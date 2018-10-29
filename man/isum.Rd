@@ -6,6 +6,11 @@
 \usage{
 isum(x, ..., l.size = 10L)
 }
+\arguments{
+\item{x}{An R object: it can be a dataframe or a vector.}
+
+\item{...}{additional parameter}
+}
 \description{
 isum() lets you do a quick summary on your data type.
 

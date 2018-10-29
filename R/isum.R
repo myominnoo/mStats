@@ -8,6 +8,9 @@
 #' For "integer" data type, it provides seven summary measures:
 #'     mean, standard deviation, median, Q1, Q3, minimum and maximum.
 #'
+#' @param x An R object: it can be a dataframe or a vector.
+#' @param ... additional parameter
+#'
 #' @seealso isum.factor, isum.numeric, isum.data.frame
 #' @keywords summarize, isum, basic statistics, quick summary
 #' @examples
@@ -16,7 +19,7 @@
 
 isum <- function(x, ..., l.size = 10L) {
   if (is.data.frame(x)) {
-    print("...x is a dataframe ...")
+    UseMethod("isum", x)
   } else {
     if (length(unique(x)) < l.size) {
       x <- factor(x)

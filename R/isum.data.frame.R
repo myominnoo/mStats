@@ -9,11 +9,12 @@
 #'     mean, standard deviation, median, Q1, Q3, minimum and maximum.
 #'
 #' @param x An R object: it can be a dataframe or a vector.
+#'
 #' @seealso isum.factor, isum.numeric, isum.data.frame
 #' @keywords summarize, isum, basic statistics, quick summary
 #' @examples
 #' isum()
 
 isum.data.frame <- function(x) {
-
+  return(x)
 }
