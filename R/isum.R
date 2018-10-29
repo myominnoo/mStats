@@ -14,19 +14,15 @@
 #'     as factor
 #'
 #' @param rnd an integer indicating the number of decimal places:
-#' @param na.rm A logical value indicating whether "NA" missing values should be removed before the computation proceeds.
+#' @param na.rm A logical value indicating whether "NA" missing values should be
+#'     removed before the computation proceeds.
 #'
 #' @seealso isum.factor, isum.numeric, isum.data.frame
 #' @keywords summarize, isum, basic statistics, quick summary
 #' @examples
 #' isum()
 
-isum <- function(x, ...) {
-  UseMethod("isum", x)
-}
-
-
-isum.default <- function(x, ..., l.size = 10L) {
+isum <- function(x, ..., l.size = 10L) {
   if (is.data.frame(x)) {
     UseMethod("isum", x)
   } else {
@@ -38,8 +34,6 @@ isum.default <- function(x, ..., l.size = 10L) {
     }
   }
 }
-
-
 
 isum.factor <- function(x, rnd = 1, na.rm = TRUE) {
   # levels of useNA in table() has c("no", "ifany", "always)

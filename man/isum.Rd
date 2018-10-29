@@ -4,7 +4,7 @@
 \alias{isum}
 \title{A Quick Summary function with Graph Display}
 \usage{
-isum(x, ...)
+isum(x, ..., l.size = 10L)
 }
 \arguments{
 \item{x}{An R object: it can be a dataframe or a vector.}
@@ -16,7 +16,8 @@ as factor}
 
 \item{rnd}{an integer indicating the number of decimal places:}
 
-\item{na.rm}{A logical value indicating whether "NA" missing values should be removed before the computation proceeds.}
+\item{na.rm}{A logical value indicating whether "NA" missing values should be
+removed before the computation proceeds.}
 }
 \description{
 isum() lets you do a quick summary on your data type.
