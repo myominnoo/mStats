@@ -4,7 +4,7 @@
 \alias{isum.numeric}
 \title{A Quick Summary function with Graph Display}
 \usage{
-isum(x, ..., l.size = 10L)
+isum(x, ...)
 }
 \arguments{
 \item{x}{An R object: it can be a dataframe or a vector.}
@@ -15,6 +15,12 @@ isum(x, ..., l.size = 10L)
 removed before the computation proceeds.}
 
 \item{...}{Additional parameters}
+
+\item{##}{Default S3 method for class 'numeric'
+isum(x, rnd = 1, na.rm = TRUE, ...)}
+
+\item{##}{Default S3 method for class 'data.frame'
+isum(x, ...)}
 
 \item{l.size}{An integer value determining whether the variable should be treated
 as factor}

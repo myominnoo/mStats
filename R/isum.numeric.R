@@ -10,7 +10,16 @@
 #' For "data.frame" type, it gives a list of all the variables based on
 #'     their data types.
 #'
-#' @usage isum(x, ..., l.size = 10L)
+#' @usage isum(x, ...)
+#' @usage ## Default S3 method:
+#' isum(x, l.size = 10L, ...)
+#' @usage ## Default S3 method for class 'factor'
+#' isum(x, rnd = 1, na.rm = TRUE, ...)
+#' @param ## Default S3 method for class 'numeric'
+#' isum(x, rnd = 1, na.rm = TRUE, ...)
+#' @param ## Default S3 method for class 'data.frame'
+#' isum(x, ...)
+#'
 #' @param x An R object: it can be a dataframe or a vector.
 #' @param ... Additional parameters
 #' @param l.size An integer value determining whether the variable should be treated
@@ -26,7 +35,7 @@
 #' @examples
 #' isum(iris)
 
-isum.numeric <- function(x, rnd = 1, na.rm = TRUE) {
+isum.numeric <- function(x, rnd = 1, na.rm = TRUE, ...) {
   len <- length(x) # total observations
   na <- length(x[is.na(x)]) # missing observations
   mu <- mean(x, na.rm = na.rm)
