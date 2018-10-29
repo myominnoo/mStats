@@ -2,6 +2,7 @@
 
 S3method(isum,data.frame)
 S3method(isum,factor)
+S3method(isum,logical)
 S3method(isum,numeric)
 export(detachAll)
 export(isum)
