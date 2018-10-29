@@ -28,9 +28,3 @@
 isum <- function(x, ...) {
   UseMethod("isum", x)
 }
-
-#' @export
-isum.logical <- function(x, ...) {
-  return(x)
-}
-
