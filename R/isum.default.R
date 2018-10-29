@@ -25,7 +25,9 @@
 
 isum.default <- function(x, ..., l.size = 10L) {
   if (is.data.frame(x)) {
-    return(x)
+    for(i in names(x)) {
+      UseMethod("isum", x[names(x)[i]])
+    }
   } else {
     if (length(unique(x)) < l.size) {
       x <- factor(x)
