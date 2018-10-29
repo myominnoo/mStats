@@ -9,9 +9,7 @@
 #'     mean, standard deviation, median, Q1, Q3, minimum and maximum.
 #'
 #' @param x An R object: it can be a dataframe or a vector.
-#' @param ... Additional parameters
-#' @param l.size An integer value determining whether the variable should be treated
-#'     as factor
+#' @param ... additional parameter
 #'
 #' @seealso isum.factor, isum.numeric, isum.data.frame
 #' @keywords summarize, isum, basic statistics, quick summary
@@ -19,15 +17,6 @@
 #' isum()
 
 
-isum.default <- function(x, ..., l.size = 10L) {
-  if (is.data.frame(x)) {
-    UseMethod("isum", x)
-  } else {
-    if (length(unique(x)) < l.size) {
-      x <- factor(x)
-      UseMethod("isum", x)
-    } else {
-      UseMethod("isum", x)
-    }
-  }
+isum <- function(x, ...) {
+  UseMethod("isum", x)
 }
