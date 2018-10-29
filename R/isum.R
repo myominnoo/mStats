@@ -19,14 +19,11 @@
 #'
 #' @seealso isum.factor, isum.numeric, isum.data.frame
 #' @keywords summarize, isum, basic statistics, quick summary
-#' @examples
+#' @examples fasdf;lds
+#' @usage fasdfas
 #' isum()
 
-isum <- function(x, ...) {
-  UseMethod("isum", x)
-}
-
-isum.default <- function(x, ..., l.size = 10L) {
+isum <- function(x, ..., l.size = 10L) {
   if (is.data.frame(x)) {
     return(x)
   } else {
@@ -38,7 +35,6 @@ isum.default <- function(x, ..., l.size = 10L) {
     }
   }
 }
-
 isum.factor <- function(x, rnd = 1, na.rm = TRUE) {
   # levels of useNA in table() has c("no", "ifany", "always)
   if (na.rm) {include.na = "no"} else {include.na = "ifany"}
@@ -57,8 +53,6 @@ isum.factor <- function(x, rnd = 1, na.rm = TRUE) {
   barplot(height = tbl)
   return(df)
 }
-
-
 isum.numeric <- function(x, rnd = 1, na.rm = TRUE) {
   len <- length(x) # total observations
   na <- length(x[is.na(x)]) # missing observations

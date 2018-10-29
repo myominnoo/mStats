@@ -4,7 +4,8 @@
 \alias{isum}
 \title{A Quick Summary function with Graph Display}
 \usage{
-isum(x, ...)
+fasdfas
+isum()
 }
 \arguments{
 \item{x}{An R object: it can be a dataframe or a vector.}
@@ -28,7 +29,7 @@ For "integer" data type, it provides seven summary measures:
     mean, standard deviation, median, Q1, Q3, minimum and maximum.
 }
 \examples{
-isum()
+fasdf;lds
 }
 \seealso{
 isum.factor, isum.numeric, isum.data.frame
