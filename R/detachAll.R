@@ -1,8 +1,10 @@
 #' Detach all objects in the search pathway
 #'
+#' @description
 #' detachAll() lets you detach two types of objects in the search pathway:
 #' 1) user-installed packages
 #' 2) attached data objects
+#'
 #' @param NA No parameter required.
 #' @keywords detach, packages, data, search
 #' @export

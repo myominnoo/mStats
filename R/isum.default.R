@@ -19,10 +19,11 @@
 #'
 #' @seealso isum.factor, isum.numeric, isum.data.frame
 #' @keywords summarize, isum, basic statistics, quick summary
+#' @export
 #' @examples
 #' isum()
 
-isum <- function(x, ..., l.size = 10L) {
+isum.default <- function(x, ..., l.size = 10L) {
   if (is.data.frame(x)) {
     return(x)
   } else {

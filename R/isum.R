@@ -23,21 +23,7 @@
 #' @examples
 #' isum()
 
-isum.factor <- function(x, rnd = 1, na.rm = TRUE) {
-  # levels of useNA in table() has c("no", "ifany", "always)
-  if (na.rm) {include.na = "no"} else {include.na = "ifany"}
-  tbl <- table(x, useNA = include.na) # default na.rm = TRUE
-  t.count <- c(tbl, Total = sum(tbl))
-  c.count <- c(cumsum(tbl), sum(tbl))
-  names(c.count) <- names(t.count)
-  r.freq <- t.count / sum(tbl) * 100
-  c.freq <- c.count / sum(tbl) * 100
-  names(c.freq) <- names(t.count)
-  df <- as.data.frame(cbind(Freq. = t.count,
-                            Percent = round(r.freq, rnd),
-                            # Cum.Count = c.count,
-                            Cum. = round(c.freq, rnd)))
-  # Bar Chart
-  barplot(height = tbl)
-  return(df)
+isum <- function(x, ...) {
+  UseMethod("isum", x)
 }
+

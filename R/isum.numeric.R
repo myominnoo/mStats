@@ -19,6 +19,7 @@
 #'
 #' @seealso isum.factor, isum.numeric, isum.data.frame
 #' @keywords summarize, isum, basic statistics, quick summary
+#' @export
 #' @examples
 #' isum()
 
