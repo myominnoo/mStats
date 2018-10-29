@@ -3,11 +3,14 @@
 #' @description
 #' isum() lets you do a quick summary on your data type.
 #'
-#' For "factor" data type, it tabulates and gives frequency, percentages and
+#' For "factor" type, it tabulates and gives frequency, percentages and
 #'     cummulative percentages.
-#' For "integer" data type, it provides seven summary measures:
+#' For "integer" type, it provides seven summary measures:
 #'     mean, standard deviation, median, Q1, Q3, minimum and maximum.
+#' For "data.frame" type, it gives a list of all the variables based on
+#'     their data types.
 #'
+#' @usage isum(x, ..., l.size = 10L)
 #' @param x An R object: it can be a dataframe or a vector.
 #' @param ... Additional parameters
 #' @param l.size An integer value determining whether the variable should be treated
@@ -21,7 +24,7 @@
 #' @keywords summarize, isum, basic statistics, quick summary
 #' @export
 #' @examples
-#' isum()
+#' isum(iris)
 
 isum <- function(x, ...) {
   UseMethod("isum", x)
