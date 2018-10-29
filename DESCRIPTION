@@ -1,5 +1,5 @@
 Package: mStats
-Title: A Suitecase of Personal Functions for R
+Title: A Collection of Personal R Packages for Daily Data Management and Analysis
 Version: 0.0.1
 Authors@R: 
     person(given = "Myo Minn",
