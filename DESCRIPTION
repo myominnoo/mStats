@@ -1,0 +1,13 @@
+Package: mStats
+Title: A Suitecase of Personal Functions for R
+Version: 0.0.1
+Authors@R: 
+    person(given = "Myo Minn",
+           family = "Oo",
+           role = c("aut", "cre"),
+           email = "dr.myominnoo@gmail.com")
+Description: A collection of different R functions in daily data management and analysis.
+License: The MIT License
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.0
