@@ -11,12 +11,6 @@ isum(x, ...)
 
 \item{...}{Additional parameters}
 
-\item{##}{Default S3 method for class 'numeric'
-isum(x, rnd = 1, na.rm = TRUE, ...)}
-
-\item{##}{Default S3 method for class 'data.frame'
-isum(x, ...)}
-
 \item{l.size}{An integer value determining whether the variable should be treated
 as factor}
 

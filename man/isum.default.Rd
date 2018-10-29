@@ -4,7 +4,7 @@
 \alias{isum.default}
 \title{A Quick Summary function with Graph Display}
 \usage{
-isum(x, ...)
+isum.default(x, l.size = 10L, ...)
 }
 \arguments{
 \item{x}{An R object: it can be a dataframe or a vector.}
@@ -13,12 +13,6 @@ isum(x, ...)
 as factor}
 
 \item{...}{Additional parameters}
-
-\item{##}{Default S3 method for class 'numeric'
-isum(x, rnd = 1, na.rm = TRUE, ...)}
-
-\item{##}{Default S3 method for class 'data.frame'
-isum(x, ...)}
 
 \item{rnd}{an integer indicating the number of decimal places:}
 
