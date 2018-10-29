@@ -1,7 +1,7 @@
 #' A Quick Summary function with Graph Display
 #'
 #' @description
-#' isum.numeric() lets you do a quick summary on your data type.
+#' isum() lets you do a quick summary on your data type.
 #'
 #' For "factor" data type, it tabulates and gives frequency, percentages and
 #'     cummulative percentages.
