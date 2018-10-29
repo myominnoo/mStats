@@ -8,10 +8,6 @@
 #' For "integer" data type, it provides seven summary measures:
 #'     mean, standard deviation, median, Q1, Q3, minimum and maximum.
 #'
-#' @param x An R object: it can be a dataframe or a vector.
-#' @param l.size An integer value determining how many levels of
-#' unqiue values a vector must have in order to display as factor.
-#' @param ... additional parameters
 #' @seealso isum.factor, isum.numeric, isum.data.frame
 #' @keywords summarize, isum, basic statistics, quick summary
 #' @examples
