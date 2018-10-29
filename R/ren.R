@@ -1,13 +1,13 @@
 #' Clear Workspace, Plots and Console
 #'
-#' ren() is a quick way of clearing messy workspace, plots and console.
+#' renv() is a quick way of clearing messy workspace, plots and console.
 #' @param NA No parameter required.
 #' @keywords clear, workspace, plots, console
 #' @export
 #' @examples
-#' ren()
+#' renv()
 
-ren <- function() {
+renv <- function() {
   # Clear plots
   if(!is.null(dev.list())) dev.off()
   # Clear workspace
