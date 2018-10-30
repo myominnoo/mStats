@@ -1,15 +1,20 @@
-#' Restart R environment as fresh
+#' Restart R environment as fresh as newly opened
 #'
 #' @description
 #' rall() lets you clear deep in the search path:
+#'
 #' 1) user-installed packages
+#'
 #' 2) attached data objects
+#'
 #' 3) Global Environment
+#'
 #' 4) Plots
+#'
 #' 5) Console
+#'
 #' 6) Restart R session
 #'
-#' @param NA No parameter required.
 #' @keywords detach, packages, data, search
 #' @export
 #' @examples

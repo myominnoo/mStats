@@ -6,12 +6,11 @@
 \usage{
 detachAll()
 }
-\arguments{
-\item{NA}{No parameter required.}
-}
 \description{
 detachAll() lets you detach two types of objects in the search pathway:
+
 1) user-installed packages
+
 2) attached data objects
 }
 \examples{

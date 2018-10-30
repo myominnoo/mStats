@@ -1,7 +1,8 @@
 #' Clear Workspace, Plots and Console
 #'
+#' @description
 #' renv() is a quick way of clearing messy workspace, plots and console.
-#' @param NA No parameter required.
+#'
 #' @keywords clear, workspace, plots, console
 #' @export
 #' @examples

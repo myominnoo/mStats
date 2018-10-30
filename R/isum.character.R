@@ -12,15 +12,7 @@
 #' For the class "data.frame", it gives a list of all the variables based on
 #'     their data types.
 #'
-#' @param x An R object: it can be a dataframe or a vector.
-#' @param ... Additional parameters
-#' @param l.size An integer value determining whether the variable should be treated
-#'     as factor
-#'
-#' @param rnd an integer indicating the number of decimal places:
-#' @param na.rm A logical value indicating whether "NA" missing values should be
-#'     removed before the computation proceeds.
-#'
+#' @param ... Additional arguments
 #' @seealso isum.factor, isum.numeric, isum.data.frame
 #' @keywords summarize, isum, basic statistics, quick summary
 #' @export

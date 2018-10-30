@@ -13,11 +13,6 @@
 
 \item{na.rm}{A logical value indicating whether "NA" missing values should be
 removed before the computation proceeds.}
-
-\item{...}{Additional parameters}
-
-\item{l.size}{An integer value determining whether the variable should be treated
-as factor}
 }
 \description{
 isum() lets you do a quick summary on your data

@@ -12,15 +12,7 @@
 #' For the class "data.frame", it gives a list of all the variables based on
 #'     their data types.
 #'
-#' @param x An R object: it can be a dataframe or a vector.
-#' @param ... Additional parameters
-#' @param l.size An integer value determining whether the variable should be treated
-#'     as factor
-#'
-#' @param rnd an integer indicating the number of decimal places:
-#' @param na.rm A logical value indicating whether "NA" missing values should be
-#'     removed before the computation proceeds.
-#'
+#' @param ... Additional arguments
 #' @seealso isum.factor, isum.numeric, isum.data.frame
 #' @keywords summarize, isum, basic statistics, quick summary
 #' @export
@@ -28,12 +20,20 @@
 #' isum(iris)
 
 isum.data.frame <- function(x, ...) {
-  df <- list()
-  for(i in 1:length(names(x))) {
-    v <- x[,i]
-    df[[i]] <- isum(v, ...)
-    names(df)[i] <- names(x)[i]
+  v.names <- names(x)
+  ds <- data.frame()
+  n.var <- vector(mode="numeric", length=0)
+  freq <- list()
+  for(i in 1:ncol(x)) {
+    if(ncol(isum(x[[i]])) > 3) {
+      ds <- rbind(ds, isum(x[[i]], ...))
+      n.var <- c(n.var, i)
+    } else {
+      freq[[v.names[i]]] <- isum(x[[i]], ...)
+    }
   }
-  return(df)
+  row.names(ds) <- v.names[n.var]
+  return(list(number.summary = ds,
+              freq.summary = freq))
 }
 

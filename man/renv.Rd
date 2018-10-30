@@ -6,9 +6,6 @@
 \usage{
 renv()
 }
-\arguments{
-\item{NA}{No parameter required.}
-}
 \description{
 renv() is a quick way of clearing messy workspace, plots and console.
 }

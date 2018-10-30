@@ -13,10 +13,6 @@
 #'     their data types.
 #'
 #' @param x An R object: it can be a dataframe or a vector.
-#' @param ... Additional parameters
-#' @param l.size An integer value determining whether the variable should be treated
-#'     as factor
-#'
 #' @param rnd an integer indicating the number of decimal places:
 #' @param na.rm A logical value indicating whether "NA" missing values should be
 #'     removed before the computation proceeds.
@@ -30,9 +26,10 @@
 isum.numeric <- function(x, rnd = 1, na.rm = TRUE) {
   len <- length(x) # total observations
   na <- length(x[is.na(x)]) # missing observations
+  if(na > 0) na.rm <- TRUE
   mu <- mean(x, na.rm = na.rm)
   std <- sd(x, na.rm)
-  q <- quantile(x, probs = c(0, .25, .5, .75, 1), na.rm)
+  q <- quantile(x, probs = c(0, .25, .5, .75, 1), na.rm = na.rm)
   v <- round(c(mu, std, q), rnd)
   df <- data.frame(Obs. = len, NA. = na,
                    mean = v[1], sd = v[2],
@@ -43,9 +40,10 @@ isum.numeric <- function(x, rnd = 1, na.rm = TRUE) {
   qqnorm(x, col = "blue")
   qqline(x, col = "red")
   sp <- shapiro.test(x)
-  sp$p.value
+  pvalue <- sp$p.value
+  if(pvalue < 0.0001) {pvalue <- "<0.0001"} else {pvalue <- round(pvalue, 4)}
   text(-1.8, v[7], "Shapiro-Wilk normality test", cex = 0.75, col = "red")
-  text(-2, v[7] - (v[7] * .05), paste("p-value =", round(sp$p.value, 4)),
+  text(-2, v[7] - (v[7] * .05), paste("p-value =", pvalue),
        cex = 0.75, col = "red")
   return(df)
 }

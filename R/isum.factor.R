@@ -13,10 +13,6 @@
 #'     their data types.
 #'
 #' @param x An R object: it can be a dataframe or a vector.
-#' @param ... Additional parameters
-#' @param l.size An integer value determining whether the variable should be treated
-#'     as factor
-#'
 #' @param rnd an integer indicating the number of decimal places:
 #' @param na.rm A logical value indicating whether "NA" missing values should be
 #'     removed before the computation proceeds.
@@ -42,6 +38,6 @@ isum.factor <- function(x, rnd = 1, na.rm = TRUE) {
                             # Cum.Count = c.count,
                             Cum. = round(c.freq, rnd)))
   # Bar Chart
-  barplot(height = tbl)
+  barplot(height = tbl, col = rainbow(length(tbl)))
   return(df)
 }

@@ -2,20 +2,23 @@
 % Please edit documentation in R/rall.R
 \name{rall}
 \alias{rall}
-\title{Restart R environment as fresh}
+\title{Restart R environment as fresh as newly opened}
 \usage{
 rall()
 }
-\arguments{
-\item{NA}{No parameter required.}
-}
 \description{
 rall() lets you clear deep in the search path:
+
 1) user-installed packages
+
 2) attached data objects
+
 3) Global Environment
+
 4) Plots
+
 5) Console
+
 6) Restart R session
 }
 \examples{
