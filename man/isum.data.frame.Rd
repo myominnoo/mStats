@@ -4,7 +4,7 @@
 \alias{isum.data.frame}
 \title{A Quick Summary function with Graph Display}
 \usage{
-\method{isum}{data.frame}(x)
+\method{isum}{data.frame}(x, ...)
 }
 \arguments{
 \item{x}{An R object: it can be a dataframe or a vector.}
