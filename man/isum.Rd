@@ -20,13 +20,15 @@ as factor}
 removed before the computation proceeds.}
 }
 \description{
-isum() lets you do a quick summary on your data type.
+isum() lets you do a quick summary on your data
 
-For "factor" type, it tabulates and gives frequency, percentages and
-    cummulative percentages.
-For "integer" type, it provides seven summary measures:
+For the class "factor", it tabulates and gives frequency, percentages and
+    cummulative percentages. The same is with the class "character".
+
+For the class "integer", it provides seven summary measures:
     mean, standard deviation, median, Q1, Q3, minimum and maximum.
-For "data.frame" type, it gives a list of all the variables based on
+
+For the class "data.frame", it gives a list of all the variables based on
     their data types.
 }
 \examples{
