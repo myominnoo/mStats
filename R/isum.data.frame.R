@@ -27,11 +27,11 @@
 #' @examples
 #' isum(iris)
 
-isum.data.frame <- function(x) {
+isum.data.frame <- function(x, ...) {
   df <- list()
   for(i in 1:length(names(x))) {
     v <- x[,i]
-    df[[i]] <- isum(v)
+    df[[i]] <- isum(v, ...)
     names(df)[i] <- names(x)[i]
   }
   return(df)
