@@ -4,7 +4,7 @@
 \alias{isum.numeric}
 \title{A Quick Summary function with Graph Display}
 \usage{
-\method{isum}{numeric}(x, rnd = 1, na.rm = TRUE)
+\method{isum}{numeric}(x, rnd = 1, na.rm = TRUE, plot.title = NULL)
 }
 \arguments{
 \item{x}{An R object: it can be a dataframe or a vector.}
@@ -25,9 +25,6 @@ For the class "integer", it provides seven summary measures:
 
 For the class "data.frame", it gives a list of all the variables based on
     their data types.
-}
-\examples{
-isum(iris)
 }
 \seealso{
 isum.factor, isum.numeric, isum.data.frame

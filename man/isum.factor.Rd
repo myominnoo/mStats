@@ -4,7 +4,7 @@
 \alias{isum.factor}
 \title{A Quick Summary function with Graph Display}
 \usage{
-\method{isum}{factor}(x, rnd = 1, na.rm = TRUE)
+\method{isum}{factor}(x, rnd = 1, na.rm = TRUE, plot.title = NULL)
 }
 \arguments{
 \item{x}{An R object: it can be a dataframe or a vector.}

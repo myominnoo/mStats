@@ -26,12 +26,17 @@ isum.data.frame <- function(x, rnd = 1, na.rm = TRUE) {
                                                               TRUE, FALSE))))
   v_num <- unlist(lapply(names(x), function(y) return(ifelse(is.numeric(x[,y]),
                                                              TRUE, FALSE))))
-  var_freq <- !v_date & !v_num
+  v_freq <- !v_date & !v_num
 
-  num <- do.call(rbind, lapply(names(x)[v_num], function(y) isum(x[,y], rnd, na.rm)))
+  num <- do.call(rbind,
+         lapply(names(x)[v_num],
+                function(y) isum(x[,y], rnd, na.rm,
+                                 plot.title = toString(y))))
   row.names(num) <- names(x)[v_num]
-  freq <- lapply(names(x)[var_freq], function(y) isum(x[,y], rnd, na.rm))
-  freq <- structure(freq, names = names(x)[var_freq])
+  freq <- lapply(names(x)[v_freq],
+                 function(y) isum(x[,y], rnd, na.rm,
+                                  plot.title = toString(y)))
+  freq <- structure(freq, names = names(x)[v_freq])
   return(list(Num.summary = num,
     Freq.summary = freq,
     Additional.Info = paste0("... '", ncol(x[,v_date]),

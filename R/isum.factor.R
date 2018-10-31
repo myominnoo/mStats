@@ -23,7 +23,7 @@
 #' @examples
 #' isum(iris)
 
-isum.factor <- function(x, rnd = 1, na.rm = TRUE) {
+isum.factor <- function(x, rnd = 1, na.rm = TRUE, plot.title = NULL) {
   # levels of useNA in table() has c("no", "ifany", "always)
   if (na.rm) {include.na = "no"} else {include.na = "ifany"}
   tbl <- table(x, useNA = include.na) # default na.rm = TRUE
@@ -39,7 +39,10 @@ isum.factor <- function(x, rnd = 1, na.rm = TRUE) {
                             Cum. = round(c.freq, rnd)))
   # Bar Chart
   barplot(height = tbl,
-          main = paste0("Plot of ", deparse(substitute(x))),
+          main = paste0("Plot of variable '",
+                        ifelse(is.null(plot.title),
+                               deparse(substitute(x)),
+                               plot.title), "'"),
           col = rainbow(length(tbl)))
   return(df)
 }

@@ -20,10 +20,9 @@
 #' @seealso isum.factor, isum.numeric, isum.data.frame
 #' @keywords summarize, isum, basic statistics, quick summary
 #' @export
-#' @examples
-#' isum(iris)
 
-isum.numeric <- function(x, rnd = 1, na.rm = TRUE) {
+
+isum.numeric <- function(x, rnd = 1, na.rm = TRUE, plot.title = NULL) {
   len <- length(x) # total observations
   na <- length(x[is.na(x)]) # missing observations
   if(na > 0) na.rm <- TRUE
@@ -38,7 +37,10 @@ isum.numeric <- function(x, rnd = 1, na.rm = TRUE) {
                    row.names = "")
   # Normality Plot
   qqnorm(x, col = "blue",
-         main = paste0("Normal Q-Q Plot of ", deparse(substitute(x))))
+         main = paste0("Normal Q-Q Plot of variable: '",
+                       ifelse(is.null(plot.title),
+                              deparse(substitute(x)),
+                              plot.title), "'"))
   qqline(x, col = "red")
   sp <- shapiro.test(x)
   pvalue <- sp$p.value

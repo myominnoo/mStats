@@ -4,7 +4,7 @@
 \alias{itab}
 \title{Cross-tabulation between two categorical variables with Chi-Squre Test}
 \usage{
-itab(x, y, rnd = 1, na.rm = TRUE)
+itab(x, y, data = NULL, rnd = 1, na.rm = TRUE)
 }
 \arguments{
 \item{x}{An R Object: represents Row variable}
