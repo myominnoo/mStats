@@ -22,10 +22,12 @@
 isum.data.frame <- function(x, rnd = 1, na.rm = TRUE) {
   x <- data.frame(x)
   # create logical vector for date type
-  v_date <- unlist(lapply(names(x), function(y) return(ifelse(is.date(x[,y]),
-                                                              TRUE, FALSE))))
-  v_num <- unlist(lapply(names(x), function(y) return(ifelse(is.numeric(x[,y]),
-                                                             TRUE, FALSE))))
+  v_date <- unlist(lapply(names(x),
+                          function(y) return(ifelse(is.date(x[,y]),
+                                       TRUE, FALSE))))
+  v_num <- unlist(lapply(names(x),
+                         function(y) return(ifelse(is.numeric(x[,y]),
+                                       TRUE, FALSE))))
   v_freq <- !v_date & !v_num
 
   num <- do.call(rbind,
@@ -40,5 +42,5 @@ isum.data.frame <- function(x, rnd = 1, na.rm = TRUE) {
   return(list(Num.summary = num,
     Freq.summary = freq,
     Additional.Info = paste0("... '", ncol(x[,v_date]),
-                             "' variable(s) are of type date ...")))
+                             "' variable(s) are of type 'Date' ...")))
 }

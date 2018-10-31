@@ -28,7 +28,7 @@ isum.numeric <- function(x, rnd = 1, na.rm = TRUE, plot.title = NULL) {
   if(na > 0) na.rm <- TRUE
   mu <- mean(x, na.rm = na.rm)
   std <- sd(x, na.rm)
-  q <- quantile(x, probs = c(0, .25, .5, .75, 1), na.rm = na.rm)
+  q <- round(quantile(x, probs = c(0, .25, .5, .75, 1), na.rm = na.rm), rnd)
   v <- round(c(mu, std, q), rnd)
   df <- data.frame(Obs. = len, NA. = na,
                    mean = v[1], sd = v[2],
