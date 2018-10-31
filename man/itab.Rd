@@ -4,17 +4,17 @@
 \alias{itab}
 \title{Cross-tabulation between two categorical variables with Chi-Squre Test}
 \usage{
-itab(x, y, use.na = FALSE, rnd = 1)
+itab(x, y, rnd = 1, na.rm = TRUE)
 }
 \arguments{
 \item{x}{An R Object: represents Row variable}
 
 \item{y}{An R Object: represents Column variable}
 
-\item{use.na}{A logical value indicating whether to include NA values in the table or not.
-By Default, the value is FALSE.}
-
 \item{rnd}{an integer indicating the number of decimal places:}
+
+\item{na.rm}{A logical value indicating to remove NA values in the table or not.
+By Default, the value is TRUE}
 }
 \description{
 itab() quickly provides three cross-tabulation results between two categorical variables

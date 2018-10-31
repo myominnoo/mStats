@@ -19,21 +19,21 @@
 #' @examples
 #' isum(iris)
 
-isum.data.frame <- function(x, ...) {
-  v.names <- names(x)
-  ds <- data.frame()
-  n.var <- vector(mode="numeric", length=0)
-  freq <- list()
-  for(i in 1:ncol(x)) {
-    if(ncol(isum(x[[i]])) > 3) {
-      ds <- rbind(ds, isum(x[[i]], ...))
-      n.var <- c(n.var, i)
-    } else {
-      freq[[v.names[i]]] <- isum(x[[i]], ...)
-    }
-  }
-  row.names(ds) <- v.names[n.var]
-  return(list(number.summary = ds,
-              freq.summary = freq))
-}
+isum.data.frame <- function(x, rnd = 1, na.rm = TRUE) {
+  x <- data.frame(x)
+  # create logical vector for date type
+  v_date <- unlist(lapply(names(x), function(y) return(ifelse(is.date(x[,y]),
+                                                              TRUE, FALSE))))
+  v_num <- unlist(lapply(names(x), function(y) return(ifelse(is.numeric(x[,y]),
+                                                             TRUE, FALSE))))
+  var_freq <- !v_date & !v_num
 
+  num <- do.call(rbind, lapply(names(x)[v_num], function(y) isum(x[,y], rnd, na.rm)))
+  row.names(num) <- names(x)[v_num]
+  freq <- lapply(names(x)[var_freq], function(y) isum(x[,y], rnd, na.rm))
+  freq <- structure(freq, names = names(x)[var_freq])
+  return(list(Num.summary = num,
+    Freq.summary = freq,
+    Additional.Info = paste0("... '", ncol(x[,v_date]),
+                             "' variable(s) are of type date ...")))
+}

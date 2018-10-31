@@ -23,23 +23,21 @@
 #' @examples
 #' isum(iris)
 
-isum.factor <- function(x, rnd = 1, na.rm = TRUE) {
-  # levels of useNA in table() has c("no", "ifany", "always)
-  if (na.rm) {include.na = "no"} else {include.na = "ifany"}
-  tbl <- table(x, useNA = include.na) # default na.rm = TRUE
-  t.count <- c(tbl, Total = sum(tbl))
-  c.count <- c(cumsum(tbl), sum(tbl))
-  names(c.count) <- names(t.count)
-  r.freq <- t.count / sum(tbl) * 100
-  c.freq <- c.count / sum(tbl) * 100
-  names(c.freq) <- names(t.count)
-  df <- as.data.frame(cbind(Freq. = t.count,
-                            Percent = round(r.freq, rnd),
-                            # Cum.Count = c.count,
-                            Cum. = round(c.freq, rnd)))
-  # Bar Chart
-  barplot(height = tbl,
-          main = paste0("Plot of ", deparse(substitute(x))),
-          col = rainbow(length(tbl)))
+isum.Date <- function(x, rnd = 1, na.rm = TRUE) {
+  len <- length(x) # total observations
+  na <- length(x[is.na(x)]) # missing observations
+  if(na > 0) na.rm <- TRUE
+  mu <- mean(x, na.rm = na.rm)
+  std <- sd(x, na.rm)
+  q <- quantile(unclass(x), probs = c(0, .25, .5, .75, 1),
+                na.rm = na.rm)
+  q <- as.Date(q, origin = "1970-01-01")
+  v <- c(mu, std, q)
+  df <- data.frame(Obs. = len, NA. = na,
+                   mean = v[1], sd = v[2],
+                   median = v[5], Q.25 = v[4], Q.75 = v[6],
+                   min = v[3], max = v[7],
+                   row.names = "")
+  plot(x, main = paste0("Plot of ", deparse(substitute(x))))
   return(df)
 }

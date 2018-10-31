@@ -37,7 +37,8 @@ isum.numeric <- function(x, rnd = 1, na.rm = TRUE) {
                    min = v[3], max = v[7],
                    row.names = "")
   # Normality Plot
-  qqnorm(x, col = "blue")
+  qqnorm(x, col = "blue",
+         main = paste0("Normal Q-Q Plot of ", deparse(substitute(x))))
   qqline(x, col = "red")
   sp <- shapiro.test(x)
   pvalue <- sp$p.value
