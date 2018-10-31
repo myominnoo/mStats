@@ -6,12 +6,7 @@ Authors@R:
            family = "Oo",
            role = c("aut", "cre"),
            email = "dr.myominnoo@gmail.com")
-Description: A collection of different R functions in daily data management and analysis.
-Functions for data analysis produce outputs that try to imitate the result display in 
-Stata software, and also automatically run statistical tests of difference for bivariate
-analysis. Univariate analysis on "dataframe" objects runs on numeric as well as categorical data 
-types, generating a list of statistics and basic plots. This eliminates the need to loop 
-or manually types in all the variables for simple means and proportions. 
+Description: A collection of different R functions in daily data management and analysis. Functions for data analysis produce outputs that try to imitate the result display in Stata software, and also automatically run statistical tests of difference for bivariate analysis. Univariate analysis on "dataframe" objects runs on numeric as well as categorical data types, generating a list of statistics and basic plots. This eliminates the need to loop or manually types in all the variables for simple means and proportions. 
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
