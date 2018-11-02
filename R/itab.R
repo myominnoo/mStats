@@ -30,8 +30,8 @@ itab <- function(x, y, data = NULL, rnd = 1, na.rm = TRUE) {
   for(i in 1:nrow(tbl.col)) {
     pct.row <- rbind(pct.row, tbl.total[i,] / tbl.total[i, ncol(tbl.total)])
   }
-  colnames(pct.col) <- c(rep("Col.Pct", ncol(pct.col)-1), "Col.Pct.Total")
-  colnames(pct.row) <- c(rep("Row.Pct", ncol(pct.col)-1), "Row.Pct.Total")
+  colnames(pct.col) <- c(rep("(Pct)", ncol(pct.col)-1), "(Pct.Total)")
+  colnames(pct.row) <- c(rep("(Pct)", ncol(pct.col)-1), "(Pct.Total)")
   pct.col <- round(pct.col, rnd)
   pct.row <- round(pct.row, rnd)
   tab.col <- vector("numeric", 0)
@@ -55,8 +55,8 @@ itab <- function(x, y, data = NULL, rnd = 1, na.rm = TRUE) {
                  Chi.Square.Test = chisq.test(tbl, correct = c.correct),
                  fisher.Exact.Test = fisher.test(tbl))
   mosaicplot(tbl, color = rainbow(nrow(tbl)),
-             main = paste0("Mosaic Plot: x = '", deparse(substitute(x)),
-                           "' & y = '", deparse(substitute(y)), "'"),
+             main = paste0("Mosaic Plot: '", deparse(substitute(x)),
+                           "' ~ '", deparse(substitute(y)), "'"),
              xlab = deparse(substitute(x)),
              ylab = deparse(substitute(y)))
   return(result)
