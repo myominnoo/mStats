@@ -30,8 +30,8 @@ itab <- function(x, y, data = NULL, rnd = 1, na.rm = TRUE) {
   for(i in 1:nrow(tbl.col)) {
     pct.row <- rbind(pct.row, tbl.total[i,] / tbl.total[i, ncol(tbl.total)])
   }
-  colnames(pct.col) <- c(rep("Col.", ncol(pct.col)-1), "Col.total")
-  colnames(pct.row) <- c(rep("Row.", ncol(pct.col)-1), "Row.total")
+  colnames(pct.col) <- c(rep("Col.Pct", ncol(pct.col)-1), "Col.Pct.Total")
+  colnames(pct.row) <- c(rep("Row.Pct", ncol(pct.col)-1), "Row.Pct.Total")
   pct.col <- round(pct.col, rnd)
   pct.row <- round(pct.row, rnd)
   tab.col <- vector("numeric", 0)
