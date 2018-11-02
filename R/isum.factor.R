@@ -39,7 +39,7 @@ isum.factor <- function(x, rnd = 1, na.rm = TRUE, plot.title = NULL) {
                             Cum. = round(c.freq, rnd)))
   # Bar Chart
   barplot(height = tbl,
-          main = paste0("Plot of variable '",
+          main = paste0("BarPlot of '",
                         ifelse(is.null(plot.title),
                                deparse(substitute(x)),
                                plot.title), "'"),
