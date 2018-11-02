@@ -23,6 +23,12 @@ For the class "data.frame", it gives a list of all the variables based on
 }
 \examples{
 isum(iris)
+isum(iris, 5, FALSE)
+isum(iris$Sepal.Length, rnd = 3 )
+isum(iris$Sepal.Length, rnd = 0)
+isum(iris$Species, rnd = 3, na.rm = FALSE)
+isum(iris, rnd = 3, na.rm = TRUE)
+isum(iris, rnd = 3, na.rm = FALSE)
 }
 \seealso{
 isum.factor, isum.numeric, isum.data.frame

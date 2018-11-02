@@ -31,9 +31,9 @@ isum.numeric <- function(x, rnd = 1, na.rm = TRUE, plot.title = NULL) {
   q <- round(quantile(x, probs = c(0, .25, .5, .75, 1), na.rm = na.rm), rnd)
   v <- round(c(mu, std, q), rnd)
   df <- data.frame(Obs. = len, NA. = na,
-                   mean = v[1], sd = v[2],
-                   median = v[5], Q.25 = v[4], Q.75 = v[6],
-                   min = v[3], max = v[7],
+                   Mean = v[1], Std.Dev = v[2],
+                   Median = v[5], Q.25 = v[4], Q.75 = v[6],
+                   Min = v[3], Max = v[7],
                    row.names = "")
   # Normality Plot
   qqnorm(x, col = "blue",
