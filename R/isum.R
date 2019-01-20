@@ -45,7 +45,6 @@ isum.default <- function(...) {
 #' @rdname  isum
 #' @export
 isum.factor <- function(x, rnd = 1, na.rm = TRUE, plot.display = TRUE, plot.title = NULL) {
-  x <- factor(x, levels = unique(x), labels = unique(x))
   # levels of useNA in table() has c("no", "ifany", "always)
   if (na.rm) {include.na = "no"} else {include.na = "ifany"}
   tbl <- table(x, useNA = include.na) # default na.rm = TRUE
