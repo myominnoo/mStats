@@ -24,6 +24,15 @@ make it stop working.
 The prompt '>' and continue '+' can be restored by typing this in the console: options
 (prompt = "> ", continue = "+ ").
 }
+\examples{
+ilog("myfirstlog.txt", append = F)
+isum(infert)
+str(infert)
+isum(iris)
+str(iris)
+isum(AirPassengers) # not logging the output when errors appear.
+ilog.close()
+}
 \seealso{
 isum, igroup, ixtab, irestart
 }

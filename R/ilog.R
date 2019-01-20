@@ -14,8 +14,7 @@
 #' @param append A logical value, indicating whether the log file is appended or not.
 #' @seealso isum, igroup, ixtab, irestart
 #' @keywords log console, save outputs, save console
-#' @example
-#'
+#' @examples
 #' ilog("myfirstlog.txt", append = F)
 #' isum(infert)
 #' str(infert)
@@ -23,7 +22,6 @@
 #' str(iris)
 #' isum(AirPassengers) # not logging the output when errors appear.
 #' ilog.close()
-#'
 
 #' @export
 ilog <- function(logfile = "mylog.txt", append = FALSE) {

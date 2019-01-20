@@ -29,9 +29,9 @@
 #' @export
 irestart <- function() {
   # remove data from global environment and plots, clear console
-  rm.env()
+  iclear()
   # detach all user-loaded packages and data
-  detachAll()
+  idetach()
   # restart R session
   .rs.restartR()
 }
