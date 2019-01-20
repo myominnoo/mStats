@@ -30,10 +30,19 @@ isave.isum <- function(x, file, append = FALSE) {
   for (i in 1:length(x)) {
     write.table(names(x[i]), file, col.names = FALSE, row.names = FALSE, sep = ",",
                 append = TRUE)
-    write.table(x[[i]], file, col.names = TRUE, row.names = TRUE, sep = ",",
-                append = TRUE)
-    write.table(blank, file, sep = ",", row.names = FALSE, col.names = FALSE,
-                append = TRUE)
+    if (i > 1) {
+      for (q in 1:length(x[[i]])) {
+        write.table(x[[i]][q], file, sep = ",", row.names = TRUE, col.names = TRUE,
+                    append = TRUE)
+        write.table(blank, file, sep = ",", row.names = FALSE, col.names = FALSE,
+                    append = TRUE)
+      }
+    } else {
+      write.table(x[[i]], file, col.names = TRUE, row.names = TRUE, sep = ",",
+                  append = TRUE)
+      write.table(blank, file, sep = ",", row.names = FALSE, col.names = FALSE,
+                  append = TRUE)
+    }
   }
   options(warn = oldw)
 }
