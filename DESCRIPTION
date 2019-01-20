@@ -1,6 +1,6 @@
 Package: mStats
-Title: A fun package of Summary Statistics by Myo
-Version: 1.02.11
+Title: A fun R package by Myo
+Version: 1.01.12
 Authors@R: 
     person(given = "Myo Minn",
            family = "Oo",

@@ -70,11 +70,8 @@ ilog <- function(logfile = "mylog.txt", append = FALSE) {
   if(append) {
     cat(paste0("(note ", getwd(), "/", logfile, " appended)"))
   } else {cat(paste0("(note ", getwd(), "/", logfile, " replace)"))}
-  cat(paste('\n\n'))
-  cat(paste0('    log: ', getwd(), "/", logfile))
-  cat(paste0('\nopen on: ', Sys.time(),'\n'))
-  cat(paste0(rep('.', 40)))
-  cat(paste('\n\n'))
+  cat(paste0('\n', '    log: ', getwd(), "/", logfile, '\nopen on: ', Sys.time(),'\n'))
+  cat(rep('.', 40), '\n\n')
   sink()
 
   addTaskCallback(ilogtxt, name = "ilogtxt")
@@ -98,8 +95,8 @@ ilog.close <- function() {
   # writing log info
   sink(logging.env$logfile, append = TRUE, split = TRUE)
   cat(paste0(rep('.', 40)))
-  cat(paste0('\n\n     log: ', getwd(), "/", logging.env$logfile))
-  cat(paste0('\nclosed on: ', Sys.time(),'\n\n'))
+  cat(paste0('\n\n     log: ', getwd(), "/", logging.env$logfile, '\nclosed on: ',
+             Sys.time(),'\n\n'))
   sink()
   evalq(rm(list=ls()), envir = logging.env )
   invisible(NULL)
