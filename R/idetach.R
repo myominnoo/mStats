@@ -1,18 +1,22 @@
-#' Detach all objects in the search pathway
+#' @title Detach all objects in search pathway
 #'
 #' @description
-#' detachAll() lets you detach two types of objects in the search pathway:
+#' idetach removes two types of user-loaded objects in the search pathway:
 #'
-#' 1) user-installed packages
+#' 1) user-loaded packages
 #'
 #' 2) attached data objects
 #'
-#' @keywords detach, packages, data, search
-#' @export
+#' @keywords detach all, packages, data, search
 #' @examples
-#' detachAll()
+#' library(foreign)
+#' library(MASS)
+#' search()
+#' idetach()
+#' search()
 
-detachAll <- function() {
+#' @export
+idetach <- function() {
   # detaching user-installed packages
   basic.packages <- c("package:stats","package:graphics","package:grDevices",
                       "package:utils","package:datasets","package:methods","package:base")

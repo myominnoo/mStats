@@ -2,38 +2,70 @@
 % Please edit documentation in R/isum.R
 \name{isum}
 \alias{isum}
+\alias{isum.default}
+\alias{isum.factor}
+\alias{isum.character}
+\alias{isum.logical}
+\alias{isum.numeric}
+\alias{isum.data.frame}
 \title{A Quick Summary function with Graph Display}
 \usage{
-isum(...)
+isum(x, rnd = 1, na.rm = TRUE, plot.display = TRUE,
+  plot.title = NULL)
+
+\method{isum}{default}(...)
+
+\method{isum}{factor}(x, rnd = 1, na.rm = TRUE, plot.display = TRUE,
+  plot.title = NULL)
+
+\method{isum}{character}(...)
+
+\method{isum}{logical}(...)
+
+\method{isum}{numeric}(x, rnd = 1, na.rm = TRUE, plot.display = TRUE,
+  plot.title = NULL)
+
+\method{isum}{data.frame}(x, rnd = 1, na.rm = TRUE,
+  plot.display = TRUE, ...)
 }
 \arguments{
-\item{...}{Additional arguments}
+\item{x}{An R object, for which summary statistics are desired}
+
+\item{rnd}{Integer, indicating how many decimal places should be shown}
+
+\item{na.rm}{A logical value, indicating whether NA values should be removed before the
+analysis}
+
+\item{plot.display}{A logical value, indicating whether the data will be plotted and display}
+
+\item{plot.title}{A character value, specifying the name of the plot in categorical or continuous data. This argument does not work in summaring data.frame object, where the plot will be automatically mapped to the names of the data.frame.}
 }
 \description{
-isum() lets you do a quick summary on your data
-
-For the class "factor", it tabulates and gives frequency, percentages and
-    cummulative percentages. The same is with the class "character".
-
-For the class "integer", it provides seven summary measures:
-    mean, standard deviation, median, Q1, Q3, minimum and maximum.
-
-For the class "data.frame", it gives a list of all the variables based on
-    their data types.
+isum is a generic function to produce a quick summary results of various types of data.
+The function invokes on particular methods which depend on the class of the first
+argument.
+If the data is categorical, it generates frequency, relative frequency and cummulative
+frequency.
+If continuous, it generates five number summaries (median, Q1, Q3, min,
+max), mean and standard deviation.
+if the input is data.frame, it generates a list containing number summary, frequency table and additional information for date variable.
 }
 \examples{
+?iris
+str(iris)
 isum(iris)
-isum(iris, 5, FALSE)
-isum(iris$Sepal.Length, rnd = 3 )
-isum(iris$Sepal.Length, rnd = 0)
-isum(iris$Species, rnd = 3, na.rm = FALSE)
-isum(iris, rnd = 3, na.rm = TRUE)
-isum(iris, rnd = 3, na.rm = FALSE)
+
+?infert
+str(infert)
+isum(infert)
+
+?trees
+str(trees)
+isum(trees)
 }
 \seealso{
-isum.factor, isum.numeric, isum.data.frame
+ixtab, igroup
 }
-\keyword{basic}
 \keyword{isum,}
 \keyword{quick}
 \keyword{statistics,}

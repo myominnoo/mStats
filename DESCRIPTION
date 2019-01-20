@@ -1,13 +1,16 @@
 Package: mStats
-Title: Myo's package for data management and analysis
-Version: 0.11.18
+Title: A fun package of Summary Statistics by Myo
+Version: 1.02.11
 Authors@R: 
     person(given = "Myo Minn",
            family = "Oo",
            role = c("aut", "cre"),
            email = "dr.myominnoo@gmail.com")
-Description: A collection of different R functions in daily data management and analysis. Functions for data analysis produce outputs that try to imitate the result display in Stata software, and also automatically run statistical tests of difference for bivariate analysis. Univariate analysis on "dataframe" objects runs on numeric as well as categorical data types, generating a list of statistics and basic plots. This eliminates the need to loop or manually types in all the variables for simple means and proportions. 
-License: MIT
+Description: A collection of R functions in daily data management and analysis. Functions for data analysis produce outputs that try to imitate the result display in Stata software, and also automatically run statistical tests of difference for bivariate analysis. Univariate analysis on "dataframe" objects runs on numeric as well as categorical data types, generating a list of statistics and basic plots. This eliminates the need to loop or manually types in all the variables for simple means and proportions. 
+License: GLP-3
+URL: https://myominnoo.github.io
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
+Author: Myo Minn Oo [aut, cre]
+Maintainer: Myo Minn Oo <dr.myominnoo@gmail.com>
