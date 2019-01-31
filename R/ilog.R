@@ -96,7 +96,7 @@ ilog.close <- function() {
   cat(paste0('\n\n     log: ', getwd(), "/", logging.env$logfile, '\nclosed on: ',
              Sys.time(),'\n\n'))
   sink()
-  evalq(rm(list=ls()), envir = logging.env )
+  eval(rm(list= "logging.env", envir = sys.frame(-1)))
   invisible(NULL)
 }
 
