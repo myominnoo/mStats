@@ -6,11 +6,12 @@
 \usage{
 ikdplot(x, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
   main = NULL, xlab = NULL, ylab = NULL, facet = TRUE,
-  legend.text = NULL, legend.position = "right",
+  legend.show = TRUE, legend.text = NULL, legend.position = "right",
   line.color = "black", line.type = "solid", fill = "white",
   alpha = 0, vline = TRUE, vline.color = "blue",
-  vline.type = "dotted", vline.size = 0.5, save.plot = FALSE,
-  plot.name = "ikdplot.tiff", width = 5, height = 4, dpi = 150)
+  vline.type = "dotted", vline.size = 0.5, rug.position = "b",
+  rug.color = "red", save.plot = FALSE, plot.name = "ikdplot.tiff",
+  width = 5, height = 4, dpi = 150)
 }
 \arguments{
 \item{x}{a vector describing the bars which make up the plot. It is usually on x axis.}
@@ -52,6 +53,9 @@ ikdplot (I kdplot) lets you generate k density curve for one variable and curves
 ikdplot(infert$age)
 ikdplot(age, data = infert)
 ikdplot(infert$age, infert$education)
+ikdplot(infert$age, infert$education, facet = TRUE)
+ikdplot(infert$age, infert$education, facet = FALSE, legend.show = TRUE)
+ikdplot(infert$age, infert$education, facet = TRUE, legend.show = FALSE)
 # facet option
 ikdplot(age, education, infert, facet = T)
 ikdplot(age, education, infert, facet = F)

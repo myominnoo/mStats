@@ -25,7 +25,7 @@
 
 #' @export
 idatesum <- function(x, groupby = "y", decreasing = FALSE, rnd = 1,
-                     plot.display = TRUE, xlab = NULL)
+                     plot.display = TRUE, xlab = NULL, legend.show = FALSE)
 {
   xlab <- ifelse(is.null(xlab), deparse(substitute(x)), xlab)
   x <- na.omit(x)
@@ -73,8 +73,8 @@ idatesum <- function(x, groupby = "y", decreasing = FALSE, rnd = 1,
       labs(title = paste0('Plot of ', xlab)) +
       xlab(label = xlab) +
       ylab(label = 'Count') +
-      guides(fill = FALSE) +
       theme_light()
+    if (!legend.show) p <- p + guides(fill = FALSE)
     plot(p)
   }
   return(result)

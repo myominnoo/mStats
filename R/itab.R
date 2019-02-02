@@ -36,8 +36,11 @@
 #' # cross-tabulation
 #' itab(case, education, infert)
 #' itab(case, education, infert, facet = F)
+#' itab(case, education, infert, facet = F, legend.show = TRUE)
 #' itab(case, parity, infert)
-#' itab(case, parity, infert, facet = F)
+#' itab(case, parity, infert, legend.show = TRUE)
+#' itab(case, parity, infert, facet = FALSE)
+#' itab(case, parity, infert, facet = FALSE, legend.show = TRUE)
 #' itab(case, parity, infert, plot.display = FALSE)
 
 #' @export

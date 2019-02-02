@@ -6,9 +6,10 @@
 \usage{
 ibarplot(x, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
   main = NULL, xlab = NULL, ylab = NULL, facet = TRUE,
-  legend.text = NULL, legend.position = "right", bar.color = "white",
-  vjust = -0.5, hjust = 0.5, position_dodge = 1, save.plot = FALSE,
-  plot.name = "ibarplot.tiff", width = 5, height = 4, dpi = 150)
+  legend.show = FALSE, legend.text = NULL, legend.position = "right",
+  bar.color = "white", vjust = -0.5, hjust = 0.5,
+  position_dodge = 1, save.plot = FALSE, plot.name = "ibarplot.tiff",
+  width = 5, height = 4, dpi = 150)
 }
 \arguments{
 \item{x}{a vector describing the bars which make up the plot. It is usually on x axis.}
@@ -54,7 +55,9 @@ ibarplot is a function that generate a barplot with several options for optimal 
 }
 \examples{
 ibarplot(x = education, data = infert)
+ibarplot(x = education, data = infert, legend.show = FALSE)
+ibarplot(infert$education, legend.show = TRUE)
 ibarplot(x = education, by = case, data = infert)
 ibarplot(x = education, by = case, data = infert, facet = FALSE)
-ibarplot(induced, case, infert, facet = FALSE)
+ibarplot(induced, case, infert, facet = T, legend.show = FALSE)
 }

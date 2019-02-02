@@ -69,10 +69,13 @@ isum <- function(x, by = NULL, data = NULL, rnd = 1, na.rm = TRUE,
     # plot title and labels
     if (is.null(xlab)) xlab <- lab.x
     if (is.null(ylab)) ylab <- 'Density'
-    if (is.null(legend.text)) legend.text <- ifelse(is.null(by), NA, lab.by)
     main <- ifelse(is.null(main),
                    ifelse(is.null(by), paste0('Kernel Density Plot of ', lab.x),
                    paste0('Kernel Density Plot of ', lab.x, ' ~ ', lab.by)), main)
+    if (!is.null(by)) {
+      by <- factor(by)
+      legend.text <- ifelse(is.null(legend.text), lab.by, legend.text)
+    }
     df <- inumsum(x = x, by = by, data = data, rnd = rnd, na.rm = na.rm,
             plot.display = plot.display, main = main, xlab = xlab, ylab = ylab,
             legend.text = legend.text, facet = facet, ...)
@@ -89,8 +92,7 @@ isum <- function(x, by = NULL, data = NULL, rnd = 1, na.rm = TRUE,
     if (is.null(xlab)) xlab <- lab.x
     if (is.null(ylab)) ylab <- 'Freq'
     if (is.null(legend.text))
-      legend.text <- ifelse(facet,
-                            ifelse(is.null(by), xlab, lab.by), xlab)
+      legend.text <- ifelse(facet, xlab, lab.by)
 
     df <- itab(x = x, by = by, data = data, rnd = rnd, na.rm = na.rm,
                   plot.display = plot.display, main = main, xlab = xlab, ylab = ylab,

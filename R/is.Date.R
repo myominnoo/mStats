@@ -6,13 +6,13 @@
 #' @param x object to be coerced or tested.
 #' @param format a character value, representing the function of Date conversion or coercion.
 #'
-#' "a" - "%Y-%m-%d"
+#' "a" - ("%Y-%m-%d")
 #'
-#' "b" - "%Y-%d-%m"
+#' "b" - ("%Y-%d-%m")
 #'
-#' "c" - "%d-%m-%Y"
+#' "c" - ("%d-%m-%Y")
 #'
-#' "d" - "%m-%d-%Y"
+#' "d" - ("%m-%d-%Y")
 #'
 #' "e" - MS excel number format to Date: origin is set to "1899-12-30".
 #'

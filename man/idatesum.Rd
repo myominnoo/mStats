@@ -5,7 +5,7 @@
 \title{Date Summary}
 \usage{
 idatesum(x, groupby = "y", decreasing = FALSE, rnd = 1,
-  plot.display = TRUE, xlab = NULL)
+  plot.display = TRUE, xlab = NULL, legend.show = FALSE)
 }
 \arguments{
 \item{x}{a vector describing the bars which make up the plot. It is usually on x axis.}

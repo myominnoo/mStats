@@ -27,14 +27,16 @@
 #'
 #' @examples
 #' ibarplot(x = education, data = infert)
+#' ibarplot(x = education, data = infert, legend.show = FALSE)
+#' ibarplot(infert$education, legend.show = TRUE)
 #' ibarplot(x = education, by = case, data = infert)
 #' ibarplot(x = education, by = case, data = infert, facet = FALSE)
-#' ibarplot(induced, case, infert, facet = FALSE)
+#' ibarplot(induced, case, infert, facet = T, legend.show = FALSE)
 
 #' @export
 ibarplot <- function(x, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
                      main = NULL, xlab = NULL, ylab = NULL, facet = TRUE,
-                     legend.text = NULL, legend.position = "right",
+                     legend.show = FALSE, legend.text = NULL, legend.position = "right",
                      bar.color = "white", vjust = -0.5, hjust = 0.5,
                      position_dodge = 1,
                      save.plot = FALSE, plot.name = 'ibarplot.tiff',
@@ -69,7 +71,7 @@ ibarplot <- function(x, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
     tbl <- table(x, useNA = include.na)
     data <- data.frame(tbl)
     p <- ggplot2::ggplot(data = data, aes(x = x, y = Freq, fill = x)) +
-      geom_bar(stat = "identity", color = bar.color)
+      geom_bar(stat = "identity", color = bar.color, show.legend = legend.show)
   } else {
     tbl <- table(x, by, useNA = include.na)
     data <- data.frame(tbl)
@@ -79,7 +81,7 @@ ibarplot <- function(x, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
     } else {
       p <- ggplot2::ggplot(data = data, aes(x = x, y = Freq, fill = by))
     }
-    p <- p + geom_bar(stat="identity", position = "dodge2")
+    p <- p + geom_bar(stat="identity", position = "dodge2", show.legend = legend.show)
   }
   p <- p +
     geom_text(aes(label = paste0(round(Freq / sum(Freq) * 100, rnd), '%'),
@@ -87,12 +89,14 @@ ibarplot <- function(x, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
     labs(title = main) +
     xlab(label = xlab) +
     ylab(label = ylab) +
-    guides(fill=guide_legend(title = legend.text)) +
+    guides(fill = guide_legend(title = legend.text)) +
     theme(legend.position = legend.position) +
     theme_light()
+
   if (save.plot) {
     ggplot2::ggsave(plot.name, width = width, height = height, dpi = dpi)
     dev.off()
   }
   return(p)
 }
+

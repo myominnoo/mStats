@@ -1,12 +1,12 @@
 Package: mStats
 Title: Myo's Stats & Graph Package
-Version: 1.02.01
+Version: 1.02.02
 Authors@R: 
     person(given = "Myo Minn",
            family = "Oo",
            role = c("aut", "cre"),
            email = "dr.myominnoo@gmail.com")
-Description: A collection of R functions in daily data management and analysis. Functions for data analysis produce outputs that try to imitate the result display in Stata software, and also automatically run statistical tests of difference for bivariate analysis. Univariate analysis on "dataframe" objects runs on numeric as well as categorical data types, generating a list of statistics and basic plots. This eliminates the need to loop or manually types in all the variables for simple means and proportions. 
+Description: A collection of R functions in daily data management and analysis. Several Functions inspired the commands and output display in Stata software. Univariate analysis on "dataframe" objects runs on numeric as well as categorical data types, generating a list of statistics and basic plots. This eliminates the need to loop or manual type-in of all the variables during data analysis.
 Depends: 
   R (>= 3.5.0),
   ggplot2 (>= 3.0.0)

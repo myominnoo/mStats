@@ -24,6 +24,9 @@
 #' ikdplot(infert$age)
 #' ikdplot(age, data = infert)
 #' ikdplot(infert$age, infert$education)
+#' ikdplot(infert$age, infert$education, facet = TRUE)
+#' ikdplot(infert$age, infert$education, facet = FALSE, legend.show = TRUE)
+#' ikdplot(infert$age, infert$education, facet = TRUE, legend.show = FALSE)
 #' # facet option
 #' ikdplot(age, education, infert, facet = T)
 #' ikdplot(age, education, infert, facet = F)
@@ -35,10 +38,10 @@
 #' @export
 ikdplot <- function(x, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
                     main = NULL, xlab = NULL, ylab = NULL, facet = TRUE,
-                    legend.text = NULL, legend.position = "right",
+                    legend.show = TRUE, legend.text = NULL, legend.position = "right",
                     line.color = "black", line.type = "solid", fill = "white", alpha = 0,
                     vline = TRUE, vline.color = "blue", vline.type = "dotted",
-                    vline.size = 0.5,
+                    vline.size = 0.5, rug.position = "b", rug.color = "red",
                     save.plot = FALSE, plot.name = 'ikdplot.tiff',
                     width = 5, height = 4, dpi = 150)
 {
@@ -65,16 +68,17 @@ ikdplot <- function(x, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
   # plot title and labels
   if (is.null(main)) {
     main <- ifelse(is.null(by), paste0('Kernel Density Plot of ', lab.x),
-                   paste0('Plot of ', lab.x, ' ~ ', lab.by))
+                   paste0('Kernel Density Plot of ', lab.x, ' ~ ', lab.by))
   }
   if (is.null(xlab)) xlab <- lab.x
   if (is.null(ylab)) ylab <- 'Density'
-  if (is.null(legend.text)) legend.text <- ifelse(is.null(by), NA, lab.by)
+  if (is.null(legend.text)) legend.text <- ifelse(is.null(by), xlab, lab.by)
 
   # plot display
   if (is.null(by)) {
     p <- ggplot2::ggplot(data, aes(x = x)) +
-      geom_density(color = line.color, linetype = line.type, fill = fill, alpha = alpha)
+      geom_density(color = line.color, linetype = line.type, fill = fill, alpha = alpha) +
+      geom_rug(sides = rug.position, color = rug.color)
     # mean line
     if (vline) {
       p <- p +
@@ -83,10 +87,8 @@ ikdplot <- function(x, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
     }
   } else {
     p <- ggplot2::ggplot(data, aes(x = x, color = by, fill = by)) +
-      geom_density(alpha = alpha) +
-      labs(fill = legend.text) +
-      labs(color = legend.text) +
-      theme(legend.position = legend.position)
+      geom_density(alpha = alpha, show.legend = legend.show) +
+      geom_rug(sides = rug.position, show.legend = legend.show)
     if (facet) {
       p <- p + facet_grid(. ~ factor(by))
     } else {vline <- FALSE}
@@ -94,16 +96,19 @@ ikdplot <- function(x, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
       grp.mean <- aggregate(x = x, by = list(by = by), "mean")
       p <- p +
         geom_vline(data = grp.mean, aes(xintercept = x, color = by),
-                 linetype = vline.type)
+                 linetype = vline.type, show.legend = legend.show)
     }
+    p <- p + guides(fill = FALSE)
   }
 
   # Title and Labels
   p <- p +
     labs(title = main) +
+    scale_color_discrete(legend.text) +
     xlab(label = xlab) +
     ylab(label = ylab) +
     theme_light()
+
   if (save.plot) {
     ggplot2::ggsave(plot.name, width = width, height = height, dpi = dpi)
     dev.off()
