@@ -11,13 +11,23 @@
 #' @param main a main title for the plot.
 #' @param xlab a label for the x axis, defaults to a description of x.
 #' @param ylab a label for the y axis, defaults to a description of y.
+#' @param stack indicate for stack bar chart in bivariate analysis
+#' @param stack.pct indicate stacked percent bar chart
+#' @param stack.vjust number to place value label in stacked bar chart
 #' @param legend.text a text for the title of the plot
 #' @param facet a logical value. If TRUE, the plot forms a matrix of panels defined by column faceting variables. It is most useful when you have two discrete variables, and all combinations of the variables exist in the data. By default, it is set to TRUE.
-#' @param ... additional arguments affecting the display of graph: See the following arguments.
+#' @param facet.ncol number of columns to be faceted
+#' @param facet.strip.pos indicate position of facet strip: "top" by default: others include "bottom", "left", "right".
+#' @param legend.show show or hide the legend. Hide the legend by default
+#' @param legend.text Legend title
+#' @param legend.position the position of legends ("none", "left", "right", "bottom", "top", or two-element numeric vector)
+#' @param horizontal logical value, indicating the direction of bar: horizontal by default and vertical.
+#' @param flip.levels if there are more than k categories, bar chart will be automatically flip to horizontal direction in order to generate a better visual. This is the same as setting horizontal to TRUE.
 #' @param bar.color a text to depict the outer line of bars. You can set "black", "green", "blue" and so on.
+#' @param dvsize font size of value label in stacked bar chart.
 #' @param vjust a number to place the value label in percentage to the bar.
 #' @param hjust a number to place the value label in percentage to the bar.
-#' @param legend.position the position of legends ("none", "left", "right", "bottom", "top", or two-element numeric vector)
+#' @param position.dodge shrink width of bars.
 #' @param save.plot a logical value. If TRUE, it saves the plot generated in the current working directory.
 #' @param plot.name a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"
 #' @param width a value in inches

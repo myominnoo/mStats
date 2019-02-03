@@ -4,11 +4,11 @@
 \alias{cox.output}
 \title{Process Cox survival model and Display Hazard Ratios}
 \usage{
-cox.output(covar, time, event, data, aHR = FALSE, write.csv = TRUE,
+cox.output(covar, time, event, data, aHR = FALSE, write.csv = FALSE,
   file = NULL, print.to.console = FALSE)
 }
 \arguments{
-\item{covar}{a vector containing all the covar}
+\item{covar}{a vector containing all the covariates to be fitted}
 
 \item{time}{time variable for right censored data, this is the follow up time. For interval data, the first argument is the starting time for the interval.}
 

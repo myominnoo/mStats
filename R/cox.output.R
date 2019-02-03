@@ -3,7 +3,7 @@
 #' @description
 #' Takes several covar and generates Hazard Ratios outputs at the same time. Outputs include unadjusted / adjusted HR, 95% CI and P-values.
 #'
-#' @param covar a vector containing all the covar
+#' @param covar a vector containing all the covariates to be fitted
 #' @param time time variable for right censored data, this is the follow up time. For interval data, the first argument is the starting time for the interval.
 #' @param event The status indicator, normally 0=alive, 1=dead. Other choices are TRUE/FALSE (TRUE = death) or 1/2 (2=death). For interval censored data, the status indicator is 0=right censored, 1=event at time, 2=left censored, 3=interval censored. For multiple enpoint data the event variable will be a factor, whose first level is treated as censoring. Although unusual, the event indicator can be omitted, in which case all subjects are assumed to have an event.
 #' @param data a data frame containing the variables in the model.
@@ -14,8 +14,10 @@
 #' @seealso itab, isum, inumsum
 
 #' @export
-cox.output <- function(covar, time, event, data, aHR = FALSE, write.csv = TRUE,
-                       file = NULL, print.to.console = FALSE) {
+cox.output <- function(covar, time, event, data, aHR = FALSE, write.csv = FALSE,
+                       file = NULL, print.to.console = FALSE)
+
+{
   arguments <- as.list(match.call())
   time <- eval(arguments$time, data)
   event <- eval(arguments$event, data)

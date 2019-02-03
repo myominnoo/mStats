@@ -29,15 +29,35 @@ itab(x, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
 
 \item{facet}{a logical value. If TRUE, the plot forms a matrix of panels defined by column faceting variables. It is most useful when you have two discrete variables, and all combinations of the variables exist in the data. By default, it is set to TRUE.}
 
-\item{...}{additional arguments affecting the display of graph: See the following arguments.}
+\item{stack}{indicate for stack bar chart in bivariate analysis}
+
+\item{stack.pct}{indicate stacked percent bar chart}
+
+\item{stack.vjust}{number to place value label in stacked bar chart}
+
+\item{facet.ncol}{number of columns to be faceted}
+
+\item{facet.strip.pos}{indicate position of facet strip: "top" by default: others include "bottom", "left", "right".}
+
+\item{legend.show}{show or hide the legend. Hide the legend by default}
+
+\item{legend.text}{Legend title}
+
+\item{legend.position}{the position of legends ("none", "left", "right", "bottom", "top", or two-element numeric vector)}
+
+\item{horizontal}{logical value, indicating the direction of bar: horizontal by default and vertical.}
+
+\item{flip.levels}{if there are more than k categories, bar chart will be automatically flip to horizontal direction in order to generate a better visual. This is the same as setting horizontal to TRUE.}
 
 \item{bar.color}{a text to depict the outer line of bars. You can set "black", "green", "blue" and so on.}
+
+\item{dvsize}{font size of value label in stacked bar chart.}
 
 \item{vjust}{a number to place the value label in percentage to the bar.}
 
 \item{hjust}{a number to place the value label in percentage to the bar.}
 
-\item{legend.position}{the position of legends ("none", "left", "right", "bottom", "top", or two-element numeric vector)}
+\item{position.dodge}{shrink width of bars.}
 
 \item{save.plot}{a logical value. If TRUE, it saves the plot generated in the current working directory.}
 

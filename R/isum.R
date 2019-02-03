@@ -65,7 +65,7 @@ isum <- function(x, by = NULL, data = NULL, rnd = 1, na.rm = TRUE,
   }
 
   # number summary
-  if (is.numeric(x)) {
+  if (is.numeric(x) | class(x) == "difftime") {
     # plot title and labels
     if (is.null(xlab)) xlab <- lab.x
     if (is.null(ylab)) ylab <- 'Density'
