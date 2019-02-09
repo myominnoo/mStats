@@ -4,12 +4,17 @@
 \alias{itab}
 \title{Tabulation, Cross Tabulation and Graphical Display}
 \usage{
-itab(x, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
-  plot.display = TRUE, main = NULL, xlab = NULL, ylab = NULL,
-  legend.text = NULL, facet = TRUE, ...)
+itab(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
+  x.varname = NULL, y.varname = NULL, by.varname = NULL,
+  pct = "row", plot.display = TRUE, main = NULL, xlab = NULL,
+  ylab = NULL, show.legend = TRUE, legend.text = NULL,
+  plot.type = "f", facet.ncol = 2, save.plot = FALSE,
+  plot.name = "itab.tiff", width = 5, height = 4, dpi = 150)
 }
 \arguments{
 \item{x}{a vector describing the bars which make up the plot. It is usually on x axis.}
+
+\item{y}{a vector describing the y axis or second variable in cross-tabulation or data relationship.}
 
 \item{by}{a vector describing the grouping of x. By default, the plot generates a faceted barplot.}
 
@@ -19,45 +24,23 @@ itab(x, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
 
 \item{na.rm}{A logical value indicating to remove NA values in the table or not. By Default, the value is TRUE}
 
+\item{pct}{type of percentages in cross-tabulation: by default, it shows row percentages in two}
+
+\item{plot.display}{logical value, indicating whether plot will be displayed or not}
+
 \item{main}{a main title for the plot.}
 
 \item{xlab}{a label for the x axis, defaults to a description of x.}
 
 \item{ylab}{a label for the y axis, defaults to a description of y.}
 
-\item{legend.text}{a text for the title of the plot}
-
-\item{facet}{a logical value. If TRUE, the plot forms a matrix of panels defined by column faceting variables. It is most useful when you have two discrete variables, and all combinations of the variables exist in the data. By default, it is set to TRUE.}
-
-\item{stack}{indicate for stack bar chart in bivariate analysis}
-
-\item{stack.pct}{indicate stacked percent bar chart}
-
-\item{stack.vjust}{number to place value label in stacked bar chart}
-
-\item{facet.ncol}{number of columns to be faceted}
-
-\item{facet.strip.pos}{indicate position of facet strip: "top" by default: others include "bottom", "left", "right".}
-
-\item{legend.show}{show or hide the legend. Hide the legend by default}
+\item{show.legend}{show or hide the legend. Hide the legend by default}
 
 \item{legend.text}{Legend title}
 
-\item{legend.position}{the position of legends ("none", "left", "right", "bottom", "top", or two-element numeric vector)}
+\item{plot.type}{if bivariate analysis, type of plot can be specified. By default, this generates a facted plot. 'p' for parrallel barplot, 's' for stacked barplot, 'fs' for full stacked percentage barplot.}
 
-\item{horizontal}{logical value, indicating the direction of bar: horizontal by default and vertical.}
-
-\item{flip.levels}{if there are more than k categories, bar chart will be automatically flip to horizontal direction in order to generate a better visual. This is the same as setting horizontal to TRUE.}
-
-\item{bar.color}{a text to depict the outer line of bars. You can set "black", "green", "blue" and so on.}
-
-\item{dvsize}{font size of value label in stacked bar chart.}
-
-\item{vjust}{a number to place the value label in percentage to the bar.}
-
-\item{hjust}{a number to place the value label in percentage to the bar.}
-
-\item{position.dodge}{shrink width of bars.}
+\item{facet.ncol}{number of columns to be faceted}
 
 \item{save.plot}{a logical value. If TRUE, it saves the plot generated in the current working directory.}
 
@@ -70,28 +53,42 @@ itab(x, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
 \item{dpi}{a value for resolution of the plot saved.}
 }
 \description{
-itab is a simple function for data exploration and used to build frequency table of a factor variable or contigency table of the counts at each combination of factor levels.
+generates simple tabulation, cross-tabulation and stratified cross-tabulation tables.
 }
 \examples{
 str(infert)
-data(infert)
 # tabulation of one factor variable
 itab(education, data = infert)
 itab(parity, data = infert)
 itab(case, data = infert)
 itab(spontaneous, data = infert)
 # cross-tabulation
-itab(case, education, infert)
-itab(case, education, infert, facet = F)
-itab(case, education, infert, facet = F, legend.show = TRUE)
-itab(case, parity, infert)
-itab(case, parity, infert, legend.show = TRUE)
-itab(case, parity, infert, facet = FALSE)
-itab(case, parity, infert, facet = FALSE, legend.show = TRUE)
-itab(case, parity, infert, plot.display = FALSE)
+itab(case, education, data = infert, plot.display = FALSE)
+itab(case, education, data = infert)
+itab(case, education, data = infert, pct = 'col') # change percentage type
+itab(case, education, data = infert, pct = 'row') # default percentage type
+itab(case, education, data = infert, pct = 'all')
+itab(case, education, data = infert, pct = 'none')
+
+# changing plot types
+itab(induced, education, data = infert)
+itab(induced, education, data = infert, plot.type = 'f') # default faceted type
+itab(induced, education, data = infert, plot.type = 'p') # parallel bar
+itab(induced, education, data = infert, plot.type = 's') # stacked bar
+itab(induced, education, data = infert, plot.type = 'fs') # full stacked bar
+itab(induced, education, data = infert, facet.ncol = 3) # change number of facets
+itab(induced, education, data = infert, plot.type = 'p', show.legend = FALSE) # legend on and off
+itab(induced, education, data = infert, save.plot = TRUE) # save plot to current directory
+itab(induced, education, data = infert, save.plot = TRUE, plot.name = "mybarplot.tiff")
+itab(induced, education, data = infert, save.plot = TRUE, width = 10, height = 8, dpi = 300)
+# three variables - analysis
+infert$case <- factor(infert$case)
+infert$induced <- factor(infert$induced)
+itab(case, education, induced, data = infert)
+itab(case, education, induced, data = infert, na.rm = TRUE, pct = 'col')
 }
 \seealso{
-ibarplot, inumsum, ikdplot
+ibarplot, inumsum, ikdplot, iboxplot, isum
 }
 \keyword{contigency}
 \keyword{cross-tabulation,}

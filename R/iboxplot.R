@@ -1,7 +1,7 @@
-#' @title Kernel Density Plot, Grouped plotting using ggplot2
+#' @title Create and Save beautiful Box Plot using ggplot2
 #'
 #' @description
-#' generate kernel density curves.
+#' generate a boxplot for data exploration and visualization using ggplot2 package.
 #'
 #' @param x a vector describing the bars which make up the plot. It is usually on x axis.
 #' @param y a vector describing the y axis or second variable in cross-tabulation or data relationship.
@@ -12,38 +12,35 @@
 #' @param main a main title for the plot.
 #' @param xlab a label for the x axis, defaults to a description of x.
 #' @param ylab a label for the y axis, defaults to a description of y.
-#' @param alpha set transparency of the density
 #' @param show.legend show or hide the legend. Hide the legend by default
+#' @param legend.text a text for the title of the plot
 #' @param legend.text Legend title
-#' @param facet.ncol number of columns to be faceted
 #' @param save.plot a logical value. If TRUE, it saves the plot generated in the current working directory.
 #' @param plot.name a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"
 #' @param width a value in inches
 #' @param height a value in inches
 #' @param dpi a value for resolution of the plot saved.
 #' @import ggplot2
-#' @seealso ibarplot, iboxplot, inumsum, isum, itab
-#' @keywords kernel density plot, kdensity, density
+#' @seealso ibarplot, itab, inumsum, isum
 #' @examples
-#' ikdplot(infert$age)
-#' ikdplot(age, data = infert)
-#' ikdplot(infert$age, infert$education)
+#' iboxplot(infert$age)
+#' iboxplot(age, data = infert)
+#' iboxplot(age, education, data = infert)
+#' iboxplot(infert$age, infert$education)
+#' iboxplot(age, pooled.stratum, education, data = infert)
 #' infert$case <- factor(infert$case)
-#' ikdplot(age, case, data = infert) # NA is included as one of the categories
-#' ikdplot(age, case, data = infert, na.rm = TRUE)
-#' ikdplot(age, pooled.stratum, data = infert)
-#' ikdplot(age, pooled.stratum, education, data = infert)
-#' str(iris)
-#' ikdplot(Sepal.Length, data = iris)
-#' ikdplot(Sepal.Length, Sepal.Width, data = iris)
-#' ikdplot(Sepal.Length, Sepal.Width, Species, data = iris)
+#' iboxplot(age, case, data = infert) # NA is included as one of the categories
+#' iboxplot(age, case, data = infert, na.rm = TRUE)
+#' iboxplot(age, case, education, data = infert)
+#' iboxplot(age, case, education, data = infert, show.legend = F)
+#' iboxplot(age, case, education, data = infert, save.plot = T)
 
 #' @export
-ikdplot <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
-                    main = NULL, xlab = NULL, ylab = NULL, alpha = 0.1,
-                    show.legend = TRUE, legend.text = NULL, facet.ncol = 2,
-                    save.plot = FALSE, plot.name = 'ikdplot.tiff',
-                    width = 5, height = 4, dpi = 150)
+iboxplot <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
+                     main = NULL, xlab = NULL, ylab = NULL,
+                     show.legend = TRUE, legend.text = NULL,
+                     save.plot = FALSE, plot.name = 'iboxplot.tiff',
+                     width = 5, height = 4, dpi = 150)
 
 {
   if (!is.null(data)) {
@@ -68,23 +65,22 @@ ikdplot <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
     gr.type,
     uni = {
       if (is.null(main)) main <- paste0('Plot of ', lab.x)
-      if (is.null(ylab)) ylab <- 'Density'
-      if (is.null(xlab)) xlab <- lab.x
-
+      if (is.null(ylab)) ylab <- lab.x
       data <- data.frame(x = x[!is.na(x)])
       sp.test <- shapiro.test(x)$p.value
       sp.test <- ifelse(sp.test < 0.001, "< 0.001", round(sp.test, 3))
-      p <- ggplot2::ggplot(data, aes(x = x)) +
-        geom_density(color = "white", fill = "light grey") +
-        geom_rug(color = "red", size = .1) +
-        geom_vline(aes(xintercept = mean(x, na.rm = TRUE)),
-                   color = "blue", linetype = "dashed", size = 0.2) +
-        scale_x_continuous(breaks = pretty(x, n = 5)) +
-        labs(title = main,
-             subtitle = paste0("Shapiro-Wilk Normality Test: ", sp.test),
-             x = xlab, y = ylab) +
+      p <- ggplot2::ggplot(data = data, aes(y = x)) +
+        stat_boxplot(geom = "errorbar") +
+        geom_boxplot(outlier.colour = "red") +
+        xlim(-1, 1) +
+        scale_y_continuous(breaks = pretty(x, n = 10)) +
+        labs(title = main, subtitle = paste0("Shapiro-Wilk Normality Test: ",
+                                             sp.test), y = ylab) +
+        coord_flip() +
         theme_classic() +
-        theme(panel.border = element_rect(linetype = "solid",
+        theme(axis.text.y = element_blank(),
+              axis.ticks.y = element_blank(),
+              panel.border = element_rect(linetype = "solid",
                                           colour = "black", fill = "NA"))
     },
     bi = {
@@ -105,27 +101,21 @@ ikdplot <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
           theme(panel.border = element_rect(linetype = "solid",
                                             colour = "black", fill = "NA"))
       } else {
-        if (is.null(ylab)) ylab <- 'Density'
-        if (is.null(xlab)) xlab <- lab.x
-        if (is.null(legend.text)) legend.text <- lab.y
+        if (is.null(xlab)) xlab <- lab.y
+        if (is.null(ylab)) ylab <- lab.x
         ncat <- ifelse(na.rm, nlevels(y),
                        ifelse(any(is.na(y)), nlevels(addNA(y)), nlevels(y)))
         p.value <- ifelse(ncat <= 2, t.test(x ~ y)$p.value,
                           summary(aov(x ~ y, data = data))[[1]][1,5])
         p.value <- ifelse(p.value < 0.001, "<0.001", round(p.value, 3))
-        if (!na.rm) y <- addNA(y)
-        grp.mean <- aggregate(x = x, by = list(y = y), "mean")
-        p <- ggplot2::ggplot(data, aes(x = x, color = y, fill = y)) +
-          geom_density(alpha = alpha, show.legend = show.legend) +
-          geom_rug(show.legend = show.legend) +
-          geom_vline(data = grp.mean, aes(xintercept = x, color = y),
-                     linetype = "dashed", size = 0.5, show.legend = show.legend) +
-          guides(fill = FALSE) +
-          scale_x_continuous(breaks = pretty(x, n = 5)) +
+        p <- ggplot2::ggplot(data = data, aes(x = y, y = x, fill = y)) +
+          stat_boxplot(geom = "errorbar") +
+          geom_boxplot(outlier.colour = "red", show.legend = FALSE) +
+          scale_y_continuous(breaks = pretty(x, n = 5)) +
           labs(title = main,
                subtitle = paste0("p-value (", ifelse(ncat <= 2, "t-test",
-                        "One-way ANOVA"), "): ", p.value),
-               x = xlab, y = ylab, color = legend.text) +
+                                                     "One-way ANOVA"), "): ", p.value),
+               x = xlab, y = ylab) +
           theme_classic() + # remove panel background and gridlines
           theme(panel.border = element_rect(linetype = "solid",
                                             colour = "black", fill = "NA"))
@@ -147,28 +137,18 @@ ikdplot <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
           theme(panel.border = element_rect(linetype = "solid",
                                             colour = "black", fill = "NA"))
       } else {
-        if (is.null(xlab)) xlab <- lab.x
-        if (is.null(ylab)) ylab <- "Density"
-        if (is.null(legend.text)) legend.text <- lab.y
-        if (!na.rm) {
-          y <- addNA(y)
-          by <- addNA(by)
-        }
-        grp.mean <- aggregate(x = x, by = list(y = y, by = by), "mean")
-        p <- ggplot2::ggplot(data, aes(x = x, color = y, fill = y)) +
-          geom_density(alpha = alpha, show.legend = show.legend) +
-          geom_rug(show.legend = show.legend) +
-          facet_wrap(~ by, ncol = facet.ncol) +
-          geom_vline(data = grp.mean, aes(xintercept = x, color = y, group = by),
-                     linetype = "dashed", size = 0.5, show.legend = show.legend) +
-          guides(fill = FALSE) +
-          labs(title = main, x = xlab, y = ylab, color = legend.text) +
+        if (is.null(xlab)) xlab <- lab.y
+        if (is.null(ylab)) ylab <- lab.x
+        if (is.null(legend.text)) legend.text <- lab.by
+        p <- ggplot2::ggplot(data = data, aes(x = y, y = x, fill = by)) +
+          stat_boxplot(geom = "errorbar") +
+          geom_boxplot(outlier.colour = "red", show.legend = show.legend) +
+          labs(title = main, x = xlab, y = ylab, fill = legend.text) +
           theme_classic() + # remove panel background and gridlines
           theme(panel.border = element_rect(linetype = "solid",
                                             colour = "black", fill = "NA"))
       }
     })
-
   if (save.plot) {
     ggplot2::ggsave(plot.name, width = width, height = height, dpi = dpi)
     dev.off()

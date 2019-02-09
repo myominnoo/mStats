@@ -25,7 +25,7 @@
 
 #' @export
 idatesum <- function(x, groupby = "y", decreasing = FALSE, rnd = 1,
-                     plot.display = TRUE, xlab = NULL, legend.show = FALSE)
+                     plot.display = TRUE, xlab = NULL, show.legend = FALSE)
 {
   xlab <- ifelse(is.null(xlab), deparse(substitute(x)), xlab)
   x <- na.omit(x)
@@ -58,23 +58,26 @@ idatesum <- function(x, groupby = "y", decreasing = FALSE, rnd = 1,
     p <- switch(groupby,
                 y = ggplot2::ggplot(data = df, aes(x = Year, y = Count, fill = Year)) +
                   geom_bar(position = 'dodge', stat = "identity") +
-                  geom_text(aes(label = paste0(Rel.Freq, '%')), vjust = 1.5),
+                  geom_text(aes(label = paste0(Rel.Freq, '%')), vjust = -0.5) +
+                  ylim(0, (max(df$Count) + (max(df$Count) * 0.1))) ,
                 ym = ggplot2::ggplot(data = df,
                                      aes(x = yr.mnth, y = Count, fill = yr.mnth)) +
                   geom_bar(position = 'dodge', stat = "identity") +
-                  geom_text(aes(label = paste0(Rel.Freq, '%')), hjust = 1.) +
+                  geom_text(aes(label = paste0(Rel.Freq, '%')), hjust = -0.2) +
+                  ylim(0, (max(df$Count) + (max(df$Count) * 0.1))) +
                   coord_flip(),
                 ymd = ggplot2::ggplot(data = df,
                                       aes(x = yr.mnth.day, y = Count, fill = yr.mnth.day)) +
                   geom_bar(position = 'dodge', stat = "identity") +
-                  geom_text(aes(label = paste0(Rel.Freq, '%')), hjust = 1.5) +
+                  geom_text(aes(label = paste0(Rel.Freq, '%')), hjust = -0.2) +
+                  ylim(0, (max(df$Count) + (max(df$Count) * 0.1))) +
                   coord_flip())
     p <- p +
       labs(title = paste0('Plot of ', xlab)) +
       xlab(label = xlab) +
       ylab(label = 'Count') +
       theme_light()
-    if (!legend.show) p <- p + guides(fill = FALSE)
+    if (!show.legend) p <- p + guides(fill = FALSE)
     plot(p)
   }
   return(result)

@@ -2,14 +2,15 @@
 % Please edit documentation in R/inumsum.R
 \name{inumsum}
 \alias{inumsum}
-\alias{inumsum.numeric}
 \title{Number Summary and Plot using ggplot2}
 \usage{
-inumsum(x, by = NULL, data = NULL, rnd = 1, na.rm = TRUE,
-  plot.display = TRUE, main = NULL, xlab = NULL, ylab = NULL,
-  legend.text = NULL, facet = TRUE, ...)
-
-inumsum.numeric(x, rnd = 1, na.rm = TRUE)
+inumsum(x, y = NULL, by = NULL, data = NULL, rnd = 1,
+  na.rm = FALSE, x.varname = NULL, y.varname = NULL,
+  by.varname = NULL, plot.display = TRUE, boxplot = TRUE,
+  main = NULL, xlab = NULL, ylab = NULL, alpha = 0.1,
+  show.legend = TRUE, legend.text = NULL, facet.ncol = 2,
+  save.plot = FALSE, plot.name = "inumsum.tiff", width = 5,
+  height = 4, dpi = 150)
 }
 \arguments{
 \item{x}{a vector describing the bars which make up the plot. It is usually on x axis.}
@@ -28,11 +29,13 @@ inumsum.numeric(x, rnd = 1, na.rm = TRUE)
 
 \item{ylab}{a label for the y axis, defaults to a description of y.}
 
-\item{legend.text}{a text for the title of the plot}
+\item{alpha}{set transparency of the density}
 
-\item{facet}{a logical value. If TRUE, the plot forms a matrix of panels defined by column faceting variables. It is most useful when you have two discrete variables, and all combinations of the variables exist in the data. By default, it is set to TRUE.}
+\item{show.legend}{show or hide the legend. Hide the legend by default}
 
-\item{legend.position}{the position of legends ("none", "left", "right", "bottom", "top", or two-element numeric vector)}
+\item{legend.text}{Legend title}
+
+\item{facet.ncol}{number of columns to be faceted}
 
 \item{save.plot}{a logical value. If TRUE, it saves the plot generated in the current working directory.}
 
@@ -45,16 +48,29 @@ inumsum.numeric(x, rnd = 1, na.rm = TRUE)
 \item{dpi}{a value for resolution of the plot saved.}
 }
 \description{
-inumsum (I number-summarize) generates seven-number summary for one variable which include number of observations, missing records, mean, standard deviation, median, interquartile range, minimum, maximum. If the x variable is summarized by a factor variable, then the output will include seven-number summary plus standard error, 95% confidence intervals for means. In addition, the function generates automated Kernel density plot with optional parameters for graphical display.
+inumsum (I number-summarize) generates seven-number summary for one variable which include number of observations, missing records, mean, standard deviation, median, interquartile range, minimum, maximum. If the x variable is summarized by a factor variable, then the output will include seven-number summary plus standard error, 95% confidence intervals for means. In addition, the function generates automated box plots or Kernel density plot with optional parameters for graphical display.
 }
 \examples{
-inumsum(x = age, by = education, data = infert)
-inumsum(age, data = infert)
+inumsum(x = age, data = infert)
+inumsum(x = age, data = infert, boxplot = FALSE) # calling Kernel density plot
 inumsum(infert$age)
-inumsum(infert$age, infert$education)
+inumsum(age, data = infert)
+inumsum(x = age, y = education, data = infert)
+infert$case <- factor(infert$case)
+inumsum(x = age, y = case, by = education, data = infert, na.rm = TRUE)
+inumsum(x = age, y = case, by = education, data = infert, na.rm = TRUE, boxplot = FALSE) # calling Kernel density plot
+inumsum(x = age, y = case, by = education, data = infert, na.rm = TRUE, boxplot = FALSE, facet.ncol = 3)
+str(iris)
+inumsum(Sepal.Length, data = iris)
+inumsum(Sepal.Length, Species, data = iris)
+inumsum(Sepal.Length, Species, data = iris, boxplot = FALSE)
+inumsum(Sepal.Length, Sepal.Width, data = iris)
+inumsum(Sepal.Length, Sepal.Width, data = iris, boxplot = FALSE)
+inumsum(Sepal.Length, Sepal.Width, Species, data = iris)
+inumsum(Sepal.Length, Sepal.Width, Species, data = iris, boxplot = F)
 }
 \seealso{
-itab, ibarplot, ikdplot
+ibarplot, iboxplot, inumsum, isum, itab
 }
 \keyword{grouping}
 \keyword{number}

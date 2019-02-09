@@ -1,112 +1,123 @@
-#' @title A Quick Summary function with Graph Display using ggplot2
+#' @title A Quick Summary of data frame or data
 #'
 #' @description
-#' isum is a simple yet powerful function to produce a quick summary results of various types of data.
+#' A simple yet powerful function to produce a quick summary of various types of data or data frame
+#'
 #' @param x a vector describing the bars which make up the plot. It is usually on x axis.
+#' @param y a vector describing the y axis or second variable in cross-tabulation or data relationship.
 #' @param by a vector describing the grouping of x. By default, the plot generates a faceted barplot.
 #' @param data an optional data frame (or object coercible by as.data.frame to a data frame) containing the variables for contigency table.
 #' @param rnd an integer indicating the number of decimal places:
 #' @param na.rm A logical value indicating to remove NA values in the table or not. By Default, the value is TRUE
+#' @param pct type of percentages in cross-tabulation: by default, it shows row percentages in two
+#' @param groupby a character value, indicating patterns of aggregation either by one of the followings:
+#'
+#' "y" - Year along
+#'
+#' "ym" - Year + Month
+#'
+#' "ymd" - Year + Month + Day
+#'
+#' @param plot.display logical value, indicating whether plot will be displayed or not
 #' @param main a main title for the plot.
 #' @param xlab a label for the x axis, defaults to a description of x.
 #' @param ylab a label for the y axis, defaults to a description of y.
-#' @param legend.text a text for the title of the plot
-#' @param facet a logical value. If TRUE, the plot forms a matrix of panels defined by column faceting variables. It is most useful when you have two discrete variables, and all combinations of the variables exist in the data. By default, it is set to TRUE.
-#' @param ... additional arguments affecting the display of graph: See the following arguments.
-#' @param bar.color a text to depict the outer line of bars. You can set "black", "green", "blue" and so on.
-#' @param vjust a number to place the value label in percentage to the bar.
-#' @param hjust a number to place the value label in percentage to the bar.
-#' @param legend.position the position of legends ("none", "left", "right", "bottom", "top", or two-element numeric vector)
+#' @param show.legend show or hide the legend. Hide the legend by default
+#' @param legend.text Legend title
+#' @param plot.type if bivariate analysis, type of plot can be specified. By default, this generates a facted plot. 'p' for parrallel barplot, 's' for stacked barplot, 'fs' for full stacked percentage barplot.
+#' @param facet.ncol number of columns to be faceted
 #' @param save.plot a logical value. If TRUE, it saves the plot generated in the current working directory.
 #' @param plot.name a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"
 #' @param width a value in inches
 #' @param height a value in inches
 #' @param dpi a value for resolution of the plot saved.
-#' @seealso itab, ibarplot, inumsum, ikdplot
+#' @import ggplot2
+#' @seealso ibarplot, inumsum, ikdplot, iboxplot, isum
 #' @keywords tabulation, frequency table, cross-tabulation, contigency table, summary statistics, dates
 #' @examples
 #' str(infert)
 #' # summarize data.frame
 #' isum(infert)
+#' isum(age, data = infert) # numeric data
+#' isum(ltf$age)
+#' isum(ltf$age, boxplot = FALSE) # calling kernel density plot
+#' isum(age, education, data = infert) # continuous vs category data
+#' isum(age, education, data = infert, boxplot = FALSE)
+#' isum(age, pooled.stratum, data = infert) # continuous vs continuos data
+#' isum(age, pooled.stratum, data = infert, boxplot = FALSE)
+#' infert$case <- factor(infert$case) # stratified variable must be a factor
+#' isum(age, education, case, data = infert) # stratified analysis
+#' isum(age, education, case, data = infert, boxplot = FALSE)
+#' isum(age, education, case, data = infert, boxplot = FALSE, alpha = 1) # block transparency
+#' isum(age, pooled.stratum, education, data = infert)
 #'
-#' # summarize coninuous data
-#' isum(infert$age)
-#' isum(infert$age, main = "My Plot", xlab = "Age") # edit plot title and label
-#' # using data arugment
-#' isum(age, data = infert, main = "My Plot", xlab = "Age")
-#'
-#' # summarize two variables
-#' isum(age, education, infert)
-#' isum(age, education, infert, facet = F)
-#' isum(age, education, infert, main = "My Plot: Age ~ Education", xlab = "Age", legend.text = "Education", facet = F)
+#' isum(education, data = infert) # categorical data
+#' isum(education, case, data = infert) # row percentage by default
+#' isum(education, case, data = infert, pct = 'col')
+#' isum(education, case, data = infert, pct = 'all')
+#' isum(education, case, data = infert, pct = 'none')
+#' isum(education, case, data = infert) # faceted plot by default
+#' isum(education, case, data = infert, plot.type = 'p')
+#' isum(education, case, data = infert, plot.type = 's')
+#' isum(education, case, data = infert, plot.type = 'fs')
+#' isum(education, case, data = infert)
 #'
 #' str(iris)
-#' isum(Sepal.Length, Species, iris)
-#' isum(Sepal.Length, Species, iris, facet = F)
+#' isum(iris)
+#' isum(Sepal.Length, data = iris)
+#' isum(Sepal.Length, Sepal.Width, data = iris)
+#' isum(Sepal.Length, Species, data = iris)
+#' isum(Sepal.Length, Species, data = iris, boxplot = FALSE)
+#' isum(Sepal.Length, Species, data = iris, boxplot = FALSE, alpha = 1)
+
 
 #' @export
-isum <- function(x, by = NULL, data = NULL, rnd = 1, na.rm = TRUE,
-                 plot.display = TRUE,  main = NULL, xlab = NULL, ylab = NULL,
-                 legend.text = NULL, facet = TRUE, ...)
+isum <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
+                 pct = "row", groupby = "ym",
+                 plot.display = TRUE, plot.type = "f", boxplot = TRUE,
+                 main = NULL, xlab = NULL, ylab = NULL, alpha = 0.1,
+                 show.legend = TRUE, legend.text = NULL, facet.ncol = 2,
+                 save.plot = FALSE, plot.name = 'isum.tiff',
+                 width = 5, height = 4, dpi = 150)
 {
-  # data input
   if (!is.null(data)) {
     arguments <- as.list(match.call())
-    x <- eval(arguments$x, data)
+    x <- eval(substitute(x), data)
+    y <- eval(substitute(y), data)
+    by <- eval(substitute(by), data)
+
     lab.x <- arguments$x
-    by <- eval(arguments$by, data)
+    lab.y <- arguments$y
     lab.by <- arguments$by
   } else {
     lab.x <- deparse(substitute(x))
-    if (!is.null(by)) {
-      data <- data.frame(x = x, by = by)
-      lab.by <- deparse(substitute(by))
-    }
+    if (!is.null(y)) lab.y <- deparse(substitute(y))
+    if (!is.null(by)) lab.by <- deparse(substitute(by))
   }
 
-  # number summary
+  # depend on x
   if (is.numeric(x) | class(x) == "difftime") {
-    # plot title and labels
+    if (is.table(x)) stop(paste0(lab.x, " is a ", class(x), "."))
+    if (class(x) == "difftime")  x <- as.numeric(x)
+    df <- inumsum(x = x, y = y, by = by, rnd = rnd, na.rm = na.rm,
+                   x.varname = lab.x, y.varname = lab.y, by.varname = lab.by,
+                   plot.display = plot.display, boxplot = boxplot,
+                   main = main, xlab = xlab, ylab = ylab, alpha = alpha,
+                   show.legend = show.legend, legend.text = legend.text,
+                   facet.ncol = facet.ncol, save.plot = save.plot, plot.name = plot.name,
+                   width = width, height = height, dpi = dpi)
+  } else if (is.character(x) | is.factor(x) | is.logical(x)) {
+    df <- itab(x = x, y = y, by = by, rnd = rnd, na.rm = na.rm,
+                x.varname = lab.x, y.varname = lab.y, by.varname = lab.by,
+                pct = pct, plot.display = plot.display, main = main, xlab = xlab,
+                ylab = ylab, show.legend = show.legend, legend.text = legend.text,
+                plot.type = plot.type, facet.ncol = facet.ncol, save.plot = save.plot,
+                plot.name = plot.name, width = width, height = height, dpi = dpi)
+  } else if (is.Date(x)) {
     if (is.null(xlab)) xlab <- lab.x
-    if (is.null(ylab)) ylab <- 'Density'
-    main <- ifelse(is.null(main),
-                   ifelse(is.null(by), paste0('Kernel Density Plot of ', lab.x),
-                   paste0('Kernel Density Plot of ', lab.x, ' ~ ', lab.by)), main)
-    if (!is.null(by)) {
-      by <- factor(by)
-      legend.text <- ifelse(is.null(legend.text), lab.by, legend.text)
-    }
-    df <- inumsum(x = x, by = by, data = data, rnd = rnd, na.rm = na.rm,
-            plot.display = plot.display, main = main, xlab = xlab, ylab = ylab,
-            legend.text = legend.text, facet = facet, ...)
-  }
-
-  # tabulation
-  if (is.character(x) | is.factor(x) | is.logical(x)) {
-    # plot axis labels & legends
-    if (is.null(main)) {
-      if (is.null(by)) {main <- paste0('Plot of ', lab.x)} else {
-        main <- paste0('Plot of ', lab.x, ' ~ ', lab.by)
-      }
-    }
-    if (is.null(xlab)) xlab <- lab.x
-    if (is.null(ylab)) ylab <- 'Freq'
-    if (is.null(legend.text))
-      legend.text <- ifelse(facet, xlab, lab.by)
-
-    df <- itab(x = x, by = by, data = data, rnd = rnd, na.rm = na.rm,
-                  plot.display = plot.display, main = main, xlab = xlab, ylab = ylab,
-                  legend.text = legend.text, facet = facet, ...)
-  }
-
-  # date summary
-  if (is.Date(x)) {
-    if (is.null(xlab)) xlab <- lab.x
-    df <- idatesum(x = x, groupby = "y", rnd = rnd, xlab = xlab)
-  }
-
-  # data frame summary
-  if (is.data.frame(x)) {
+    df <- idatesum(x = x, groupby = groupby, rnd = rnd, plot.display = plot.display,
+                   xlab = xlab)
+  } else if (is.data.frame(x)) {
     # create logical vector for date type
     v_date <- unlist(lapply(names(x), function(y)
       ifelse(is.Date(x[[y]]), TRUE, FALSE)))
@@ -115,40 +126,41 @@ isum <- function(x, by = NULL, data = NULL, rnd = 1, na.rm = TRUE,
     v_freq <- !v_date & !v_num
 
     # number summary
-    num <- do.call(rbind, lapply(names(x)[v_num], function(y)
-      inumsum(x = x[,y], by = by, data = data, rnd = rnd, na.rm = na.rm,
-           plot.display = plot.display,
-           main = paste0('Kernel Density Plot of ', toString(y)),
-           xlab = toString(y))
+    num <- do.call(rbind, lapply(names(x)[v_num], function(z)
+      inumsum(x = x[,z], x.varname = z, rnd = rnd, na.rm = na.rm, plot.display = FALSE)
     ))
-    row.names(num) <- names(x)[v_num]
+    # row.names(num) <- names(x)[v_num]
 
     # factor summary
-    freq <- lapply(names(x)[v_freq], function(y)
-      itab(x = x[,y], by = by, data = data, rnd = rnd, na.rm = na.rm,
-           plot.display = plot.display,
-           main = paste0('Plot of ', toString(y)),
-           xlab = toString(y),
-           legend.text = toString(y)))
+    freq <- lapply(names(x)[v_freq], function(z)
+      itab(x = x[,z], x.varname = z, rnd = rnd, na.rm = na.rm, pct = pct,
+           plot.display = FALSE))
     freq <- structure(freq, names = names(x)[v_freq])
 
     # date summary
-    date <- lapply(names(x)[v_date], function(y)
-      idatesum(x = x[,y], rnd = rnd, plot.display = plot.display,
-               xlab = toString(y)))
+    date <- lapply(names(x)[v_date], function(z)
+      idatesum(x = x[,z], rnd = rnd, plot.display = FALSE))
     date <- structure(date, names = names(x)[v_date])
 
     # data.frame summary output
-    if(any(v_num)) flag <- "a"
-    if(any(v_num) & any(v_freq)) flag <- "b"
-    if(any(v_num) & any(v_freq) & any(v_date)) flag <- "c"
+    if (any(v_num)) flag <- "a"
+    if (any(v_freq)) flag <- "b"
+    if (any(v_date)) flag <- "c"
+    if (any(v_num) & any(v_freq)) flag <- "d"
+    if (any(v_freq) & any(v_date)) flag <- "e"
+    if (any(v_num) & any(v_date)) flag <- "f"
+    if (any(v_num) & any(v_freq) & any(v_date)) flag <- "g"
     df <- switch(flag,
                  a = num,
-                 b = list(Number.Summary = num,
-                          Freq.Summary = freq),
-                 c = list(Number.Summary = num,
-                          Freq.Summary = freq,
+                 b = freq,
+                 c = date,
+                 d = list(Number.Summary = num, Freq.Summary = freq),
+                 e = list(Freq.Summary = freq, Date.Summary = date),
+                 f = list(Number.Summary = num, Date.Summary = date),
+                 g = list(Number.Summary = num, Freq.Summary = freq,
                           Date.Summary = date))
+  } else {
+    print(paste0(lab.x, " is a ", class(x), "."))
   }
   return(df)
 }

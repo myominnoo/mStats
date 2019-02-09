@@ -2,14 +2,19 @@
 % Please edit documentation in R/isum.R
 \name{isum}
 \alias{isum}
-\title{A Quick Summary function with Graph Display using ggplot2}
+\title{A Quick Summary of data frame or data}
 \usage{
-isum(x, by = NULL, data = NULL, rnd = 1, na.rm = TRUE,
-  plot.display = TRUE, main = NULL, xlab = NULL, ylab = NULL,
-  legend.text = NULL, facet = TRUE, ...)
+isum(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
+  pct = "row", groupby = "ym", plot.display = TRUE,
+  plot.type = "f", boxplot = TRUE, main = NULL, xlab = NULL,
+  ylab = NULL, alpha = 0.1, show.legend = TRUE, legend.text = NULL,
+  facet.ncol = 2, save.plot = FALSE, plot.name = "isum.tiff",
+  width = 5, height = 4, dpi = 150)
 }
 \arguments{
 \item{x}{a vector describing the bars which make up the plot. It is usually on x axis.}
+
+\item{y}{a vector describing the y axis or second variable in cross-tabulation or data relationship.}
 
 \item{by}{a vector describing the grouping of x. By default, the plot generates a faceted barplot.}
 
@@ -19,25 +24,31 @@ isum(x, by = NULL, data = NULL, rnd = 1, na.rm = TRUE,
 
 \item{na.rm}{A logical value indicating to remove NA values in the table or not. By Default, the value is TRUE}
 
+\item{pct}{type of percentages in cross-tabulation: by default, it shows row percentages in two}
+
+\item{groupby}{a character value, indicating patterns of aggregation either by one of the followings:
+
+"y" - Year along
+
+"ym" - Year + Month
+
+"ymd" - Year + Month + Day}
+
+\item{plot.display}{logical value, indicating whether plot will be displayed or not}
+
+\item{plot.type}{if bivariate analysis, type of plot can be specified. By default, this generates a facted plot. 'p' for parrallel barplot, 's' for stacked barplot, 'fs' for full stacked percentage barplot.}
+
 \item{main}{a main title for the plot.}
 
 \item{xlab}{a label for the x axis, defaults to a description of x.}
 
 \item{ylab}{a label for the y axis, defaults to a description of y.}
 
-\item{legend.text}{a text for the title of the plot}
+\item{show.legend}{show or hide the legend. Hide the legend by default}
 
-\item{facet}{a logical value. If TRUE, the plot forms a matrix of panels defined by column faceting variables. It is most useful when you have two discrete variables, and all combinations of the variables exist in the data. By default, it is set to TRUE.}
+\item{legend.text}{Legend title}
 
-\item{...}{additional arguments affecting the display of graph: See the following arguments.}
-
-\item{bar.color}{a text to depict the outer line of bars. You can set "black", "green", "blue" and so on.}
-
-\item{vjust}{a number to place the value label in percentage to the bar.}
-
-\item{hjust}{a number to place the value label in percentage to the bar.}
-
-\item{legend.position}{the position of legends ("none", "left", "right", "bottom", "top", or two-element numeric vector)}
+\item{facet.ncol}{number of columns to be faceted}
 
 \item{save.plot}{a logical value. If TRUE, it saves the plot generated in the current working directory.}
 
@@ -50,30 +61,46 @@ isum(x, by = NULL, data = NULL, rnd = 1, na.rm = TRUE,
 \item{dpi}{a value for resolution of the plot saved.}
 }
 \description{
-isum is a simple yet powerful function to produce a quick summary results of various types of data.
+A simple yet powerful function to produce a quick summary of various types of data or data frame
 }
 \examples{
 str(infert)
 # summarize data.frame
 isum(infert)
+isum(age, data = infert) # numeric data
+isum(ltf$age)
+isum(ltf$age, boxplot = FALSE) # calling kernel density plot
+isum(age, education, data = infert) # continuous vs category data
+isum(age, education, data = infert, boxplot = FALSE)
+isum(age, pooled.stratum, data = infert) # continuous vs continuos data
+isum(age, pooled.stratum, data = infert, boxplot = FALSE)
+infert$case <- factor(infert$case) # stratified variable must be a factor
+isum(age, education, case, data = infert) # stratified analysis
+isum(age, education, case, data = infert, boxplot = FALSE)
+isum(age, education, case, data = infert, boxplot = FALSE, alpha = 1) # block transparency
+isum(age, pooled.stratum, education, data = infert)
 
-# summarize coninuous data
-isum(infert$age)
-isum(infert$age, main = "My Plot", xlab = "Age") # edit plot title and label
-# using data arugment
-isum(age, data = infert, main = "My Plot", xlab = "Age")
-
-# summarize two variables
-isum(age, education, infert)
-isum(age, education, infert, facet = F)
-isum(age, education, infert, main = "My Plot: Age ~ Education", xlab = "Age", legend.text = "Education", facet = F)
+isum(education, data = infert) # categorical data
+isum(education, case, data = infert) # row percentage by default
+isum(education, case, data = infert, pct = 'col')
+isum(education, case, data = infert, pct = 'all')
+isum(education, case, data = infert, pct = 'none')
+isum(education, case, data = infert) # faceted plot by default
+isum(education, case, data = infert, plot.type = 'p')
+isum(education, case, data = infert, plot.type = 's')
+isum(education, case, data = infert, plot.type = 'fs')
+isum(education, case, data = infert)
 
 str(iris)
-isum(Sepal.Length, Species, iris)
-isum(Sepal.Length, Species, iris, facet = F)
+isum(iris)
+isum(Sepal.Length, data = iris)
+isum(Sepal.Length, Sepal.Width, data = iris)
+isum(Sepal.Length, Species, data = iris)
+isum(Sepal.Length, Species, data = iris, boxplot = FALSE)
+isum(Sepal.Length, Species, data = iris, boxplot = FALSE, alpha = 1)
 }
 \seealso{
-itab, ibarplot, inumsum, ikdplot
+ibarplot, inumsum, ikdplot, iboxplot, isum
 }
 \keyword{contigency}
 \keyword{cross-tabulation,}

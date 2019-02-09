@@ -4,17 +4,16 @@
 \alias{ibarplot}
 \title{Create and Save beautiful Bar Plot using ggplot2}
 \usage{
-ibarplot(x, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
-  main = NULL, xlab = NULL, ylab = NULL, stack = FALSE,
-  stack.pct = TRUE, stack.vjust = 0.5, facet = TRUE,
-  facet.ncol = 3, facet.strip.pos = "top", legend.show = FALSE,
-  legend.text = NULL, legend.position = "right", horizontal = FALSE,
-  flip.levels = 10, bar.color = "white", dv.size = 3.5,
-  vjust = -0.5, hjust = 0.5, position.dodge = 1, save.plot = FALSE,
-  plot.name = "ibarplot.tiff", width = 5, height = 4, dpi = 150)
+ibarplot(x, y = NULL, by = NULL, data = NULL, rnd = 1,
+  na.rm = FALSE, main = NULL, xlab = NULL, ylab = NULL,
+  show.legend = TRUE, legend.text = NULL, plot.type = "f",
+  facet.ncol = 2, save.plot = FALSE, plot.name = "ibarplot.tiff",
+  width = 5, height = 4, dpi = 150)
 }
 \arguments{
 \item{x}{a vector describing the bars which make up the plot. It is usually on x axis.}
+
+\item{y}{a vector describing the y axis or second variable in cross-tabulation or data relationship.}
 
 \item{by}{a vector describing the grouping of x. By default, the plot generates a faceted barplot.}
 
@@ -30,35 +29,13 @@ ibarplot(x, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
 
 \item{ylab}{a label for the y axis, defaults to a description of y.}
 
-\item{stack}{indicate for stack bar chart in bivariate analysis}
+\item{show.legend}{show or hide the legend. Hide the legend by default}
 
-\item{stack.pct}{indicate stacked percent bar chart}
+\item{legend.text}{Legend title}
 
-\item{stack.vjust}{number to place value label in stacked bar chart}
-
-\item{facet}{a logical value. If TRUE, the plot forms a matrix of panels defined by column faceting variables. It is most useful when you have two discrete variables, and all combinations of the variables exist in the data. By default, it is set to TRUE.}
+\item{plot.type}{if bivariate analysis, type of plot can be specified. By default, this generates a facted plot. 'p' for parrallel barplot, 's' for stacked barplot, 'fs' for full stacked percentage barplot.}
 
 \item{facet.ncol}{number of columns to be faceted}
-
-\item{facet.strip.pos}{indicate position of facet strip: "top" by default: others include "bottom", "left", "right".}
-
-\item{legend.show}{show or hide the legend. Hide the legend by default}
-
-\item{legend.text}{a text for the title of the plot}
-
-\item{legend.position}{the position of legends ("none", "left", "right", "bottom", "top", or two-element numeric vector)}
-
-\item{horizontal}{logical value, indicating the direction of bar: horizontal by default and vertical.}
-
-\item{flip.levels}{if there are more than k categories, bar chart will be automatically flip to horizontal direction in order to generate a better visual. This is the same as setting horizontal to TRUE.}
-
-\item{bar.color}{a text to depict the outer line of bars. You can set "black", "green", "blue" and so on.}
-
-\item{vjust}{a number to place the value label in percentage to the bar.}
-
-\item{hjust}{a number to place the value label in percentage to the bar.}
-
-\item{position.dodge}{shrink width of bars.}
 
 \item{save.plot}{a logical value. If TRUE, it saves the plot generated in the current working directory.}
 
@@ -69,22 +46,32 @@ ibarplot(x, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
 \item{height}{a value in inches}
 
 \item{dpi}{a value for resolution of the plot saved.}
-
-\item{legend.text}{Legend title}
-
-\item{dvsize}{font size of value label in stacked bar chart.}
 }
 \description{
 ibarplot is a function that generate a barplot with several options for optimal data visualization of factor variables using ggplot2 package. If one factor is provided as input, a simple barplot will be generated. If two factors, it produces a faceted barplot by default. Grouped bar plot can also be specified. Several parameters including plot title, labels of x and y axes and saving plot can be set by the user.
 }
 \examples{
+ibarplot(infert$education)
 ibarplot(x = education, data = infert)
-ibarplot(x = education, data = infert, legend.show = FALSE)
-ibarplot(infert$education, legend.show = TRUE)
-ibarplot(x = education, by = case, data = infert)
-ibarplot(x = education, by = case, data = infert, facet = FALSE)
-ibarplot(induced, case, infert)
+ibarplot(x = education, y = case, data = infert)
+ibarplot(x = education, y = case, data = infert, plot.type = 'f')
+ibarplot(x = education, y = case, data = infert, plot.type = 'p')
+ibarplot(x = education, y = case, data = infert, plot.type = 's')
+ibarplot(x = education, y = case, data = infert, plot.type = 'fs')
+education <- factor(rep(c("None", "Primary", "Secondary", "graduate"), c(50, 100, 25, 25)))
+sex <- factor(rep(c("M", "F", NA), c(100, 75, 25)))
+marital <- factor(rep(c("Single", "married", "widowed", NA), c(25, 100, 70, 5)))
+ibarplot(education)
+ibarplot(sex)
+ibarplot(marital)
+ibarplot(sex, marital)
+ibarplot(sex, marital, na.rm = TRUE)
+ibarplot(sex, marital, education)
 }
 \seealso{
-itab, inumsum, isum
+iboxplot, itab, inumsum, isum
 }
+\keyword{barplot,}
+\keyword{cross-tabulation,}
+\keyword{faceted}
+\keyword{plot}
