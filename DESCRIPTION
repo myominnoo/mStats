@@ -1,6 +1,6 @@
 Package: mStats
 Title: A Package of Stats & Graphs by Myo
-Version: 1.03.01
+Version: 1.03.03
 Authors@R: 
     person(given = "Myo Minn",
            family = "Oo",

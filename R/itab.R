@@ -78,21 +78,24 @@ itab <- function(x, y = NULL, by  = NULL, data = NULL, rnd = 1, na.rm = FALSE,
 
     lab.x <- ifelse(is.null(x.varname), arguments$x, x.varname)
     lab.y <- ifelse(is.null(y.varname), arguments$y, y.varname)
-    lab.by <- ifelse(is.null(by.varname), arguments$by, by.varname)
+    if (is.null(by)) {lab.by <- NULL} else {
+      lab.by <- ifelse(is.null(by.varname), arguments$by, by.varname)
+    }
   } else {
     lab.x <- ifelse(is.null(x.varname), deparse(substitute(x)), x.varname)
     if (!is.null(y)) lab.y <- ifelse(is.null(y.varname), deparse(substitute(y)), y.varname)
-    if (!is.null(by)) lab.by <- ifelse(is.null(by.varname), deparse(substitute(by)), by.varname)
+    if (!is.null(by)) lab.by <- ifelse(is.null(by.varname), deparse(substitute(by)),
+                                       by.varname)
   }
 
-  # create data frame
-  data <- data.frame(x)
-  if (!is.null(y)) {
-    data <- data.frame(x, y)
-  }
-  if (!is.null(by)) {
-    data <- data.frame(x, y, by)
-  }
+  # # create data frame
+  # data <- data.frame(x)
+  # if (!is.null(y)) {
+  #   data <- data.frame(x, y)
+  # }
+  # if (!is.null(by)) {
+  #   data <- data.frame(x, y, by)
+  # }
 
   # levels of useNA in table() has c("no", "ifany", "always)
   include.na <- ifelse(na.rm, "no", "ifany")
@@ -109,25 +112,36 @@ itab <- function(x, y = NULL, by  = NULL, data = NULL, rnd = 1, na.rm = FALSE,
     cpct <- round(t(t(tbl) / colSums(tabc)) * 100, rnd) # column percentage
     tpct <- round(tbl / sum(tab) * 100, rnd)
 
+    p.value <- suppressWarnings(chisq.test(tab)$p.value)
+    p.value <- c(ifelse(p.value < 0.001, "<0.001", round(p.value, 3)),
+                 rep("", nrow(tbl) - 1))
+
     tblr <- NULL; tblc <- NULL; tblt <- NULL
     var.r <- NULL; var.c <- NULL; var.t <- NULL
     for ( i in 1:ncol(tbl)) {
-      tblt <- cbind(tblt, tbl[,i], tpct[,i])
+      tblt <- data.frame(cbind(tblt, tbl[,i], tpct[,i]))
       var.t <- c(var.t, colnames(tbl)[i], "(t%)")
-      tblr <- cbind(tblr, tbl[,i], rpct[,i])
+      tblr <- data.frame(cbind(tblr, tbl[,i], rpct[,i]))
       var.r <- c(var.r, colnames(tbl)[i], "(r%)")
-      tblc <- cbind(tblc, tbl[,i], cpct[,i])
+      tblc <- data.frame(cbind(tblc, tbl[,i], cpct[,i]))
       var.c <- c(var.c, colnames(tbl)[i], "(c%)")
     }
-    colnames(tblt) <- var.t
-    colnames(tblr) <- var.r
-    colnames(tblc) <- var.c
-    names(dimnames(tbl)) <- c()
+
+    tblt <- cbind(tblt, p.value = p.value)
+    tblr <- cbind(tblr, p.value = p.value)
+    tblc <- cbind(tblc, p.value = p.value)
+
+    colnames(tblt) <- c(var.t, "p.value")
+    colnames(tblr) <- c(var.r, "p.value")
+    colnames(tblc) <- c(var.c, "p.value")
+    names(dimnames(tbl)) <- c(lab.x, lab.y)
     names(dimnames(tblt)) <- c(lab.x, lab.y)
     names(dimnames(tblr)) <- c(lab.x, lab.y)
     names(dimnames(tblc)) <- c(lab.x, lab.y)
 
-    df <- list(total.percentage = tblt,
+
+    df <- list(no.percentage = tbl,
+               total.percentage = tblt,
                row.percentage = tblr,
                column.percentage = tblc)
     switch(pct,
@@ -174,7 +188,8 @@ itab <- function(x, y = NULL, by  = NULL, data = NULL, rnd = 1, na.rm = FALSE,
                                  paste0('Plot of ', lab.x, ' ~ ', lab.y, ', stratified by ',
                                         lab.by))),main)
     xlab <- ifelse(is.null(xlab), lab.x, xlab)
-    ylab <- ifelse(is.null(ylab), 'Number', ylab)
+    ylab <- ifelse(is.null(ylab),
+                   ifelse(plot.type == 'fs', 'Percentage (%)', 'Number'), ylab)
     if (!is.null(y)) legend.text <- ifelse(is.null(legend.text), lab.y, legend.text)
     plot(ibarplot(x = x, y = y, by = by, rnd = rnd, na.rm = na.rm,
                   main = main, xlab = xlab, ylab = ylab, show.legend = show.legend,

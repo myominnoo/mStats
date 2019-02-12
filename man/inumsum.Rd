@@ -57,6 +57,7 @@ inumsum(infert$age)
 inumsum(age, data = infert)
 inumsum(x = age, y = education, data = infert)
 infert$case <- factor(infert$case)
+inumsum(case, education, data = infert)
 inumsum(x = age, y = case, by = education, data = infert, na.rm = TRUE)
 inumsum(x = age, y = case, by = education, data = infert, na.rm = TRUE, boxplot = FALSE) # calling Kernel density plot
 inumsum(x = age, y = case, by = education, data = infert, na.rm = TRUE, boxplot = FALSE, facet.ncol = 3)

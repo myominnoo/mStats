@@ -30,6 +30,7 @@
 #' inumsum(age, data = infert)
 #' inumsum(x = age, y = education, data = infert)
 #' infert$case <- factor(infert$case)
+#' inumsum(case, education, data = infert)
 #' inumsum(x = age, y = case, by = education, data = infert, na.rm = TRUE)
 #' inumsum(x = age, y = case, by = education, data = infert, na.rm = TRUE, boxplot = FALSE) # calling Kernel density plot
 #' inumsum(x = age, y = case, by = education, data = infert, na.rm = TRUE, boxplot = FALSE, facet.ncol = 3)
@@ -59,7 +60,9 @@ inumsum <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
 
     lab.x <- ifelse(is.null(x.varname), arguments$x, x.varname)
     lab.y <- ifelse(is.null(y.varname), arguments$y, y.varname)
-    lab.by <- ifelse(is.null(by.varname), arguments$by, by.varname)
+    if (is.null(by)) {lab.by <- NULL} else {
+      lab.by <- ifelse(is.null(by.varname), arguments$by, by.varname)
+    }
   } else {
     lab.x <- ifelse(is.null(x.varname), deparse(substitute(x)), x.varname)
     if (!is.null(y)) lab.y <- ifelse(is.null(y.varname), deparse(substitute(y)), y.varname)
