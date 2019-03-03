@@ -16,7 +16,7 @@
 #' @param show.legend show or hide the legend. Hide the legend by default
 #' @param legend.text Legend title
 #' @param facet.ncol number of columns to be faceted
-#' @param save.plot a logical value. If TRUE, it saves the plot generated in the current working directory.
+#' @param plot.save a logical value. If TRUE, it saves the plot generated in the current working directory.
 #' @param plot.name a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"
 #' @param width a value in inches
 #' @param height a value in inches
@@ -42,7 +42,7 @@
 ikdplot <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
                     main = NULL, xlab = NULL, ylab = NULL, alpha = 0.1,
                     show.legend = TRUE, legend.text = NULL, facet.ncol = 2,
-                    save.plot = FALSE, plot.name = 'ikdplot.tiff',
+                    plot.save = FALSE, plot.name = 'ikdplot.tiff',
                     width = 5, height = 4, dpi = 150)
 
 {
@@ -169,7 +169,7 @@ ikdplot <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
       }
     })
 
-  if (save.plot) {
+  if (plot.save) {
     ggplot2::ggsave(plot.name, width = width, height = height, dpi = dpi)
     dev.off()
   }

@@ -15,7 +15,7 @@
 #' @param show.legend show or hide the legend. Hide the legend by default
 #' @param legend.text Legend title
 #' @param facet.ncol number of columns to be faceted
-#' @param save.plot a logical value. If TRUE, it saves the plot generated in the current working directory.
+#' @param plot.save a logical value. If TRUE, it saves the plot generated in the current working directory.
 #' @param plot.name a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"
 #' @param width a value in inches
 #' @param height a value in inches
@@ -49,7 +49,7 @@ inumsum <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
                     plot.display = TRUE, boxplot = TRUE,
                     main = NULL, xlab = NULL, ylab = NULL, alpha = 0.1,
                     show.legend = TRUE, legend.text = NULL, facet.ncol = 2,
-                    save.plot = FALSE, plot.name = 'inumsum.tiff',
+                    plot.save = FALSE, plot.name = 'inumsum.tiff',
                     width = 5, height = 4, dpi = 150)
 {
   if (!is.null(data)) {
@@ -131,7 +131,7 @@ inumsum <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
       }
       plot(iboxplot(x = x, y = y, by = by, rnd = rnd, na.rm = na.rm, main = main,
                     xlab = xlab, ylab = ylab, show.legend = show.legend,
-                    legend.text = legend.text, save.plot = save.plot,
+                    legend.text = legend.text, plot.save = plot.save,
                     plot.name = plot.name, width = width, height = height, dpi = dpi))
     } else {
       main <- ifelse(is.null(main),
@@ -146,7 +146,7 @@ inumsum <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
       plot(ikdplot(x = x, y = y, by = by, rnd = rnd, na.rm = na.rm, main = main,
                    xlab = xlab, ylab = ylab, alpha = alpha, show.legend = show.legend,
                    legend.text = legend.text, facet.ncol = facet.ncol,
-                   save.plot = save.plot, plot.name = plot.name, width = width,
+                   plot.save = plot.save, plot.name = plot.name, width = width,
                    height = height, dpi = dpi))
     }
   }

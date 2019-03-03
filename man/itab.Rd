@@ -8,7 +8,7 @@ itab(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
   x.varname = NULL, y.varname = NULL, by.varname = NULL,
   pct = "row", plot.display = TRUE, main = NULL, xlab = NULL,
   ylab = NULL, show.legend = TRUE, legend.text = NULL,
-  plot.type = "f", facet.ncol = 2, save.plot = FALSE,
+  plot.type = "f", facet.ncol = 2, plot.save = FALSE,
   plot.name = "itab.tiff", width = 5, height = 4, dpi = 150)
 }
 \arguments{
@@ -42,7 +42,7 @@ itab(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
 
 \item{facet.ncol}{number of columns to be faceted}
 
-\item{save.plot}{a logical value. If TRUE, it saves the plot generated in the current working directory.}
+\item{plot.save}{a logical value. If TRUE, it saves the plot generated in the current working directory.}
 
 \item{plot.name}{a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"}
 
@@ -78,9 +78,9 @@ itab(induced, education, data = infert, plot.type = 's') # stacked bar
 itab(induced, education, data = infert, plot.type = 'fs') # full stacked bar
 itab(induced, education, data = infert, facet.ncol = 3) # change number of facets
 itab(induced, education, data = infert, plot.type = 'p', show.legend = FALSE) # legend on and off
-itab(induced, education, data = infert, save.plot = TRUE) # save plot to current directory
-itab(induced, education, data = infert, save.plot = TRUE, plot.name = "mybarplot.tiff")
-itab(induced, education, data = infert, save.plot = TRUE, width = 10, height = 8, dpi = 300)
+itab(induced, education, data = infert, plot.save = TRUE) # save plot to current directory
+itab(induced, education, data = infert, plot.save = TRUE, plot.name = "mybarplot.tiff")
+itab(induced, education, data = infert, plot.save = TRUE, width = 10, height = 8, dpi = 300)
 # three variables - analysis
 infert$case <- factor(infert$case)
 infert$induced <- factor(infert$induced)

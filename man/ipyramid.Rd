@@ -2,12 +2,12 @@
 % Please edit documentation in R/ipyramid.R
 \name{ipyramid}
 \alias{ipyramid}
-\title{Population Pyramid Graph}
+\title{Population Pyramid Plot}
 \usage{
-ipyramid(x, y, data = NULL, rnd = 1, na.rm = FALSE,
-  binwidth = NULL, main = NULL, xlab = NULL, ylab = NULL,
-  legend.text = NULL, getdata = "tp", save.plot = FALSE,
-  plot.name = "ipyramid.tiff", width = 5, height = 4, dpi = 150)
+ipyramid(x, y, data = NULL, na.rm = FALSE, binwidth = NULL,
+  main = NULL, xlab = NULL, ylab = NULL, legend.text = NULL,
+  getdata = "tp", plot.save = FALSE, plot.name = "ipyramid.tiff",
+  width = 5, height = 4, dpi = 150)
 }
 \arguments{
 \item{x}{a vector describing the bars which make up the plot. It is usually on x axis.}
@@ -16,11 +16,9 @@ ipyramid(x, y, data = NULL, rnd = 1, na.rm = FALSE,
 
 \item{data}{an optional data frame (or object coercible by as.data.frame to a data frame) containing the variables for contigency table.}
 
-\item{rnd}{an integer indicating the number of decimal places:}
-
 \item{na.rm}{A logical value indicating to remove NA values in the table or not. By Default, the value is TRUE}
 
-\item{binwidth}{a number to specify the cut points of the continous data. If NULL, it is set to 5 by default. A sequence of number can be specified. See examples.}
+\item{binwidth}{a number to specify the cut points of the continous data. If NULL, it is set to 10 by default. A sequence of number can be specified. See examples.}
 
 \item{main}{a main title for the plot.}
 
@@ -30,7 +28,7 @@ ipyramid(x, y, data = NULL, rnd = 1, na.rm = FALSE,
 
 \item{legend.text}{Legend title}
 
-\item{save.plot}{a logical value. If TRUE, it saves the plot generated in the current working directory.}
+\item{plot.save}{a logical value. If TRUE, it saves the plot generated in the current working directory.}
 
 \item{plot.name}{a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"}
 
@@ -39,27 +37,29 @@ ipyramid(x, y, data = NULL, rnd = 1, na.rm = FALSE,
 \item{height}{a value in inches}
 
 \item{dpi}{a value for resolution of the plot saved.}
-
-\item{show.legend}{show or hide the legend. Hide the legend by default}
 }
 \description{
-generates a population pyramid graph and data output.
+\code{ipyramid} generates a population pyramid graph and data output.
 }
 \examples{
+# create random vectors
 set.seed(100)
-age <- sample(1:100, 1000, replace = TRUE)
+age <- sample(11:100, 1000, replace = TRUE)
 sex <- factor(sample(c("male", "female"), 1000, replace = TRUE))
-library(ggplot2)
+ipyramid(age, sex)
 ipyramid(age, sex, binwidth = 20)
-ipyramid(age, sex, binwidth = 20, getdata = "p")
-ipyramid(age, sex, binwidth = 20, getdata = "tp")
-ipyramid(age, sex, binwidth = 20, getdata = "all")
+ipyramid(age, sex, binwidth = 20, getdata = "p") # only plot
+ipyramid(age, sex, binwidth = 20, getdata = "tp") # plot with cross-tabulation
+ipyramid(age, sex, binwidth = 20, getdata = "all") # plot + cross-tabulation + data
 ipyramid(age, sex, binwidth = 10)
 ipyramid(age, sex, binwidth = c(0, 20, 40, 60, 80, 100))
 ipyramid(age, sex, binwidth = c(1, 15, 40, 60, 100))
+data <- data.frame(age, sex)
+ipyramid(age, sex, data = data)
+ipyramid(age, sex, data = data, binwidth = 30)
 }
 \seealso{
-itab, ibarplot, inumsum, ikdplot, iboxplot, isum
+\code{\link{isum}}, \code{\link{itab}}, \code{\link{inumsum}}, \code{\link{ibarplot}}
 }
 \keyword{contigency}
 \keyword{cross-tabulation,}

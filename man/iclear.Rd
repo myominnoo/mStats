@@ -7,8 +7,7 @@
 iclear()
 }
 \description{
-iclear is a quick way of clearing messy global environment, plots and console without touching
-the search path.
+\code{iclear} is a quick way to clear messy Global Environment, plots and console without interrupting the search path. If you want to detach all packages, see \code{\link{idetach}}.
 }
 \examples{
 x <- rnorm(100)
@@ -18,6 +17,13 @@ hist(x)
 hist(y)
 hist(z)
 iclear()
+}
+\seealso{
+\code{\link{idetach}}
+}
+\author{
+Myo Minn Oo (Email: \email{dr.myominnoo@gmail.com} |
+Website: \url{https://myominnoo.github.io/})
 }
 \keyword{all,}
 \keyword{clear}

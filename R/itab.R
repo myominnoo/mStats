@@ -18,7 +18,7 @@
 #' @param legend.text Legend title
 #' @param plot.type if bivariate analysis, type of plot can be specified. By default, this generates a facted plot. 'p' for parrallel barplot, 's' for stacked barplot, 'fs' for full stacked percentage barplot.
 #' @param facet.ncol number of columns to be faceted
-#' @param save.plot a logical value. If TRUE, it saves the plot generated in the current working directory.
+#' @param plot.save a logical value. If TRUE, it saves the plot generated in the current working directory.
 #' @param plot.name a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"
 #' @param width a value in inches
 #' @param height a value in inches
@@ -49,9 +49,9 @@
 #' itab(induced, education, data = infert, plot.type = 'fs') # full stacked bar
 #' itab(induced, education, data = infert, facet.ncol = 3) # change number of facets
 #' itab(induced, education, data = infert, plot.type = 'p', show.legend = FALSE) # legend on and off
-#' itab(induced, education, data = infert, save.plot = TRUE) # save plot to current directory
-#' itab(induced, education, data = infert, save.plot = TRUE, plot.name = "mybarplot.tiff")
-#' itab(induced, education, data = infert, save.plot = TRUE, width = 10, height = 8, dpi = 300)
+#' itab(induced, education, data = infert, plot.save = TRUE) # save plot to current directory
+#' itab(induced, education, data = infert, plot.save = TRUE, plot.name = "mybarplot.tiff")
+#' itab(induced, education, data = infert, plot.save = TRUE, width = 10, height = 8, dpi = 300)
 #' # three variables - analysis
 #' infert$case <- factor(infert$case)
 #' infert$induced <- factor(infert$induced)
@@ -65,7 +65,7 @@ itab <- function(x, y = NULL, by  = NULL, data = NULL, rnd = 1, na.rm = FALSE,
                  main = NULL, xlab = NULL, ylab = NULL,
                  show.legend = TRUE, legend.text = NULL,
                  plot.type = "f", facet.ncol = 2,
-                 save.plot = FALSE, plot.name = 'itab.tiff',
+                 plot.save = FALSE, plot.name = 'itab.tiff',
                  width = 5, height = 4, dpi = 150)
 {
 
@@ -194,7 +194,7 @@ itab <- function(x, y = NULL, by  = NULL, data = NULL, rnd = 1, na.rm = FALSE,
     plot(ibarplot(x = x, y = y, by = by, rnd = rnd, na.rm = na.rm,
                   main = main, xlab = xlab, ylab = ylab, show.legend = show.legend,
                   legend.text = legend.text, plot.type = plot.type,
-                  facet.ncol = facet.ncol, save.plot = save.plot,
+                  facet.ncol = facet.ncol, plot.save = plot.save,
                   plot.name = plot.name, width = width, height = height, dpi = dpi))
   }
   return(res)

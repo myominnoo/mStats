@@ -8,7 +8,7 @@ isum(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
   pct = "row", groupby = "ym", plot.display = TRUE,
   plot.type = "f", boxplot = TRUE, main = NULL, xlab = NULL,
   ylab = NULL, alpha = 0.1, show.legend = TRUE, legend.text = NULL,
-  facet.ncol = 2, save.plot = FALSE, plot.name = "isum.tiff",
+  facet.ncol = 2, plot.save = FALSE, plot.name = "isum.tiff",
   width = 5, height = 4, dpi = 150)
 }
 \arguments{
@@ -50,7 +50,7 @@ isum(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
 
 \item{facet.ncol}{number of columns to be faceted}
 
-\item{save.plot}{a logical value. If TRUE, it saves the plot generated in the current working directory.}
+\item{plot.save}{a logical value. If TRUE, it saves the plot generated in the current working directory.}
 
 \item{plot.name}{a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"}
 

@@ -2,15 +2,16 @@
 % Please edit documentation in R/plotOR.R
 \name{plotOR}
 \alias{plotOR}
-\title{Odds Ratios Plot}
+\title{Plotting Odds Ratios or Hazard Ratios}
 \usage{
-plotOR(odds, cilow, cihigh, vars = NULL, main = NULL, xlab = NULL,
-  ylab = NULL, ci.barsize = 0.5, ci.barheight = 0.5,
-  ci.barcolor = "black", ci.linetype = "solid", vline.xintercept = 1,
-  vline.size = 0.25, vline.type = "dashed", vline.color = "blue",
-  or.shape = 15, or.size = odds * 2, or.color = NULL,
-  xlimits = c(0, max(cihigh)), text.size = 16, save.plot = FALSE,
-  plot.name = "plotOR.tiff", width = 5, height = 4, dpi = 150)
+plotOR(odds, cilow, cihigh, vars = NULL, log = FALSE, rnd = 1,
+  main = NULL, xlab = NULL, ylab = NULL, pe.shape = 15,
+  pe.size = 3, pe.color = NULL, ci.barsize = 0.25,
+  ci.barheight = 0.25, ci.barcolor = "red", ci.linetype = "solid",
+  vline.xintercept = 1, vline.size = 0.25, vline.type = "dashed",
+  vline.color = "blue", xlimits = NULL, text.size = 12,
+  plot.save = FALSE, plot.name = "plotOR.tiff", width = 5,
+  height = 4, dpi = 150)
 }
 \arguments{
 \item{odds}{a vector containing Odds Ratios (OR) values}
@@ -21,11 +22,19 @@ plotOR(odds, cilow, cihigh, vars = NULL, main = NULL, xlab = NULL,
 
 \item{vars}{a vector with names of categories or sub-categories for OR}
 
+\item{log}{produce odds ratios and 95\% confidence intervals on log scale}
+
 \item{main}{a main title for the plot.}
 
 \item{xlab}{a label for the x axis, defaults to a description of x.}
 
 \item{ylab}{a label for the y axis, defaults to a description of y.}
+
+\item{pe.shape}{shape of OR point estimate}
+
+\item{pe.size}{size of OR estimate: by default, OR x 2 (to magnify the point in display)}
+
+\item{pe.color}{color of OR estimate}
 
 \item{ci.barsize}{a double to change the size of the 95\% CI bars. 0.5 by default.}
 
@@ -43,17 +52,11 @@ plotOR(odds, cilow, cihigh, vars = NULL, main = NULL, xlab = NULL,
 
 \item{vline.color}{color of vertical line}
 
-\item{or.shape}{shape of OR point estimate}
-
-\item{or.size}{size of OR estimate: by default, OR x 2 (to magnify the point in display)}
-
-\item{or.color}{color of OR estimate}
-
 \item{xlimits}{specify two points to limit x axis. by default, it is c(0, max(cihigh))}
 
 \item{text.size}{Text size for the axis labels}
 
-\item{save.plot}{a logical value. If TRUE, it saves the plot generated in the current working directory.}
+\item{plot.save}{a logical value. If TRUE, it saves the plot generated in the current working directory.}
 
 \item{plot.name}{a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"}
 
@@ -64,7 +67,7 @@ plotOR(odds, cilow, cihigh, vars = NULL, main = NULL, xlab = NULL,
 \item{dpi}{a value for resolution of the plot saved.}
 }
 \description{
-produce an Odds Ratios Plot with 95% CI values.
+\code{\link{plotOR}} produce an Odds Ratios Plot with 95% CI values.
 }
 \examples{
 str(infert)
@@ -72,19 +75,46 @@ or <- logistic.output("education", case, data = infert)
 or
 infert$induced <- factor(infert$induced)
 infert$spontaneous <- factor(infert$spontaneous)
-or <- logistic.output(c("education", "induced", "spontaneous"), case, data = infert)
+or <- logistic.output(c("education", "induced", "spontaneous"), case,
+data = infert, print.to.console = TRUE)
+library(ggplot2)
 plotOR(or[,1], or[,2], or[,3])
+plotOR(or[,1], or[,2], or[,3], log = TRUE)
 plotOR(or[,1], or[,2], or[,3], vars = rownames(or))
+plotOR(or[,1], or[,2], or[,3], vars = rownames(or), log = TRUE)
+
+plotOR(or[,1], or[,2], or[,3], vars = rownames(or), log = TRUE,
+    pe.size = 5, pe.color = "orange")
+
 plotOR(or[,1], or[,2], or[,3], vars = rownames(or), main = "Odds Ratios Plot")
 plotOR(or[,1], or[,2], or[,3], vars = rownames(or), xlab = "Adjusted OR")
 plotOR(or[,1], or[,2], or[,3], vars = rownames(or), xlimits = c(0, 30))
-plotOR(or[,1], or[,2], or[,3], vars = rownames(or), or.color = "black")
-plotOR(or[,1], or[,2], or[,3], vars = rownames(or), or.size = 3, or.color = "black")
-plotOR(or[,1], or[,2], or[,3], vars = rownames(or), or.size = 3, or.color = "black")
-plotOR(or[,1], or[,2], or[,3], vars = rownames(or), or.size = 3, or.color = "black", save.plot = TRUE)
+plotOR(or[,1], or[,2], or[,3], vars = rownames(or), pe.color = "orange")
+plotOR(or[,1], or[,2], or[,3], vars = rownames(or), pe.size = 8,
+    pe.color = "green")
+
+plotOR(or[,1], or[,2], or[,3], vars = rownames(or), pe.size = 1,
+    pe.color = "blue")
+
+# increase font size of axis labels
+plotOR(or[,1], or[,2], or[,3], vars = rownames(or), pe.size = 1, pe.color = "blue",
+text.size = 16)
+
+plotOR(or[,1], or[,2], or[,3], vars = rownames(or),
+log = TRUE, pe.size = 6, pe.color = "green", ci.barcolor = "orange")
+
+plotOR(or[,1], or[,2], or[,3], vars = rownames(or), log = TRUE,
+    pe.size = 6, pe.color = "green", ci.barcolor = "orange", xlimits = c(-3, 4))
+
+plotOR(or[,1], or[,2], or[,3], vars = rownames(or), pe.size = 6,
+    pe.color = "green", ci.barcolor = "orange", plot.save = TRUE)
 }
 \seealso{
-iboxplot, itab, inumsum, isum
+\code{\link{isum}}, \code{\link{itab}}, \code{\link{inumsum}}, \code{\link{ibarplot}}, \code{\link{iboxplot}}, \code{\link{ikdplot}}
+}
+\author{
+Myo Minn Oo (Email: \email{dr.myominnoo@gmail.com} |
+Website: \url{https://myominnoo.github.io/})
 }
 \keyword{OR,}
 \keyword{Odds}

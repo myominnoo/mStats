@@ -6,7 +6,7 @@
 \usage{
 iboxplot(x, y = NULL, by = NULL, data = NULL, rnd = 1,
   na.rm = FALSE, main = NULL, xlab = NULL, ylab = NULL,
-  show.legend = TRUE, legend.text = NULL, save.plot = FALSE,
+  show.legend = TRUE, legend.text = NULL, plot.save = FALSE,
   plot.name = "iboxplot.tiff", width = 5, height = 4, dpi = 150)
 }
 \arguments{
@@ -32,7 +32,7 @@ iboxplot(x, y = NULL, by = NULL, data = NULL, rnd = 1,
 
 \item{legend.text}{a text for the title of the plot}
 
-\item{save.plot}{a logical value. If TRUE, it saves the plot generated in the current working directory.}
+\item{plot.save}{a logical value. If TRUE, it saves the plot generated in the current working directory.}
 
 \item{plot.name}{a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"}
 
@@ -54,11 +54,12 @@ iboxplot(age, education, data = infert)
 iboxplot(infert$age, infert$education)
 iboxplot(age, pooled.stratum, education, data = infert)
 infert$case <- factor(infert$case)
-iboxplot(age, case, data = infert) # NA is included as one of the categories
+# NA is included as one of the categories
+iboxplot(age, case, data = infert)
 iboxplot(age, case, data = infert, na.rm = TRUE)
 iboxplot(age, case, education, data = infert)
 iboxplot(age, case, education, data = infert, show.legend = F)
-iboxplot(age, case, education, data = infert, save.plot = T)
+iboxplot(age, case, education, data = infert, plot.save = T)
 }
 \seealso{
 ibarplot, itab, inumsum, isum

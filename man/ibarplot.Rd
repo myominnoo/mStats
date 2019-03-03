@@ -7,7 +7,7 @@
 ibarplot(x, y = NULL, by = NULL, data = NULL, rnd = 1,
   na.rm = FALSE, main = NULL, xlab = NULL, ylab = NULL,
   show.legend = TRUE, legend.text = NULL, plot.type = "f",
-  facet.ncol = 2, save.plot = FALSE, plot.name = "ibarplot.tiff",
+  facet.ncol = 2, plot.save = FALSE, plot.name = "ibarplot.tiff",
   width = 5, height = 4, dpi = 150)
 }
 \arguments{
@@ -37,7 +37,7 @@ ibarplot(x, y = NULL, by = NULL, data = NULL, rnd = 1,
 
 \item{facet.ncol}{number of columns to be faceted}
 
-\item{save.plot}{a logical value. If TRUE, it saves the plot generated in the current working directory.}
+\item{plot.save}{a logical value. If TRUE, it saves the plot generated in the current working directory.}
 
 \item{plot.name}{a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"}
 
@@ -48,7 +48,7 @@ ibarplot(x, y = NULL, by = NULL, data = NULL, rnd = 1,
 \item{dpi}{a value for resolution of the plot saved.}
 }
 \description{
-ibarplot is a function that generate a barplot with several options for optimal data visualization of factor variables using ggplot2 package. If one factor is provided as input, a simple barplot will be generated. If two factors, it produces a faceted barplot by default. Grouped bar plot can also be specified. Several parameters including plot title, labels of x and y axes and saving plot can be set by the user.
+\code{ibarplot} generates a barplot with several options for optimal data visualization using ggplot2 package. If one factor is provided as input, a simple barplot will be generated. If two factors, it produces a faceted barplot by default. Grouped bar plot can also be specified. Several parameters including plot title, labels of x and y axes and saving plot can be set by the user.
 }
 \examples{
 ibarplot(infert$education)
@@ -66,10 +66,14 @@ ibarplot(sex)
 ibarplot(marital)
 ibarplot(sex, marital)
 ibarplot(sex, marital, na.rm = TRUE)
-ibarplot(sex, marital, education)
+ibarplot(sex, marital, education, na.rm = TRUE)
 }
 \seealso{
-iboxplot, itab, inumsum, isum
+\code{\link{isum}}, \code{\link{itab}}, \code{\link{inumsum}}, \code{\link{iboxplot}}, \code{\link{ikdplot}}
+}
+\author{
+Myo Minn Oo (Email: \email{dr.myominnoo@gmail.com} |
+Website: \url{https://myominnoo.github.io/})
 }
 \keyword{barplot,}
 \keyword{cross-tabulation,}

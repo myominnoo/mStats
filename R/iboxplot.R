@@ -15,7 +15,7 @@
 #' @param show.legend show or hide the legend. Hide the legend by default
 #' @param legend.text a text for the title of the plot
 #' @param legend.text Legend title
-#' @param save.plot a logical value. If TRUE, it saves the plot generated in the current working directory.
+#' @param plot.save a logical value. If TRUE, it saves the plot generated in the current working directory.
 #' @param plot.name a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"
 #' @param width a value in inches
 #' @param height a value in inches
@@ -29,17 +29,18 @@
 #' iboxplot(infert$age, infert$education)
 #' iboxplot(age, pooled.stratum, education, data = infert)
 #' infert$case <- factor(infert$case)
-#' iboxplot(age, case, data = infert) # NA is included as one of the categories
+#' # NA is included as one of the categories
+#' iboxplot(age, case, data = infert)
 #' iboxplot(age, case, data = infert, na.rm = TRUE)
 #' iboxplot(age, case, education, data = infert)
 #' iboxplot(age, case, education, data = infert, show.legend = F)
-#' iboxplot(age, case, education, data = infert, save.plot = T)
+#' iboxplot(age, case, education, data = infert, plot.save = T)
 
 #' @export
 iboxplot <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
                      main = NULL, xlab = NULL, ylab = NULL,
                      show.legend = TRUE, legend.text = NULL,
-                     save.plot = FALSE, plot.name = 'iboxplot.tiff',
+                     plot.save = FALSE, plot.name = 'iboxplot.tiff',
                      width = 5, height = 4, dpi = 150)
 
 {
@@ -149,7 +150,7 @@ iboxplot <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE
                                             colour = "black", fill = "NA"))
       }
     })
-  if (save.plot) {
+  if (plot.save) {
     ggplot2::ggsave(plot.name, width = width, height = height, dpi = dpi)
     dev.off()
   }

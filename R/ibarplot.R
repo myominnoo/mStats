@@ -1,7 +1,7 @@
 #' @title Create and Save beautiful Bar Plot using ggplot2
 #'
 #' @description
-#' ibarplot is a function that generate a barplot with several options for optimal data visualization of factor variables using ggplot2 package. If one factor is provided as input, a simple barplot will be generated. If two factors, it produces a faceted barplot by default. Grouped bar plot can also be specified. Several parameters including plot title, labels of x and y axes and saving plot can be set by the user.
+#' \code{ibarplot} generates a barplot with several options for optimal data visualization using ggplot2 package. If one factor is provided as input, a simple barplot will be generated. If two factors, it produces a faceted barplot by default. Grouped bar plot can also be specified. Several parameters including plot title, labels of x and y axes and saving plot can be set by the user.
 #'
 #' @param x a vector describing the bars which make up the plot. It is usually on x axis.
 #' @param y a vector describing the y axis or second variable in cross-tabulation or data relationship.
@@ -16,14 +16,16 @@
 #' @param legend.text Legend title
 #' @param plot.type if bivariate analysis, type of plot can be specified. By default, this generates a facted plot. 'p' for parrallel barplot, 's' for stacked barplot, 'fs' for full stacked percentage barplot.
 #' @param facet.ncol number of columns to be faceted
-#' @param save.plot a logical value. If TRUE, it saves the plot generated in the current working directory.
+#' @param plot.save a logical value. If TRUE, it saves the plot generated in the current working directory.
 #' @param plot.name a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"
 #' @param width a value in inches
 #' @param height a value in inches
 #' @param dpi a value for resolution of the plot saved.
 #' @import ggplot2
-#' @seealso iboxplot, itab, inumsum, isum
+#' @seealso \code{\link{isum}}, \code{\link{itab}}, \code{\link{inumsum}}, \code{\link{iboxplot}}, \code{\link{ikdplot}}
 #' @keywords barplot, cross-tabulation, faceted plot
+#' @author Myo Minn Oo (Email: \email{dr.myominnoo@@gmail.com} |
+#' Website: \url{https://myominnoo.github.io/})
 #' @examples
 #' ibarplot(infert$education)
 #' ibarplot(x = education, data = infert)
@@ -40,14 +42,14 @@
 #' ibarplot(marital)
 #' ibarplot(sex, marital)
 #' ibarplot(sex, marital, na.rm = TRUE)
-#' ibarplot(sex, marital, education)
+#' ibarplot(sex, marital, education, na.rm = TRUE)
 
 #' @export
 ibarplot <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
                      main = NULL, xlab = NULL, ylab = NULL,
                      show.legend = TRUE, legend.text = NULL,
                      plot.type = "f", facet.ncol = 2,
-                     save.plot = FALSE, plot.name = 'ibarplot.tiff',
+                     plot.save = FALSE, plot.name = 'ibarplot.tiff',
                      width = 5, height = 4, dpi = 150)
 {
   if (!is.null(data)) {
@@ -175,9 +177,11 @@ ibarplot <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE
                   theme_light()
               }
   )
-  if (save.plot) {
+  if (plot.save) {
+    plot(p)
     ggplot2::ggsave(plot.name, width = width, height = height, dpi = dpi)
     dev.off()
+    cat(paste0("\n... plot saved to \"", getwd(), "/", plot.name, "\" ...\n\n"))
   }
   p
 }

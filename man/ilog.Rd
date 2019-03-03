@@ -16,13 +16,14 @@ extension ".txt".}
 \item{append}{A logical value, indicating whether the log file is appended or not.}
 }
 \description{
-ilog is a function to log console interactively which is inspired by Stata Software. This
-function captures outputs from console in a local environment which is running behind
-the scene. Hence, be advised that clearing the workspace of removing environments can
-make it stop working.
-
-The prompt '>' and continue '+' can be restored by typing this in the console: options
-(prompt = "> ", continue = "+ ").
+\code{\link{ilog}} is a function to log console interactively which is inspired by Stata Software.
+This function captures outputs from console in a local environment which is running behind
+the scene. Please be reminded that clearing the environments can make the logging stop.
+In that case, your console will still be like this "log>". See the following instructions:
+\enumerate{
+  \item The prompt '>' and continue '+' can be restored by typing this in the console:
+  \item options(prompt = "> ", continue = "+ ").
+}
 }
 \examples{
 ilog("myfirstlog.txt", append = F)
@@ -30,11 +31,15 @@ isum(infert)
 str(infert)
 isum(iris)
 str(iris)
-isum(AirPassengers) # not logging the output when errors appear.
+isum(AirPassengers) # not logging error or warning messages
 ilog.close()
 }
 \seealso{
-isum, igroup, ixtab, irestart
+\code{\link{isum}}, \code{\link{itab}}, \code{\link{inumsum}}, \code{\link{ibarplot}}, \code{\link{iboxplot}}, \code{\link{ikdplot}}
+}
+\author{
+Myo Minn Oo (Email: \email{dr.myominnoo@gmail.com} |
+Website: \url{https://myominnoo.github.io/})
 }
 \keyword{console}
 \keyword{console,}

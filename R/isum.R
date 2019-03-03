@@ -26,7 +26,7 @@
 #' @param legend.text Legend title
 #' @param plot.type if bivariate analysis, type of plot can be specified. By default, this generates a facted plot. 'p' for parrallel barplot, 's' for stacked barplot, 'fs' for full stacked percentage barplot.
 #' @param facet.ncol number of columns to be faceted
-#' @param save.plot a logical value. If TRUE, it saves the plot generated in the current working directory.
+#' @param plot.save a logical value. If TRUE, it saves the plot generated in the current working directory.
 #' @param plot.name a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"
 #' @param width a value in inches
 #' @param height a value in inches
@@ -77,7 +77,7 @@ isum <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
                  plot.display = TRUE, plot.type = "f", boxplot = TRUE,
                  main = NULL, xlab = NULL, ylab = NULL, alpha = 0.1,
                  show.legend = TRUE, legend.text = NULL, facet.ncol = 2,
-                 save.plot = FALSE, plot.name = 'isum.tiff',
+                 plot.save = FALSE, plot.name = 'isum.tiff',
                  width = 5, height = 4, dpi = 150)
 {
   if (!is.null(data)) {
@@ -104,14 +104,14 @@ isum <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
                    plot.display = plot.display, boxplot = boxplot,
                    main = main, xlab = xlab, ylab = ylab, alpha = alpha,
                    show.legend = show.legend, legend.text = legend.text,
-                   facet.ncol = facet.ncol, save.plot = save.plot, plot.name = plot.name,
+                   facet.ncol = facet.ncol, plot.save = plot.save, plot.name = plot.name,
                    width = width, height = height, dpi = dpi)
   } else if (is.character(x) | is.factor(x) | is.logical(x)) {
     df <- itab(x = x, y = y, by = by, rnd = rnd, na.rm = na.rm,
                 x.varname = lab.x, y.varname = lab.y, by.varname = lab.by,
                 pct = pct, plot.display = plot.display, main = main, xlab = xlab,
                 ylab = ylab, show.legend = show.legend, legend.text = legend.text,
-                plot.type = plot.type, facet.ncol = facet.ncol, save.plot = save.plot,
+                plot.type = plot.type, facet.ncol = facet.ncol, plot.save = plot.save,
                 plot.name = plot.name, width = width, height = height, dpi = dpi)
   } else if (is.Date(x)) {
     if (is.null(xlab)) xlab <- lab.x
