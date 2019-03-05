@@ -2,65 +2,120 @@
 % Please edit documentation in R/iboxplot.R
 \name{iboxplot}
 \alias{iboxplot}
-\title{Create and Save beautiful Box Plot using ggplot2}
+\title{Delightful Box plots and Scatter Plots}
 \usage{
 iboxplot(x, y = NULL, by = NULL, data = NULL, rnd = 1,
-  na.rm = FALSE, main = NULL, xlab = NULL, ylab = NULL,
-  show.legend = TRUE, legend.text = NULL, plot.save = FALSE,
-  plot.name = "iboxplot.tiff", width = 5, height = 4, dpi = 150)
+  na.rm = TRUE, main = NULL, xlab = NULL, ylab = NULL,
+  legend.text = NULL, text.size = 12, plot.save = FALSE,
+  plot.name = "<unnamed>.tiff", width = 5, height = 4, dpi = 150)
 }
 \arguments{
-\item{x}{a vector describing the bars which make up the plot. It is usually on x axis.}
+\item{x}{a factor object}
 
-\item{y}{a vector describing the y axis or second variable in cross-tabulation or data relationship.}
+\item{y}{a factor object; if ignored, frequency distribution on x is generated.}
 
-\item{by}{a vector describing the grouping of x. By default, the plot generates a faceted barplot.}
+\item{by}{a factor object; if ignored, cross-tabulation on x and y is generated.}
 
-\item{data}{an optional data frame (or object coercible by as.data.frame to a data frame) containing the variables for contigency table.}
+\item{data}{an optional data frame}
 
-\item{rnd}{an integer indicating the number of decimal places:}
+\item{rnd}{specify rounding of numbers. See \code{\link{round}}.}
 
-\item{na.rm}{A logical value indicating to remove NA values in the table or not. By Default, the value is TRUE}
+\item{na.rm}{A logical value to specify missing values, <NA>:}
 
-\item{main}{a main title for the plot.}
+\item{main}{title of the plot}
 
-\item{xlab}{a label for the x axis, defaults to a description of x.}
+\item{xlab}{x-axis label}
 
-\item{ylab}{a label for the y axis, defaults to a description of y.}
+\item{ylab}{y-axis label}
 
-\item{show.legend}{show or hide the legend. Hide the legend by default}
+\item{legend.text}{title of legend}
 
-\item{legend.text}{a text for the title of the plot}
+\item{text.size}{size of text in the plot}
 
-\item{plot.save}{a logical value. If TRUE, it saves the plot generated in the current working directory.}
+\item{plot.save}{save the plot}
 
-\item{plot.name}{a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"}
+\item{plot.name}{specify for name of the plot file to be saved. 
+Filename can be in either of these extension formats: ".tiff", ".png", and ".pdf"}
 
-\item{width}{a value in inches}
+\item{width}{integer measured in inches}
 
-\item{height}{a value in inches}
+\item{height}{integer measured in inches}
 
-\item{dpi}{a value for resolution of the plot saved.}
-
-\item{legend.text}{Legend title}
+\item{dpi}{specify resolution of the plot to be saved}
 }
 \description{
-generate a boxplot for data exploration and visualization using ggplot2 package.
+\code{iboxplot} generates optimized box plots and scatter plots 
+for univariate, bivariate and stratified analyses.
+}
+\details{
+Exploring data before jumping into complex analysis is always a necessity. 
+The first step of an analysis should be to summarize and display data.
+By doing so, invaluable insight can be gained through the familiarity with the data.
+
+\strong{Box plot}
+
+Described by Tukey (1977), displays five figure summary of a distribution: 
+the median, quartiles, minimum and maximum. In addition, any observations whose 
+distance is more than 1.5 times the interquartile range are denoted as outliers 
+and shown as red points. This type of plot is useful for showing the comparison 
+of several groups. 
+
+\strong{Scatter plot}
+
+Scaling two continous variables along horizontal and vertical axis, this plot is 
+known as scatter plot or diagram. Each pair of observations is displayed with a
+hollow circle to better visualize the overlapping density. This can be further 
+stratified in color by a third factor variable. For the association of two variables, a blue best fitted line is drawn by linear 
+method. 
+
+\strong{References:}
+\enumerate{
+  \item An Introduction to MEdical Statistics, Martin Bland, Thrid Edition, 
+  Chapter 4, page 58 & 75-7
+}
 }
 \examples{
+data(infert)
+str(infert)
+
+## univariate analysis
 iboxplot(infert$age)
 iboxplot(age, data = infert)
+iboxplot(age, data = infert, main = "My Plot: Age", xlab = 'Age in years')
+iboxplot(age, data = infert)
+iboxplot(pooled.stratum, data = infert)
+
+## bivariate analysis
+iboxplot(infert$age, infert$parity)
+iboxplot(age, pooled.stratum, data = infert)
+iboxplot(age, parity, data = infert, main = 'My plot: age x parity', 
+         xlab = 'Age in years', ylab = 'Parity')
+         
 iboxplot(age, education, data = infert)
-iboxplot(infert$age, infert$education)
-iboxplot(age, pooled.stratum, education, data = infert)
-infert$case <- factor(infert$case)
-# NA is included as one of the categories
-iboxplot(age, case, data = infert)
-iboxplot(age, case, data = infert, na.rm = TRUE)
-iboxplot(age, case, education, data = infert)
-iboxplot(age, case, education, data = infert, show.legend = F)
-iboxplot(age, case, education, data = infert, plot.save = T)
+infert$case = factor(infert$case)
+iboxplot(age, case, data = infert, main = 'My plot: age x case', 
+         xlab = 'Case', ylab = 'Age in years')
+
+## stratified analysis 
+iboxplot(infert$age, infert$parity, infert$education)
+iboxplot(age, parity, education, data = infert, main = 'Stratified Plot', 
+         xlab = 'Age', ylab = 'Parity', legend.text = 'Education')
+
+iboxplot(age, education, case, data = infert)
+iboxplot(age, case, education, data = infert, main = 'Stratified box plot', 
+         xlab = 'Case', ylab = 'Age in years', legend.text = 'Education')
 }
 \seealso{
-ibarplot, itab, inumsum, isum
+\code{\link{isum}}, \code{\link{itab}}, \code{\link{ibarplot}}
 }
+\author{
+Myo Minn Oo (Email: \email{dr.myominnoo@gmail.com} |
+Website: \url{https://myominnoo.github.io/})
+}
+\keyword{bar}
+\keyword{box}
+\keyword{full}
+\keyword{plot,}
+\keyword{scatter}
+\keyword{stacked}
+\keyword{whisker}

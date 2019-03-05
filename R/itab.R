@@ -1,201 +1,189 @@
-#' @title Tabulation, Cross Tabulation and Graphical Display
-#'
+#' @title Frequency distribution, cross-tabulation and stratified tabulation
 #' @description
-#' generates simple tabulation, cross-tabulation and stratified cross-tabulation tables.
-#'
-#' @param x a vector describing the bars which make up the plot. It is usually on x axis.
-#' @param y a vector describing the y axis or second variable in cross-tabulation or data relationship.
-#' @param by a vector describing the grouping of x. By default, the plot generates a faceted barplot.
-#' @param data an optional data frame (or object coercible by as.data.frame to a data frame) containing the variables for contigency table.
-#' @param rnd an integer indicating the number of decimal places:
-#' @param na.rm A logical value indicating to remove NA values in the table or not. By Default, the value is TRUE
-#' @param pct type of percentages in cross-tabulation: by default, it shows row percentages in two
-#' @param plot.display logical value, indicating whether plot will be displayed or not
-#' @param main a main title for the plot.
-#' @param xlab a label for the x axis, defaults to a description of x.
-#' @param ylab a label for the y axis, defaults to a description of y.
-#' @param show.legend show or hide the legend. Hide the legend by default
-#' @param legend.text Legend title
-#' @param plot.type if bivariate analysis, type of plot can be specified. By default, this generates a facted plot. 'p' for parrallel barplot, 's' for stacked barplot, 'fs' for full stacked percentage barplot.
-#' @param facet.ncol number of columns to be faceted
-#' @param plot.save a logical value. If TRUE, it saves the plot generated in the current working directory.
-#' @param plot.name a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"
-#' @param width a value in inches
-#' @param height a value in inches
-#' @param dpi a value for resolution of the plot saved.
+#' \code{itab} generates Frequency distribution, cross-tabulation and stratified 
+#' tabulations. 
+#' @param x a factor object
+#' @param y a factor object; if ignored, frequency distribution on x is generated. 
+#' @param by a factor object; if ignored, cross-tabulation on x and y is generated.
+#' @param data an optional data frame 
+#' @param rnd specify rounding of numbers. See \code{\link{round}}.
+#' @param na.rm A logical value to specify missing values, <NA> in the table
+#' @param pct type of percentages in cross-tabulation: by default, it's row percentage.
+#' @param plot.show display bar plots of the data
+#' @details 
+#' Exploring data before jumping into complex analysis is always a necessity. 
+#' The first step of an analysis should be to summarize and display data.
+#' By doing so, invaluable insight can be gained through the familiarity with the data.
+#' 
+#' \code{itab} 
+#' uses simple tabular techniques for displaying the distribution of
+#' values taken by a single variable, the association between two variables as well as 
+#' stratified tabulation. 
+#' 
+#' In addition, \code{itab} generates delightful bar plots of the data, using another 
+#' function called \code{\link{ibarplot}}. This function also make use of a powerful 
+#' and famous package, \code{\link{ggplot2}}, hence the plots generated 
+#' by \code{itab} are just beautiful and delightful. If you want to save the plot, 
+#' see \code{\link{ibarplot}} for full details. 
+#' 
+#' \strong{References:}
+#' \enumerate{
+#'   \item Essential Medical Statistics, Betty R. Kirkwood & Jonathan A.C. Sterne, 
+#'   Second Edition. Chapter 3
+#'   \item An Introduction to MEdical Statistics, Martin Bland, Thrid Edition, 
+#'   Chapter 4
+#' }
+#' 
 #' @import ggplot2
-#' @seealso ibarplot, inumsum, ikdplot, iboxplot, isum
-#' @keywords tabulation, frequency table, cross-tabulation, contigency table
+#' @import graphics
+#' @seealso \code{\link{isum}}, \code{\link{ibarplot}}
+#' @keywords frequency distribution, cross-tabulation, stratified tabulation
+#' @author Myo Minn Oo (Email: \email{dr.myominnoo@@gmail.com} |
+#' Website: \url{https://myominnoo.github.io/})
 #' @examples
 #' str(infert)
-#' # tabulation of one factor variable
+#' 
+#' ## univariate analysis
+#' itab(infert$education) 
 #' itab(education, data = infert)
-#' itab(parity, data = infert)
-#' itab(case, data = infert)
 #' itab(spontaneous, data = infert)
-#' # cross-tabulation
-#' itab(case, education, data = infert, plot.display = FALSE)
-#' itab(case, education, data = infert)
-#' itab(case, education, data = infert, pct = 'col') # change percentage type
-#' itab(case, education, data = infert, pct = 'row') # default percentage type
-#' itab(case, education, data = infert, pct = 'all')
-#' itab(case, education, data = infert, pct = 'none')
-#'
-#' # changing plot types
-#' itab(induced, education, data = infert)
-#' itab(induced, education, data = infert, plot.type = 'f') # default faceted type
-#' itab(induced, education, data = infert, plot.type = 'p') # parallel bar
-#' itab(induced, education, data = infert, plot.type = 's') # stacked bar
-#' itab(induced, education, data = infert, plot.type = 'fs') # full stacked bar
-#' itab(induced, education, data = infert, facet.ncol = 3) # change number of facets
-#' itab(induced, education, data = infert, plot.type = 'p', show.legend = FALSE) # legend on and off
-#' itab(induced, education, data = infert, plot.save = TRUE) # save plot to current directory
-#' itab(induced, education, data = infert, plot.save = TRUE, plot.name = "mybarplot.tiff")
-#' itab(induced, education, data = infert, plot.save = TRUE, width = 10, height = 8, dpi = 300)
-#' # three variables - analysis
-#' infert$case <- factor(infert$case)
-#' infert$induced <- factor(infert$induced)
-#' itab(case, education, induced, data = infert)
-#' itab(case, education, induced, data = infert, na.rm = TRUE, pct = 'col')
+#' 
+#' ## bivariate analysis
+#' itab(infert$education, infert$case) 
+#' itab(education, case, data = infert, pct = 'col') # col percentage
+#' itab(education, case, data = infert, pct = 'all')
+#' 
+#' ## stratified analysis 
+#' itab(education, case, parity, data = infert)
+#' itab(education, case, parity, data = infert, na.rm = TRUE)
 
 #' @export
-itab <- function(x, y = NULL, by  = NULL, data = NULL, rnd = 1, na.rm = FALSE,
-                 x.varname = NULL, y.varname = NULL, by.varname = NULL,
-                 pct = "row", plot.display = TRUE,
-                 main = NULL, xlab = NULL, ylab = NULL,
-                 show.legend = TRUE, legend.text = NULL,
-                 plot.type = "f", facet.ncol = 2,
-                 plot.save = FALSE, plot.name = 'itab.tiff',
-                 width = 5, height = 4, dpi = 150)
+itab <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
+                 pct = "row", plot.show = TRUE)
 {
-
-  # data input
   if (!is.null(data)) {
     arguments <- as.list(match.call())
-    x <- eval(arguments$x, data)
-    y <- eval(arguments$y, data)
-    by <- eval(arguments$by, data)
-
-    lab.x <- ifelse(is.null(x.varname), arguments$x, x.varname)
-    lab.y <- ifelse(is.null(y.varname), arguments$y, y.varname)
-    if (is.null(by)) {lab.by <- NULL} else {
-      lab.by <- ifelse(is.null(by.varname), arguments$by, by.varname)
-    }
+    x <- eval(substitute(x), data)
+    y <- eval(substitute(y), data)
+    by <- eval(substitute(by), data)
+    
+    x.name <- arguments$x
+    y.name <- arguments$y
+    by.name <- arguments$by
   } else {
-    lab.x <- ifelse(is.null(x.varname), deparse(substitute(x)), x.varname)
-    if (!is.null(y)) lab.y <- ifelse(is.null(y.varname), deparse(substitute(y)), y.varname)
-    if (!is.null(by)) lab.by <- ifelse(is.null(by.varname), deparse(substitute(by)),
-                                       by.varname)
+    x.name <- deparse(substitute(x))
+    if (!is.null(y)) y.name <- deparse(substitute(y))
+    if (!is.null(by)) by.name <- deparse(substitute(by))
   }
-
-  # # create data frame
-  # data <- data.frame(x)
-  # if (!is.null(y)) {
-  #   data <- data.frame(x, y)
-  # }
-  # if (!is.null(by)) {
-  #   data <- data.frame(x, y, by)
-  # }
-
-  # levels of useNA in table() has c("no", "ifany", "always)
+  
   include.na <- ifelse(na.rm, "no", "ifany")
-
-  # switch mechanisms
   type <- ifelse(is.null(y), "uni", ifelse(is.null(by), "bi", "strata"))
-
-  ctab <- function(tab, pct, rnd) {
-    tabr <- rbind(tab, Total = colSums(tab))
-    tabc <- cbind(tab, Total = rowSums(tab))
-    tbl <- cbind(tabr, Total = rowSums(tabr))
-
-    rpct <- round(tbl / rowSums(tabr) * 100, rnd) # row percentage
-    cpct <- round(t(t(tbl) / colSums(tabc)) * 100, rnd) # column percentage
-    tpct <- round(tbl / sum(tab) * 100, rnd)
-
-    p.value <- suppressWarnings(chisq.test(tab)$p.value)
-    p.value <- c(ifelse(p.value < 0.001, "<0.001", round(p.value, 3)),
-                 rep("", nrow(tbl) - 1))
-
-    tblr <- NULL; tblc <- NULL; tblt <- NULL
-    var.r <- NULL; var.c <- NULL; var.t <- NULL
-    for ( i in 1:ncol(tbl)) {
-      tblt <- data.frame(cbind(tblt, tbl[,i], tpct[,i]))
-      var.t <- c(var.t, colnames(tbl)[i], "(t%)")
-      tblr <- data.frame(cbind(tblr, tbl[,i], rpct[,i]))
-      var.r <- c(var.r, colnames(tbl)[i], "(r%)")
-      tblc <- data.frame(cbind(tblc, tbl[,i], cpct[,i]))
-      var.c <- c(var.c, colnames(tbl)[i], "(c%)")
-    }
-
-    tblt <- cbind(tblt, p.value = p.value)
-    tblr <- cbind(tblr, p.value = p.value)
-    tblc <- cbind(tblc, p.value = p.value)
-
-    colnames(tblt) <- c(var.t, "p.value")
-    colnames(tblr) <- c(var.r, "p.value")
-    colnames(tblc) <- c(var.c, "p.value")
-    names(dimnames(tbl)) <- c(lab.x, lab.y)
-    names(dimnames(tblt)) <- c(lab.x, lab.y)
-    names(dimnames(tblr)) <- c(lab.x, lab.y)
-    names(dimnames(tblc)) <- c(lab.x, lab.y)
-
-
-    df <- list(no.percentage = tbl,
-               total.percentage = tblt,
-               row.percentage = tblr,
-               column.percentage = tblc)
-    switch(pct,
-           none = tbl,
-           total = tblt,
-           row = tblr,
-           col = tblc,
-           all = df)
-  }
-
+  
   res <- switch(
     type,
     uni = {
-      # frequency table
-      tbl <- table(x, useNA = include.na)
-      t.count <- c(tbl, Total = sum(tbl))
-      c.count <- c(cumsum(tbl), sum(tbl))
-      names(c.count) <- names(t.count)
-      r.freq <- t.count / sum(tbl) * 100
-      c.freq <- c.count / sum(tbl) * 100
-      names(c.freq) <- names(t.count)
-      df <- cbind(t.count, round(r.freq, rnd), round(c.freq, rnd))
-      colnames(df) <- c("n", "(col%)", "(cum.col%)")
-      names(dimnames(df)) <- c(lab.x, "")
-      uni = df
-    },
-    bi = ctab(table(x, y, useNA = include.na), pct = pct, rnd = rnd),
+      cat(paste0('\nFrequency distribution: ', x.name, '\n\n'))
+      unitab(x, rnd, include.na)}, 
+    bi = {
+      cat(paste0('\nCross-tabulation: \"', x.name, '\" ~ \"', y.name, '\"\n',
+                     'Note: showing ', toupper(pct), ' percentages\n\n'))
+      bitab(x, y, rnd, include.na, pct)}, 
     strata = {
-      by.levels <- as.character(unique(na.omit(by)))
-      res <- lapply(by.levels,
-                    function(z)
-                      ctab(table(x[by == z], y[by == z]), pct = pct, rnd = rnd))
-      res <- structure(res, names = by.levels)
-      if (!na.rm) {
-        res[["NA"]] <- ctab(table(x[is.na(by)], y[is.na(by)]), pct = pct, rnd = rnd)
-      }
-      strata = res
-    })
-
-  if (plot.display) {
-    main <- ifelse(is.null(main),
-                   ifelse(is.null(y), paste0('Plot of ', lab.x),
-                          ifelse(is.null(by), paste0('Plot of ', lab.x, ' ~ ', lab.y),
-                                 paste0('Plot of ', lab.x, ' ~ ', lab.y, ', stratified by ',
-                                        lab.by))),main)
-    xlab <- ifelse(is.null(xlab), lab.x, xlab)
-    ylab <- ifelse(is.null(ylab),
-                   ifelse(plot.type == 'fs', 'Percentage (%)', 'Number'), ylab)
-    if (!is.null(y)) legend.text <- ifelse(is.null(legend.text), lab.y, legend.text)
-    plot(ibarplot(x = x, y = y, by = by, rnd = rnd, na.rm = na.rm,
-                  main = main, xlab = xlab, ylab = ylab, show.legend = show.legend,
-                  legend.text = legend.text, plot.type = plot.type,
-                  facet.ncol = facet.ncol, plot.save = plot.save,
-                  plot.name = plot.name, width = width, height = height, dpi = dpi))
+      cat(paste0('\nStratified cross-tabulation: \"', x.name, '\" ~ \"', y.name, 
+                     '\", by \"', by.name, '\"\n',
+                     'Note: showing ', toupper(pct), ' percentages\n\n'))
+      strtab(x, y, by, rnd, include.na, pct)}
+  )
+  
+  if (plot.show) {
+    main <- ifelse(is.null(y), paste0('Plot: ', x.name), 
+                               ifelse(is.null(by), 
+                                      paste0('Plot: ', x.name, ' ~ ', y.name), 
+                                      paste0('Plot: ', x.name, ' ~ ', y.name, 
+                                             ' | ', by.name)))
+    plot(
+      ibarplot(x, y, by, na.rm = na.rm, main = main, xlab = x.name, 
+               legend.text = y.name)
+    )
+    
   }
+  
   return(res)
+}
+
+unitab <- function(x, rnd, include.na) {
+  tbl <- table(x, useNA = include.na)
+  t.count <- c(tbl, Total = sum(tbl))
+  c.count <- c(cumsum(tbl), sum(tbl))
+  r.freq <- t.count / sum(tbl) * 100
+  c.freq <- c.count / sum(tbl) * 100
+  df <- cbind(t.count, round(r.freq, rnd), round(c.freq, rnd))
+  colnames(df) <- c("Freq.", "(Percent.)", "(Cum.Percent)")
+  return(df)
+}
+
+bitab <- function(x, y, rnd = 1, include.na, pct = 'row') {
+  tab <- table(x, y, useNA = include.na)
+  tabr <- rbind(tab, Total = colSums(tab))
+  tabc <- cbind(tab, Total = rowSums(tab))
+  tbl <- cbind(tabr, Total = rowSums(tabr))
+  
+  rpct <- round(tbl / rowSums(tabr) * 100, rnd) # row pct
+  cpct <- round(t(t(tbl) / colSums(tabc)) * 100, rnd) # col pct
+  tpct <- round(tbl / sum(tab) * 100, rnd) # total pct
+  
+  if (any(tab < 5)) 
+    pvalue <- tryCatch({
+      suppressWarnings(fisher.test(x, y, simulate.p.value = TRUE)$p.value)
+    }, error = function(err) {
+      return(NA)
+    }) else 
+      pvalue <- tryCatch({
+        suppressWarnings(chisq.test(x, y, correct = FALSE)$p.value)
+      }, error = function(err) {
+        return(NA)
+      })
+  pvalue <- c(ifelse(pvalue < 0.001, "<0.001", round(pvalue, 3)),
+              rep("", nrow(tbl) - 1))
+  pvalue.name <- ifelse(any(tab < 5), 'p-value (Exact)', 'p-value (Chi)')
+  
+  tblr <- NULL; tblc <- NULL; tblt <- NULL
+  var.r <- NULL; var.c <- NULL; var.t <- NULL
+  for ( i in seq_len(ncol(tbl))) {
+    tblt <- data.frame(cbind(tblt, tbl[,i], tpct[,i]))
+    var.t <- c(var.t, colnames(tbl)[i], "(t%)")
+    tblr <- data.frame(cbind(tblr, tbl[,i], rpct[,i]))
+    var.r <- c(var.r, colnames(tbl)[i], "(r%)")
+    tblc <- data.frame(cbind(tblc, tbl[,i], cpct[,i]))
+    var.c <- c(var.c, colnames(tbl)[i], "(c%)")
+  }
+  
+  tblt <- cbind(tblt, pvalue = pvalue)
+  tblr <- cbind(tblr, pvalue = pvalue)
+  tblc <- cbind(tblc, pvalue = pvalue)
+  
+  colnames(tblt) <- c(var.t, pvalue.name)
+  colnames(tblr) <- c(var.r, pvalue.name)
+  colnames(tblc) <- c(var.c, pvalue.name)
+  
+  df <- list(no.percentage = tbl,
+             total.percentage = tblt,
+             row.percentage = tblr,
+             column.percentage = tblc)
+  
+  return(switch(pct,
+                no = tbl,
+                total = tblt,
+                row = tblr,
+                col = tblc,
+                all = df))
+}
+
+strtab <- function(x, y, by, rnd = 1, include.na = 'ifany', pct = 'row') 
+{
+  if (include.na == 'no') lvl <- unique(na.omit(by)) else lvl <- unique(by)
+  df <- lapply(lvl, function(z) bitab(x[by == z], y[by == z], 
+                                      rnd, include.na, pct))
+  df <- structure(df, names = lvl)
+  return(df)
 }

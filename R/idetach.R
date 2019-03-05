@@ -1,19 +1,26 @@
-#' @title Detach all objects in search pathway
+#' @title Detach user-loaded packges in the search pathway
 #'
 #' @description
-#' idetach removes two types of user-loaded objects in the search pathway:
-#'
-#' 1) user-loaded packages
-#'
-#' 2) attached data objects
-#'
-#' @keywords detach all, packages, data, search
+#' \code{idetach} searches and removes two types of user-loaded objects in the search pathway:
+#' 
+#' \enumerate{
+#'   \item user-loaded packages
+#'   \item attached data objects
+#' }
+#' @import foreign
+#' @import MASS
+#' @seealso \code{\link{clear}}
+#' @keywords detach all, user-loaded packages
+#' @author Myo Minn Oo (Email: \email{dr.myominnoo@@gmail.com} |
+#' Website: \url{https://myominnoo.github.io/})
 #' @examples
+#' \dontrun{
 #' library(foreign)
 #' library(MASS)
 #' search()
 #' idetach()
 #' search()
+#' }
 
 #' @export
 idetach <- function() {

@@ -4,7 +4,7 @@
 \alias{strate}
 \title{Tabulate and stratify incidence rates}
 \usage{
-strate(time, event, data = NULL, strata = NULL, fail = NULL,
+strate(time, event, strata = NULL, data = NULL, fail = NULL,
   perPY = 1, rnd = 4)
 }
 \arguments{
@@ -12,9 +12,9 @@ strate(time, event, data = NULL, strata = NULL, fail = NULL,
 
 \item{event}{event of interest to calculate incidence}
 
-\item{data}{an optional data frame}
-
 \item{strata}{specify variable to calculate stratified rates}
+
+\item{data}{an optional data frame}
 
 \item{fail}{failure event}
 
@@ -23,37 +23,60 @@ strate(time, event, data = NULL, strata = NULL, fail = NULL,
 \item{rnd}{Rounding of numbers}
 }
 \description{
-\code{\link{strate}} calculates incidence rates of the cohort. Rates of event 
-occurrences, known as incidence rates are outcome measures in longitudinal studies. 
-Calculation is based on the method descibed by Kirkwood & Sterne: 
-"Essential Medical Statistics: Betty R. Kirkwood & Jonathan A.C. Sterne" Second 
-Edition, Part D, Chapter 22, page 229 & 238.
+\code{\link{strate}} calculates incidence rates of the cohort.
+}
+\details{
+Rates of event occurrences, known as incidence rates are outcome measures in 
+longitudinal studies. In most longitudinal studies, follow-up times vary due 
+to logistic resasons, different periods of recruitment, delay enrolment into 
+the study, lost-to-follow-up, immigration or emigration and death. 
+
+\strong{Follow-up time in longitudinal studies}
+
+Period of observation (called as follow-up time) starts when individuals join 
+the study and ends when they either have an outcome of interest, are lost-to-
+follow-up or the follow-up period ends, whichever happens first. This period is 
+called \strong{person-year-at-risk}. This is denoted by \emph{PY} in \code{strate} 
+function's output and numer of event by \emph{D}. 
+
+\strong{Rate}
+
+is calcluated using the following formula: 
+\deqn{\lambda = D / PY}
+
+\strong{Confidence interval of rate}
+
+is derived using the following formula: 
+
+\deqn{95\% CI (rate) = rate x Error Factor}
+\deqn{Error Factor (rate) = exp(1.96 / \sqrtD)}
+
+\strong{References:}
+\enumerate{
+  \item Essential Medical Statistics, Betty R. Kirkwood & Jonathan A.C. Sterne, 
+  Second Edition. Chapter 22, page 229 & 239
+}
 }
 \examples{
-## use diet data from PaulDickman
-## Source: \\url{http://www.pauldickman.com/survival/stataintro.pdf}
-
-diet <- foreign::read.dta("http://www.pauldickman.com/survival/diet.dta")
-diet$suryear <- as.numeric(diet$dox - diet$doe) / 365.25
+library(survival)
+data(lung)
+str(lung)
 
 ## incidence rates
-strate(suryear, chd, data = diet)
-strate(suryear, chd, data = diet, perPY = 1000)
+strate(time, status, data = lung)
+strate(time, status, data = lung, per = 100000)
 
 ## stratified incidence rates
-strate(suryear, chd, diet, job, perPY = 1000) # strata
-strate(suryear, chd, diet, hieng, perPY = 1000) #strata
+lung$sex <- factor(lung$sex, levels = c(1:2), labels = c('male', 'female'))
+strate(time, status, sex, lung, per = 100000)
+strate(time, status, inst, lung, per = 100000)
 }
 \seealso{
-\code{\link{isum}}
+\code{\link{isum}}, \code{\link{itab}},
 }
 \author{
 Myo Minn Oo (Email: \email{dr.myominnoo@gmail.com} |
 Website: \url{https://myominnoo.github.io/})
 }
-\keyword{contigency}
-\keyword{cross-tabulation,}
-\keyword{frequency}
-\keyword{table}
-\keyword{table,}
-\keyword{tabulation,}
+\keyword{incidence}
+\keyword{rate}

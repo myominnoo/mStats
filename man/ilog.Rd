@@ -3,39 +3,54 @@
 \name{ilog}
 \alias{ilog}
 \alias{ilog.close}
-\title{Simple function for logging console in R}
+\title{Echo a copy of console to log file}
 \usage{
-ilog(logfile = "mylog.txt", append = FALSE)
+ilog(logfile = "<unnamed>.txt", append = FALSE)
 
 ilog.close()
 }
 \arguments{
-\item{logfile}{A character, denoted by the name of desired log file which follows by an
-extension ".txt".}
+\item{logfile}{Name of desired log file in \code{.txt} format}
 
-\item{append}{A logical value, indicating whether the log file is appended or not.}
+\item{append}{specify if the log file will be appended or not}
 }
 \description{
-\code{\link{ilog}} is a function to log console interactively which is inspired by Stata Software.
-This function captures outputs from console in a local environment which is running behind
-the scene. Please be reminded that clearing the environments can make the logging stop.
-In that case, your console will still be like this "log>". See the following instructions:
-\enumerate{
-  \item The prompt '>' and continue '+' can be restored by typing this in the console:
-  \item options(prompt = "> ", continue = "+ ").
+\code{ilog} allows to echo a copy of your console to log file.
 }
+\details{
+\code{ilog} is a two-step function that allows you a record of your console. 
+A log is a file containing what you type and console output. If a name is not 
+specified, then \code{ilog} will use the name \code{<unnamed>.txt}.
+
+\code{ilog} opens a log file and \code{ilog.close} close the file. 
+
+\strong{Warnings:}
+
+Be reminded that clearing the environments while logging distrubs the 
+process. If such happens, console prompt will be stuck at \code{log> }. 
+Run the \code{commands} below to revert the console prompt back to normal.
+
+options(prompt = \code{"> "}, continue = \code{"+ "})
+
+\strong{Acknowledgement:}
+\code{ilog} and \code{ilog.close} are inspriations from \code{STATA} software.
 }
 \examples{
-ilog("myfirstlog.txt", append = F)
-isum(infert)
+ilog("myfirstlog.txt")
 str(infert)
-isum(iris)
+itab(infert$education)
 str(iris)
-isum(AirPassengers) # not logging error or warning messages
+isum(iris$Sepal.Length)
+ilog.close()
+
+## appending the file. 
+ilog("myfirstlog.txt", append = TRUE)
+summary(infert)
+summary(iris)
 ilog.close()
 }
 \seealso{
-\code{\link{isum}}, \code{\link{itab}}, \code{\link{inumsum}}, \code{\link{ibarplot}}, \code{\link{iboxplot}}, \code{\link{ikdplot}}
+\code{\link{idetach}}, \code{\link{clear}},
 }
 \author{
 Myo Minn Oo (Email: \email{dr.myominnoo@gmail.com} |

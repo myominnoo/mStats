@@ -2,80 +2,119 @@
 % Please edit documentation in R/ibarplot.R
 \name{ibarplot}
 \alias{ibarplot}
-\title{Create and Save beautiful Bar Plot using ggplot2}
+\title{Delightful Bar Plots}
 \usage{
 ibarplot(x, y = NULL, by = NULL, data = NULL, rnd = 1,
   na.rm = FALSE, main = NULL, xlab = NULL, ylab = NULL,
-  show.legend = TRUE, legend.text = NULL, plot.type = "f",
-  facet.ncol = 2, plot.save = FALSE, plot.name = "ibarplot.tiff",
+  text.size = 12, label.pct = FALSE, flip.axis = FALSE,
+  legend.show = TRUE, legend.text = NULL, plot.type = "p",
+  facet.ncol = 2, plot.save = FALSE, plot.name = "<unnamed>.tiff",
   width = 5, height = 4, dpi = 150)
 }
 \arguments{
-\item{x}{a vector describing the bars which make up the plot. It is usually on x axis.}
+\item{x}{a factor object}
 
-\item{y}{a vector describing the y axis or second variable in cross-tabulation or data relationship.}
+\item{y}{a factor object; if ignored, frequency distribution on x is generated.}
 
-\item{by}{a vector describing the grouping of x. By default, the plot generates a faceted barplot.}
+\item{by}{a factor object; if ignored, cross-tabulation on x and y is generated.}
 
-\item{data}{an optional data frame (or object coercible by as.data.frame to a data frame) containing the variables for contigency table.}
+\item{data}{an optional data frame}
 
-\item{rnd}{an integer indicating the number of decimal places:}
+\item{rnd}{specify rounding of numbers. See \code{\link{round}}.}
 
-\item{na.rm}{A logical value indicating to remove NA values in the table or not. By Default, the value is TRUE}
+\item{na.rm}{A logical value to specify missing values, <NA>:}
 
-\item{main}{a main title for the plot.}
+\item{main}{title of the plot}
 
-\item{xlab}{a label for the x axis, defaults to a description of x.}
+\item{xlab}{x-axis label}
 
-\item{ylab}{a label for the y axis, defaults to a description of y.}
+\item{ylab}{y-axis label}
 
-\item{show.legend}{show or hide the legend. Hide the legend by default}
+\item{text.size}{size of text in the plot. Font size for data level is 14:5 ratio 
+to axis font size}
 
-\item{legend.text}{Legend title}
+\item{label.pct}{show percentage for data label}
 
-\item{plot.type}{if bivariate analysis, type of plot can be specified. By default, this generates a facted plot. 'p' for parrallel barplot, 's' for stacked barplot, 'fs' for full stacked percentage barplot.}
+\item{flip.axis}{logical value to flip x-axis to y-axis}
 
-\item{facet.ncol}{number of columns to be faceted}
+\item{legend.show}{show or hide the legend}
 
-\item{plot.save}{a logical value. If TRUE, it saves the plot generated in the current working directory.}
+\item{legend.text}{title of legend}
 
-\item{plot.name}{a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"}
+\item{plot.type}{Only for bivariate analysis: four type of plot can be specified. 
+\enumerate{
+  \item \code{p}: parallel bar plot (default)
+  \item \code{f}: \code{x} bar plot faceted by \code{y}
+  \item \code{s}: stacked bar plot
+  \item \code{fs}: full stacked or percentage bar plot
+}}
 
-\item{width}{a value in inches}
+\item{facet.ncol}{number of columns to be faceted in faceted plot}
 
-\item{height}{a value in inches}
+\item{plot.save}{save the plot}
 
-\item{dpi}{a value for resolution of the plot saved.}
+\item{plot.name}{specify for name of the plot file to be saved. 
+Filename can be in either of these extension formats: ".tiff", ".png", and ".pdf"}
+
+\item{width}{integer measured in inches}
+
+\item{height}{integer measured in inches}
+
+\item{dpi}{specify resolution of the plot to be saved}
 }
 \description{
-\code{ibarplot} generates a barplot with several options for optimal data visualization using ggplot2 package. If one factor is provided as input, a simple barplot will be generated. If two factors, it produces a faceted barplot by default. Grouped bar plot can also be specified. Several parameters including plot title, labels of x and y axes and saving plot can be set by the user.
+\code{ibarplot} generates optimized bar plots for univariate, bivariate and 
+stratified analyses.
+}
+\details{
+Exploring data before jumping into complex analysis is always a necessity. 
+The first step of an analysis should be to summarize and display data.
+By doing so, invaluable insight can be gained through the familiarity with the data.
+
+\strong{Bar Plot}
+
+Frequency data is displayed in the form of horizontal or vertical bars. This type 
+of plot is used to display single variable or the association between two or three 
+categorical variables.
+
+\strong{References:}
+\enumerate{
+  \item An Introduction to MEdical Statistics, Martin Bland, Thrid Edition, 
+  Chapter 4, page 73
+}
 }
 \examples{
+data(infert)
+
+## univariate display
 ibarplot(infert$education)
-ibarplot(x = education, data = infert)
-ibarplot(x = education, y = case, data = infert)
-ibarplot(x = education, y = case, data = infert, plot.type = 'f')
-ibarplot(x = education, y = case, data = infert, plot.type = 'p')
-ibarplot(x = education, y = case, data = infert, plot.type = 's')
-ibarplot(x = education, y = case, data = infert, plot.type = 'fs')
-education <- factor(rep(c("None", "Primary", "Secondary", "graduate"), c(50, 100, 25, 25)))
-sex <- factor(rep(c("M", "F", NA), c(100, 75, 25)))
-marital <- factor(rep(c("Single", "married", "widowed", NA), c(25, 100, 70, 5)))
-ibarplot(education)
-ibarplot(sex)
-ibarplot(marital)
-ibarplot(sex, marital)
-ibarplot(sex, marital, na.rm = TRUE)
-ibarplot(sex, marital, education, na.rm = TRUE)
+ibarplot(education, data = infert)
+ibarplot(education, data = infert, main = "Plot of eduation", 
+         xlab = "Education Level", ylab = "Number")
+
+ibarplot(education, data = infert, label.pct = TRUE)
+
+## bivariate display
+ibarplot(education, case, data = infert) # parallel bar chart
+ibarplot(education, case, data = infert, plot.type = 'f') # facet plot
+ibarplot(education, case, data = infert, plot.type = 's') # stacked plot
+ibarplot(education, case, data = infert, plot.type = 'fs') # full stacked
+
+## stratified display
+ibarplot(education, case, parity, infert)
+ibarplot(education, parity, case, infert) 
 }
 \seealso{
-\code{\link{isum}}, \code{\link{itab}}, \code{\link{inumsum}}, \code{\link{iboxplot}}, \code{\link{ikdplot}}
+\code{\link{itab}}, \code{\link{isum}}, \code{\link{iboxplot}}
 }
 \author{
 Myo Minn Oo (Email: \email{dr.myominnoo@gmail.com} |
 Website: \url{https://myominnoo.github.io/})
 }
-\keyword{barplot,}
-\keyword{cross-tabulation,}
+\keyword{bar}
+\keyword{bar,}
+\keyword{chart,}
 \keyword{faceted}
-\keyword{plot}
+\keyword{full}
+\keyword{plot,}
+\keyword{stacked}

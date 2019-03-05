@@ -2,97 +2,82 @@
 % Please edit documentation in R/itab.R
 \name{itab}
 \alias{itab}
-\title{Tabulation, Cross Tabulation and Graphical Display}
+\title{Frequency distribution, cross-tabulation and stratified tabulation}
 \usage{
 itab(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
-  x.varname = NULL, y.varname = NULL, by.varname = NULL,
-  pct = "row", plot.display = TRUE, main = NULL, xlab = NULL,
-  ylab = NULL, show.legend = TRUE, legend.text = NULL,
-  plot.type = "f", facet.ncol = 2, plot.save = FALSE,
-  plot.name = "itab.tiff", width = 5, height = 4, dpi = 150)
+  pct = "row", plot.show = TRUE)
 }
 \arguments{
-\item{x}{a vector describing the bars which make up the plot. It is usually on x axis.}
+\item{x}{a factor object}
 
-\item{y}{a vector describing the y axis or second variable in cross-tabulation or data relationship.}
+\item{y}{a factor object; if ignored, frequency distribution on x is generated.}
 
-\item{by}{a vector describing the grouping of x. By default, the plot generates a faceted barplot.}
+\item{by}{a factor object; if ignored, cross-tabulation on x and y is generated.}
 
-\item{data}{an optional data frame (or object coercible by as.data.frame to a data frame) containing the variables for contigency table.}
+\item{data}{an optional data frame}
 
-\item{rnd}{an integer indicating the number of decimal places:}
+\item{rnd}{specify rounding of numbers. See \code{\link{round}}.}
 
-\item{na.rm}{A logical value indicating to remove NA values in the table or not. By Default, the value is TRUE}
+\item{na.rm}{A logical value to specify missing values, <NA> in the table}
 
-\item{pct}{type of percentages in cross-tabulation: by default, it shows row percentages in two}
+\item{pct}{type of percentages in cross-tabulation: by default, it's row percentage.}
 
-\item{plot.display}{logical value, indicating whether plot will be displayed or not}
-
-\item{main}{a main title for the plot.}
-
-\item{xlab}{a label for the x axis, defaults to a description of x.}
-
-\item{ylab}{a label for the y axis, defaults to a description of y.}
-
-\item{show.legend}{show or hide the legend. Hide the legend by default}
-
-\item{legend.text}{Legend title}
-
-\item{plot.type}{if bivariate analysis, type of plot can be specified. By default, this generates a facted plot. 'p' for parrallel barplot, 's' for stacked barplot, 'fs' for full stacked percentage barplot.}
-
-\item{facet.ncol}{number of columns to be faceted}
-
-\item{plot.save}{a logical value. If TRUE, it saves the plot generated in the current working directory.}
-
-\item{plot.name}{a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"}
-
-\item{width}{a value in inches}
-
-\item{height}{a value in inches}
-
-\item{dpi}{a value for resolution of the plot saved.}
+\item{plot.show}{display bar plots of the data}
 }
 \description{
-generates simple tabulation, cross-tabulation and stratified cross-tabulation tables.
+\code{itab} generates Frequency distribution, cross-tabulation and stratified 
+tabulations.
+}
+\details{
+Exploring data before jumping into complex analysis is always a necessity. 
+The first step of an analysis should be to summarize and display data.
+By doing so, invaluable insight can be gained through the familiarity with the data.
+
+\code{itab} 
+uses simple tabular techniques for displaying the distribution of
+values taken by a single variable, the association between two variables as well as 
+stratified tabulation. 
+
+In addition, \code{itab} generates delightful bar plots of the data, using another 
+function called \code{\link{ibarplot}}. This function also make use of a powerful 
+and famous package, \code{\link{ggplot2}}, hence the plots generated 
+by \code{itab} are just beautiful and delightful. If you want to save the plot, 
+see \code{\link{ibarplot}} for full details. 
+
+\strong{References:}
+\enumerate{
+  \item Essential Medical Statistics, Betty R. Kirkwood & Jonathan A.C. Sterne, 
+  Second Edition. Chapter 3
+  \item An Introduction to MEdical Statistics, Martin Bland, Thrid Edition, 
+  Chapter 4
+}
 }
 \examples{
 str(infert)
-# tabulation of one factor variable
-itab(education, data = infert)
-itab(parity, data = infert)
-itab(case, data = infert)
-itab(spontaneous, data = infert)
-# cross-tabulation
-itab(case, education, data = infert, plot.display = FALSE)
-itab(case, education, data = infert)
-itab(case, education, data = infert, pct = 'col') # change percentage type
-itab(case, education, data = infert, pct = 'row') # default percentage type
-itab(case, education, data = infert, pct = 'all')
-itab(case, education, data = infert, pct = 'none')
 
-# changing plot types
-itab(induced, education, data = infert)
-itab(induced, education, data = infert, plot.type = 'f') # default faceted type
-itab(induced, education, data = infert, plot.type = 'p') # parallel bar
-itab(induced, education, data = infert, plot.type = 's') # stacked bar
-itab(induced, education, data = infert, plot.type = 'fs') # full stacked bar
-itab(induced, education, data = infert, facet.ncol = 3) # change number of facets
-itab(induced, education, data = infert, plot.type = 'p', show.legend = FALSE) # legend on and off
-itab(induced, education, data = infert, plot.save = TRUE) # save plot to current directory
-itab(induced, education, data = infert, plot.save = TRUE, plot.name = "mybarplot.tiff")
-itab(induced, education, data = infert, plot.save = TRUE, width = 10, height = 8, dpi = 300)
-# three variables - analysis
-infert$case <- factor(infert$case)
-infert$induced <- factor(infert$induced)
-itab(case, education, induced, data = infert)
-itab(case, education, induced, data = infert, na.rm = TRUE, pct = 'col')
+## univariate analysis
+itab(infert$education) 
+itab(education, data = infert)
+itab(spontaneous, data = infert)
+
+## bivariate analysis
+itab(infert$education, infert$case) 
+itab(education, case, data = infert, pct = 'col') # col percentage
+itab(education, case, data = infert, pct = 'all')
+
+## stratified analysis 
+itab(education, case, parity, data = infert)
+itab(education, case, parity, data = infert, na.rm = TRUE)
 }
 \seealso{
-ibarplot, inumsum, ikdplot, iboxplot, isum
+\code{\link{isum}}, \code{\link{ibarplot}}
 }
-\keyword{contigency}
+\author{
+Myo Minn Oo (Email: \email{dr.myominnoo@gmail.com} |
+Website: \url{https://myominnoo.github.io/})
+}
 \keyword{cross-tabulation,}
+\keyword{distribution,}
 \keyword{frequency}
-\keyword{table}
-\keyword{table,}
-\keyword{tabulation,}
+\keyword{stratified}
+\keyword{tabulation}

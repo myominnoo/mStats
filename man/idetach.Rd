@@ -2,26 +2,35 @@
 % Please edit documentation in R/idetach.R
 \name{idetach}
 \alias{idetach}
-\title{Detach all objects in search pathway}
+\title{Detach user-loaded packges in the search pathway}
 \usage{
 idetach()
 }
 \description{
-idetach removes two types of user-loaded objects in the search pathway:
+\code{idetach} searches and removes two types of user-loaded objects in the search pathway:
 
-1) user-loaded packages
-
-2) attached data objects
+\enumerate{
+  \item user-loaded packages
+  \item attached data objects
+}
 }
 \examples{
+\dontrun{
 library(foreign)
 library(MASS)
 search()
 idetach()
 search()
 }
+}
+\seealso{
+\code{\link{clear}}
+}
+\author{
+Myo Minn Oo (Email: \email{dr.myominnoo@gmail.com} |
+Website: \url{https://myominnoo.github.io/})
+}
 \keyword{all,}
-\keyword{data,}
 \keyword{detach}
-\keyword{packages,}
-\keyword{search}
+\keyword{packages}
+\keyword{user-loaded}

@@ -2,68 +2,94 @@
 % Please edit documentation in R/ipyramid.R
 \name{ipyramid}
 \alias{ipyramid}
-\title{Population Pyramid Plot}
+\title{The Population Pyramid}
 \usage{
 ipyramid(x, y, data = NULL, na.rm = FALSE, binwidth = NULL,
   main = NULL, xlab = NULL, ylab = NULL, legend.text = NULL,
-  getdata = "tp", plot.save = FALSE, plot.name = "ipyramid.tiff",
-  width = 5, height = 4, dpi = 150)
+  text.size = 12, getdata = FALSE, plot.save = FALSE,
+  plot.name = "<unnamed>.tiff", width = 5, height = 4, dpi = 150)
 }
 \arguments{
-\item{x}{a vector describing the bars which make up the plot. It is usually on x axis.}
+\item{x}{a numeric vector: age in a typical Population Pyramid plot.}
 
-\item{y}{a vector describing the y axis or second variable in cross-tabulation or data relationship.}
+\item{y}{a binary vector: sex in a typical Population Pyramid plot.}
 
-\item{data}{an optional data frame (or object coercible by as.data.frame to a data frame) containing the variables for contigency table.}
+\item{data}{an optional data frame}
 
-\item{na.rm}{A logical value indicating to remove NA values in the table or not. By Default, the value is TRUE}
+\item{na.rm}{A logical value indicating to remove NA values}
 
-\item{binwidth}{a number to specify the cut points of the continous data. If NULL, it is set to 10 by default. A sequence of number can be specified. See examples.}
+\item{binwidth}{specify the cut points of x: 
+By default, cut-off is set at 10 years interval from the lowest value. 
+A sequence of cut-off points can also be speicified. For example, 
+\code{binwidth = seq(1:100, 10)} or \code{binwidth = c(18, 20, 25, 30, 60, 90)}}
 
-\item{main}{a main title for the plot.}
+\item{main}{title of the plot}
 
-\item{xlab}{a label for the x axis, defaults to a description of x.}
+\item{xlab}{x-axis label}
 
-\item{ylab}{a label for the y axis, defaults to a description of y.}
+\item{ylab}{y-axis label}
 
-\item{legend.text}{Legend title}
+\item{legend.text}{title of legend}
 
-\item{plot.save}{a logical value. If TRUE, it saves the plot generated in the current working directory.}
+\item{text.size}{size of text in the plot. Font size for data level is 14:5 ratio 
+to axis font size}
 
-\item{plot.name}{a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"}
+\item{getdata}{generate cross-tabulation, data frame in addition to plot.}
 
-\item{width}{a value in inches}
+\item{plot.save}{save the plot}
 
-\item{height}{a value in inches}
+\item{plot.name}{specify for name of the plot file to be saved. 
+Filename can be in either of these extension formats: ".tiff", ".png", and ".pdf"}
 
-\item{dpi}{a value for resolution of the plot saved.}
+\item{width}{integer measured in inches}
+
+\item{height}{integer measured in inches}
+
+\item{dpi}{specify resolution of the plot to be saved}
 }
 \description{
 \code{ipyramid} generates a population pyramid graph and data output.
 }
+\details{
+Histogram is typically used to display the age distribution of a population. However, 
+it is usual to present age ditribution separately for two sexes because mortality tends to
+be different. In a population pyramid, age is scaled vertically and sex horizontally. 
+The number or frequency scale of sex is zero at the middle and increases or decreases to 
+both sides. 
+
+\strong{Usage in other types of data} 
+
+It is interesting to see the application of age-sex pyramid population plot for other 
+types of data. I would like to hear more comments about this. 
+
+\strong{References:}
+\enumerate{
+  \item An Introduction to MEdical Statistics, Martin Bland, Thrid Edition, 
+  Chapter 16, page 303
+}
+}
 \examples{
-# create random vectors
+## create random vectors
 set.seed(100)
 age <- sample(11:100, 1000, replace = TRUE)
 sex <- factor(sample(c("male", "female"), 1000, replace = TRUE))
+
 ipyramid(age, sex)
-ipyramid(age, sex, binwidth = 20)
-ipyramid(age, sex, binwidth = 20, getdata = "p") # only plot
-ipyramid(age, sex, binwidth = 20, getdata = "tp") # plot with cross-tabulation
-ipyramid(age, sex, binwidth = 20, getdata = "all") # plot + cross-tabulation + data
-ipyramid(age, sex, binwidth = 10)
-ipyramid(age, sex, binwidth = c(0, 20, 40, 60, 80, 100))
-ipyramid(age, sex, binwidth = c(1, 15, 40, 60, 100))
+ipyramid(age, sex, binwidth = 5)
+ipyramid(age, sex, binwidth = 20, getdata = TRUE)
+
 data <- data.frame(age, sex)
 ipyramid(age, sex, data = data)
-ipyramid(age, sex, data = data, binwidth = 30)
+ipyramid(age, sex, data = data, binwidth = 5)
 }
 \seealso{
-\code{\link{isum}}, \code{\link{itab}}, \code{\link{inumsum}}, \code{\link{ibarplot}}
+\code{\link{ibarplot}}, \code{\link{iboxplot}}, \code{\link{isum}}, 
+\code{\link{toDate}}
 }
 \keyword{contigency}
 \keyword{cross-tabulation,}
-\keyword{frequency}
+\keyword{mortality}
+\keyword{population}
+\keyword{pyramid,}
+\keyword{statistics,}
 \keyword{table}
-\keyword{table,}
-\keyword{tabulation,}

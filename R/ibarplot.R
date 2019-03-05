@@ -1,55 +1,88 @@
-#' @title Create and Save beautiful Bar Plot using ggplot2
+#' @title Delightful Bar Plots 
 #'
 #' @description
-#' \code{ibarplot} generates a barplot with several options for optimal data visualization using ggplot2 package. If one factor is provided as input, a simple barplot will be generated. If two factors, it produces a faceted barplot by default. Grouped bar plot can also be specified. Several parameters including plot title, labels of x and y axes and saving plot can be set by the user.
-#'
-#' @param x a vector describing the bars which make up the plot. It is usually on x axis.
-#' @param y a vector describing the y axis or second variable in cross-tabulation or data relationship.
-#' @param by a vector describing the grouping of x. By default, the plot generates a faceted barplot.
-#' @param data an optional data frame (or object coercible by as.data.frame to a data frame) containing the variables for contigency table.
-#' @param rnd an integer indicating the number of decimal places:
-#' @param na.rm A logical value indicating to remove NA values in the table or not. By Default, the value is TRUE
-#' @param main a main title for the plot.
-#' @param xlab a label for the x axis, defaults to a description of x.
-#' @param ylab a label for the y axis, defaults to a description of y.
-#' @param show.legend show or hide the legend. Hide the legend by default
-#' @param legend.text Legend title
-#' @param plot.type if bivariate analysis, type of plot can be specified. By default, this generates a facted plot. 'p' for parrallel barplot, 's' for stacked barplot, 'fs' for full stacked percentage barplot.
-#' @param facet.ncol number of columns to be faceted
-#' @param plot.save a logical value. If TRUE, it saves the plot generated in the current working directory.
-#' @param plot.name a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"
-#' @param width a value in inches
-#' @param height a value in inches
-#' @param dpi a value for resolution of the plot saved.
+#' \code{ibarplot} generates optimized bar plots for univariate, bivariate and 
+#' stratified analyses.
+#' @param x a factor object
+#' @param y a factor object; if ignored, frequency distribution on x is generated. 
+#' @param by a factor object; if ignored, cross-tabulation on x and y is generated.
+#' @param data an optional data frame 
+#' @param rnd specify rounding of numbers. See \code{\link{round}}.
+#' @param na.rm A logical value to specify missing values, <NA>:
+#' @param main title of the plot
+#' @param xlab x-axis label
+#' @param ylab y-axis label
+#' @param text.size size of text in the plot. Font size for data level is 14:5 ratio 
+#' to axis font size
+#' @param label.pct show percentage for data label
+#' @param flip.axis logical value to flip x-axis to y-axis
+#' @param legend.show show or hide the legend 
+#' @param legend.text title of legend
+#' @param plot.type Only for bivariate analysis: four type of plot can be specified. 
+#' \enumerate{
+#'   \item \code{p}: parallel bar plot (default)
+#'   \item \code{f}: \code{x} bar plot faceted by \code{y}
+#'   \item \code{s}: stacked bar plot
+#'   \item \code{fs}: full stacked or percentage bar plot
+#' }
+#' @param facet.ncol number of columns to be faceted in faceted plot
+#' @param plot.save save the plot
+#' @param plot.name specify for name of the plot file to be saved. 
+#' Filename can be in either of these extension formats: ".tiff", ".png", and ".pdf"
+#' @param width integer measured in inches
+#' @param height integer measured in inches
+#' @param dpi specify resolution of the plot to be saved
+#' @details 
+#' Exploring data before jumping into complex analysis is always a necessity. 
+#' The first step of an analysis should be to summarize and display data.
+#' By doing so, invaluable insight can be gained through the familiarity with the data.
+#' 
+#' \strong{Bar Plot}
+#' 
+#' Frequency data is displayed in the form of horizontal or vertical bars. This type 
+#' of plot is used to display single variable or the association between two or three 
+#' categorical variables.
+#' 
+#' \strong{References:}
+#' \enumerate{
+#'   \item An Introduction to MEdical Statistics, Martin Bland, Thrid Edition, 
+#'   Chapter 4, page 73
+#' }
+#' 
 #' @import ggplot2
-#' @seealso \code{\link{isum}}, \code{\link{itab}}, \code{\link{inumsum}}, \code{\link{iboxplot}}, \code{\link{ikdplot}}
-#' @keywords barplot, cross-tabulation, faceted plot
+#' @import graphics
+#' @seealso \code{\link{itab}}, \code{\link{isum}}, \code{\link{iboxplot}}
+#' @keywords bar chart, bar plot, faceted plot, stacked bar, full stacked bar
 #' @author Myo Minn Oo (Email: \email{dr.myominnoo@@gmail.com} |
 #' Website: \url{https://myominnoo.github.io/})
 #' @examples
+#' data(infert)
+#' 
+#' ## univariate display
 #' ibarplot(infert$education)
-#' ibarplot(x = education, data = infert)
-#' ibarplot(x = education, y = case, data = infert)
-#' ibarplot(x = education, y = case, data = infert, plot.type = 'f')
-#' ibarplot(x = education, y = case, data = infert, plot.type = 'p')
-#' ibarplot(x = education, y = case, data = infert, plot.type = 's')
-#' ibarplot(x = education, y = case, data = infert, plot.type = 'fs')
-#' education <- factor(rep(c("None", "Primary", "Secondary", "graduate"), c(50, 100, 25, 25)))
-#' sex <- factor(rep(c("M", "F", NA), c(100, 75, 25)))
-#' marital <- factor(rep(c("Single", "married", "widowed", NA), c(25, 100, 70, 5)))
-#' ibarplot(education)
-#' ibarplot(sex)
-#' ibarplot(marital)
-#' ibarplot(sex, marital)
-#' ibarplot(sex, marital, na.rm = TRUE)
-#' ibarplot(sex, marital, education, na.rm = TRUE)
+#' ibarplot(education, data = infert)
+#' ibarplot(education, data = infert, main = "Plot of eduation", 
+#'          xlab = "Education Level", ylab = "Number")
+#' 
+#' ibarplot(education, data = infert, label.pct = TRUE)
+#' 
+#' ## bivariate display
+#' ibarplot(education, case, data = infert) # parallel bar chart
+#' ibarplot(education, case, data = infert, plot.type = 'f') # facet plot
+#' ibarplot(education, case, data = infert, plot.type = 's') # stacked plot
+#' ibarplot(education, case, data = infert, plot.type = 'fs') # full stacked
+#' 
+#' ## stratified display
+#' ibarplot(education, case, parity, infert)
+#' ibarplot(education, parity, case, infert) 
 
 #' @export
 ibarplot <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
-                     main = NULL, xlab = NULL, ylab = NULL,
-                     show.legend = TRUE, legend.text = NULL,
-                     plot.type = "f", facet.ncol = 2,
-                     plot.save = FALSE, plot.name = 'ibarplot.tiff',
+                     main = NULL, xlab = NULL, ylab = NULL, 
+                     text.size = 12, label.pct = FALSE, flip.axis = FALSE,
+                     legend.show = TRUE, legend.text = NULL,
+                     plot.type = "p", facet.ncol = 2,
+                     plot.save = FALSE, plot.name = '<unnamed>.tiff',
                      width = 5, height = 4, dpi = 150)
 {
   if (!is.null(data)) {
@@ -57,131 +90,197 @@ ibarplot <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE
     x <- eval(substitute(x), data)
     y <- eval(substitute(y), data)
     by <- eval(substitute(by), data)
-
+    
     lab.x <- arguments$x
     lab.y <- arguments$y
     lab.by <- arguments$by
-
+    
   } else {
     lab.x <- deparse(substitute(x))
     if (!is.null(y)) {lab.y <- deparse(substitute(y))}
     if (!is.null(by)) {lab.by <- deparse(substitute(by))}
   }
-
-  # levels of useNA in table() has c("no", "ifany", "always)
+  
   if (na.rm) {include.na = "no"} else {include.na = "ifany"}
-
-  # switch mechanisms
-  gr.type <- ifelse(is.null(y), "uni", ifelse(is.null(by), "bi", "strata"))
-  p <- switch(gr.type,
-              uni = {
-                if (is.null(main)) main <- paste0('Plot of ', lab.x)
-                if (is.null(xlab)) xlab <- lab.x
-                if (is.null(ylab)) ylab <- 'Number'
-                # univariate
-                tbl <- table(x, useNA = include.na)
-                data <- data.frame(tbl)
-                data$pct <- round(data$Freq / sum(data$Freq) * 100, rnd)
-                p <- ggplot2::ggplot(data = data, aes(x = x, y = Freq, fill = x)) +
-                  geom_bar(stat = "identity", show.legend = FALSE) +
-                  geom_text(aes(label = paste0(pct, '%'),
-                                hjust = 0.5, vjust = -0.5),
-                            position = position_dodge(1)) +
-                  ylim(0, (max(data$Freq) + (max(data$Freq) * 0.1))) +
-                  labs(title = main, x = xlab, y = ylab) +
-                  theme_light()
-              },
-              bi = {
-                # labels
-                if (is.null(main)) main <- paste0('Plot of ', lab.x, ' ~ ', lab.y)
-                if (!is.null(xlab)) lab.x <- xlab
-                if (is.null(ylab))
-                  ylab <- ifelse(plot.type == "fs", 'Percentage (%)', 'Number')
-                if (is.null(legend.text)) legend.text <- lab.y
-                tbl <- table(x, y, useNA = include.na)
-                tblr <- round(tbl / rowSums(tbl) * 100, rnd) # row percentage
-                tblc <- round(t(t(tbl) / colSums(tbl)) * 100, rnd) # column percentage
-                data <- cbind(data.frame(tbl), rpct = data.frame(tblr)[,3],
-                              cpct = data.frame(tblc)[,3])
-                colnames(data)[1:2] <- c("x", "y")
-                p <- ggplot2::ggplot(data = data)
-                p <- switch(
-                  plot.type,
-                  f = {
-                    p + aes(x = x, y = Freq, fill = x) +
-                      geom_bar(stat = "identity", position = "dodge2", show.legend = FALSE) +
-                      ylim(0, (max(data$Freq) + (max(data$Freq) * 0.1))) +
-                      geom_text(aes(label = paste0(rpct, '%'), hjust = 0.5, vjust = -0.5),
-                                position = position_dodge(1)) +
-                      facet_wrap(~ y, ncol = facet.ncol) +
-                      labs(title = main, x = lab.x, y = ylab) +
-                      theme_light()
-                  },
-                  p = {
-                    p + aes(x = x, y = Freq, fill = y) +
-                      geom_bar(stat = "identity", position = "dodge2", show.legend = show.legend) +
-                      ylim(0, (max(data$Freq) + (max(data$Freq) * 0.1))) +
-                      geom_text(aes(label = paste0(rpct, '%'), hjust = 0.5, vjust = -0.5),
-                                position = position_dodge(1)) +
-                      labs(title = main, x = lab.x, y = ylab, fill = legend.text) +
-                      theme_light()
-                  },
-                  s = {
-                    p + aes(x = x, y = Freq, fill = y) +
-                      geom_bar(stat = "identity", position = "stack", show.legend = show.legend) +
-                      geom_text(aes(label = paste0(rpct, '%')),
-                                position = position_stack(vjust = 0.5)) +
-                      labs(title = main, x = lab.x, y = ylab, fill = legend.text) +
-                      theme_light()
-                  },
-                  fs = {
-                    p + aes(x = x, y = rpct, fill = y) +
-                      geom_bar(stat = "identity", position = "stack", show.legend = show.legend) +
-                      geom_text(aes(label = Freq), position = position_stack(vjust = 0.5)) +
-                      labs(title = main, x = lab.x, y = ylab, fill = legend.text) +
-                      theme_light()})
-              },
-              strata = {
-                # labels
-                if (!is.null(xlab)) lab.x <- xlab
-                if (is.null(ylab))  ylab <- 'Number'
-                if (is.null(main)) main <- paste0('Plot of ', lab.x, ' ~ ', lab.y,
-                                                  ', stratified by ', lab.by)
-                if (is.null(legend.text)) legend.text <- lab.y
-                by.cat <- levels(by)
-                tab.freq <- function(tbl, by.cat) {
-                  data <- data.frame(tbl)
-                  tblr <- round(tbl / rowSums(tbl) * 100, rnd) # row percentage
-                  tblc <- round(t(t(tbl) / colSums(tbl)) * 100, rnd) # column percentage
-                  data <- cbind(data.frame(tbl), rpct = data.frame(tblr)[,3],
-                                cpct = data.frame(tblc)[,3])
-                  data <- cbind(data, by = rep(by.cat, nrow(data)))
-                  colnames(data)[1:2] <- c("x", "y")
-                  data
-                }
-                data <- do.call(
-                  rbind,
-                  lapply(by.cat, function(z) tab.freq(table(x[by == z], y[by == z]), z)))
-                if (!na.rm) {
-                  data <- rbind(data, tab.freq(table(x[is.na(by)], y[is.na(by)]), "<NA>"))
-                }
-
-                p <- ggplot2::ggplot(data = data)
-                p + aes(x = x, y = Freq, fill = y) +
-                  geom_bar(stat = "identity", position = "dodge", show.legend = show.legend) +
-                  ylim(0, (max(data$Freq) + (max(data$Freq) * 0.1))) +
-                  facet_wrap(~ by) +
-                  geom_text(aes(label = paste0(rpct, '%'), hjust = 0.5, vjust = -0.5),
-                            position = position_dodge(1)) +
-                  labs(title = main, x = lab.x, y = ylab, fill = legend.text) +
-                  theme_light()
-              }
-  )
+  type <- ifelse(is.null(y), "uni", ifelse(is.null(by), "bi", "strata"))
+  
+  p <- switch(
+    type,
+    uni = {
+      if (is.null(main)) main <- paste0('Plot: ', lab.x)
+      if (is.null(xlab)) xlab <- lab.x
+      if (is.null(ylab)) ylab <- 'Frequency'
+      uni <- uni.barplt(x, rnd, include.na, main, xlab, ylab, text.size, label.pct,
+                        flip.axis)
+    }, 
+    bi = {
+      if (is.null(main)) main <- paste0('Plot of ', lab.x, ' ~ ', lab.y)
+      if (is.null(xlab)) xlab <- lab.x
+      if (is.null(ylab))
+        ylab <- ifelse(plot.type == "fs", 'Percentage (%)', 'Frequency')
+      if (is.null(legend.text)) legend.text <- lab.y
+      bi <- bi.barplt(x, y, rnd, include.na, main, xlab, ylab, text.size, label.pct, 
+                      legend.show, legend.text, plot.type, facet.ncol)
+    }, 
+    strata = {
+      if (is.null(main)) main <- paste0('Plot: ', lab.x, ' ~ ', lab.y, 
+                                        ', stratified by ', lab.by)
+      if (is.null(xlab)) xlab <- lab.x
+      if (is.null(ylab)) ylab <- 'Frequency'
+      if (is.null(legend.text)) legend.text <- lab.y
+      strata <- str.barplt(x, y, by, rnd, include.na, main, xlab, ylab, text.size, 
+                           label.pct, legend.show, legend.text, facet.ncol)
+    })
   if (plot.save) {
     plot(p)
     ggplot2::ggsave(plot.name, width = width, height = height, dpi = dpi)
     dev.off()
-    cat(paste0("\n... plot saved to \"", getwd(), "/", plot.name, "\" ...\n\n"))
+    cat(paste0("note: plot saved to \"", getwd(), "/", plot.name, "\"\n"))
   }
-  p
+  return(p)
+}
+
+uni.barplt <- function(x, rnd = 1, include.na = 'ifany', 
+                       main = 'Frequency distribution', xlab = 'x', 
+                       ylab = 'Frequency', text.size = 14, 
+                       label.pct = FALSE, flip.axis = FALSE) 
+{
+  tbl <- table(x, useNA = include.na)
+  data <- data.frame(tbl)
+  data$pct <- round(data$Freq / sum(data$Freq) * 100, rnd)
+  if (label.pct) lbl <- paste0(data$pct, '%') else lbl <- data$Freq
+  
+  p <- ggplot2::ggplot(data = data, aes(x = x, y = data$Freq, fill = x)) +
+    geom_bar(stat = "identity", show.legend = FALSE) + 
+    ylim(0, (max(data$Freq) + (max(data$Freq) * 0.1))) + 
+    labs(title = main, x = xlab, y = ylab) +
+    theme_classic() +
+    theme(text = element_text(size = text.size),
+          panel.border = element_rect(linetype = "solid", colour = "black", fill = "NA"))
+  
+  if (flip.axis) {
+    p <- p + coord_flip()
+    hjust = -0.25
+    vjust = 0.5
+  } else {
+    hjust = 0.5
+    vjust = -0.5
+  }
+  
+  p <- p + 
+    geom_text(aes(label = lbl, hjust = hjust, vjust = vjust), 
+              size = text.size / (14/5), position = position_dodge(1)) 
+  return(p)
+}
+
+bi.table <- function(x, y, rnd = 1, include.na = 'ifany') 
+{
+  tbl <- table(x, y, useNA = include.na)
+  tblr <- round(tbl / rowSums(tbl) * 100, rnd) # row percentage
+  tblc <- round(t(t(tbl) / colSums(tbl)) * 100, rnd) # column percentage
+  data <- cbind(data.frame(tbl), rpct = data.frame(tblr)[,3],
+                cpct = data.frame(tblc)[,3])
+  data$lbl.rpct <- paste0(data$rpct, '%')
+  data$lbl.cpct <- paste0(data$cpct, '%')
+  return(data)
+}
+
+bi.barplt <- function(x, y, rnd = 1, include.na = 'ifany',
+                      main = 'Plot:', xlab = 'x', ylab = 'Frequency', 
+                      text.size = 14, label.pct = FALSE, 
+                      legend.show = TRUE, legend.text = 'y',
+                      plot.type = "f", facet.ncol = 2) 
+{
+  tbl <- table(x, y, useNA = include.na)
+  data <- bi.table(x, y, rnd, include.na)
+  if (label.pct) lbl <- paste0(data$rpct, '%') else lbl <- data$Freq
+  
+  if (any(tbl < 5)) 
+    pvalue <- tryCatch({
+      suppressWarnings(fisher.test(x, y, simulate.p.value = TRUE)$p.value)
+    }, error = function(err) {
+      return(NA)
+    }) else 
+      pvalue <- tryCatch({
+        suppressWarnings(chisq.test(x, y, correct = FALSE)$p.value)
+      }, error = function(err) {
+        return(NA)
+      })
+  pvalue <- c(ifelse(pvalue < 0.001, "<0.001", round(pvalue, 3)),
+              rep("", nrow(tbl) - 1))
+  pvalue.name <- ifelse(any(tbl < 5), 'p-value (Fisher Exact Test): ', 
+                        'p-value (Chi-Square Test): ')
+  
+  p <- ggplot2::ggplot(data = data)
+  p <- switch(
+    plot.type,
+    f = {
+      p + aes(x = x, y = data$Freq, fill = x) +
+        geom_bar(stat = "identity", position = "dodge2", show.legend = FALSE) +
+        ylim(0, (max(data$Freq) + (max(data$Freq) * 0.1))) +
+        geom_text(aes(label = lbl, hjust = 0.5, vjust = -0.5), 
+                  size = text.size / (14/5), position = position_dodge(1)) +
+        facet_wrap(~ y, ncol = facet.ncol) +
+        labs(title = main, subtitle = paste0(pvalue.name, pvalue),
+             x = xlab, y = ylab) 
+    }, 
+    p = {
+      p + aes(x = x, y = data$Freq, fill = y) +
+        geom_bar(stat = "identity", position = "dodge2", 
+                 show.legend = legend.show) +
+        ylim(0, (max(data$Freq) + (max(data$Freq) * 0.1))) +
+        geom_text(aes(label = lbl, hjust = 0.5, vjust = -0.5), 
+                  size = text.size / (14/5), position = position_dodge(1)) +
+        labs(title = main, subtitle = paste0(pvalue.name, pvalue),
+             x = xlab, y = ylab, fill = legend.text) 
+    },
+    s = {
+      p + aes(x = x, y = data$Freq, fill = y) +
+        geom_bar(stat = "identity", position = "stack", show.legend = legend.show) +
+        geom_text(aes(label = lbl), size = text.size / (14/5), 
+                  position = position_stack(vjust = 0.5)) +
+        labs(title = main, subtitle = paste0(pvalue.name, pvalue),
+             x = xlab, y = ylab, fill = legend.text) 
+    },
+    fs = {
+      p + aes(x = x, y = data$rpct, fill = y) +
+        geom_bar(stat = "identity", position = "stack", show.legend = legend.show) +
+        geom_text(aes(label = data$Freq), size = text.size / (14/5), 
+                  position = position_stack(vjust = 0.5)) +
+        labs(title = main, subtitle = paste0(pvalue.name, pvalue),
+             x = xlab, y = ylab, fill = legend.text)
+    })
+  p <- p + 
+    theme_classic() +
+    theme(text = element_text(size = text.size),
+          panel.border = element_rect(linetype = "solid", colour = "black", fill = "NA"))
+  return(p)
+}
+
+str.barplt <- function(x, y, by, rnd = 1, include.na = 'ifany',
+                       main = 'Plot:', xlab = 'x', ylab = 'Frequency', 
+                       text.size = 14, label.pct = FALSE, 
+                       legend.show = TRUE, legend.text = 'y', facet.ncol = 2)
+{
+  if (include.na == 'no') lvl <- unique(na.omit(by)) else lvl <- unique(by)
+  data <- do.call(
+    rbind,
+    lapply(lvl, function(z) {
+      df <- bi.table(x[by == z], y[by == z], rnd, include.na)
+      df <- cbind(df, by = z)
+    }))
+  if (label.pct) lbl <- paste0(data$rpct, '%') else lbl <- data$Freq
+  
+  p <- ggplot2::ggplot(data = data)
+  p <- p + aes(x = x, y = data$Freq, fill = y) +
+    geom_bar(stat = "identity", position = "dodge", show.legend = legend.show) +
+    ylim(0, (max(data$Freq) + (max(data$Freq) * 0.1))) +
+    facet_wrap(~ by, ncol = facet.ncol) +
+    geom_text(aes(label = lbl, hjust = 0.5, vjust = -0.5),
+              size = text.size / (14/5), position = position_dodge(1)) +
+    labs(title = main, x = xlab, y = ylab, fill = legend.text) +
+    theme_classic() +
+    theme(text = element_text(size = text.size),
+          panel.border = element_rect(linetype = "solid", colour = "black", fill = "NA"))
+  return(p)
 }

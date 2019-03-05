@@ -1,32 +1,48 @@
-#' @title Simple function for logging console in R
+#' @title Echo a copy of console to log file
 #'
 #' @description
-#' \code{\link{ilog}} is a function to log console interactively which is inspired by Stata Software.
-#' This function captures outputs from console in a local environment which is running behind
-#' the scene. Please be reminded that clearing the environments can make the logging stop.
-#' In that case, your console will still be like this "log>". See the following instructions:
-#' \enumerate{
-#'   \item The prompt '>' and continue '+' can be restored by typing this in the console:
-#'   \item options(prompt = "> ", continue = "+ ").
-#' }
-#' @param logfile A character, denoted by the name of desired log file which follows by an
-#' extension ".txt".
-#' @param append A logical value, indicating whether the log file is appended or not.
-#' @seealso \code{\link{isum}}, \code{\link{itab}}, \code{\link{inumsum}}, \code{\link{ibarplot}}, \code{\link{iboxplot}}, \code{\link{ikdplot}}
+#' \code{ilog} allows to echo a copy of your console to log file. 
+#' 
+#' @param logfile Name of desired log file in \code{.txt} format
+#' @param append specify if the log file will be appended or not
+#' @details 
+#' \code{ilog} is a two-step function that allows you a record of your console. 
+#' A log is a file containing what you type and console output. If a name is not 
+#' specified, then \code{ilog} will use the name \code{<unnamed>.txt}.
+#' 
+#' \code{ilog} opens a log file and \code{ilog.close} close the file. 
+#' 
+#' \strong{Warnings:}
+#' 
+#' Be reminded that clearing the environments while logging distrubs the 
+#' process. If such happens, console prompt will be stuck at \code{log> }. 
+#' Run the \code{commands} below to revert the console prompt back to normal.
+#' 
+#' options(prompt = \code{"> "}, continue = \code{"+ "})
+#' 
+#' \strong{Acknowledgement:}
+#' \code{ilog} and \code{ilog.close} are inspriations from \code{STATA} software. 
+#' 
+#' @seealso \code{\link{idetach}}, \code{\link{clear}}, 
 #' @keywords log console, save outputs, save console
 #' @author Myo Minn Oo (Email: \email{dr.myominnoo@@gmail.com} |
 #' Website: \url{https://myominnoo.github.io/})
 #' @examples
-#' ilog("myfirstlog.txt", append = F)
-#' isum(infert)
+#' ilog("myfirstlog.txt")
 #' str(infert)
-#' isum(iris)
+#' itab(infert$education)
 #' str(iris)
-#' isum(AirPassengers) # not logging error or warning messages
+#' isum(iris$Sepal.Length)
+#' ilog.close()
+#' 
+#' ## appending the file. 
+#' ilog("myfirstlog.txt", append = TRUE)
+#' summary(infert)
+#' summary(iris)
 #' ilog.close()
 
 #' @export
-ilog <- function(logfile = "mylog.txt", append = FALSE) {
+ilog <- function(logfile = "<unnamed>.txt", append = FALSE) {
   # create a global environment which can be accessed outside
   logging.env <<- new.env()
   # <-- create a connection file -->
@@ -69,7 +85,7 @@ ilog <- function(logfile = "mylog.txt", append = FALSE) {
   sink(logfile, append = TRUE, split = TRUE)
   if(append) {
     cat(paste0("(note ", getwd(), "/", logfile, " appended)"))
-  } else {cat(paste0("(note ", getwd(), "/", logfile, " replace)"))}
+  } else {cat(paste0("(note: ", getwd(), "/", logfile, " replace)"))}
   cat(paste0('\n', '    log: ', getwd(), "/", logfile, '\nopen on: ', Sys.time(),'\n'))
   cat(rep('.', 40), '\n\n')
   sink()
@@ -82,6 +98,7 @@ ilog <- function(logfile = "mylog.txt", append = FALSE) {
 #' @export
 ilog.close <- function() {
   removeTaskCallback(id = "ilogtxt")
+  logging.env <- as.environment(logging.env)
   if(!logging.env$con.close) {
     close(logging.env$con)
   }

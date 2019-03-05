@@ -2,111 +2,87 @@
 % Please edit documentation in R/isum.R
 \name{isum}
 \alias{isum}
-\title{A Quick Summary of data frame or data}
+\title{Number Summary, Correlation, Grouped and Stratified Summary}
 \usage{
-isum(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
-  pct = "row", groupby = "ym", plot.display = TRUE,
-  plot.type = "f", boxplot = TRUE, main = NULL, xlab = NULL,
-  ylab = NULL, alpha = 0.1, show.legend = TRUE, legend.text = NULL,
-  facet.ncol = 2, plot.save = FALSE, plot.name = "isum.tiff",
-  width = 5, height = 4, dpi = 150)
+isum(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = TRUE,
+  plot.show = TRUE)
 }
 \arguments{
-\item{x}{a vector describing the bars which make up the plot. It is usually on x axis.}
+\item{x}{a numeric object}
 
-\item{y}{a vector describing the y axis or second variable in cross-tabulation or data relationship.}
+\item{y}{a numeric or factor object}
 
-\item{by}{a vector describing the grouping of x. By default, the plot generates a faceted barplot.}
+\item{by}{a factor object}
 
-\item{data}{an optional data frame (or object coercible by as.data.frame to a data frame) containing the variables for contigency table.}
+\item{data}{an optional data frame}
 
-\item{rnd}{an integer indicating the number of decimal places:}
+\item{rnd}{specify rounding of numbers}
 
-\item{na.rm}{A logical value indicating to remove NA values in the table or not. By Default, the value is TRUE}
+\item{na.rm}{A logical value to specify missing values, <NA> in the table}
 
-\item{pct}{type of percentages in cross-tabulation: by default, it shows row percentages in two}
-
-\item{groupby}{a character value, indicating patterns of aggregation either by one of the followings:
-
-"y" - Year along
-
-"ym" - Year + Month
-
-"ymd" - Year + Month + Day}
-
-\item{plot.display}{logical value, indicating whether plot will be displayed or not}
-
-\item{plot.type}{if bivariate analysis, type of plot can be specified. By default, this generates a facted plot. 'p' for parrallel barplot, 's' for stacked barplot, 'fs' for full stacked percentage barplot.}
-
-\item{main}{a main title for the plot.}
-
-\item{xlab}{a label for the x axis, defaults to a description of x.}
-
-\item{ylab}{a label for the y axis, defaults to a description of y.}
-
-\item{show.legend}{show or hide the legend. Hide the legend by default}
-
-\item{legend.text}{Legend title}
-
-\item{facet.ncol}{number of columns to be faceted}
-
-\item{plot.save}{a logical value. If TRUE, it saves the plot generated in the current working directory.}
-
-\item{plot.name}{a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"}
-
-\item{width}{a value in inches}
-
-\item{height}{a value in inches}
-
-\item{dpi}{a value for resolution of the plot saved.}
+\item{plot.show}{display bar plots of the data}
 }
 \description{
-A simple yet powerful function to produce a quick summary of various types of data or data frame
+\code{isum} generates tables that display univariate, bivariate and stratified
+summaries.
+}
+\details{
+Exploring data before jumping into complex analysis is always a necessity. 
+The first step of an analysis should be to summarize and display data.
+By doing so, invaluable insight can be gained through the familiarity with the data.
+
+\code{isum} allows to summarize the distribution of data taken by a single variable, 
+the association between two numeric variables as well as between a numeric variable
+and a factor variable, and finally these associations stratified by a third factor 
+variable. 
+
+This function also generate different data visualization for better exploration by 
+using \code{iboxplot}. The plot display can be switched off by setting 
+\code{plot.show = FALSE}.
+
+\strong{References:}
+\enumerate{
+  \item Essential Medical Statistics, Betty R. Kirkwood & Jonathan A.C. Sterne, 
+  Second Edition. Chapter 3
+  \item An Introduction to MEdical Statistics, Martin Bland, Thrid Edition, 
+  Chapter 4
+}
 }
 \examples{
+data(infert)
 str(infert)
-# summarize data.frame
-isum(infert)
-isum(age, data = infert) # numeric data
-isum(ltf$age)
-isum(ltf$age, boxplot = FALSE) # calling kernel density plot
-isum(age, education, data = infert) # continuous vs category data
-isum(age, education, data = infert, boxplot = FALSE)
-isum(age, pooled.stratum, data = infert) # continuous vs continuos data
-isum(age, pooled.stratum, data = infert, boxplot = FALSE)
-infert$case <- factor(infert$case) # stratified variable must be a factor
-isum(age, education, case, data = infert) # stratified analysis
-isum(age, education, case, data = infert, boxplot = FALSE)
-isum(age, education, case, data = infert, boxplot = FALSE, alpha = 1) # block transparency
-isum(age, pooled.stratum, education, data = infert)
 
-isum(education, data = infert) # categorical data
-isum(education, case, data = infert) # row percentage by default
-isum(education, case, data = infert, pct = 'col')
-isum(education, case, data = infert, pct = 'all')
-isum(education, case, data = infert, pct = 'none')
-isum(education, case, data = infert) # faceted plot by default
-isum(education, case, data = infert, plot.type = 'p')
-isum(education, case, data = infert, plot.type = 's')
-isum(education, case, data = infert, plot.type = 'fs')
-isum(education, case, data = infert)
+## univariate analysis 
+isum(infert$age)
+isum(pooled.stratum, data = infert)
 
-str(iris)
-isum(iris)
-isum(Sepal.Length, data = iris)
-isum(Sepal.Length, Sepal.Width, data = iris)
-isum(Sepal.Length, Species, data = iris)
-isum(Sepal.Length, Species, data = iris, boxplot = FALSE)
-isum(Sepal.Length, Species, data = iris, boxplot = FALSE, alpha = 1)
+## bivariate: numeric x factor
+isum(age, education, data = infert)
+isum(parity, education, data = infert)
+isum(pooled.stratum, education, data = infert)
+isum(infert$parity, factor(infert$case))
+
+## bivariate: numeric x numeric 
+isum(age, parity, data = infert)
+isum(age, stratum, data = infert)
+isum(age, pooled.stratum, data = infert)
+
+## stratified: numeric x factor | factor 
+infert$case <- factor(infert$case)
+isum(age, education, case, data = infert)
+
+## stratified: numeric x numeric | factor 
+isum(age, parity, education, data = infert)
+isum(age, stratum, education, data = infert)
 }
 \seealso{
-ibarplot, inumsum, ikdplot, iboxplot, isum
+\code{\link{itab}}, \code{\link{ibarplot}}, \code{\link{strate}},
 }
-\keyword{contigency}
-\keyword{cross-tabulation,}
-\keyword{dates}
-\keyword{frequency}
-\keyword{statistics,}
-\keyword{summary}
-\keyword{table,}
-\keyword{tabulation,}
+\author{
+Myo Minn Oo (Email: \email{dr.myominnoo@gmail.com} |
+Website: \url{https://myominnoo.github.io/})
+}
+\keyword{correlation}
+\keyword{distribution,}
+\keyword{number}
+\keyword{summary,}

@@ -1,166 +1,296 @@
-#' @title A Quick Summary of data frame or data
-#'
+#' @title Number Summary, Correlation, Grouped and Stratified Summary
 #' @description
-#' A simple yet powerful function to produce a quick summary of various types of data or data frame
-#'
-#' @param x a vector describing the bars which make up the plot. It is usually on x axis.
-#' @param y a vector describing the y axis or second variable in cross-tabulation or data relationship.
-#' @param by a vector describing the grouping of x. By default, the plot generates a faceted barplot.
-#' @param data an optional data frame (or object coercible by as.data.frame to a data frame) containing the variables for contigency table.
-#' @param rnd an integer indicating the number of decimal places:
-#' @param na.rm A logical value indicating to remove NA values in the table or not. By Default, the value is TRUE
-#' @param pct type of percentages in cross-tabulation: by default, it shows row percentages in two
-#' @param groupby a character value, indicating patterns of aggregation either by one of the followings:
-#'
-#' "y" - Year along
-#'
-#' "ym" - Year + Month
-#'
-#' "ymd" - Year + Month + Day
-#'
-#' @param plot.display logical value, indicating whether plot will be displayed or not
-#' @param main a main title for the plot.
-#' @param xlab a label for the x axis, defaults to a description of x.
-#' @param ylab a label for the y axis, defaults to a description of y.
-#' @param show.legend show or hide the legend. Hide the legend by default
-#' @param legend.text Legend title
-#' @param plot.type if bivariate analysis, type of plot can be specified. By default, this generates a facted plot. 'p' for parrallel barplot, 's' for stacked barplot, 'fs' for full stacked percentage barplot.
-#' @param facet.ncol number of columns to be faceted
-#' @param plot.save a logical value. If TRUE, it saves the plot generated in the current working directory.
-#' @param plot.name a text for plot filename. Suffix can be ".png", ".tiff" and ".pdf"
-#' @param width a value in inches
-#' @param height a value in inches
-#' @param dpi a value for resolution of the plot saved.
+#' \code{isum} generates tables that display univariate, bivariate and stratified
+#' summaries. 
+#' @param x a numeric object
+#' @param y a numeric or factor object
+#' @param by a factor object
+#' @param data an optional data frame 
+#' @param rnd specify rounding of numbers
+#' @param na.rm A logical value to specify missing values, <NA> in the table
+#' @param plot.show display bar plots of the data
+#' @details 
+#' Exploring data before jumping into complex analysis is always a necessity. 
+#' The first step of an analysis should be to summarize and display data.
+#' By doing so, invaluable insight can be gained through the familiarity with the data.
+#' 
+#' \code{isum} allows to summarize the distribution of data taken by a single variable, 
+#' the association between two numeric variables as well as between a numeric variable
+#' and a factor variable, and finally these associations stratified by a third factor 
+#' variable. 
+#' 
+#' This function also generate different data visualization for better exploration by 
+#' using \code{iboxplot}. The plot display can be switched off by setting 
+#' \code{plot.show = FALSE}.
+#' 
+#' \strong{References:}
+#' \enumerate{
+#'   \item Essential Medical Statistics, Betty R. Kirkwood & Jonathan A.C. Sterne, 
+#'   Second Edition. Chapter 3
+#'   \item An Introduction to MEdical Statistics, Martin Bland, Thrid Edition, 
+#'   Chapter 4
+#' }
+#' 
 #' @import ggplot2
-#' @seealso ibarplot, inumsum, ikdplot, iboxplot, isum
-#' @keywords tabulation, frequency table, cross-tabulation, contigency table, summary statistics, dates
+#' @seealso \code{\link{itab}}, \code{\link{ibarplot}}, \code{\link{strate}}, 
+#' @keywords distribution, number summary, correlation
+#' @author Myo Minn Oo (Email: \email{dr.myominnoo@@gmail.com} |
+#' Website: \url{https://myominnoo.github.io/})
 #' @examples
+#' data(infert)
 #' str(infert)
-#' # summarize data.frame
-#' isum(infert)
-#' isum(age, data = infert) # numeric data
-#' isum(ltf$age)
-#' isum(ltf$age, boxplot = FALSE) # calling kernel density plot
-#' isum(age, education, data = infert) # continuous vs category data
-#' isum(age, education, data = infert, boxplot = FALSE)
-#' isum(age, pooled.stratum, data = infert) # continuous vs continuos data
-#' isum(age, pooled.stratum, data = infert, boxplot = FALSE)
-#' infert$case <- factor(infert$case) # stratified variable must be a factor
-#' isum(age, education, case, data = infert) # stratified analysis
-#' isum(age, education, case, data = infert, boxplot = FALSE)
-#' isum(age, education, case, data = infert, boxplot = FALSE, alpha = 1) # block transparency
-#' isum(age, pooled.stratum, education, data = infert)
-#'
-#' isum(education, data = infert) # categorical data
-#' isum(education, case, data = infert) # row percentage by default
-#' isum(education, case, data = infert, pct = 'col')
-#' isum(education, case, data = infert, pct = 'all')
-#' isum(education, case, data = infert, pct = 'none')
-#' isum(education, case, data = infert) # faceted plot by default
-#' isum(education, case, data = infert, plot.type = 'p')
-#' isum(education, case, data = infert, plot.type = 's')
-#' isum(education, case, data = infert, plot.type = 'fs')
-#' isum(education, case, data = infert)
-#'
-#' str(iris)
-#' isum(iris)
-#' isum(Sepal.Length, data = iris)
-#' isum(Sepal.Length, Sepal.Width, data = iris)
-#' isum(Sepal.Length, Species, data = iris)
-#' isum(Sepal.Length, Species, data = iris, boxplot = FALSE)
-#' isum(Sepal.Length, Species, data = iris, boxplot = FALSE, alpha = 1)
+#' 
+#' ## univariate analysis 
+#' isum(infert$age)
+#' isum(pooled.stratum, data = infert)
+#' 
+#' ## bivariate: numeric x factor
+#' isum(age, education, data = infert)
+#' isum(parity, education, data = infert)
+#' isum(pooled.stratum, education, data = infert)
+#' isum(infert$parity, factor(infert$case))
+#' 
+#' ## bivariate: numeric x numeric 
+#' isum(age, parity, data = infert)
+#' isum(age, stratum, data = infert)
+#' isum(age, pooled.stratum, data = infert)
+#' 
+#' ## stratified: numeric x factor | factor 
+#' infert$case <- factor(infert$case)
+#' isum(age, education, case, data = infert)
+#' 
+#' ## stratified: numeric x numeric | factor 
+#' isum(age, parity, education, data = infert)
+#' isum(age, stratum, education, data = infert)
 
-
-#' @export
-isum <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = FALSE,
-                 pct = "row", groupby = "ym",
-                 plot.display = TRUE, plot.type = "f", boxplot = TRUE,
-                 main = NULL, xlab = NULL, ylab = NULL, alpha = 0.1,
-                 show.legend = TRUE, legend.text = NULL, facet.ncol = 2,
-                 plot.save = FALSE, plot.name = 'isum.tiff',
-                 width = 5, height = 4, dpi = 150)
+#' @export 
+isum <- function(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = TRUE, 
+                 plot.show = TRUE)
 {
   if (!is.null(data)) {
     arguments <- as.list(match.call())
     x <- eval(substitute(x), data)
     y <- eval(substitute(y), data)
     by <- eval(substitute(by), data)
-
-    lab.x <- arguments$x
-    lab.y <- arguments$y
-    lab.by <- arguments$by
+    
+    x.name <- arguments$x
+    y.name <- arguments$y
+    by.name <- arguments$by
   } else {
-    lab.x <- deparse(substitute(x))
-    if (!is.null(y)) lab.y <- deparse(substitute(y))
-    if (!is.null(by)) lab.by <- deparse(substitute(by))
+    x.name <- deparse(substitute(x))
+    if (!is.null(y)) y.name <- deparse(substitute(y))
+    if (!is.null(by)) by.name <- deparse(substitute(by))
   }
-
-  # depend on x
-  if (is.numeric(x) | class(x) == "difftime") {
-    if (is.table(x)) stop(paste0(lab.x, " is a ", class(x), "."))
-    if (class(x) == "difftime")  x <- as.numeric(x)
-    df <- inumsum(x = x, y = y, by = by, rnd = rnd, na.rm = na.rm,
-                   x.varname = lab.x, y.varname = lab.y, by.varname = lab.by,
-                   plot.display = plot.display, boxplot = boxplot,
-                   main = main, xlab = xlab, ylab = ylab, alpha = alpha,
-                   show.legend = show.legend, legend.text = legend.text,
-                   facet.ncol = facet.ncol, plot.save = plot.save, plot.name = plot.name,
-                   width = width, height = height, dpi = dpi)
-  } else if (is.character(x) | is.factor(x) | is.logical(x)) {
-    df <- itab(x = x, y = y, by = by, rnd = rnd, na.rm = na.rm,
-                x.varname = lab.x, y.varname = lab.y, by.varname = lab.by,
-                pct = pct, plot.display = plot.display, main = main, xlab = xlab,
-                ylab = ylab, show.legend = show.legend, legend.text = legend.text,
-                plot.type = plot.type, facet.ncol = facet.ncol, plot.save = plot.save,
-                plot.name = plot.name, width = width, height = height, dpi = dpi)
-  } else if (is.Date(x)) {
-    if (is.null(xlab)) xlab <- lab.x
-    df <- idatesum(x = x, groupby = groupby, rnd = rnd, plot.display = plot.display,
-                   xlab = xlab)
-  } else if (is.data.frame(x)) {
-    # create logical vector for date type
-    v_date <- unlist(lapply(names(x), function(y)
-      ifelse(is.Date(x[[y]]), TRUE, FALSE)))
-    v_num <- unlist(lapply(names(x), function(y)
-      ifelse(is.numeric(x[[y]]), TRUE, FALSE)))
-    v_freq <- !v_date & !v_num
-
-    # number summary
-    num <- do.call(rbind, lapply(names(x)[v_num], function(z)
-      inumsum(x = x[,z], x.varname = z, rnd = rnd, na.rm = na.rm, plot.display = FALSE)
-    ))
-    # row.names(num) <- names(x)[v_num]
-
-    # factor summary
-    freq <- lapply(names(x)[v_freq], function(z)
-      itab(x = x[,z], x.varname = z, rnd = rnd, na.rm = na.rm, pct = pct,
-           plot.display = FALSE))
-    freq <- structure(freq, names = names(x)[v_freq])
-
-    # date summary
-    date <- lapply(names(x)[v_date], function(z)
-      idatesum(x = x[,z], rnd = rnd, plot.display = FALSE))
-    date <- structure(date, names = names(x)[v_date])
-
-    # data.frame summary output
-    if (any(v_num)) flag <- "a"
-    if (any(v_freq)) flag <- "b"
-    if (any(v_date)) flag <- "c"
-    if (any(v_num) & any(v_freq)) flag <- "d"
-    if (any(v_freq) & any(v_date)) flag <- "e"
-    if (any(v_num) & any(v_date)) flag <- "f"
-    if (any(v_num) & any(v_freq) & any(v_date)) flag <- "g"
-    df <- switch(flag,
-                 a = num,
-                 b = freq,
-                 c = date,
-                 d = list(Number.Summary = num, Freq.Summary = freq),
-                 e = list(Freq.Summary = freq, Date.Summary = date),
-                 f = list(Number.Summary = num, Date.Summary = date),
-                 g = list(Number.Summary = num, Freq.Summary = freq,
-                          Date.Summary = date))
-  } else {
-    print(paste0(lab.x, " is a ", class(x), "."))
+  
+  if (!is.numeric(x)) {
+    stop("x must be a numeric object.")
   }
+  
+  type <- ifelse(is.null(y), "uni", ifelse(is.null(by), "bi", "strata"))
+  
+  res <- switch(
+    type,
+    uni = {
+      df <- uni.sum(x, rnd, na.rm)
+      row.names(df) <- x.name
+      cat(paste0('\nSummary: ', x.name, '\n\n'))
+      uni <- df
+    }, 
+    bi = {
+      if (is.factor(y) | is.character(y) | is.logical(y)) {
+        df <- bi.sum.cat(x, y, rnd, na.rm)
+        row.names(df)[1] <- as.character(x.name)
+        cat(paste0('\nSummary: ', x.name, ' ~ ', y.name, '\n\n'))
+        bi = df
+      } else if (is.numeric(y)) {
+        df <- bi.sum.num(x, y, rnd, na.rm)
+        row.names(df) <- c(x.name, y.name)
+        cat(paste0('\nCorrelation: ', x.name, ' ~ ', y.name, '\n\n'))
+        bi <- df
+      } else {
+        message('y is not specified as factor or as number.')
+      }
+    }, 
+    strata = {
+      if (na.rm) lvl <- as.character(unique(na.omit(by))) else 
+        lvl <- as.character(unique(by))
+      lvl <- ifelse(is.na(lvl), "<NA>", lvl)
+      df.lvl <- unlist(lapply(lvl, function(z) paste(c(x.name, y.name), z, sep = '_')))
+      
+      if (is.factor(y) | is.character(y) | is.logical(y)) {
+        df <- str.sum.cat(x, y, by, rnd, na.rm)
+        for (i in 1:length(lvl)) row.names(df[[lvl[i]]])[1] <- as.character(x.name)
+        cat(paste0('\nSummary: ', x.name, ' ~ ', y.name, ' | ', by.name, '\n\n'))
+        strata <- df
+      } else if (is.numeric(y)) {
+        df <- str.sum.num(x, y, by, rnd, na.rm)
+        row.names(df)[1:2] <- c(x.name, y.name)
+        row.names(df)[-c(1:3)] <- df.lvl
+        cat(paste0('\nCorrelation: ', x.name, ' ~ ', y.name, ' | ', by.name, '\n\n'))
+        strata <- df
+      } else {
+        message('y is not specified as factor or as number.')
+      } 
+    }
+  )
+  
+  if (plot.show) {
+    main <- ifelse(is.null(y), paste0('Plot: ', x.name), 
+                   ifelse(is.null(by), 
+                          paste0('Plot: ', x.name, ' ~ ', y.name), 
+                          paste0('Plot: ', x.name, ' ~ ', y.name, 
+                                 ' | ', by.name)))
+    plot(
+      iboxplot(x, y, by, na.rm = na.rm, main = main, xlab = x.name, ylab = y.name,
+               legend.text = by.name)
+    )
+  }
+  
+  return(res) 
+}
+
+uni.sum <- function(x, rnd = 1, na.rm = TRUE) {
+  len <- ifelse(na.rm, length(x[!is.na(x)]), length(x))
+  na <- ifelse(na.rm, length(x[is.na(x)]), 0)
+  na.rm <- TRUE
+  mu <- mean(x, na.rm = na.rm)
+  std <- sd(x, na.rm = na.rm)
+  q <- round(quantile(x, probs = c(0, .25, .5, .75, 1), na.rm = na.rm), rnd)
+  v <- round(c(mu, std, q), rnd)
+  pvalue <- tryCatch({
+    suppressWarnings(shapiro.test(x)$p.value)
+  }, error = function(err) {
+    return(NA)
+  })
+  pvalue <- ifelse(pvalue < 0.001, "< 0.001", round(pvalue, 3))
+  df <- data.frame(Obs. = len, NA. = na, Mean = v[1], Std.Dev = v[2],
+                   Median = v[5], Q_1 = v[4], Q_3 = v[6],
+                   Min = v[3], Max = v[7], Normality = pvalue, 
+                   stringsAsFactors = FALSE)
   return(df)
 }
+
+bi.sum.num <- function(x, y, rnd = 1, na.rm = TRUE) {
+  df <- rbind(uni.sum(x, rnd, na.rm), 
+              uni.sum(y, rnd, na.rm))
+  df <- data.frame(df, Corr = c(htest.pvalue(x, y, test = 'corr'), ''), 
+                   stringsAsFactors = FALSE)
+  return(df)
+}
+
+bi.sum.cat <- function(x, y, rnd = 1, na.rm = TRUE) {
+  if (na.rm) lvl <- as.character(unique(na.omit(y))) else 
+    lvl <- as.character(unique(y))
+  df <- uni.sum(x, rnd, na.rm)
+  df.lvl <- do.call(rbind, lapply(lvl, function(z) 
+    uni.sum(x[y == z], rnd, na.rm)))
+  lvl <- ifelse(is.na(lvl), "<NA>", lvl)
+  row.names(df.lvl) <- lvl
+  df <- rbind(df, df.lvl)[,-c(8:9)]
+  df <- cbind(df, SE = round(df$Std.Dev / sqrt(df$Mean), rnd))
+  df <- cbind(df,
+              ci.Lwr = round(df$Mean - (1.96 * df$SE), rnd),
+              ci.Upr = round(df$Mean + (1.96 * df$SE), rnd))
+  df <- do.call(rbind, list(df[1,], "_" = "_", df[-1,]))
+  
+  pvalue <- htest.num(x, y, na.rm)
+  df <- data.frame(df, c(pvalue[3], rep("", nrow(df) - 1)))
+  colnames(df)[12] <- pvalue[2]
+  return(df)
+}
+
+str.sum.num <- function(x, y, by, rnd = 1, na.rm = TRUE) 
+{
+  if (na.rm) lvl <- as.character(unique(na.omit(by))) else 
+    lvl <- as.character(unique(by))
+  df <- bi.sum.num(x, y, rnd, na.rm)
+  df.lvl <- do.call(rbind, lapply(lvl, function(z) {
+    bi.sum.num(x[by == z], y[by == z], rnd, na.rm)  }))
+  lvl <- ifelse(is.na(lvl), "<NA>", lvl)
+  rownames(df.lvl) <- unlist(lapply(lvl, function(z) paste(c('x', 'y'), z, sep = '_')))
+  df <- do.call(rbind, list(df, "_" = "_", df.lvl))
+  return(df)
+}
+
+str.sum.cat <- function(x, y, by, rnd = 1, na.rm = TRUE) 
+{
+  if (na.rm) lvl <- as.character(unique(na.omit(by))) else 
+    lvl <- as.character(unique(by))
+  df <- lapply(lvl, function(z) 
+    bi.sum.cat(x[by == z], y[by == z], rnd, na.rm))
+  df <- structure(df, names = lvl)
+  return(df)
+}
+
+htest.pvalue <- function(x, y = NULL, test = 'spw') 
+{
+  pvalue <- switch (test,
+    spw = {tryCatch({
+      suppressWarnings(shapiro.test(x)$p.value)
+    }, error = function(err) {
+      return(NA)
+    })}, 
+    corr = {tryCatch({
+      suppressWarnings(cor(x, y, use = 'na.or.complete'))
+    }, error = function(err) {
+      return(NA)
+    })}, 
+    ttest = {tryCatch({
+      suppressWarnings(t.test(x ~ y)$p.value)
+    }, error = function(err) {
+      return(NA)
+    })}, 
+    wilcox = tryCatch({
+      suppressWarnings(wilcox.test(x ~ y)$p.value)
+    }, error = function(err) {
+      return(NA)}), 
+    kwallis = tryCatch({
+      suppressWarnings(kruskal.test(x ~ y)$p.value)
+    }, error = function(err) {
+      return(NA)}), 
+    anova = tryCatch({
+      suppressWarnings(summary(aov(x ~ y))[[1]][1,5])
+    }, error = function(err) {
+      return(NA)}), 
+    fisher = tryCatch({
+      suppressWarnings(fisher.test(x ~ y, simulate.p.value = TRUE)$p.value)
+    }, error = function(err) {
+      return(NA)}), 
+    chisq = tryCatch({
+      suppressWarnings(chisq.test(x ~ y)$p.value)
+    }, error = function(err) {
+      return(NA)})
+    
+  )
+  pvalue <- ifelse(pvalue < 0.001, "< 0.001", round(pvalue, 3))
+  return(pvalue)
+}
+
+
+htest.num <- function(x, y, na.rm = TRUE) 
+{
+  if (na.rm) lvl <- as.character(unique(na.omit(y))) else 
+    lvl <- as.character(unique(y))
+  if (length(lvl) > 2) {
+    if (shapiro.test(x)$p.value < 0.05) {
+      pvalue <- htest.pvalue(x, y, test = 'kwallis')
+      pvalue.name <- 'K-Wallis test'
+    } else {
+      pvalue <- htest.pvalue(x, y, test = 'anova')
+      pvalue.name <- 'ANOVA test'
+    }
+  } else {
+    if (shapiro.test(x)$p.value < 0.05) {
+      pvalue <- htest.pvalue(x, y, test = 'wilcox')
+      pvalue.name <- 'Wilcox test'
+    } else {
+      pvalue <- htest.pvalue(x, y, test = 'ttest')
+      pvalue.name <- 't-test'
+    }
+  } 
+  df <- c('htest' = paste0('p-value (', pvalue.name, '): ', pvalue), 
+          'htest.name' = pvalue.name, 
+          'p.value' = pvalue)
+  return(df)
+}
+
