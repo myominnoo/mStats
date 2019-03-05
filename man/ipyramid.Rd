@@ -18,9 +18,9 @@ ipyramid(x, y, data = NULL, na.rm = FALSE, binwidth = NULL,
 
 \item{na.rm}{A logical value indicating to remove NA values}
 
-\item{binwidth}{specify the cut points of x: 
-By default, cut-off is set at 10 years interval from the lowest value. 
-A sequence of cut-off points can also be speicified. For example, 
+\item{binwidth}{specify the cut points of x:
+By default, cut-off is set at 10 years interval from the lowest value.
+A sequence of cut-off points can also be speicified. For example,
 \code{binwidth = seq(1:100, 10)} or \code{binwidth = c(18, 20, 25, 30, 60, 90)}}
 
 \item{main}{title of the plot}
@@ -31,14 +31,14 @@ A sequence of cut-off points can also be speicified. For example,
 
 \item{legend.text}{title of legend}
 
-\item{text.size}{size of text in the plot. Font size for data level is 14:5 ratio 
+\item{text.size}{size of text in the plot. Font size for data level is 14:5 ratio
 to axis font size}
 
 \item{getdata}{generate cross-tabulation, data frame in addition to plot.}
 
 \item{plot.save}{save the plot}
 
-\item{plot.name}{specify for name of the plot file to be saved. 
+\item{plot.name}{specify for name of the plot file to be saved.
 Filename can be in either of these extension formats: ".tiff", ".png", and ".pdf"}
 
 \item{width}{integer measured in inches}
@@ -51,20 +51,20 @@ Filename can be in either of these extension formats: ".tiff", ".png", and ".pdf
 \code{ipyramid} generates a population pyramid graph and data output.
 }
 \details{
-Histogram is typically used to display the age distribution of a population. However, 
+Histogram is typically used to display the age distribution of a population. However,
 it is usual to present age ditribution separately for two sexes because mortality tends to
-be different. In a population pyramid, age is scaled vertically and sex horizontally. 
-The number or frequency scale of sex is zero at the middle and increases or decreases to 
-both sides. 
+be different. In a population pyramid, age is scaled vertically and sex horizontally.
+The number or frequency scale of sex is zero at the middle and increases or decreases to
+both sides.
 
-\strong{Usage in other types of data} 
+\strong{Usage in other types of data}
 
-It is interesting to see the application of age-sex pyramid population plot for other 
-types of data. I would like to hear more comments about this. 
+It is interesting to see the application of age-sex pyramid population plot for other
+types of data. I would like to hear more comments about this.
 
 \strong{References:}
 \enumerate{
-  \item An Introduction to MEdical Statistics, Martin Bland, Thrid Edition, 
+  \item An Introduction to MEdical Statistics, Martin Bland, Thrid Edition,
   Chapter 16, page 303
 }
 }
@@ -83,8 +83,8 @@ ipyramid(age, sex, data = data)
 ipyramid(age, sex, data = data, binwidth = 5)
 }
 \seealso{
-\code{\link{ibarplot}}, \code{\link{iboxplot}}, \code{\link{isum}}, 
-\code{\link{toDate}}
+\code{\link{ibarplot}}, \code{\link{iboxplot}}, \code{\link{isum}},
+\code{\link{formatDate}}
 }
 \keyword{contigency}
 \keyword{cross-tabulation,}

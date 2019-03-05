@@ -10,7 +10,7 @@ dateSum(x, groupBy = "y", decreasing = FALSE, rnd = 1,
 \arguments{
 \item{x}{a Date vector}
 
-\item{groupBy}{grouping by one of three date components: 
+\item{groupBy}{grouping by one of three date components:
 \enumerate{
   \item \strong{y}: Year alone
   \item \strong{ym}: Year and Month
@@ -26,13 +26,13 @@ dateSum(x, groupBy = "y", decreasing = FALSE, rnd = 1,
 \item{xlab}{x-axis label}
 }
 \description{
-\code{dateSum} tabulates dates as factor, based on date components: Day, Month, Year. 
+\code{dateSum} tabulates dates as factor, based on date components: Day, Month, Year.
 The frequency distribution can be also displayed.
 }
 \examples{
 # random dates generation
 set.seed(1)
-dates <- toDate(rnorm(100, mean = 4000, sd = 100), "e")
+dates <- formatDate(rnorm(100, mean = 4000, sd = 100), "e")
 dateSum(dates) # by default, pattern is set to Year alone.
 dateSum(dates, "y")
 dateSum(dates, "ym")
@@ -42,7 +42,7 @@ dateSum(dates, "ymd", plot.show = FALSE)
 dateSum(dates, "ymd") # this can take times.
 }
 \seealso{
-\code{\link{itab}}, \code{\link{ibarplot}}, \code{\link{isum}}, 
+\code{\link{itab}}, \code{\link{ibarplot}}, \code{\link{isum}},
 \code{\link{iboxplot}}
 }
 \author{
