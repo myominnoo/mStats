@@ -34,7 +34,7 @@ iboxplot(x, y = NULL, by = NULL, data = NULL, rnd = 1,
 
 \item{plot.save}{save the plot}
 
-\item{plot.name}{specify for name of the plot file to be saved. 
+\item{plot.name}{specify for name of the plot file to be saved.
 Filename can be in either of these extension formats: ".tiff", ".png", and ".pdf"}
 
 \item{width}{integer measured in inches}
@@ -44,33 +44,33 @@ Filename can be in either of these extension formats: ".tiff", ".png", and ".pdf
 \item{dpi}{specify resolution of the plot to be saved}
 }
 \description{
-\code{iboxplot} generates optimized box plots and scatter plots 
+\code{iboxplot} generates optimized box plots and scatter plots
 for univariate, bivariate and stratified analyses.
 }
 \details{
-Exploring data before jumping into complex analysis is always a necessity. 
+Exploring data before jumping into complex analysis is always a necessity.
 The first step of an analysis should be to summarize and display data.
 By doing so, invaluable insight can be gained through the familiarity with the data.
 
 \strong{Box plot}
 
-Described by Tukey (1977), displays five figure summary of a distribution: 
-the median, quartiles, minimum and maximum. In addition, any observations whose 
-distance is more than 1.5 times the interquartile range are denoted as outliers 
-and shown as red points. This type of plot is useful for showing the comparison 
-of several groups. 
+Described by Tukey (1977), displays five figure summary of a distribution:
+the median, quartiles, minimum and maximum. In addition, any observations whose
+distance is more than 1.5 times the interquartile range are denoted as outliers
+and shown as red points. This type of plot is useful for showing the comparison
+of several groups.
 
 \strong{Scatter plot}
 
-Scaling two continous variables along horizontal and vertical axis, this plot is 
+Scaling two continous variables along horizontal and vertical axis, this plot is
 known as scatter plot or diagram. Each pair of observations is displayed with a
-hollow circle to better visualize the overlapping density. This can be further 
-stratified in color by a third factor variable. For the association of two variables, a blue best fitted line is drawn by linear 
-method. 
+hollow circle to better visualize the overlapping density. This can be further
+stratified in color by a third factor variable. For the association of two variables,
+a blue best fitted line is drawn by linear method.
 
 \strong{References:}
 \enumerate{
-  \item An Introduction to MEdical Statistics, Martin Bland, Thrid Edition, 
+  \item An Introduction to MEdical Statistics, Martin Bland, Thrid Edition,
   Chapter 4, page 58 & 75-7
 }
 }
@@ -88,21 +88,21 @@ iboxplot(pooled.stratum, data = infert)
 ## bivariate analysis
 iboxplot(infert$age, infert$parity)
 iboxplot(age, pooled.stratum, data = infert)
-iboxplot(age, parity, data = infert, main = 'My plot: age x parity', 
+iboxplot(age, parity, data = infert, main = 'My plot: age x parity',
          xlab = 'Age in years', ylab = 'Parity')
-         
+
 iboxplot(age, education, data = infert)
 infert$case = factor(infert$case)
-iboxplot(age, case, data = infert, main = 'My plot: age x case', 
+iboxplot(age, case, data = infert, main = 'My plot: age x case',
          xlab = 'Case', ylab = 'Age in years')
 
-## stratified analysis 
+## stratified analysis
 iboxplot(infert$age, infert$parity, infert$education)
-iboxplot(age, parity, education, data = infert, main = 'Stratified Plot', 
+iboxplot(age, parity, education, data = infert, main = 'Stratified Plot',
          xlab = 'Age', ylab = 'Parity', legend.text = 'Education')
 
 iboxplot(age, education, case, data = infert)
-iboxplot(age, case, education, data = infert, main = 'Stratified box plot', 
+iboxplot(age, case, education, data = infert, main = 'Stratified box plot',
          xlab = 'Case', ylab = 'Age in years', legend.text = 'Education')
 }
 \seealso{

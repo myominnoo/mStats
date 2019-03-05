@@ -27,24 +27,24 @@ isum(x, y = NULL, by = NULL, data = NULL, rnd = 1, na.rm = TRUE,
 summaries.
 }
 \details{
-Exploring data before jumping into complex analysis is always a necessity. 
+Exploring data before jumping into complex analysis is always a necessity.
 The first step of an analysis should be to summarize and display data.
 By doing so, invaluable insight can be gained through the familiarity with the data.
 
-\code{isum} allows to summarize the distribution of data taken by a single variable, 
+\code{isum} allows to summarize the distribution of data taken by a single variable,
 the association between two numeric variables as well as between a numeric variable
-and a factor variable, and finally these associations stratified by a third factor 
-variable. 
+and a factor variable, and finally these associations stratified by a third factor
+variable.
 
-This function also generate different data visualization for better exploration by 
-using \code{iboxplot}. The plot display can be switched off by setting 
+This function also generate different data visualization for better exploration by
+using \code{iboxplot}. The plot display can be switched off by setting
 \code{plot.show = FALSE}.
 
 \strong{References:}
 \enumerate{
-  \item Essential Medical Statistics, Betty R. Kirkwood & Jonathan A.C. Sterne, 
+  \item Essential Medical Statistics, Betty R. Kirkwood & Jonathan A.C. Sterne,
   Second Edition. Chapter 3
-  \item An Introduction to MEdical Statistics, Martin Bland, Thrid Edition, 
+  \item An Introduction to MEdical Statistics, Martin Bland, Thrid Edition,
   Chapter 4
 }
 }
@@ -52,7 +52,7 @@ using \code{iboxplot}. The plot display can be switched off by setting
 data(infert)
 str(infert)
 
-## univariate analysis 
+## univariate analysis
 isum(infert$age)
 isum(pooled.stratum, data = infert)
 
@@ -62,16 +62,16 @@ isum(parity, education, data = infert)
 isum(pooled.stratum, education, data = infert)
 isum(infert$parity, factor(infert$case))
 
-## bivariate: numeric x numeric 
+## bivariate: numeric x numeric
 isum(age, parity, data = infert)
 isum(age, stratum, data = infert)
 isum(age, pooled.stratum, data = infert)
 
-## stratified: numeric x factor | factor 
+## stratified: numeric x factor | factor
 infert$case <- factor(infert$case)
 isum(age, education, case, data = infert)
 
-## stratified: numeric x numeric | factor 
+## stratified: numeric x numeric | factor
 isum(age, parity, education, data = infert)
 isum(age, stratum, education, data = infert)
 }
