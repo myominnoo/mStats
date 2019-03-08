@@ -8,9 +8,7 @@
 #' @param data an optional data frame
 #' @param na.rm A logical value indicating to remove NA values
 #' @param binwidth specify the cut points of x:
-#' By default, cut-off is set at 10 years interval from the lowest value.
-#' A sequence of cut-off points can also be speicified. For example,
-#' \code{binwidth = seq(1:100, 10)} or \code{binwidth = c(18, 20, 25, 30, 60, 90)}
+#' @param labels specify to name the factor levels.
 #' @param main title of the plot
 #' @param xlab x-axis label
 #' @param ylab y-axis label
@@ -31,6 +29,12 @@
 #' The number or frequency scale of sex is zero at the middle and increases or decreases to
 #' both sides.
 #'
+#' \strong{Specifying binwidth}
+#'
+#' By default, cut-off is set at 10 years interval from the lowest value.
+#' A sequence of cut-off points can also be speicified. For example,
+#' \code{binwidth = seq(1:100, 10)} or \code{binwidth = c(18, 20, 25, 30, 60, 90)}
+#'
 #' \strong{Usage in other types of data}
 #'
 #' It is interesting to see the application of age-sex pyramid population plot for other
@@ -38,7 +42,7 @@
 #'
 #' \strong{References:}
 #' \enumerate{
-#'   \item An Introduction to MEdical Statistics, Martin Bland, Thrid Edition,
+#'   \item An Introduction to Medical Statistics, Martin Bland, Thrid Edition,
 #'   Chapter 16, page 303
 #' }
 #'
@@ -61,7 +65,7 @@
 #' ipyramid(age, sex, data = data, binwidth = 5)
 
 #' @export
-ipyramid <- function(x, y, data = NULL, na.rm = FALSE, binwidth = NULL,
+ipyramid <- function(x, y, data = NULL, na.rm = FALSE, binwidth = NULL, labels = NULL,
                      main = NULL, xlab = NULL, ylab = NULL, legend.text = NULL,
                      text.size = 12, getdata = FALSE,
                      plot.save = FALSE, plot.name = '<unnamed>.tiff',
@@ -97,22 +101,29 @@ ipyramid <- function(x, y, data = NULL, na.rm = FALSE, binwidth = NULL,
   if (is.null(binwidth)) {
     binwidth <- 10
     x.brk <- seq(min(x, na.rm = TRUE), max(x, na.rm = TRUE), binwidth)
-    x.brk <- c(x.brk[1], x.brk[2:(length(x.brk)-1)] - 1, x.brk[length(x.brk)])
+    x.brk <- c(x.brk[1], x.brk[2:(length(x.brk)-1)] - 1, x.brk[length(x.brk)] - 1)
   }  else {
     if (length(binwidth) == 1) {
       x.brk <- seq(min(x, na.rm = TRUE), max(x, na.rm = TRUE), binwidth)
-      x.brk <- c(x.brk[1], x.brk[2:(length(x.brk)-1)] - 1, x.brk[length(x.brk)])
+      x.brk <- c(x.brk[1], x.brk[2:(length(x.brk)-1)] - 1, x.brk[length(x.brk)] - 1)
     } else {
       x.brk <- binwidth
     }
   }
 
-  if (x.brk[length(x.brk)] < max(x, na.rm = TRUE))
-    x.brk <- c(x.brk, max(x, na.rm = TRUE))
+  x.max <- max(x, na.rm = TRUE)
+  if (x.brk[length(x.brk)] < x.max) {
+    x.brk <- c(x.brk, x.max)
+  } else {
+    x.brk <- x.brk[x.brk < x.max]
+  }
+  if (x.brk[length(x.brk)] != x.max) x.brk <- c(x.brk, x.max)
 
-  x.lbl.lwr <- c(x.brk[1], x.brk[-c(1, length(x.brk))] + 1)
-  x.lbl.upr <- x.brk[-1]
-  x.lbl <- paste(x.lbl.lwr, x.lbl.upr, sep = "-")
+  if (is.null(labels)) {
+    x.lbl.lwr <- c(x.brk[1], x.brk[-c(1, length(x.brk))] + 1)
+    x.lbl.upr <- x.brk[-1]
+    x.lbl <- paste0(lab.x, ".", paste(x.lbl.lwr, x.lbl.upr, sep = "-"))
+  } else {x.lbl <- labels}
 
   data$x.cut <- cut(data$x, breaks = x.brk, labels = x.lbl, right = TRUE,
                     include.lowest = TRUE)

@@ -23,37 +23,37 @@ strate(time, event, strata = NULL, data = NULL, fail = NULL,
 \item{rnd}{Rounding of numbers}
 }
 \description{
-\code{\link{strate}} calculates incidence rates of the cohort.
+\code{strate} calculates incidence rates of the cohort.
 }
 \details{
-Rates of event occurrences, known as incidence rates are outcome measures in 
-longitudinal studies. In most longitudinal studies, follow-up times vary due 
-to logistic resasons, different periods of recruitment, delay enrolment into 
-the study, lost-to-follow-up, immigration or emigration and death. 
+Rates of event occurrences, known as incidence rates are outcome measures in
+longitudinal studies. In most longitudinal studies, follow-up times vary due
+to logistic resasons, different periods of recruitment, delay enrolment into
+the study, lost-to-follow-up, immigration or emigration and death.
 
 \strong{Follow-up time in longitudinal studies}
 
-Period of observation (called as follow-up time) starts when individuals join 
+Period of observation (called as follow-up time) starts when individuals join
 the study and ends when they either have an outcome of interest, are lost-to-
-follow-up or the follow-up period ends, whichever happens first. This period is 
-called \strong{person-year-at-risk}. This is denoted by \emph{PY} in \code{strate} 
-function's output and numer of event by \emph{D}. 
+follow-up or the follow-up period ends, whichever happens first. This period is
+called \strong{person-year-at-risk}. This is denoted by \emph{PY} in \code{strate}
+function's output and numer of event by \emph{D}.
 
 \strong{Rate}
 
-is calcluated using the following formula: 
+is calcluated using the following formula:
 \deqn{\lambda = D / PY}
 
 \strong{Confidence interval of rate}
 
-is derived using the following formula: 
+is derived using the following formula:
 
 \deqn{95\% CI (rate) = rate x Error Factor}
 \deqn{Error Factor (rate) = exp(1.96 / \sqrtD)}
 
 \strong{References:}
 \enumerate{
-  \item Essential Medical Statistics, Betty R. Kirkwood & Jonathan A.C. Sterne, 
+  \item Essential Medical Statistics, Betty R. Kirkwood & Jonathan A.C. Sterne,
   Second Edition. Chapter 22, page 229 & 239
 }
 }

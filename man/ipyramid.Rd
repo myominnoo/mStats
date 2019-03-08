@@ -5,9 +5,10 @@
 \title{The Population Pyramid}
 \usage{
 ipyramid(x, y, data = NULL, na.rm = FALSE, binwidth = NULL,
-  main = NULL, xlab = NULL, ylab = NULL, legend.text = NULL,
-  text.size = 12, getdata = FALSE, plot.save = FALSE,
-  plot.name = "<unnamed>.tiff", width = 5, height = 4, dpi = 150)
+  labels = NULL, main = NULL, xlab = NULL, ylab = NULL,
+  legend.text = NULL, text.size = 12, getdata = FALSE,
+  plot.save = FALSE, plot.name = "<unnamed>.tiff", width = 5,
+  height = 4, dpi = 150)
 }
 \arguments{
 \item{x}{a numeric vector: age in a typical Population Pyramid plot.}
@@ -18,10 +19,9 @@ ipyramid(x, y, data = NULL, na.rm = FALSE, binwidth = NULL,
 
 \item{na.rm}{A logical value indicating to remove NA values}
 
-\item{binwidth}{specify the cut points of x:
-By default, cut-off is set at 10 years interval from the lowest value.
-A sequence of cut-off points can also be speicified. For example,
-\code{binwidth = seq(1:100, 10)} or \code{binwidth = c(18, 20, 25, 30, 60, 90)}}
+\item{binwidth}{specify the cut points of x:}
+
+\item{labels}{specify to name the factor levels.}
 
 \item{main}{title of the plot}
 
@@ -57,6 +57,12 @@ be different. In a population pyramid, age is scaled vertically and sex horizont
 The number or frequency scale of sex is zero at the middle and increases or decreases to
 both sides.
 
+\strong{Specifying binwidth}
+
+By default, cut-off is set at 10 years interval from the lowest value.
+A sequence of cut-off points can also be speicified. For example,
+\code{binwidth = seq(1:100, 10)} or \code{binwidth = c(18, 20, 25, 30, 60, 90)}
+
 \strong{Usage in other types of data}
 
 It is interesting to see the application of age-sex pyramid population plot for other
@@ -64,7 +70,7 @@ types of data. I would like to hear more comments about this.
 
 \strong{References:}
 \enumerate{
-  \item An Introduction to MEdical Statistics, Martin Bland, Thrid Edition,
+  \item An Introduction to Medical Statistics, Martin Bland, Thrid Edition,
   Chapter 16, page 303
 }
 }
