@@ -3,54 +3,65 @@
 \name{ilog}
 \alias{ilog}
 \alias{ilog.close}
+\alias{ilogtxt}
 \title{Echo a copy of console to log file}
 \usage{
-ilog(logfile = "<unnamed>.txt", append = FALSE)
+ilog(logfile = "LOG.txt", append = FALSE)
 
 ilog.close()
+
+ilogtxt(cmd, res, s, vis)
 }
 \arguments{
 \item{logfile}{Name of desired log file in \code{.txt} format}
 
-\item{append}{specify if the log file will be appended or not}
+\item{append}{a logical value}
+
+\item{cmd}{command line}
+
+\item{res}{result}
+
+\item{s}{others}
+
+\item{vis}{others}
 }
 \description{
-\code{ilog} allows to echo a copy of your console to log file.
+\code{ilog} echo a copy of console output to log file.
 }
 \details{
-\code{ilog} is a two-step function that allows you a record of your console. 
-A log is a file containing what you type and console output. If a name is not 
+\code{ilog} is a two-step function that allows you a record of your console.
+A log is a file containing what you type and console output. If a name is not
 specified, then \code{ilog} will use the name \code{<unnamed>.txt}.
 
-\code{ilog} opens a log file and \code{ilog.close} close the file. 
+\code{ilog} opens a log file and \code{ilog.close} close the file.
 
 \strong{Warnings:}
 
-Be reminded that clearing the environments while logging distrubs the 
-process. If such happens, console prompt will be stuck at \code{log> }. 
-Run the \code{commands} below to revert the console prompt back to normal.
+Clearing the global environment while logging will interrupt the logging
+process. In that case, console prompt will be stuck at \code{log> }.
+Run the \code{code} below to get the console prompt back to normal.
 
 options(prompt = \code{"> "}, continue = \code{"+ "})
-
-\strong{Acknowledgement:}
-\code{ilog} and \code{ilog.close} are inspriations from \code{STATA} software.
 }
 \examples{
+\dontrun{
+## my first log
 ilog("myfirstlog.txt")
 str(infert)
-itab(infert$education)
+tab(infert$education)
 str(iris)
 isum(iris$Sepal.Length)
 ilog.close()
 
-## appending the file. 
+## appending the file.
 ilog("myfirstlog.txt", append = TRUE)
 summary(infert)
 summary(iris)
 ilog.close()
 }
+}
 \seealso{
-\code{\link{idetach}}, \code{\link{clear}},
+\code{\link{clear}}
 }
 \author{
 Myo Minn Oo (Email: \email{dr.myominnoo@gmail.com} |
@@ -58,6 +69,8 @@ Website: \url{https://myominnoo.github.io/})
 }
 \keyword{console}
 \keyword{console,}
-\keyword{log}
-\keyword{outputs,}
+\keyword{copy}
+\keyword{echo,}
+\keyword{log,}
+\keyword{ouput,}
 \keyword{save}

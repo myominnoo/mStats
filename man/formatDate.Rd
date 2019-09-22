@@ -3,28 +3,29 @@
 \name{formatDate}
 \alias{formatDate}
 \alias{is.Date}
-\title{Coerces or test vectors to Date type}
+\title{Convert to Dates}
 \usage{
-formatDate(x, format = "dmY", sep = "/", thisCent = NULL)
+formatDate(x, format = "dmY", sep = "/", century = NULL)
 
 is.Date(x)
 }
 \arguments{
-\item{x}{object to be coerced or tested}
+\item{x}{a character or numeric object}
 
-\item{format}{for character vectors:}
+\item{format}{only for character vectors:}
 
 \item{sep}{separator character for date components}
 
-\item{thisCent}{specify either 2000 or 1900 for two-digit years}
+\item{century}{specify either 2000 or 1900 for two-digit years}
 }
 \description{
-\code{formatDate} coerces objects to Date type.
-\code{is.Date} indicates which vector is type of Date.
+\code{formatDate} converts characters or numbers to dates.
+\code{is.Date} indicates which elements are Dates.
 }
 \details{
-Intuitively, "dmY" represents dd mm YYYY format.
-In combination with value from \code{sep}, this can change to several date formats.
+"dmY" represents dd mm YYYY format.
+In combination with separators from \code{sep}, this can change to
+several date formats.
 For example, "dmy" + "-" convert to "dd-mm-YYYY" format.
 
 See \code{\link{as.Date}} for more date formats.
@@ -42,12 +43,11 @@ y <- formatDate(x)
 y
 }
 \seealso{
-\code{\link{dateSum}}
+\code{\link{generate}}, \code{\link{egen}}, \code{\link{labelVars}}
 }
 \author{
 Myo Minn Oo (Email: \email{dr.myominnoo@gmail.com} |
 Website: \url{https://myominnoo.github.io/})
 }
-\keyword{coerces,}
+\keyword{conversion}
 \keyword{date}
-\keyword{test}

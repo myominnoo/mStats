@@ -1,50 +1,50 @@
 #' @title Echo a copy of console to log file
 #'
 #' @description
-#' \code{ilog} allows to echo a copy of your console to log file. 
-#' 
+#' \code{ilog} echo a copy of console output to log file.
+#'
 #' @param logfile Name of desired log file in \code{.txt} format
-#' @param append specify if the log file will be appended or not
-#' @details 
-#' \code{ilog} is a two-step function that allows you a record of your console. 
-#' A log is a file containing what you type and console output. If a name is not 
+#' @param append a logical value
+#' @details
+#' \code{ilog} is a two-step function that allows you a record of your console.
+#' A log is a file containing what you type and console output. If a name is not
 #' specified, then \code{ilog} will use the name \code{<unnamed>.txt}.
-#' 
-#' \code{ilog} opens a log file and \code{ilog.close} close the file. 
-#' 
+#'
+#' \code{ilog} opens a log file and \code{ilog.close} close the file.
+#'
 #' \strong{Warnings:}
-#' 
-#' Be reminded that clearing the environments while logging distrubs the 
-#' process. If such happens, console prompt will be stuck at \code{log> }. 
-#' Run the \code{commands} below to revert the console prompt back to normal.
-#' 
+#'
+#' Clearing the global environment while logging will interrupt the logging
+#' process. In that case, console prompt will be stuck at \code{log> }.
+#' Run the \code{code} below to get the console prompt back to normal.
+#'
 #' options(prompt = \code{"> "}, continue = \code{"+ "})
-#' 
-#' \strong{Acknowledgement:}
-#' \code{ilog} and \code{ilog.close} are inspriations from \code{STATA} software. 
-#' 
-#' @seealso \code{\link{idetach}}, \code{\link{clear}}, 
-#' @keywords log console, save outputs, save console
+#'
+#' @seealso \code{\link{clear}}
+#' @keywords log, console ouput, save console, echo, copy
 #' @author Myo Minn Oo (Email: \email{dr.myominnoo@@gmail.com} |
 #' Website: \url{https://myominnoo.github.io/})
 #' @examples
+#' \dontrun{
+#' ## my first log
 #' ilog("myfirstlog.txt")
 #' str(infert)
-#' itab(infert$education)
+#' tab(infert$education)
 #' str(iris)
 #' isum(iris$Sepal.Length)
 #' ilog.close()
-#' 
-#' ## appending the file. 
+#'
+#' ## appending the file.
 #' ilog("myfirstlog.txt", append = TRUE)
 #' summary(infert)
 #' summary(iris)
 #' ilog.close()
+#' }
 
 #' @export
-ilog <- function(logfile = "<unnamed>.txt", append = FALSE) {
+ilog <- function(logfile = "LOG.txt", append = FALSE) {
   # create a global environment which can be accessed outside
-  logging.env <<- new.env()
+  .logenv <<- new.env()
   # <-- create a connection file -->
   if(!append) {
     # <--- if logfile exists & replace is TRUE, remove logfile --->
@@ -52,14 +52,14 @@ ilog <- function(logfile = "<unnamed>.txt", append = FALSE) {
       unlink(logfile)
     }
   }
-    # write log file
-    con <- file(logfile, open ='a')
-    logging.env$logfile <- logfile
+  # write log file
+  con <- file(logfile, open ='a')
+  .logenv$logfile <- logfile
 
   if(isOpen(con)) {
-    logging.env$con.close <- FALSE
+    .logenv$con.close <- FALSE
   } else {
-    logging.env$con.close <- TRUE
+    .logenv$con.close <- TRUE
     if(append) {
       open(con, open='a')
     } else {
@@ -67,27 +67,28 @@ ilog <- function(logfile = "<unnamed>.txt", append = FALSE) {
     }
   }
 
-  logging.env$con <- con
-  logging.env$cmd <- TRUE
-  logging.env$res <- TRUE
-  logging.env$first <- TRUE
+  .logenv$con <- con
+  .logenv$cmd <- TRUE
+  .logenv$res <- TRUE
+  .logenv$first <- TRUE
 
-  logging.env$con.out <- textConnection(NULL, open='a')
-  sink(logging.env$con.out, split=TRUE)
+  .logenv$con.out <- textConnection(NULL, open='a')
+  sink(.logenv$con.out, split=TRUE)
 
-  logging.env$prompt <- unlist(options('prompt'))
-  logging.env$continue <- unlist(options('continue'))
+  .logenv$prompt <- unlist(options('prompt'))
+  .logenv$continue <- unlist(options('continue'))
 
-  options(prompt = paste('log', logging.env$prompt, sep = ''),
-          continue = paste('log', logging.env$continue,sep = '') )
+  options(prompt = paste('log', .logenv$prompt, sep = ''),
+          continue = paste('log', .logenv$continue,sep = '') )
 
   # writing log info
   sink(logfile, append = TRUE, split = TRUE)
+  cat(paste0('      log: ', getwd(), "/", logfile,
+             '\n  open on: ', Sys.time(),'\n'))
   if(append) {
-    cat(paste0("(note ", getwd(), "/", logfile, " appended)"))
-  } else {cat(paste0("(note: ", getwd(), "/", logfile, " replace)"))}
-  cat(paste0('\n', '    log: ', getwd(), "/", logfile, '\nopen on: ', Sys.time(),'\n'))
-  cat(rep('.', 40), '\n\n')
+    cat(paste0("     note: ", "appended\n"))
+  } else {cat(paste0("     note: ", "replaced\n"))}
+  cat(rep('-', 70), '\n\n', sep = "")
   sink()
 
   addTaskCallback(ilogtxt, name = "ilogtxt")
@@ -98,54 +99,61 @@ ilog <- function(logfile = "<unnamed>.txt", append = FALSE) {
 #' @export
 ilog.close <- function() {
   removeTaskCallback(id = "ilogtxt")
-  logging.env <- as.environment(logging.env)
-  if(!logging.env$con.close) {
-    close(logging.env$con)
+  .logenv <- as.environment(.logenv)
+  if(!.logenv$con.close) {
+    close(.logenv$con)
   }
-  options( prompt = logging.env$prompt,
-           continue = logging.env$continue )
-  if(logging.env$res) {
+  options( prompt = .logenv$prompt,
+           continue = .logenv$continue )
+  if(.logenv$res) {
     sink()
-    close(logging.env$con.out)
+    close(.logenv$con.out)
     closeAllConnections()
   }
   # writing log info
-  sink(logging.env$logfile, append = TRUE, split = TRUE)
-  cat(paste0(rep('.', 40)))
-  cat(paste0('\n\n     log: ', getwd(), "/", logging.env$logfile, '\nclosed on: ',
+  sink(.logenv$logfile, append = TRUE, split = TRUE)
+  cat(rep('-', 70), '\n', sep = "")
+  cat(paste0('      log: ', getwd(), "/", .logenv$logfile, "\n",
+             'closed on: ',
              Sys.time(),'\n\n'))
   sink()
-  eval(rm(list= "logging.env", envir = sys.frame(-1)))
+  eval(rm(list= ".logenv", envir = sys.frame(-1)))
   invisible(NULL)
 }
 
+#' @rdname  ilog
+#' @param cmd command line
+#' @param res result
+#' @param s others
+#' @param vis others
+#' @export
 ilogtxt <- function(cmd, res, s, vis) {
-  if(logging.env$first) {
-    logging.env$first <- FALSE
-    if( logging.env$res ) {
+  if(.logenv$first) {
+    .logenv$first <- FALSE
+    if( .logenv$res ) {
       sink()
-      close(logging.env$con.out)
-      logging.env$con.out <- textConnection(NULL, open='a')
-      sink(logging.env$con.out, split=TRUE)
+      close(.logenv$con.out)
+      .logenv$con.out <- textConnection(NULL, open='a')
+      sink(.logenv$con.out, split=TRUE)
     }
   } else {
-    if(logging.env$cmd){
+    if(.logenv$cmd){
       cmdline <- deparse(cmd)
-      cmdline <- gsub('    ', paste("\n", logging.env$continue, sep =''),
+      cmdline <- gsub('    ', paste("\n", .logenv$continue, sep =''),
                       cmdline)
-      cmdline <- gsub('}', paste("\n", logging.env$continue,"}", sep =''),
+      cmdline <- gsub('}', paste("\n", .logenv$continue,"}", sep =''),
                       cmdline)
-      cat(logging.env$prompt, cmdline, "\n", sep = '',
-          file=logging.env$con)
+      cat(.logenv$prompt, cmdline, "\n", sep = '',
+          file=.logenv$con)
     }
-    if(logging.env$res) {
-      tmp <- textConnectionValue(logging.env$con.out)
+    if(.logenv$res) {
+      tmp <- textConnectionValue(.logenv$con.out)
       if(length(tmp)) {
-        cat(tmp, sep='\n', file = logging.env$con)
+        cat(tmp, sep='\n', file = .logenv$con)
         sink()
-        close(logging.env$con.out)
-        logging.env$con.out <- textConnection(NULL, open='a')
-        sink(logging.env$con.out, split=TRUE)
+        close(.logenv$con.out)
+        .logenv$con.out <- textConnection(NULL, open='a')
+        sink(.logenv$con.out, split=TRUE)
       }
     }
   }

@@ -2,15 +2,15 @@
 % Please edit documentation in R/strate.R
 \name{strate}
 \alias{strate}
-\title{Tabulate and stratify incidence rates}
+\title{Calculate incidence rates from time-to-event data}
 \usage{
-strate(time, event, strata = NULL, data = NULL, fail = NULL,
+strate(time, status, strata = NULL, data = NULL, fail = NULL,
   perPY = 1, rnd = 4)
 }
 \arguments{
 \item{time}{specify the timer interval when the subject is at risk}
 
-\item{event}{event of interest to calculate incidence}
+\item{status}{event of interest to calculate incidence: 1 for event, 0 for censored}
 
 \item{strata}{specify variable to calculate stratified rates}
 
@@ -49,7 +49,7 @@ is calcluated using the following formula:
 is derived using the following formula:
 
 \deqn{95\% CI (rate) = rate x Error Factor}
-\deqn{Error Factor (rate) = exp(1.96 / \sqrtD)}
+\deqn{Error Factor (rate) = exp(1.96 / \sqrt{D})}
 
 \strong{References:}
 \enumerate{
@@ -58,7 +58,7 @@ is derived using the following formula:
 }
 }
 \examples{
-library(survival)
+\dontrun{
 data(lung)
 str(lung)
 
@@ -71,8 +71,10 @@ lung$sex <- factor(lung$sex, levels = c(1:2), labels = c('male', 'female'))
 strate(time, status, sex, lung, per = 100000)
 strate(time, status, inst, lung, per = 100000)
 }
+}
 \seealso{
-\code{\link{isum}}, \code{\link{itab}},
+\code{\link{summ}}, \code{\link{summBy}}, \code{\link{tab}},
+\code{\link{xtab}}
 }
 \author{
 Myo Minn Oo (Email: \email{dr.myominnoo@gmail.com} |

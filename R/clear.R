@@ -1,20 +1,19 @@
-#' @title Clear Global Environment, Plots and Console
+#' @title Clean Global Environment, Plots and Console
 #'
 #' @description
-#' \code{clear} is a quick way to clear messy Global Environment, plots and console 
-#' without interrupting the search path. If you want to detach all user-loaded packages, 
-#' see \code{\link{idetach}}.
+#' \code{clear} is a quick way to clear messy Global Environment, plots and console
+#' without interrupting the search path.
 #'
-#' @keywords remove all, global environment, clear plots, clear console
+#' @keywords remove all, clean, global environment, plots, console
 #' @import grDevices
-#' @seealso \code{\link{idetach}}
+#' @seealso \code{\link{ilog}}
 #' @author Myo Minn Oo (Email: \email{dr.myominnoo@@gmail.com} |
 #' Website: \url{https://myominnoo.github.io/})
 #' @examples
+#' \dontrun{
 #' x <- rnorm(100)
 #' plot(x)
-#' \dontrun{
-#'   clear()
+#' clear()
 #' }
 
 

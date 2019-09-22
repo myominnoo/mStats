@@ -1,7 +1,7 @@
-#' @title Transform Numeric to Factor
+#' @title extension to gen function
 #'
 #' @description
-#' \code{egen} allows to transform a numeric vector to a factor vector easily.
+#' \code{egen} transforms a numeric vector to a factor vector.
 #'
 #' @param x numeric vector
 #' @param cut either a single number or a numeric vector.
@@ -11,16 +11,13 @@
 #' \code{egen} allows easy conversion of a numeric vector to factor.
 #'
 #' \strong{Cut-off Intervals}
+#' If the interval is not specified, it is cut at an interval of 10. Otherwise,
+#' it is divided into equal cut-off points by specified number.
 #'
-#' If a single number is specified,
-#' the range of the data is divided into equal cut-off points by that number. The last
-#' piece will be always the same or smaller than the rest. In case of vector, the cut-off
-#' points will be determined accordingly.
-#'
-#' \strong{Label Construction}
-#' If none is specified, then the factor
-#' level labels are constructed as \strong{variable name} plus \strong{cut-off intervals}.
-#' @seealso \code{\link{gen}}, \code{\link{label}}, \code{\link{dup.rm}},
+#' \strong{Labelling}
+#' If not specified, the labels are constructed in the format:
+#' \strong{variable name} + "." + \strong{"cut-off intervals"}.
+#' @seealso \code{\link{generate}}
 #' @keywords distribution, number summary, correlation
 #' @author Myo Minn Oo (Email: \email{dr.myominnoo@@gmail.com} |
 #' Website: \url{https://myominnoo.github.io/})

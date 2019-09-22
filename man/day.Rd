@@ -13,7 +13,8 @@ day(x)
 \code{day} retrieves day from a Date
 }
 \examples{
-dates <- formatDate(c("2019-01-15", "2019-01-20", "2019-01-21", "2019-01-22"), "Ymd", "-")
+dates <- formatDate(c("2019-01-15", "2019-01-20", "2019-01-21", "2019-01-22"),
+                    "Ymd", "-")
 day(dates)
 }
 \seealso{

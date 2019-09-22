@@ -1,21 +1,22 @@
-#' @title Coerces or test vectors to Date type
+#' @title Convert to Dates
 #'
 #' @description
-#' \code{formatDate} coerces objects to Date type.
-#' \code{is.Date} indicates which vector is type of Date.
+#' \code{formatDate} converts characters or numbers to dates.
+#' \code{is.Date} indicates which elements are Dates.
 #'
-#' @param x object to be coerced or tested
-#' @param format for character vectors:
+#' @param x a character or numeric object
+#' @param format only for character vectors:
 #' @param sep separator character for date components
-#' @param thisCent specify either 2000 or 1900 for two-digit years
+#' @param century specify either 2000 or 1900 for two-digit years
 #' @details
-#' Intuitively, "dmY" represents dd mm YYYY format.
-#' In combination with value from \code{sep}, this can change to several date formats.
+#' "dmY" represents dd mm YYYY format.
+#' In combination with separators from \code{sep}, this can change to
+#' several date formats.
 #' For example, "dmy" + "-" convert to "dd-mm-YYYY" format.
 #'
 #' See \code{\link{as.Date}} for more date formats.
-#' @seealso \code{\link{dateSum}}
-#' @keywords date coerces, date test
+#' @seealso \code{\link{generate}}, \code{\link{egen}}, \code{\link{labelVars}}
+#' @keywords date conversion
 #' @author Myo Minn Oo (Email: \email{dr.myominnoo@@gmail.com} |
 #' Website: \url{https://myominnoo.github.io/})
 #' @examples
@@ -31,16 +32,16 @@
 #' y
 
 #' @export
-formatDate <- function(x, format = "dmY", sep = "/", thisCent = NULL) {
+formatDate <- function(x, format = "dmY", sep = "/", century = NULL) {
   if (is.character(x)) {
     f <- paste(paste0("%", unlist(strsplit(format, split = NULL, useBytes = T))),
                collapse = sep)
     x <- as.Date(x, format = f)
-    if (!is.null(thisCent)) {
+    if (!is.null(century)) {
       y <- do.call(rbind, strsplit(as.character(x), split = "-", fixed = TRUE))[,1]
       m <- do.call(rbind, strsplit(as.character(x), split = "-", fixed = TRUE))[,2]
       d <- do.call(rbind, strsplit(as.character(x), split = "-", fixed = TRUE))[,3]
-      if (thisCent) {
+      if (century) {
         y <- (as.numeric(y) %% 100) + 2000
       } else {
         y <- (as.numeric(y) %% 100) + 1900
@@ -72,7 +73,8 @@ is.Date <- function(x) {
 #' @author Myo Minn Oo (Email: \email{dr.myominnoo@@gmail.com} |
 #' Website: \url{https://myominnoo.github.io/})
 #' @examples
-#' dates <- formatDate(c("2019-01-15", "2019-01-20", "2019-01-21", "2019-01-22"), "Ymd", "-")
+#' dates <- formatDate(c("2019-01-15", "2019-01-20", "2019-01-21", "2019-01-22"),
+#'                     "Ymd", "-")
 #' year(dates)
 
 #' @export
@@ -93,7 +95,8 @@ year <- function(x)
 #' @author Myo Minn Oo (Email: \email{dr.myominnoo@@gmail.com} |
 #' Website: \url{https://myominnoo.github.io/})
 #' @examples
-#' dates <- formatDate(c("2019-01-15", "2019-01-20", "2019-01-21", "2019-01-22"), "Ymd", "-")
+#' dates <- formatDate(c("2019-01-15", "2019-01-20", "2019-01-21", "2019-01-22"),
+#'                     "Ymd", "-")
 #' month(dates)
 
 #' @export
@@ -113,7 +116,8 @@ month <- function(x)
 #' @author Myo Minn Oo (Email: \email{dr.myominnoo@@gmail.com} |
 #' Website: \url{https://myominnoo.github.io/})
 #' @examples
-#' dates <- formatDate(c("2019-01-15", "2019-01-20", "2019-01-21", "2019-01-22"), "Ymd", "-")
+#' dates <- formatDate(c("2019-01-15", "2019-01-20", "2019-01-21", "2019-01-22"),
+#'                     "Ymd", "-")
 #' day(dates)
 
 #' @export
