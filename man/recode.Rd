@@ -4,12 +4,12 @@
 \alias{recode}
 \title{Recode contents of a variable}
 \usage{
-recode(var, data = NULL, old.value, new.value)
+recode(data = NULL, var, old.value, new.value)
 }
 \arguments{
-\item{var}{name of a new variable}
-
 \item{data}{data frame}
+
+\item{var}{name of a new variable}
 
 \item{old.value}{vector}
 
@@ -37,23 +37,27 @@ c(#, #)    #          c(1,2) >>> 1        1 to 1; 2 to 1
 #:#        #          1:5 >>> 1           1 to 1; 2 to 1; ... ; 5 to 1
 }
 \examples{
-str(infert)
+\dontrun{
 table(infert$case)
-infert.new <- recode(case, infert, 0, 2)
+infert.new <- recode(infert, case, 0, 2)
 table(infert.new$case)
 
-infert.new <- recode(case, infert, c(0, 1), c(3, 4))
+infert.new <- recode(infert.new, case, c(1, 2), c(3, 4))
 table(infert.new$case)
 
 table(infert$parity)
-infert.new <- recode(parity, infert, c(1,2,3,4), 1)
+infert.new <- recode(infert, parity, c(1,2,3,4), 0)
 table(infert.new$parity)
 
 table(infert$age)
-infert.new <- recode(age, infert, 21:30, 1)
-infert.new <- recode(age, infert.new, 31:40, 2)
-infert.new <- recode(age, infert.new, 41:44, 3)
+infert.new <- recode(infert, age, 21:30, 1)
+infert.new <- recode(infert.new, age, 31:40, 2)
+infert.new <- recode(infert.new, age, 41:44, 3)
 table(infert.new$age)
+
+# errors
+recode(infert, age, 21:30, c(1, 2))
+}
 }
 \seealso{
 \code{\link{generate}}

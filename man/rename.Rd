@@ -7,20 +7,20 @@
 \alias{rename.list}
 \title{Rename variable}
 \usage{
-rename(old.var, new.var, data)
+rename(data, old.var, new.var)
 
 \method{rename}{default}(...)
 
-\method{rename}{character}(old.var, new.var, data)
+\method{rename}{character}(data, old.var, new.var)
 
-\method{rename}{list}(old.var, new.var, data)
+\method{rename}{list}(data, old.var, new.var)
 }
 \arguments{
+\item{data}{Data Frame}
+
 \item{old.var}{R object or list}
 
 \item{new.var}{R object or list}
-
-\item{data}{Data Frame}
 
 \item{...}{Optional arguments}
 }
@@ -35,12 +35,14 @@ the contents of the variable are unchanged.
 Groups of variables can be also renamed by specifying variables in a list.
 }
 \examples{
-iris1 <- rename(Species, plantType, iris)
-names(iris1)
+\dontrun{
+infert.new <- rename(infert, age, AGE)
+str(infert.new)
 
-iris2 <- rename(list(Sepal.Length, Sepal.Width, Petal.Length, Petal.Width),
-                list(sl, sw, pl, pw), iris)
-names(iris2)
+infert.new <- rename(infert, c(age, parity, induced, case),
+               c(AGE, PARITY, INDUCED, CASE))
+str(infert.new)
+}
 }
 \seealso{
 \code{\link{ilog}}

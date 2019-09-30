@@ -3,7 +3,7 @@
 \name{formatDate}
 \alias{formatDate}
 \alias{is.Date}
-\title{Convert to Dates}
+\title{Format Dates}
 \usage{
 formatDate(x, format = "dmY", sep = "/", century = NULL)
 

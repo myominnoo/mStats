@@ -2,34 +2,18 @@
 % Please edit documentation in R/codebook.R
 \name{codebook}
 \alias{codebook}
-\alias{codebook.data.frame}
 \alias{codebook.default}
-\alias{output.format}
-\alias{wrap.output}
+\alias{codebook.data.frame}
 \title{Codebook}
 \usage{
 codebook(x)
 
-\method{codebook}{data.frame}(x)
-
 \method{codebook}{default}(x)
 
-output.format(f, title)
-
-wrap.output(txt, width = 90, sep = "\\n")
+\method{codebook}{data.frame}(x)
 }
 \arguments{
-\item{x}{Data Frame}
-
-\item{f}{data frame}
-
-\item{title}{label}
-
-\item{txt}{character vector}
-
-\item{width}{desired console width}
-
-\item{sep}{wrapper}
+\item{x}{dataframe}
 }
 \description{
 \code{codebook} displays structure of a data frame
@@ -48,16 +32,16 @@ LABEL     - Labels of variables
 TYPE      - Types of variables
 OBS_COUNT - Counts of valid observations
 NA_COUNT  - Counts of observations with missing value
-(NA %)    - Percentage of observations with missing value
+NA_(%)    - Percentage of observations with missing value
 }
 \examples{
-str(infert)
+\dontrun{
 codebook(infert)
-str(iris)
 codebook(iris)
 
 # if something else
 codebook(iris$Species)
+}
 }
 \seealso{
 \code{\link{ilog}}

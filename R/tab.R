@@ -7,11 +7,16 @@
 #' @param rnd specify rounding of numbers. See \code{\link{round}}.
 #' @param ... optional arguments
 #' @details
+#'
+#' \code{tab}
+#'
+#' produces one-way table of frequencies.
 #' Exploring data before jumping into complex analysis is always a necessity.
 #' The first step of an analysis is always to summarize and display data.
 #'
-#' \code{tab}
-#' produce one-way table of frequencies.
+#' If variables are specified, all data types are accepted, except for dataframe,
+#' it tabulates all variables with three data types: 1) character, 2) factor, and
+#' 3) logical.
 #'
 #' \strong{References:}
 #' \enumerate{
@@ -21,42 +26,51 @@
 #'   Chapter 4
 #' }
 #'
-#' @seealso \code{\link{xtab}}
-#' @keywords frequency distribution, tabulation, one-way table
+#' @seealso \code{\link{xtab}}, \code{\link{summ}}, \code{\link{summBy}}
+#' @keywords frequency distribution, tabulation, one-way table,
+#' statistics, descriptive
 #' @author Myo Minn Oo (Email: \email{dr.myominnoo@@gmail.com} |
 #' Website: \url{https://myominnoo.github.io/})
 #' @examples
+#' \dontrun{
+#' # factor
 #' tab(infert$education)
-#' tab(education, infert)
-#' tab(case, infert)
+#' # numeric
+#' tab(infert$case)
 #'
-#' # multiple variables
-#' tab(list(education, case, spontaneous), infert)
-#' tab(list(infert$education, infert$case, infert$spontaneous))
+#' # multiple variables of mixed types
+#' tab(c(infert$case, infert$education, infert$induced))
+#' tab(c(case, parity, induced), infert)
 #'
-#' # whole dataset
+#' # dataframe
 #' tab(infert)
 #' tab(iris)
+#'
+#' # errors: no categorical variables
+#' tab(mtcars)
+#' }
+
 
 #' @export
 tab <- function(x, data = NULL, na.rm = FALSE, rnd = 1)
 {
   arguments <- as.list(match.call())
-  if (!is.null(data)) {
-    if (as.character(arguments$x)[1] %in% c("list"))
-      x <- list(as.character(arguments$x)[-1]) else
-        x <- as.character(eval(arguments$x, data))
-  } else {
-    if (is.factor(x) | is.logical(x) | is.numeric(x))
-      x <- as.character(arguments$x)
-  }
+  x.name <- (deparse(substitute(x)))
+  x.name <- unlist(strsplit(gsub("^c\\(|\\)$", "", x.name), ","))
+
+  catch <- tryCatch(is.data.frame(x), error=function(e) {})
+  x <- as.character()
+  if (is.null(catch)) catch <- FALSE
+  if (catch) x <- data.frame()
+  if (length(x.name) > 1) x <- list()
   UseMethod("tab", x)
 }
+
 
 #' @rdname tab
 #' @export
 tab.default <- function(...) {
-  warning(' ... Wrong Data Type ... ')
+  stop(' ... Wrong Data Type ... ')
 }
 
 #' @rdname tab
@@ -68,6 +82,7 @@ tab.character <- function(x, data = NULL, na.rm = FALSE, rnd = 1)
   if (!is.null(data)) {
     x <- eval(substitute(x), data)
   }
+
   na.rm <- ifelse(na.rm, "no", "ifany")
 
   t <- table(x, useNA = na.rm)
@@ -79,29 +94,33 @@ tab.character <- function(x, data = NULL, na.rm = FALSE, rnd = 1)
   names(attributes(f)$dimnames) <- c(x.name, "")
   f <- data.frame(f)
 
-  # print formating
-  output.format(f, paste0("Tabulation: ", x.name))
+  x.lbl <- attr(x, "label")
+  x.lbl <- ifelse(is.null(x.lbl), "NULL", x.lbl)
+  texts <- paste0("Tabulation: ", x.name, "\n",
+                 "label: ", paste0(x.lbl), collapse = "")
 
+  printText(f, texts, "label: ")
   invisible(f)
 }
+
 
 #' @rdname tab
 #' @export
 tab.list <- function(x, data = NULL, na.rm = FALSE, rnd = 1)
 {
   arguments <- as.list(match.call())
-  if (!is.null(data)) {
-    vn <- as.character(arguments$x)[-1]
-    df <- sapply(
-      paste(deparse(substitute(data)), "$", vn, sep = ""),
-      function(z) eval(parse(text = z))
-    )
-    data <- data.frame(unlist(df))
-    names(data) <- vn
+  x.name <- deparse(substitute(x))
+  x.name <- unlist(strsplit(gsub("^c\\(|\\)$", "", x.name), ","))
+  x.name <- gsub(" ", "", x.name)
+
+  data.list <- NULL
+  if (is.null(data)) {
+    data <- lapply(x.name, function(z) eval(parse(text = z)))
+    names(data) <- x.name
   } else {
-    vn <- as.character(arguments$x)[-1]
-    data <- data.frame(do.call(cbind, x))
-    names(data) <- vn
+    data <- lapply(x.name, function(z)
+      eval(parse(text = paste0("data$", z))))
+    names(data) <- x.name
   }
 
   sink(tempfile())
@@ -110,9 +129,14 @@ tab.list <- function(x, data = NULL, na.rm = FALSE, rnd = 1)
   })
   sink()
 
-  for (i in 1:length(vn)) {
-    t <- f[[i]]
-    output.format(t, paste0("Tabulation: ", vn[i]))
+  x.lbl <- lapply(data, function(z) attr(z, "label"))
+
+  for (i in 1:length(x.name)) {
+    x.lbl[i] <- ifelse(is.null(x.lbl[i]), "NULL", x.lbl[i])
+    texts <- paste0("Tabulation: ", x.name[i], "\n",
+                   "label: ", paste0(x.lbl[i]), collapse = "")
+
+    printText(f[[i]], texts, "label: ")
   }
 
   invisible(f)
@@ -122,41 +146,51 @@ tab.list <- function(x, data = NULL, na.rm = FALSE, rnd = 1)
 #' @export
 tab.data.frame <- function(x, data = NULL, na.rm = FALSE, rnd = 1)
 {
-  data <- as.data.frame(x)
-  var.names <- names(data)
+  data <- x
+  vars <- names(x)
+  type.character <- c("factor", "character")
+  type.logical <- c("logical")
 
-  type.factor <- c("factor", "character", "logical")
-  type.numeric <- c("integer", "double", "numeric")
-  type.date <- c("Date")
+  vars.type <- sapply(vars, function(z) class(unlist(x[ , z])))
+  vars.names <- vars[(vars.type %in% type.character) |
+                       (vars.type %in% type.logical)]
+  data <- data[, vars.names]
 
-  var.type <- sapply(var.names, function(z) class(unlist(x[ , z])))
-  var.factor <- names(var.type[!(var.type %in% type.numeric) &
-                                 !(var.type %in% type.date)])
-  data <- data[, var.factor]
-  names.invalid <- grep("^([[:alpha:]]|[.][._[:alpha:]])[._[:alnum:]]*$",
-                        var.factor, value = TRUE, invert = TRUE)
-  var.factor[var.factor %in% names.invalid] <- paste0("v", names.invalid)
-  names(data) <- var.factor
-
-  if (length(var.factor) == 0) stop(" ... no categorical variables found ... ")
+  if (is.data.frame(data)) {
+    if (ncol(data) == 0)
+      stop("... no categorical variables found ...")
+    names.invalid <- grep("^([[:alpha:]]|[.][._[:alpha:]])[._[:alnum:]]*$",
+                          vars.names, value = TRUE, invert = TRUE)
+    if (length(names.invalid) > 0) {
+      vars.names[vars.names %in% names.invalid] <- paste0("v", names.invalid)
+      names(data) <- vars.names
+    }
+  }
 
   sink(tempfile())
-  if (length(var.factor) > 1) {
-    f <- lapply(data, function(z){
-      tab.character(z, na.rm = na.rm, rnd = rnd)
-    })
+  if (is.data.frame(data)) {
+    f <- lapply(data, function(z)
+      tab.character(z, na.rm = na.rm, rnd = rnd))
+    x.lbl <- lapply(data, function(z) attr(z, "label"))
   } else {
     f <- tab.character(data, na.rm = na.rm, rnd = rnd)
+    x.lbl <- attr(data, "label")
   }
   sink()
 
-  if (length(var.factor) > 1) {
-    for (i in 1:length(var.factor)) {
-      t <- f[[i]]
-      output.format(t, paste0("Tabulation: ", var.factor[i]))
+  if (is.data.frame(data)) {
+    for (i in 1:length(vars.names)) {
+      x.lbl[i] <- ifelse(is.null(x.lbl[i]), "NULL", x.lbl[i])
+      texts <- paste0("Tabulation: ", vars.names[i], "\n",
+                     "label: ", paste0(x.lbl[i]), collapse = "")
+
+      printText(f[[i]], texts, "label: ")
     }
   } else {
-    output.format(f, paste0("Tabulation: ", var.factor))
+    x.lbl <- ifelse(is.null(x.lbl), "NULL", x.lbl)
+    texts <- paste0("Tabulation: ", vars.names, "\n",
+                   "label: ", paste0(x.lbl), collapse = "")
+    printText(f, texts, "label: ")
   }
 
   invisible(f)

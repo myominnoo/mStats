@@ -33,11 +33,15 @@ tab(x, data = NULL, na.rm = FALSE, rnd = 1)
 \code{tab} generates frequency distribution of a categorical variable.
 }
 \details{
+\code{tab}
+
+produces one-way table of frequencies.
 Exploring data before jumping into complex analysis is always a necessity.
 The first step of an analysis is always to summarize and display data.
 
-\code{tab}
-produce one-way table of frequencies.
+If variables are specified, all data types are accepted, except for dataframe,
+it tabulates all variables with three data types: 1) character, 2) factor, and
+3) logical.
 
 \strong{References:}
 \enumerate{
@@ -48,27 +52,35 @@ produce one-way table of frequencies.
 }
 }
 \examples{
+\dontrun{
+# factor
 tab(infert$education)
-tab(education, infert)
-tab(case, infert)
+# numeric
+tab(infert$case)
 
-# multiple variables
-tab(list(education, case, spontaneous), infert)
-tab(list(infert$education, infert$case, infert$spontaneous))
+# multiple variables of mixed types
+tab(c(infert$case, infert$education, infert$induced))
+tab(c(case, parity, induced), infert)
 
-# whole dataset
+# dataframe
 tab(infert)
 tab(iris)
+
+# errors: no categorical variables
+tab(mtcars)
+}
 }
 \seealso{
-\code{\link{xtab}}
+\code{\link{xtab}}, \code{\link{summ}}, \code{\link{summBy}}
 }
 \author{
 Myo Minn Oo (Email: \email{dr.myominnoo@gmail.com} |
 Website: \url{https://myominnoo.github.io/})
 }
+\keyword{descriptive}
 \keyword{distribution,}
 \keyword{frequency}
 \keyword{one-way}
-\keyword{table}
+\keyword{statistics,}
+\keyword{table,}
 \keyword{tabulation,}

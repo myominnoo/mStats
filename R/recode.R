@@ -29,26 +29,30 @@
 #' @author Myo Minn Oo (Email: \email{dr.myominnoo@@gmail.com} |
 #' Website: \url{https://myominnoo.github.io/})
 #' @examples
-#' str(infert)
+#' \dontrun{
 #' table(infert$case)
-#' infert.new <- recode(case, infert, 0, 2)
+#' infert.new <- recode(infert, case, 0, 2)
 #' table(infert.new$case)
 #'
-#' infert.new <- recode(case, infert, c(0, 1), c(3, 4))
+#' infert.new <- recode(infert.new, case, c(1, 2), c(3, 4))
 #' table(infert.new$case)
 #'
 #' table(infert$parity)
-#' infert.new <- recode(parity, infert, c(1,2,3,4), 1)
+#' infert.new <- recode(infert, parity, c(1,2,3,4), 0)
 #' table(infert.new$parity)
 #'
 #' table(infert$age)
-#' infert.new <- recode(age, infert, 21:30, 1)
-#' infert.new <- recode(age, infert.new, 31:40, 2)
-#' infert.new <- recode(age, infert.new, 41:44, 3)
+#' infert.new <- recode(infert, age, 21:30, 1)
+#' infert.new <- recode(infert.new, age, 31:40, 2)
+#' infert.new <- recode(infert.new, age, 41:44, 3)
 #' table(infert.new$age)
+#'
+#' # errors
+#' recode(infert, age, 21:30, c(1, 2))
+#' }
 
 #' @export
-recode <- function(var, data = NULL, old.value, new.value)
+recode <- function(data = NULL, var, old.value, new.value)
 {
   arguments <- as.list(match.call())
   var.name <- deparse(substitute(var))
@@ -62,7 +66,6 @@ recode <- function(var, data = NULL, old.value, new.value)
 
   old.len <- length(old.value)
   new.len <- length(new.value)
-  new.txt <- new.value # for output below
 
   # if old value == 1, new value should be 1
   # if old value > 1, then new value can be 1 or same as old value
@@ -71,20 +74,26 @@ recode <- function(var, data = NULL, old.value, new.value)
       new.value <- rep(new.value, old.len)
     } else {
       if (new.len != old.len)
-        stop("... value numbers must be the same or one new value ...")
+        stop(paste0("... new values must have the same lenth as old values ",
+                    "or one value only ..."))
     }
   } else {
     if (new.len != 1) {
-      stop("... one new value must be specified ...")
+      stop("... at least one new value must be specified ...")
     }
   }
 
+  value.change.n <- NULL
   for (i in 1:old.len) {
     if (is.na(old.value[i])) {
+      value.change.n <- c(value.change.n, length(var[is.na(var)]))
       var[is.na(var)] <- new.value[i]
     } else {
+      value.change.n <- c(value.change.n, length(var[var == old.value[i]]))
       var[var == old.value[i]] <- new.value[i]
     }
+    printMsg(paste0(value.change.n[i], " values recoded | '", old.value[i], "' => '",
+                    new.value[i], "'"))
   }
 
   # change back to factor
@@ -96,9 +105,5 @@ recode <- function(var, data = NULL, old.value, new.value)
     var <- data
   }
 
-  cat(paste0("\tValues: recoded in '", var.name, "' ||| '",
-             old.value, "' >>> '",
-             new.txt, "' ... \n"))
-
-  invisible(var)
+  return(var)
 }

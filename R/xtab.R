@@ -25,7 +25,7 @@
 #' }
 #'
 #' @seealso \code{\link{tab}}
-#' @keywords two-by-two table, 2x2 table, two-way table
+#' @keywords two-by-two table, 2x2 table, two-way table, statistics, descriptive
 #' @author Myo Minn Oo (Email: \email{dr.myominnoo@@gmail.com} |
 #' Website: \url{https://myominnoo.github.io/})
 #' @examples
@@ -36,31 +36,40 @@
 #' xtab(spontaneous, induced, infert, row.pct = NULL) # DO NOT SHOW PERCENTAGE
 #'
 #' # multiple variables
-#' xtab(list(spontaneous, case, induced), education, infert)
+#' xtab(c(spontaneous, case, induced), education, infert)
+#'
+#' \dontrun{
+#' # variables' labels as footnote
+#' infert.new <- labelVars(infert, c(spontaneous, case, induced),
+#'                c("SPONTANEOUS", "CASE YES OR NO", "INDUCED"))
+#' xtab(c(spontaneous, case, induced), education, infert.new)
+#' }
 #'
 #' # whole dataset
 #' xtab(infert, case)
 #' xtab(infert, induced)
 
+
 #' @export
 xtab <- function(x, y, data = NULL, row.pct = TRUE, na.rm = FALSE, rnd = 1)
 {
   arguments <- as.list(match.call())
-  if (!is.null(data)) {
-    if (as.character(arguments$x)[1] %in% c("list"))
-      x <- list(as.character(arguments$x)[-1]) else
-        x <- as.character(eval(arguments$x, data))
-  } else {
-    if (is.factor(x) | is.logical(x) | is.numeric(x))
-      x <- as.character(arguments$x)
-  }
+  x.name <- (deparse(substitute(x)))
+  x.name <- unlist(strsplit(gsub("^c\\(|\\)$", "", x.name), ","))
+
+  catch <- tryCatch(is.data.frame(x), error=function(e) {})
+  x <- as.character()
+  if (is.null(catch)) catch <- FALSE
+  if (catch) x <- data.frame()
+  if (length(x.name) > 1) x <- list()
   UseMethod("xtab", x)
 }
+
 
 #' @rdname xtab
 #' @export
 xtab.default <- function(...) {
-  warning(' ... Wrong Data Type ... ')
+  stop("... Wrong Data Type ...")
 }
 
 #' @rdname xtab
@@ -134,11 +143,20 @@ xtab.character <- function(x, y, data = NULL, row.pct = TRUE, na.rm = FALSE, rnd
              as.data.frame(rbind(pvalue,
                                  matrix(rep("", 2 * (nrow(f) - 1)), ncol = 2))))
   names(f)[(ncol(f)-1):ncol(f)] <- c("Chi.Square", "F.Exact")
-  # print formating
-  output.format(f, paste0("Cross Tabulation: ", x.name, " ~ ", y.name))
+
+  texts <- paste0("Tabulation: ", x.name, " ~ ", y.name, collapse = "")
+  printText(f, texts)
+
+  if (!is.null(attr(x, "label")) | !is.null(attr(y, "label"))) {
+    printMsg("Labels:")
+    printMsg(paste0(x.name, ": ", attr(x, "label"), collapse = ""))
+    printMsg(paste0(y.name, ": ", attr(y, "label"), collapse = ""))
+  }
 
   invisible(f)
 }
+
+
 
 #' @rdname xtab
 #' @export
@@ -146,19 +164,15 @@ xtab.list <- function(x, y, data = NULL, row.pct = TRUE, na.rm = FALSE, rnd = 1)
 {
   arguments <- as.list(match.call())
   y.name <- deparse(substitute(y))
-  if (!is.null(data)) {
-    y <- eval(substitute(y), data)
-    vn <- as.character(arguments$x)[-1]
-    df <- sapply(
-      paste(deparse(substitute(data)), "$", vn, sep = ""),
-      function(z) eval(parse(text = z))
-    )
-    data <- data.frame(unlist(df))
-    names(data) <- vn
-  } else {
-    vn <- as.character(arguments$x)[-1]
+
+  if (is.null(data)) {
+    x.names <- as.character(arguments$x)[-1]
     data <- data.frame(do.call(cbind, x))
-    names(data) <- vn
+    names(data) <- x.names
+  } else {
+    y <- eval(substitute(y), data)
+    x.names <- as.character(arguments$x)[-1]
+    data <- data[, x.names]
   }
 
   sink(tempfile())
@@ -167,42 +181,54 @@ xtab.list <- function(x, y, data = NULL, row.pct = TRUE, na.rm = FALSE, rnd = 1)
   })
   sink()
 
-  for (i in 1:length(vn)) {
+  x.lbl <- sapply(data, function(z) attr(z, "label"))
+  y.lbl <- attr(y, "label")
+
+  for (i in 1:length(x.names)) {
     t <- f[[i]]
-    output.format(t, paste0("Cross Tabulation: ", vn[i], " ~ ", y.name))
+    texts <- paste0("Tabulation: ", x.names[i], " ~ ", y.name, collapse = "")
+    printText(t, texts)
+    if (!is.null(unlist(x.lbl[i]))) {
+      printMsg("Labels:")
+      printMsg(paste0(x.names[i], ": ", x.lbl[i], collapse = ""))
+    }
+    if (!is.null(y.lbl))
+      printMsg(paste0(y.name, ": ", y.lbl, collapse = ""))
   }
 
   invisible(f)
 }
 
+
 #' @rdname xtab
 #' @export
-xtab.data.frame <- function(x, y, data = NULL, row.pct = TRUE, na.rm = FALSE, rnd = 1)
+xtab.data.frame <- function(x, y, data = NULL, row.pct = TRUE,
+                            na.rm = FALSE, rnd = 1)
 {
-  arguments <- as.list(match.call())
+  data <- x
+  vars <- names(x)
+  y.name <- deparse(substitute(y))
   y <- eval(substitute(y), x)
-  y.name <- arguments$y
 
-  data <- as.data.frame(x)
-  var.names <- names(data)
+  type.character <- c("factor", "character")
+  type.logical <- c("logical")
 
-  type.factor <- c("factor", "character", "logical")
-  type.numeric <- c("integer", "double", "numeric")
-  type.date <- c("Date")
+  vars.type <- sapply(vars, function(z) class(unlist(x[ , z])))
+  vars.names <- vars[(vars.type %in% type.character) |
+                       (vars.type %in% type.logical)]
+  data <- data[, vars.names]
 
-  var.type <- sapply(var.names, function(z) class(unlist(x[ , z])))
-  var.factor <- names(var.type[!(var.type %in% type.numeric) &
-                                 !(var.type %in% type.date)])
-  data <- data[, var.factor]
+  if (length(vars.names) == 0)
+    stop("... no categorical variables found ...")
   names.invalid <- grep("^([[:alpha:]]|[.][._[:alpha:]])[._[:alnum:]]*$",
-                        var.factor, value = TRUE, invert = TRUE)
-  var.factor[var.factor %in% names.invalid] <- paste0("v", names.invalid)
-  names(data) <- var.factor
-
-  if (length(var.factor) == 0) stop(" ... no categorical variables found ... ")
+                        vars.names, value = TRUE, invert = TRUE)
+  if (length(names.invalid) > 0) {
+    vars.names[vars.names %in% names.invalid] <- paste0("v", names.invalid)
+    names(data) <- vars.names
+  }
 
   sink(tempfile())
-  if (length(var.factor) > 1) {
+  if (length(vars.names) > 1) {
     f <- lapply(data, function(z){
       xtab.character(z, y, row.pct = row.pct, na.rm = na.rm, rnd = rnd)
     })
@@ -211,16 +237,23 @@ xtab.data.frame <- function(x, y, data = NULL, row.pct = TRUE, na.rm = FALSE, rn
   }
   sink()
 
-  if (length(var.factor) > 1) {
-    for (i in 1:length(var.factor)) {
+
+  x.lbl <- sapply(data, function(z) attr(z, "label"))
+  y.lbl <- attr(y, "label")
+
+  for (i in 1:length(vars.names)) {
+    if (length(vars.names) > 1) {
       t <- f[[i]]
-      output.format(t, paste0("Cross Tabulation: ", var.factor[i], " ~ ", y.name))
+    } else t <- f
+    texts <- paste0("Tabulation: ", vars.names[i], " ~ ", y.name, collapse = "")
+    printText(t, texts)
+    if (!is.null(unlist(x.lbl[i]))) {
+      printMsg("Labels:")
+      printMsg(paste0(vars.names[i], ": ", x.lbl[i], collapse = ""))
     }
-  } else {
-    output.format(f, paste0("Cross Tabulation: ", var.factor, " ~ ", y.name))
+    if (!is.null(y.lbl))
+      printMsg(paste0(y.name, ": ", y.lbl, collapse = ""))
   }
 
   invisible(f)
 }
-
-

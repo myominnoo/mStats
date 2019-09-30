@@ -2,17 +2,11 @@
 % Please edit documentation in R/summBy.R
 \name{summBy}
 \alias{summBy}
-\alias{summBy.default}
-\alias{summBy.numeric}
 \alias{summBy.list}
 \alias{summBy.data.frame}
 \title{Number summary grouped by a factor}
 \usage{
 summBy(x, y, data = NULL, rnd = 1, na.rm = FALSE)
-
-\method{summBy}{default}(...)
-
-\method{summBy}{numeric}(x, y, data = NULL, rnd = 1, na.rm = FALSE)
 
 \method{summBy}{list}(x, y, data = NULL, rnd = 1, na.rm = FALSE)
 
@@ -29,8 +23,6 @@ summBy(x, y, data = NULL, rnd = 1, na.rm = FALSE)
 \item{rnd}{specify rounding of numbers. See \code{\link{round}}.}
 
 \item{na.rm}{A logical value to specify missing values, <NA> in the table}
-
-\item{...}{optional arguments}
 }
 \description{
 \code{summ.by} generates seven number summary statistics and tests normality
@@ -43,17 +35,27 @@ summary statistics, coefficient of variation (CV.) and normality test.
 Normality test is perfomed by Shapiro-Wilk Normality Test. See more at
 \code{\link{shapiro.test}}.
 
-ANNOTATION
+\strong{ANNOTATIONS}
 
 Obs. = observation
+
 NA. = missing data
+
 Mean = Mean value
+
 Std.Dev = Standard deviation
+
 Median = Median value
+
 Q1 = First quartile or percentile
+
 Q3 = Third quartile or percentile
+
 Min = Minimum value
-Maximum = Maximum value
+
+Max = Maximum value
+
+Normal.test = test by Shapiro-Wilk Normality Test
 
 If the second variable has two levels of category, it performs either
 Student's t-test
@@ -64,15 +66,29 @@ Kruskal-Wallis rank sum test \code{\link{kruskal.test}}
 is carried out to test the difference between different groups.
 }
 \examples{
+\dontrun{
+# single x variable
 summBy(age, education, infert)
-summBy(spontaneous, education, infert)
+summBy(infert$age, infert$education)
 
 # multiple variables
-summBy(list("age", "spontaneous", "case"), education, infert)
+summBy(c(age, parity, stratum), education, infert)
 
-# all numericals in the whole dataset
+# whole dataframe
 summBy(infert, education)
 summBy(iris, Species)
+
+# variables labels
+infert.new <- labelVars(infert,
+                c(age, case, spontaneous, education),
+                c("age of patient",
+                  "case (yes or no)",
+                  "spontaneous labor",
+                  "education of patient"))
+infert.new <- keep(infert.new, age, case, spontaneous, education)
+codebook(infert.new)
+summBy(infert.new, education)
+}
 }
 \seealso{
 \code{\link{summ}}, \code{\link{tab}}, \code{\link{xtab}}
@@ -81,5 +97,8 @@ summBy(iris, Species)
 Myo Minn Oo (Email: \email{dr.myominnoo@gmail.com} |
 Website: \url{https://myominnoo.github.io/})
 }
+\keyword{descriptive,}
+\keyword{five}
 \keyword{number}
-\keyword{summary}
+\keyword{statistics,}
+\keyword{summary,}

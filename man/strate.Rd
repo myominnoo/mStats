@@ -4,21 +4,21 @@
 \alias{strate}
 \title{Calculate incidence rates from time-to-event data}
 \usage{
-strate(time, status, strata = NULL, data = NULL, fail = NULL,
-  perPY = 1, rnd = 4)
+strate(data = NULL, time, status, by = NULL, fail = NULL, per = 1,
+  rnd = 5)
 }
 \arguments{
+\item{data}{an optional data frame}
+
 \item{time}{specify the timer interval when the subject is at risk}
 
 \item{status}{event of interest to calculate incidence: 1 for event, 0 for censored}
 
-\item{strata}{specify variable to calculate stratified rates}
-
-\item{data}{an optional data frame}
+\item{by}{specify variable to calculate stratified rates}
 
 \item{fail}{failure event}
 
-\item{perPY}{units to be used in reported rates}
+\item{per}{units to be used in reported rates}
 
 \item{rnd}{Rounding of numbers}
 }
@@ -59,17 +59,27 @@ is derived using the following formula:
 }
 \examples{
 \dontrun{
+library(survival)
 data(lung)
 str(lung)
 
 ## incidence rates
-strate(time, status, data = lung)
-strate(time, status, data = lung, per = 100000)
+strate(lung, time, status)
+strate(lung, time, status, fail = 2)
 
 ## stratified incidence rates
-lung$sex <- factor(lung$sex, levels = c(1:2), labels = c('male', 'female'))
-strate(time, status, sex, lung, per = 100000)
-strate(time, status, inst, lung, per = 100000)
+strate(lung, time, status, by = sex)
+strate(lung, time, status, by = sex, fail = 2)
+strate(lung, time, status, by = sex, fail = 2, per = 1000)
+strate(lung, time, status, by = sex, fail = 2, per = 100000, rnd = 1)
+strate(time, status, data = lung, per = 100000)
+
+data(pbc)
+str(pbc)
+strate(pbc, time, status)
+strate(pbc, time, status, trt)
+strate(pbc, time, status, sex)
+strate(pbc, time, status, stage, per = 100000)
 }
 }
 \seealso{

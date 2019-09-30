@@ -1,11 +1,13 @@
-#' @title extension to gen function
+#' @title An extension to generate function
 #'
 #' @description
 #' \code{egen} transforms a numeric vector to a factor vector.
 #'
-#' @param x numeric vector
+#' @param data dataframe
+#' @param old.var variable to perform cut
 #' @param cut either a single number or a numeric vector.
-#' @param labels specify to name the factor levels.
+#' @param lbl specify to name the factor levels.
+#' @param new.var name of new variable generated
 #' @param na.rm A logical value to specify missing values
 #' @details
 #' \code{egen} allows easy conversion of a numeric vector to factor.
@@ -22,56 +24,151 @@
 #' @author Myo Minn Oo (Email: \email{dr.myominnoo@@gmail.com} |
 #' Website: \url{https://myominnoo.github.io/})
 #' @examples
-#' set.seed(1)
-#' age <- round(c(rnorm(100, 45, 20), rep(NA, 20)),0)
-#' summary(age)
+#' \dontrun{
+#' ## variable with dataframe
+#' # automatically categorized into interval of 10
+#' infert.new <- egen(infert, age)
+#' str(infert.new)
+#' tab(age.cat, infert.new)
 #'
-#' egen(age)
-#' egen(age, cut = 20)
-#' egen(age, cut = c(1, 20, 40))
-#' egen(age, cut = c(1, 20, 40), labels = c("young", "middle", "old"))
-#' egen(age, cut = c(1, 20, 40, 60, 100))
+#' infert.new <- egen(infert, age, c(30, 35, 40))
+#' str(infert.new)
+#' tab(age.cat, infert.new)
 #'
-#' ## remove missing value
-#' egen(age, cut = 20, na.rm = TRUE)
-#' egen(age, cut = c(1, 20, 40), na.rm = TRUE)
-#' egen(age, cut = c(1, 20, 40), labels = c("young", "middle", "old"), na.rm = TRUE)
-#' egen(age, cut = c(1, 20, 40, 60, 100), na.rm = TRUE)
+#' infert.new <- egen(infert, age, c(30, 35, 40),
+#'                 c("young", "mid", "old", "oldest"))
+#' str(infert.new)
+#' tab(age.cat, infert.new)
+#'
+#' # give variable name as age.grp
+#' infert.new <- egen(infert, age, c(30, 35, 40),
+#'                 c("young", "mid", "old", "oldest"), age.grp)
+#' str(infert.new)
+#' tab(age.grp, infert.new)
+#'
+#' # age.grp duplicates
+#' infert.new1 <- egen(infert.new, age, c(30, 35, 40),
+#'                 c("young", "mid", "old", "oldest"), age.grp)
+#' }
+
 
 #' @export
-egen <- function(x, cut = NULL, labels = NULL, na.rm = FALSE)
+egen <- function(data = NULL, old.var, cut = NULL, lbl = NULL,
+                 new.var = NULL, na.rm = FALSE)
 {
-  x.name <- deparse(substitute(x))
-  if (na.rm) x <- x[!is.na(x)]
+  arguments <- as.list(match.call())
+  old.var.name <- unlist(arguments$old.var)
+
+  if (is.null(data)) {
+    if (!is.null(arguments$new.var))
+      stop("... no need to specify 'new.var' ...")
+    data <- as.numeric()
+  } else {
+    if (!is.data.frame(data)) {
+      stop("... specify a dataframe or NULL in the fist argument ...")
+    }
+    data <- data.frame()
+  }
+  UseMethod("egen", data)
+}
+
+
+#' @rdname egen
+#' @export
+egen.default <- function(data = NULL, old.var, cut = NULL, lbl = NULL,
+                         new.var = NULL, na.rm = FALSE)
+{
+  stop("... Wrong data type ...")
+}
+
+egen.numeric <- function(data = NULL, old.var, cut = NULL, lbl = NULL,
+                         new.var = NULL, na.rm = FALSE)
+{
+  arguments <- as.list(match.call())
+  old.var.name <- arguments$old.var
+  if (na.rm) old.var <- old.var[!is.na(old.var)]
 
   if (is.null(cut)) {
     cut <- 10
-    x.brk <- seq(min(x, na.rm = TRUE), max(x, na.rm = TRUE), cut)
-    x.brk <- c(x.brk[1], x.brk[2:(length(x.brk)-1)] - 1, x.brk[length(x.brk)] - 1)
+    old.var.brk <- seq(min(old.var, na.rm = TRUE),
+                       max(old.var, na.rm = TRUE),
+                       cut)
+    old.var.brk <- c(old.var.brk[1],
+                     old.var.brk[2:(length(old.var.brk)-1)] - 1,
+                     old.var.brk[length(old.var.brk)] - 1)
   }  else {
     if (length(cut) == 1) {
-      x.brk <- seq(min(x, na.rm = TRUE), max(x, na.rm = TRUE), cut)
-      x.brk <- c(x.brk[1], x.brk[2:(length(x.brk)-1)] - 1, x.brk[length(x.brk)] - 1)
+      old.var.brk <- seq(min(old.var, na.rm = TRUE),
+                         max(old.var, na.rm = TRUE),
+                         cut)
+      old.var.brk <- c(old.var.brk[1],
+                       old.var.brk[2:(length(old.var.brk)-1)] - 1,
+                       old.var.brk[length(old.var.brk)] - 1)
     } else {
-      x.brk <- cut
+      old.var.brk <- cut
     }
   }
 
-  x.max <- max(x, na.rm = TRUE)
-  if (x.brk[length(x.brk)] < x.max) {
-    x.brk <- c(x.brk, x.max)
-  } else {
-    x.brk <- x.brk[x.brk < x.max]
+  old.var.min <- min(old.var, na.rm = TRUE)
+  old.var.brk.min <- old.var.brk[1]
+  if (old.var.min < old.var.brk.min) {
+    old.var.brk <- c(old.var.min, old.var.brk)
   }
-  if (x.brk[length(x.brk)] != x.max) x.brk <- c(x.brk, x.max)
+  if (old.var.brk.min < old.var.min) {
+    old.var.brk <- c(old.var.min, old.var.brk)
+    old.var.brk <- old.var.brk[old.var.brk >= old.var.min]
+  }
+  old.var.max <- max(old.var, na.rm = TRUE)
+  old.var.brk.max <- old.var.brk[length(old.var.brk)]
 
-  if (is.null(labels)) {
-    x.lbl.lwr <- c(x.brk[1], x.brk[-c(1, length(x.brk))] + 1)
-    x.lbl.upr <- x.brk[-1]
-    x.lbl <- paste0(x.name, ".", paste(x.lbl.lwr, x.lbl.upr, sep = "-"))
-  } else {x.lbl <- labels}
+  if (old.var.brk.max < old.var.max) {
+    old.var.brk <- c(old.var.brk, old.var.max)
+  } else {
+    old.var.brk <- old.var.brk[old.var.brk < old.var.max]
+    if (old.var.max != max(old.var.brk, na.rm = TRUE))
+      old.var.brk <- c(old.var.brk, old.var.max)
+  }
 
-  x <- cut(x, breaks = x.brk, labels = x.lbl, right = TRUE,
-           include.lowest = TRUE)
-  return(x)
+  old.var.brk.len <- length(old.var.brk)
+  if (is.null(lbl)) {
+    old.var.lbl.lwr <- c(old.var.brk[1],
+                         old.var.brk[-c(1, old.var.brk.len)])
+    old.var.lbl.upr <- c(old.var.brk[2:(old.var.brk.len - 1)] - 1 ,
+                         old.var.brk[old.var.brk.len])
+    old.var.lbl <- paste0("l.",
+                          paste(old.var.lbl.lwr, old.var.lbl.upr, sep = "-"))
+  } else {old.var.lbl <- lbl}
+
+  old.var <- cut(old.var, breaks = old.var.brk, labels = old.var.lbl, right = FALSE,
+                 include.lowest = TRUE)
+
+  printMsg(paste0(length(old.var), " values generated with labels: ",
+                  paste0(old.var.lbl, collapse = ", ")))
+  return(old.var)
 }
+
+
+#' @rdname egen
+#' @export
+egen.data.frame <- function(data = NULL, old.var, cut = NULL, lbl = NULL,
+                            new.var = NULL, na.rm = FALSE)
+{
+  arguments <- as.list(match.call())
+  data.name <- arguments$data
+  old.var.name <- gsub(" ", "", arguments$old.var)
+  old.var <- data[, old.var.name]
+  new.var.name <- as.character(arguments$new.var)
+  if (is.null(new.var.name))
+    new.var.name <- paste0(old.var.name, ".cat")
+  if (any(names(data) %in% new.var.name))
+    stop(paste0("... ", new.var.name, " already exists. Specify a new name ..."))
+  new.var <- egen.numeric(NULL, old.var, cut = cut, lbl = lbl, na.rm = na.rm)
+  data <- cbind(data, new.var)
+  names(data)[length(data)] <- new.var.name
+
+  printMsg(paste0("'", new.var.name,
+                  "' created & appended to dataframe '", data.name, "'"))
+
+  return(data)
+}
+

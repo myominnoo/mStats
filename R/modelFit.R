@@ -1,6 +1,6 @@
 #' @title Regression models, reporting overall significance of the model
 #' @description
-#' \code{model.fit} overall significance of the model and interpretation
+#' \code{modelFit} overall significance of the model and interpretation
 #' @param model object glm or lm type
 #' @details
 #' This test asks whether the model with predictors fits significantly better
@@ -12,13 +12,14 @@
 #' freedom between the current and the null model (i.e., the number of predictor
 #' variables in the model).
 #'
-#' \strong{Reference:}
+#' \strong{Reference: }
 #' \enumerate{
-#'   \item LOGIT REGRESSION | R DATA ANALYSIS EXAMPLES, IDRE
-#'   https://stats.idre.ucla.edu/r/dae/logit-regression/
+#'   \item LOGIT REGRESSION | R DATA ANALYSIS EXAMPLES. UCLA: Statistical Consulting
+#'   Group. from https://stats.idre.ucla.edu/r/dae/logit-regression/ (accessed
+#'   September 27, 2019)
 #' }
 #'
-#' @seealso \code{\link{model.output}}
+#' @seealso \code{\link{modelDisplay}}
 #' @keywords model fit, significance of model
 #' @author Myo Minn Oo (Email: \email{dr.myominnoo@@gmail.com} |
 #' Website: \url{https://myominnoo.github.io/})
@@ -34,13 +35,12 @@
 #' mylogit <- glm(admit ~ gre + gpa + factor(rank), data = mydata, family = "binomial")
 #' summary(mylogit)
 #'
-#' model.output(mylogit)
-#' model.output(mylogit, raw = TRUE)
-#' model.fit(mylogit)
+#' modelDisplay(mylogit) # generates parameters
+#' modelFit(mylogit) # test overall significant of the model
 #' }
 
 #' @export
-model.fit <- function(model) {
+modelFit <- function(model) {
   df.diff <- with(model, df.null - df.residual)
   test <- with(model, null.deviance - deviance)
   p.value <- with(model,

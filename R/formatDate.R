@@ -1,4 +1,4 @@
-#' @title Convert to Dates
+#' @title Format Dates
 #'
 #' @description
 #' \code{formatDate} converts characters or numbers to dates.

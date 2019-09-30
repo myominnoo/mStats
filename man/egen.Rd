@@ -2,16 +2,29 @@
 % Please edit documentation in R/egen.R
 \name{egen}
 \alias{egen}
-\title{extension to gen function}
+\alias{egen.default}
+\alias{egen.data.frame}
+\title{An extension to generate function}
 \usage{
-egen(x, cut = NULL, labels = NULL, na.rm = FALSE)
+egen(data = NULL, old.var, cut = NULL, lbl = NULL, new.var = NULL,
+  na.rm = FALSE)
+
+\method{egen}{default}(data = NULL, old.var, cut = NULL, lbl = NULL,
+  new.var = NULL, na.rm = FALSE)
+
+\method{egen}{data.frame}(data = NULL, old.var, cut = NULL,
+  lbl = NULL, new.var = NULL, na.rm = FALSE)
 }
 \arguments{
-\item{x}{numeric vector}
+\item{data}{dataframe}
+
+\item{old.var}{variable to perform cut}
 
 \item{cut}{either a single number or a numeric vector.}
 
-\item{labels}{specify to name the factor levels.}
+\item{lbl}{specify to name the factor levels.}
+
+\item{new.var}{name of new variable generated}
 
 \item{na.rm}{A logical value to specify missing values}
 }
@@ -30,21 +43,32 @@ If not specified, the labels are constructed in the format:
 \strong{variable name} + "." + \strong{"cut-off intervals"}.
 }
 \examples{
-set.seed(1)
-age <- round(c(rnorm(100, 45, 20), rep(NA, 20)),0)
-summary(age)
+\dontrun{
+## variable with dataframe
+# automatically categorized into interval of 10
+infert.new <- egen(infert, age)
+str(infert.new)
+tab(age.cat, infert.new)
 
-egen(age)
-egen(age, cut = 20)
-egen(age, cut = c(1, 20, 40))
-egen(age, cut = c(1, 20, 40), labels = c("young", "middle", "old"))
-egen(age, cut = c(1, 20, 40, 60, 100))
+infert.new <- egen(infert, age, c(30, 35, 40))
+str(infert.new)
+tab(age.cat, infert.new)
 
-## remove missing value
-egen(age, cut = 20, na.rm = TRUE)
-egen(age, cut = c(1, 20, 40), na.rm = TRUE)
-egen(age, cut = c(1, 20, 40), labels = c("young", "middle", "old"), na.rm = TRUE)
-egen(age, cut = c(1, 20, 40, 60, 100), na.rm = TRUE)
+infert.new <- egen(infert, age, c(30, 35, 40),
+                c("young", "mid", "old", "oldest"))
+str(infert.new)
+tab(age.cat, infert.new)
+
+# give variable name as age.grp
+infert.new <- egen(infert, age, c(30, 35, 40),
+                c("young", "mid", "old", "oldest"), age.grp)
+str(infert.new)
+tab(age.grp, infert.new)
+
+# age.grp duplicates
+infert.new1 <- egen(infert.new, age, c(30, 35, 40),
+                c("young", "mid", "old", "oldest"), age.grp)
+}
 }
 \seealso{
 \code{\link{generate}}

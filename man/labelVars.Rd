@@ -3,57 +3,50 @@
 \name{labelVars}
 \alias{labelVars}
 \alias{labelVars.default}
+\alias{labelVars.character}
 \alias{labelVars.list}
-\alias{labelVars.data.frame}
 \alias{labelData}
-\title{Manipulate labels: Label columns or dataframe}
+\title{Manipulate labels: Label variables or dataframe}
 \usage{
-labelVars(x, lbl = NULL, data = NULL)
+labelVars(data = NULL, var, lbl)
 
-\method{labelVars}{default}(x, lbl = NULL, data = NULL)
+\method{labelVars}{default}(data = NULL, var, lbl)
 
-\method{labelVars}{list}(x, lbl = NULL, data = NULL)
+\method{labelVars}{character}(data = NULL, var, lbl)
 
-\method{labelVars}{data.frame}(x, lbl = NULL, data = NULL)
+\method{labelVars}{list}(data = NULL, var, lbl)
 
-labelData(x, lbl = NULL)
+labelData(data, lbl)
 }
 \arguments{
-\item{x}{a variable or a list or a dataframe}
+\item{data}{a dataframe object (Optional)}
+
+\item{var}{vectors or list}
 
 \item{lbl}{specify a string}
-
-\item{data}{a dataframe object (Optional)}
 }
 \description{
 \code{labelVars} attaches a label to variables or a dataframe
 }
 \details{
-Dataframe and variable labels are displayed when you \code{\link{codebook}}
-the dataframe.
-If a label is not specified, existing label is removed.
+Labels are displayed when you \code{\link{codebook}}
+the dataframe. See the examples below.
 
-If data is specified, it returns the whole dataframe with recoded variables.
+This function works only on data.frame type. Consider changing to this type
+by using as.data.frame().
 }
 \examples{
-codebook(iris)
-
-# label one variable
-iris1 <- labelVars(Sepal.Length, "Length of Sepal", iris)
-codebook(iris1)
-# label multiple variables in a list
-iris2 <- labelVars(list(Sepal.Width, Petal.Length, Petal.Width, Species),
-                   list("Width of Sepal", "Length of Petal",
-                        "Width of Petal", "Type of Species"), iris1)
-codebook(iris2)
+\dontrun{
+# label variables
+codebook(labelVars(infert, age, "AGE"))
+codebook(labelVars(infert, c(age, parity), c("AGE", "PARITY")))
 
 # label dataframe
-labelVars(iris2, "Fisher's Iris data set")
-iris3 <- labelData(iris2, "Fisher's Iris data set")
-codebook(iris3)
+codebook(labelData(infert, "INFERT"))
+}
 }
 \seealso{
-\code{\link{codebook}}, \code{\link{labelData}}, \code{\link{labelValue}}
+\code{\link{codebook}}, \code{\link{labelData}}, \code{\link{labelValues}}
 }
 \author{
 Myo Minn Oo (Email: \email{dr.myominnoo@gmail.com} |

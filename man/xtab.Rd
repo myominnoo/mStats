@@ -63,7 +63,14 @@ xtab(spontaneous, induced, infert, row.pct = FALSE) # column percentage
 xtab(spontaneous, induced, infert, row.pct = NULL) # DO NOT SHOW PERCENTAGE
 
 # multiple variables
-xtab(list(spontaneous, case, induced), education, infert)
+xtab(c(spontaneous, case, induced), education, infert)
+
+\dontrun{
+# variables' labels as footnote
+infert.new <- labelVars(infert, c(spontaneous, case, induced),
+               c("SPONTANEOUS", "CASE YES OR NO", "INDUCED"))
+xtab(c(spontaneous, case, induced), education, infert.new)
+}
 
 # whole dataset
 xtab(infert, case)
@@ -77,7 +84,8 @@ Myo Minn Oo (Email: \email{dr.myominnoo@gmail.com} |
 Website: \url{https://myominnoo.github.io/})
 }
 \keyword{2x2}
-\keyword{table}
+\keyword{descriptive}
+\keyword{statistics,}
 \keyword{table,}
 \keyword{two-by-two}
 \keyword{two-way}

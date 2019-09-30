@@ -4,12 +4,12 @@
 \alias{generate}
 \title{Create a new variable}
 \usage{
-generate(var, data = NULL, expr = NULL)
+generate(data = NULL, var, expr = NULL)
 }
 \arguments{
-\item{var}{name of a new variable}
-
 \item{data}{data frame}
+
+\item{var}{name of a new variable}
 
 \item{expr}{value or Expression: See examples below.}
 }
@@ -25,21 +25,21 @@ If \code{expr} is NULL, \code{generate} produce a vector
 }
 \examples{
 \dontrun{
-str(infert)
-infert.new <- generate(age.cat, infert)
-str(infert.new)
+infert.new <- generate(infert, age)
+head(infert.new)
 
-# variable already exists
-infert.new <- generate(age.cat, infert.new)
+infert.new <- generate(infert, age.cat)
+head(infert.new)
 
-infert.new <- generate(age.cat, infert, ifelse(age < 20, 1,
-                 ifelse(age >= 20 & age < 30, 2,
-                    ifelse(age >= 30 & age < 40, 3, 4))))
-str(infert.new)
+infert.new <- generate(infert, age.cat,
+         ifelse(age < 20, 1,
+                ifelse(age >= 20 & age < 30, 2,
+                       ifelse(age >= 30 & age < 40, 3, 4))))
+head(infert.new)
 
 # based on vector
 age <- infert$age
-age.cat <- generate(age.cat, NULL, ifelse(age < 20, 1,
+age.cat <- generate(NULL, age.cat, ifelse(age < 20, 1,
                  ifelse(age >= 20 & age < 30, 2,
                     ifelse(age >= 30 & age < 40, 3, 4))))
 age.cat
