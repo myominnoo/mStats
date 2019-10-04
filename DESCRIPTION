@@ -1,7 +1,7 @@
 Package: mStats
 Type: Package
 Title: Tools for data management and statistical analysis 
-Version: 2.3.0
+Version: 2.3.1
 Author: Myo Minn Oo
 Maintainer: Myo Minn Oo <dr.myominnoo@gmail.com>
 Description: Contains tools for data management and statistical analysis.
