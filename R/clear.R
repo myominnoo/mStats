@@ -21,5 +21,5 @@
 clear <- function() {
   while (!is.null(dev.list()))  dev.off()
   rm(list = ls(envir = .GlobalEnv), pos = 1)
-  cat(rep("\n", 50))
+  cat("\014")
 }

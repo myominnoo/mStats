@@ -40,10 +40,7 @@ codebook <- function(x) {
 #' @rdname codebook
 #' @export
 codebook.default <- function(x) {
-  printMsg("... Try codebook(iris) ...")
-  f <- summary(x)
-  print(f)
-  invisible(f)
+  printMsg(" >>> Try codebook(iris) <<< ")
 }
 
 #' @rdname codebook
@@ -68,7 +65,8 @@ codebook.data.frame <- function(x) {
     sum(as.numeric(!is.na(x[, z])), na.rm = TRUE))
   obs.nrow <- nrow(x)
 
-  f <- data.frame(names(vars.type), vars.lbl, vars.type, obs.counts, na.counts,
+  f <- data.frame(names(vars.type), vars.lbl, vars.type, obs.counts,
+                  na.counts,
                   paste(round(na.counts / nrow(x) * 100, 1), "%"),
                   row.names = NULL)
   names(f) <- c("VARS_NAME", "LABEL", "DATA_TYPE",

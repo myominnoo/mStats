@@ -8,6 +8,7 @@
 #' is produced. If TRUE, row percentages are shown and if FALSE, column percentages.
 #' @param na.rm A logical value to specify missing values, <NA> in the table
 #' @param rnd specify rounding of numbers. See \code{\link{round}}.
+#' @param print.table logical value to display formatted outputs
 #' @param ... optional arguments
 #' @details
 #' Exploring data before jumping into complex analysis is always a necessity.
@@ -51,7 +52,9 @@
 
 
 #' @export
-xtab <- function(x, y, data = NULL, row.pct = TRUE, na.rm = FALSE, rnd = 1)
+xtab <- function(x, y, data = NULL, row.pct = TRUE,
+                 na.rm = FALSE, rnd = 1,
+                 print.table = TRUE)
 {
   arguments <- as.list(match.call())
   x.name <- (deparse(substitute(x)))
@@ -74,7 +77,9 @@ xtab.default <- function(...) {
 
 #' @rdname xtab
 #' @export
-xtab.character <- function(x, y, data = NULL, row.pct = TRUE, na.rm = FALSE, rnd = 1)
+xtab.character <- function(x, y, data = NULL, row.pct = TRUE,
+                           na.rm = FALSE, rnd = 1,
+                           print.table = TRUE)
 {
   arguments <- as.list(match.call())
   x.name <- deparse(substitute(x))
@@ -144,13 +149,15 @@ xtab.character <- function(x, y, data = NULL, row.pct = TRUE, na.rm = FALSE, rnd
                                  matrix(rep("", 2 * (nrow(f) - 1)), ncol = 2))))
   names(f)[(ncol(f)-1):ncol(f)] <- c("Chi.Square", "F.Exact")
 
-  texts <- paste0("Tabulation: ", x.name, " ~ ", y.name, collapse = "")
-  printText(f, texts)
+  if (print.table) {
+    texts <- paste0("Tabulation: ", x.name, " ~ ", y.name, collapse = "")
+    printText(f, texts)
 
-  if (!is.null(attr(x, "label")) | !is.null(attr(y, "label"))) {
-    printMsg("Labels:")
-    printMsg(paste0(x.name, ": ", attr(x, "label"), collapse = ""))
-    printMsg(paste0(y.name, ": ", attr(y, "label"), collapse = ""))
+    if (!is.null(attr(x, "label")) | !is.null(attr(y, "label"))) {
+      printMsg("Labels:")
+      printMsg(paste0(x.name, ": ", attr(x, "label"), collapse = ""))
+      printMsg(paste0(y.name, ": ", attr(y, "label"), collapse = ""))
+    }
   }
 
   invisible(f)
@@ -160,7 +167,9 @@ xtab.character <- function(x, y, data = NULL, row.pct = TRUE, na.rm = FALSE, rnd
 
 #' @rdname xtab
 #' @export
-xtab.list <- function(x, y, data = NULL, row.pct = TRUE, na.rm = FALSE, rnd = 1)
+xtab.list <- function(x, y, data = NULL, row.pct = TRUE,
+                      na.rm = FALSE, rnd = 1,
+                      print.table = TRUE)
 {
   arguments <- as.list(match.call())
   y.name <- deparse(substitute(y))
@@ -175,25 +184,27 @@ xtab.list <- function(x, y, data = NULL, row.pct = TRUE, na.rm = FALSE, rnd = 1)
     data <- data[, x.names]
   }
 
-  sink(tempfile())
   f <- lapply(data, function(z){
-    xtab.character(z, y, row.pct = row.pct, na.rm = na.rm, rnd = rnd)
+    xtab.character(z, y, row.pct = row.pct, na.rm = na.rm, rnd = rnd,
+                   print.table = FALSE)
   })
-  sink()
 
   x.lbl <- sapply(data, function(z) attr(z, "label"))
   y.lbl <- attr(y, "label")
 
-  for (i in 1:length(x.names)) {
-    t <- f[[i]]
-    texts <- paste0("Tabulation: ", x.names[i], " ~ ", y.name, collapse = "")
-    printText(t, texts)
-    if (!is.null(unlist(x.lbl[i]))) {
-      printMsg("Labels:")
-      printMsg(paste0(x.names[i], ": ", x.lbl[i], collapse = ""))
+
+  if (print.table) {
+    for (i in 1:length(x.names)) {
+      t <- f[[i]]
+      texts <- paste0("Tabulation: ", x.names[i], " ~ ", y.name, collapse = "")
+      printText(t, texts)
+      if (!is.null(unlist(x.lbl[i]))) {
+        printMsg("Labels:")
+        printMsg(paste0(x.names[i], ": ", x.lbl[i], collapse = ""))
+      }
+      if (!is.null(y.lbl))
+        printMsg(paste0(y.name, ": ", y.lbl, collapse = ""))
     }
-    if (!is.null(y.lbl))
-      printMsg(paste0(y.name, ": ", y.lbl, collapse = ""))
   }
 
   invisible(f)
@@ -203,17 +214,18 @@ xtab.list <- function(x, y, data = NULL, row.pct = TRUE, na.rm = FALSE, rnd = 1)
 #' @rdname xtab
 #' @export
 xtab.data.frame <- function(x, y, data = NULL, row.pct = TRUE,
-                            na.rm = FALSE, rnd = 1)
+                            na.rm = FALSE, rnd = 1,
+                            print.table = TRUE)
 {
   data <- x
   vars <- names(x)
   y.name <- deparse(substitute(y))
   y <- eval(substitute(y), x)
 
-  type.character <- c("factor", "character")
+  type.character <- c("factor", "character", "orderedfactor")
   type.logical <- c("logical")
 
-  vars.type <- sapply(vars, function(z) class(unlist(x[ , z])))
+  vars.type <- sapply(vars, function(z) paste0(class(unlist(x[ , z])), collapse = ""))
   vars.names <- vars[(vars.type %in% type.character) |
                        (vars.type %in% type.logical)]
   data <- data[, vars.names]
@@ -227,32 +239,34 @@ xtab.data.frame <- function(x, y, data = NULL, row.pct = TRUE,
     names(data) <- vars.names
   }
 
-  sink(tempfile())
   if (length(vars.names) > 1) {
     f <- lapply(data, function(z){
-      xtab.character(z, y, row.pct = row.pct, na.rm = na.rm, rnd = rnd)
+      xtab.character(z, y, row.pct = row.pct, na.rm = na.rm, rnd = rnd,
+                     print.table = FALSE)
     })
   } else {
-    f <- xtab.character(data, y, row.pct = row.pct, na.rm = na.rm, rnd = rnd)
+    f <- xtab.character(data, y, row.pct = row.pct, na.rm = na.rm,
+                        rnd = rnd, print.table = FALSE)
   }
-  sink()
 
 
   x.lbl <- sapply(data, function(z) attr(z, "label"))
   y.lbl <- attr(y, "label")
 
-  for (i in 1:length(vars.names)) {
-    if (length(vars.names) > 1) {
-      t <- f[[i]]
-    } else t <- f
-    texts <- paste0("Tabulation: ", vars.names[i], " ~ ", y.name, collapse = "")
-    printText(t, texts)
-    if (!is.null(unlist(x.lbl[i]))) {
-      printMsg("Labels:")
-      printMsg(paste0(vars.names[i], ": ", x.lbl[i], collapse = ""))
+  if (print.table) {
+    for (i in 1:length(vars.names)) {
+      if (length(vars.names) > 1) {
+        t <- f[[i]]
+      } else t <- f
+      texts <- paste0("Tabulation: ", vars.names[i], " ~ ", y.name, collapse = "")
+      printText(t, texts)
+      if (!is.null(unlist(x.lbl[i]))) {
+        printMsg("Labels:")
+        printMsg(paste0(vars.names[i], ": ", x.lbl[i], collapse = ""))
+      }
+      if (!is.null(y.lbl))
+        printMsg(paste0(y.name, ": ", y.lbl, collapse = ""))
     }
-    if (!is.null(y.lbl))
-      printMsg(paste0(y.name, ": ", y.lbl, collapse = ""))
   }
 
   invisible(f)

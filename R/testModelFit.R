@@ -1,6 +1,6 @@
 #' @title Regression models, reporting overall significance of the model
 #' @description
-#' \code{modelFit} overall significance of the model and interpretation
+#' \code{testModelFit} overall significance of the model and interpretation
 #' @param model object glm or lm type
 #' @details
 #' This test asks whether the model with predictors fits significantly better
@@ -19,7 +19,7 @@
 #'   September 27, 2019)
 #' }
 #'
-#' @seealso \code{\link{modelDisplay}}
+#' @seealso \code{\link{fModelOutput}}
 #' @keywords model fit, significance of model
 #' @author Myo Minn Oo (Email: \email{dr.myominnoo@@gmail.com} |
 #' Website: \url{https://myominnoo.github.io/})
@@ -35,12 +35,12 @@
 #' mylogit <- glm(admit ~ gre + gpa + factor(rank), data = mydata, family = "binomial")
 #' summary(mylogit)
 #'
-#' modelDisplay(mylogit) # generates parameters
-#' modelFit(mylogit) # test overall significant of the model
+#' fModelOutput(mylogit) # generates parameters
+#' testModelFit(mylogit) # test overall significant of the model
 #' }
 
 #' @export
-modelFit <- function(model) {
+testModelFit <- function(model) {
   df.diff <- with(model, df.null - df.residual)
   test <- with(model, null.deviance - deviance)
   p.value <- with(model,

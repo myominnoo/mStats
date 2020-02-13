@@ -10,19 +10,19 @@
 \alias{summBy.numeric}
 \title{Number Summary for numerical data}
 \usage{
-summ(x, data = NULL, rnd = 1, na.rm = FALSE)
+summ(x, data = NULL, rnd = 1, na.rm = FALSE, print.table = TRUE)
 
-\method{summ}{default}(x, data = NULL, rnd = 1, na.rm = FALSE)
+\method{summ}{default}(...)
 
-\method{summ}{numeric}(x, data = NULL, rnd = 1, na.rm = FALSE)
+\method{summ}{numeric}(x, data = NULL, rnd = 1, na.rm = FALSE, print.table = TRUE)
 
-\method{summ}{list}(x, data = NULL, rnd = 1, na.rm = FALSE)
+\method{summ}{list}(x, data = NULL, rnd = 1, na.rm = FALSE, print.table = TRUE)
 
-\method{summ}{data.frame}(x, data = NULL, rnd = 1, na.rm = FALSE)
+\method{summ}{data.frame}(x, data = NULL, rnd = 1, na.rm = FALSE, print.table = TRUE)
 
-\method{summBy}{default}(x, y, data = NULL, rnd = 1, na.rm = FALSE)
+\method{summBy}{default}(...)
 
-\method{summBy}{numeric}(x, y, data = NULL, rnd = 1, na.rm = FALSE)
+\method{summBy}{numeric}(x, y, data = NULL, rnd = 1, na.rm = FALSE, print.table = TRUE)
 }
 \arguments{
 \item{x}{numeric object, list or data frame}
@@ -32,6 +32,10 @@ summ(x, data = NULL, rnd = 1, na.rm = FALSE)
 \item{rnd}{specify rounding of numbers. See \code{\link{round}}.}
 
 \item{na.rm}{A logical value to specify missing values, <NA> in the table}
+
+\item{print.table}{logical value to display formatted outputs}
+
+\item{...}{optional arguments}
 
 \item{y}{a factor or character object}
 }

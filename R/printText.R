@@ -1,9 +1,9 @@
-#' @title Support Print Functions for mStats package
+#' @title Printing Functions for supporting mStats package
 #'
 #' @description
-#' A collection of Support Print Functions for mStats package
+#' Printing Functions to format the outputs from mStats package
 #'
-#' @param x vector, matrix, dataframe or separator (in case of printDeco)
+#' @param x vector, matrix, dataframe or separator (in case of printLines)
 #' @param txt texts
 #' @param width desired character length to display
 #' @param sep separator for line break
@@ -39,17 +39,17 @@ printText <- function(x, txt, split = NULL) {
         txt <- paste0(c(txt.split[1], txt.split[2]), collapse = "")
     }
 
-    printDeco(x = "=", width = x.width)
+    printLines(x = "=", width = x.width)
     cat(txt, "\n")
-    printDeco(x = "~", width = x.width)
+    printLines(x = "_", width = x.width)
     print(x)
-    printDeco(x = "=", width = x.width)
+    printLines(x = "=", width = x.width)
 }
 
 
 #' @rdname printText
 #' @export
-printDeco <- function(x = "=", width = 80)
+printLines <- function(x = "=", width = 80)
 {
     cat(paste(rep(x, width), collapse = ""), "\n")
 }

@@ -3,19 +3,21 @@
 \name{duplicates}
 \alias{duplicates}
 \alias{keepUnique}
-\alias{keepNonUnique}
+\alias{keepDup}
 \title{Tag, report, delete or keep duplicate observations}
 \usage{
-duplicates(data, ...)
+duplicates(data, ..., print.table = TRUE)
 
-keepUnique(data, ...)
+keepUnique(data, ..., print.table = TRUE)
 
-keepNonUnique(data, ...)
+keepDup(data, ..., print.table = TRUE)
 }
 \arguments{
 \item{data}{dataframe}
 
 \item{...}{any variables within dataframe for unique id}
+
+\item{print.table}{logical value to display formatted outputs}
 }
 \description{
 \code{duplicates} displays structure of a data frame
@@ -27,34 +29,43 @@ tags duplicate observations within dataframe with a new variable called
 \code{dupID_} and reports statistics.
 Duplicates are observations with identical values either on all variables
 if no variable is specified in the optional argument \code{...}
-or on a specified list of variable
+or on a specified list of variables.
 
 ANNOTATIONS:
 
 Copies       - Number of duplicates
-Observations - Count of duplicate observations
-dupID Count  - Count of observations by dupID
+
+Observations - Number of records per Copies
+
+Surplus  - Number of surplus copies
 
 \code{keepUnique}
 
 delete all but the first occurrence of each group of duplicated observations.
 
-\code{keepNonUnique}
+\code{keepDup}
 keep all but the first occurrence of each group of duplicated observations.
 This function returns the opposite dataset generated from \code{keepUnique}.
 }
 \examples{
 \dontrun{
-duplicates(infert)
+# finding duplicates across all variables
 duplicates(iris)
 
-keepUnique(infert)
-keepUnique(infert, education, age)
-keepUnique(iris)
+# finding duplicates on variables of interest
+duplicates(iris, Sepal.Length, Sepal.Width)
+duplicates(iris, Species)
+duplicates(iris, Sepal.Length, Sepal.Width, print.table = FALSE)
 
-keepNonUnique(infert)
-keepNonUnique(infert, education, age)
-keepNonUnique(iris)
+# Keep Unique records
+keepUnique(iris, Sepal.Length)
+keepUnique(iris, Species)
+keepUnique(infert, case)
+
+# Keep duplicated records (opposite of keep unique records)
+keepDup(iris, Sepal.Length)
+keepDup(iris, Species)
+keepDup(infert, case)
 }
 }
 \seealso{
@@ -64,5 +75,7 @@ keepNonUnique(iris)
 Myo Minn Oo (Email: \email{dr.myominnoo@gmail.com} |
 Website: \url{https://myominnoo.github.io/})
 }
+\keyword{distinct,}
 \keyword{duplicates,}
-\keyword{report}
+\keyword{report,}
+\keyword{unique}

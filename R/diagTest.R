@@ -1,12 +1,14 @@
 #' @title Statistics of Diagnostic Tests
 #'
 #' @description
-#' \code{screening} reports statistics of diagnostic tests
+#' \code{diagTest} reports statistics of diagnostic tests
 #'
 #' @param x a factor object or a table
 #' @param y an optional factor object
 #' @param p disease prevalence
 #' @param rnd specify rounding of numbers. See \code{\link{round}}.
+#' @param print.table logical value to display formatted outputs
+#' @param ... optional arguments
 #'
 #' @details
 #' The screening tests are based on Bayes' Theorem. These tests help clinicians to
@@ -95,7 +97,8 @@
 
 
 #' @export
-diagTest <- function(x, y = NULL, p = NULL, rnd = 2)
+diagTest <- function(x, y = NULL, p = NULL, rnd = 2,
+                     print.table = TRUE)
 {
   if (is.table(x)) {
     x <- structure(x, class = "table")
@@ -108,14 +111,15 @@ diagTest <- function(x, y = NULL, p = NULL, rnd = 2)
 
 #' @rdname diagTest
 #' @export
-diagTest.default <- function(x, y = NULL, p = NULL, rnd = 2) {
+diagTest.default <- function(...) {
   stop("... Wrong data type ...")
 }
 
 
 #' @rdname diagTest
 #' @export
-diagTest.table <- function(x, y = NULL, p = NULL, rnd = 2)
+diagTest.table <- function(x, y = NULL, p = NULL, rnd = 2,
+                           print.table = TRUE)
 {
   t <- x
   t.dimnames <- names(dimnames(t))
@@ -200,35 +204,36 @@ diagTest.table <- function(x, y = NULL, p = NULL, rnd = 2)
   colnames(f) <- c("Estimate (%)", "95% CI (Wilson Score)",
                    "95% CI (Score Correction)")
 
-
-  #### Printing
-  printDeco("=", 72)
-  cat(paste0("Cross-Tabulation of Screening Test ",
-             "and Disease Status\n\n"))
-  print(t)
-  cat(paste0("\n    Sample Prevalence: ",
-             sprintf(p.sample * 100, fmt = paste0('%#.', rnd, 'f')),
-             " %",
-             "\nPopulation Prevalence: ",
-             ifelse(is.null(p.pop), "NOT GIVEN",
-                    paste0(sprintf(p * 100, fmt = paste0('%#.', rnd, 'f')),
-                           " %")), "\n"))
-  printDeco("~", 72)
-  cat(paste0("\t\t    Statistics of Diagnostic Tests\n"))
-  printDeco("~", 72)
-  print(f)
-  printDeco("~", 72)
-  printMsg(paste0("Note: used '", ifelse(is.null(p.pop),
-                                         "Sample", "Population"),
-                  "' prevalence in the calculation of PPV and NPV."))
-  printMsg(paste0("PPV or NPV: Positive or Negative Predictive Value"))
-  printMsg(paste0("LR (+) or (-): Likelihood Ratio of a positive or ",
-                  "negative result"))
-  printMsg(paste0("PTP (LR+): Post-Test Probability of disease ",
-                  "given (+) test"))
-  printMsg(paste0("PTP (LR-): Post-Test Probability of non-disease ",
-                  "given (-) test"))
-  printDeco("=", 72)
+  if (print.table) {
+    #### Printing
+    printLines("=", 72)
+    cat(paste0("Cross-Tabulation of Screening Test ",
+               "and Disease Status\n\n"))
+    print(t)
+    cat(paste0("\n    Sample Prevalence: ",
+               sprintf(p.sample * 100, fmt = paste0('%#.', rnd, 'f')),
+               " %",
+               "\nPopulation Prevalence: ",
+               ifelse(is.null(p.pop), "NOT GIVEN",
+                      paste0(sprintf(p * 100, fmt = paste0('%#.', rnd, 'f')),
+                             " %")), "\n"))
+    printLines("~", 72)
+    cat(paste0("\t\t    Statistics of Diagnostic Tests\n"))
+    printLines("~", 72)
+    print(f)
+    printLines("~", 72)
+    printMsg(paste0("Note: used '", ifelse(is.null(p.pop),
+                                           "Sample", "Population"),
+                    "' prevalence in the calculation of PPV and NPV."))
+    printMsg(paste0("PPV or NPV: Positive or Negative Predictive Value"))
+    printMsg(paste0("LR (+) or (-): Likelihood Ratio of a positive or ",
+                    "negative result"))
+    printMsg(paste0("PTP (LR+): Post-Test Probability of disease ",
+                    "given (+) test"))
+    printMsg(paste0("PTP (LR-): Post-Test Probability of non-disease ",
+                    "given (-) test"))
+    printLines("=", 72)
+  }
 
   invisible(f)
 }
@@ -236,7 +241,8 @@ diagTest.table <- function(x, y = NULL, p = NULL, rnd = 2)
 
 #' @rdname diagTest
 #' @export
-diagTest.numeric <- function(x, y = NULL, p = NULL, rnd = 2)
+diagTest.numeric <- function(x, y = NULL, p = NULL, rnd = 2,
+                             print.table = TRUE)
 {
   x.name <- deparse(substitute(x))
   y.name <- deparse(substitute(y))
@@ -277,9 +283,8 @@ diagTest.numeric <- function(x, y = NULL, p = NULL, rnd = 2)
 
     f <- list()
     for (i in 1:t.nrow) {
-      sink(tempfile())
-      f[[i]] <- diagTest(as.table(l[[i]]), p = p, rnd = rnd)
-      sink()
+      f[[i]] <- diagTest(as.table(l[[i]]), p = p, rnd = rnd,
+                         print.table = FALSE)
     }
 
     #### ROC Curves
@@ -318,39 +323,41 @@ diagTest.numeric <- function(x, y = NULL, p = NULL, rnd = 2)
     colnames(t)[ncol(t)] <- "Total"
     names(dimnames(t)) <- c(x.dim, y.dim)
 
-    ### Printing
-    printDeco("=", 72)
-    cat(paste0("Cross-Tabulations of ", x.dim, " and ", y.dim, "\n\n"))
-    print(t)
-    cat(paste0("\n    Sample Prevalence: ",
-               sprintf(p.sample * 100, fmt = paste0('%#.', rnd, 'f')),
-               " %",
-               "\nPopulation Prevalence: ",
-               ifelse(is.null(p.pop), "NOT GIVEN",
-                      paste0(sprintf(p * 100, fmt = paste0('%#.', rnd, 'f')),
-                             " %")), "\n"))
-    printDeco("~", 72)
-    cat(paste0("      Different Cut-off points and Statistics of ",
-               "Diagnostic Tests\n"))
-    printDeco("~", 72)
-    for (i in 1:t.nrow) {
-      print(l[[i]])
-      printDeco(" ... ", 14)
-      print(f[[i]])
-      printDeco("-", 72)
+    if (print.table) {
+      ### Printing
+      printLines("=", 72)
+      cat(paste0("Cross-Tabulations of ", x.dim, " and ", y.dim, "\n\n"))
+      print(t)
+      cat(paste0("\n    Sample Prevalence: ",
+                 sprintf(p.sample * 100, fmt = paste0('%#.', rnd, 'f')),
+                 " %",
+                 "\nPopulation Prevalence: ",
+                 ifelse(is.null(p.pop), "NOT GIVEN",
+                        paste0(sprintf(p * 100, fmt = paste0('%#.', rnd, 'f')),
+                               " %")), "\n"))
+      printLines("~", 72)
+      cat(paste0("      Different Cut-off points and Statistics of ",
+                 "Diagnostic Tests\n"))
+      printLines("~", 72)
+      for (i in 1:t.nrow) {
+        print(l[[i]])
+        printLines(" ... ", 14)
+        print(f[[i]])
+        printLines("-", 72)
+      }
+      printLines("~", 72)
+      printMsg(paste0("Note: used '", ifelse(is.null(p.pop),
+                                             "Sample", "Population"),
+                      "' prevalence in the calculation of PPV and NPV."))
+      printMsg(paste0("PPV or NPV: Positive or Negative Predictive Value"))
+      printMsg(paste0("LR (+) or (-): Likelihood Ratio of a positive or ",
+                      "negative result"))
+      printMsg(paste0("PTP (LR+): Post-Test Probability of disease ",
+                      "given (+) test"))
+      printMsg(paste0("PTP (LR-): Post-Test Probability of non-disease ",
+                      "given (-) test"))
+      printLines("=", 72)
     }
-    printDeco("~", 72)
-    printMsg(paste0("Note: used '", ifelse(is.null(p.pop),
-                                           "Sample", "Population"),
-                    "' prevalence in the calculation of PPV and NPV."))
-    printMsg(paste0("PPV or NPV: Positive or Negative Predictive Value"))
-    printMsg(paste0("LR (+) or (-): Likelihood Ratio of a positive or ",
-                    "negative result"))
-    printMsg(paste0("PTP (LR+): Post-Test Probability of disease ",
-                    "given (+) test"))
-    printMsg(paste0("PTP (LR-): Post-Test Probability of non-disease ",
-                    "given (-) test"))
-    printDeco("=", 72)
 
   } else {
     l <- t

@@ -1,15 +1,16 @@
 #' @title Report parameters from regression models
 #'
 #' @description
-#' \code{modelDisplay} display corresponding estimates of different models along
+#' \code{fModelOutput} display corresponding estimates of different models along
 #' with 95% confidence intervals and p-values.
 #'
 #' @param model object glm or lm type
-#'
 #' @param rnd rounding digits
+#' @param print.table logical value to display formatted outputs
+#' @param ... optional arguments
 #' @details
 #'
-#' \code{modelDisplay}
+#' \code{fModelOutput}
 #'
 #' reports parameters from regression models. Currently supporting model is
 #' logistic models. Other types will be incoporated in future works.
@@ -34,7 +35,7 @@
 #'   September 27, 2019)
 #' }
 #'
-#' @seealso \code{\link{modelFit}}
+#' @seealso \code{\link{testModelFit}}
 #' @keywords model output, coefficients display
 #' @author Myo Minn Oo (Email: \email{dr.myominnoo@@gmail.com} |
 #' Website: \url{https://myominnoo.github.io/})
@@ -47,15 +48,20 @@
 #' tab(admit, mydata)
 #' tab(rank, mydata)
 #'
-#' mylogit <- glm(admit ~ gre + gpa + factor(rank), data = mydata, family = "binomial")
-#' summary(mylogit)
+#' logit.gre <- glm(admit ~ gre, data = mydata, family = "binomial")
+#' summary(logit.gre)
+#' fModelOutput(logit.gre)
+#' testModelFit(logit.gre)
 #'
-#' modelDisplay(mylogit) # generates parameters
-#' modelFit(mylogit) # test overall significant of the model
+#' logit.multi <- glm(admit ~ gre + gpa + factor(rank), data = mydata, family = "binomial")
+#' summary(logit.multi)
+#'
+#' fModelOutput(logit.multi) # generates parameters
+#' testModelFit(logit.multi) # test overall significant of the model
 #' }
 
 #' @export
-modelDisplay <- function(model, rnd = 1)
+fModelOutput <- function(model, rnd = 1, print.table = TRUE)
 {
   m.sum <- summary(model)
   raw <- coef(m.sum)
@@ -67,21 +73,23 @@ modelDisplay <- function(model, rnd = 1)
   } else {
     model <- structure(model, class = "unAdjusted")
   }
-  UseMethod("modelDisplay", model)
+  UseMethod("fModelOutput", model)
 }
 
 
-#' @rdname modelDisplay
+
+#' @rdname fModelOutput
 #' @export
-modelDisplay.default <- function(model, rnd = 1)
+fModelOutput.default <- function(...)
 {
   stop("... Wrong model type ...")
 }
 
 
-#' @rdname modelDisplay
+#' @rdname fModelOutput
 #' @export
-modelDisplay.unAdjusted <- function(model, rnd = 1)
+fModelOutput.unAdjusted <- function(model, rnd = 1,
+                                    print.table = TRUE)
 {
   m.sum <- summary(model)
   raw <- coef(m.sum)
@@ -101,19 +109,23 @@ modelDisplay.unAdjusted <- function(model, rnd = 1)
   t.dis <- as.data.frame(cbind("|", t, "|"))
   colnames(t.dis) <- c("+", "------ uOR (95% CI)", "Pr(>|z|)", "------ +")
 
-  printText(t.dis, paste0("Output of Logistic Regression\n",
-                          "Number of obs: " , length(model$y)),
-            split = "Number of obs: ")
-  printMsg(paste0("Log-likelihood: ",
-                  sprintf(logLik(model), fmt = paste0('%#.', rnd, 'f'))))
-  printMsg(paste0("AIC: ", sprintf(AIC(model), fmt = paste0('%#.', rnd, 'f'))))
+  if (print.table) {
+    printText(t.dis, paste0("Output of Logistic Regression\n",
+                            "Number of obs: " , length(model$y)),
+              split = "Number of obs: ")
+    printMsg(paste0("Log-likelihood: ",
+                    sprintf(logLik(model), fmt = paste0('%#.', rnd, 'f'))))
+    printMsg(paste0("AIC: ", sprintf(AIC(model), fmt = paste0('%#.', rnd, 'f'))))
+  }
 
   invisible(t)
 }
 
-#' @rdname modelDisplay
+
+
+#' @rdname fModelOutput
 #' @export
-modelDisplay.adjusted <- function(model, rnd = 1)
+fModelOutput.adjusted <- function(model, rnd = 1, print.table = TRUE)
 {
   m.sum <- summary(model)
   raw <- coef(m.sum)
@@ -121,15 +133,15 @@ modelDisplay.adjusted <- function(model, rnd = 1)
   vars <- gsub(" ", "", unlist(strsplit(m.call, "+", fixed = TRUE)))
   vars.ex <- vars[-1]
 
-  t.uOR <- do.call(rbind, lapply(1:length(vars.ex), function(z) {
-    texts <- paste0("glm(", vars[1], " ~ ", vars.ex[z],
-                    ", family = ", m.sum$call$family,
-                    ", data = ", m.sum$call$data, ")")
-    sink(tempfile())
-    v <- modelDisplay.unAdjusted(eval(parse(text = texts)))
-    sink()
-    v
-  }))
+  t.uOR <- do.call(
+    rbind, lapply(1:length(vars.ex), function(z) {
+      texts <- paste0("glm(", vars[1], " ~ ", vars.ex[z],
+                      ", family = ", m.sum$call$family,
+                      ", data = ", m.sum$call$data, ")")
+      v <- fModelOutput.unAdjusted(eval(parse(text = texts)),
+                                   print.table = FALSE)
+    })
+  )
 
   m.sum <- summary(model)
   raw <- coef(m.sum)
@@ -155,16 +167,24 @@ modelDisplay.adjusted <- function(model, rnd = 1)
                   ifelse(p.aOR < 0.01, "**",
                          ifelse(p.aOR < 0.05, "*", ".")))
 
-  f <- as.data.frame(cbind("|", t.uOR, p.uOR, "|", t.aOR, p.aOR, "|"))
-  colnames(f) <- c("+", "--- uOR (95% CI)", " Pr(>|z|)", "---", "+",
-                   "--- aOR (95% CI)", " Pr(>|z|)", "---", "+")
+  f.uOR <- as.data.frame(cbind("|", t.uOR, p.uOR, "|"))
+  f.aOR <- as.data.frame(cbind("|", t.aOR, p.aOR, "|"))
+  colnames(f.uOR) <- c("+", "--- uOR (95% CI)", " Pr(>|z|)", "---", "+")
+  colnames(f.aOR) <- c("+", "--- aOR (95% CI)", " Pr(>|z|)", "---", "+")
 
-  printText(f, paste0("Output of Logistic Regression\n",
-                      "Number of obs: " , length(model$y)),
-            split = "Number of obs: ")
-  printMsg(paste0("Log-likelihood: ",
-                  sprintf(logLik(model), fmt = paste0('%#.', rnd, 'f'))))
-  printMsg(paste0("AIC: ", sprintf(AIC(model), fmt = paste0('%#.', rnd, 'f'))))
+  f <- list(UnAjustedOR = f.uOR, AjustedOR = f.aOR)
+
+  if (print.table) {
+    printText(f.uOR, paste0("Output of unadjusted Logistic Regression\n",
+                            "Number of obs: " , length(model$y)),
+              split = "Number of obs: ")
+    printText(f.aOR, paste0("Output of Adjusted Logistic Regression\n",
+                            "Number of obs: " , length(model$y)),
+              split = "Number of obs: ")
+    printMsg(paste0("Log-likelihood: ",
+                    sprintf(logLik(model), fmt = paste0('%#.', rnd, 'f'))))
+    printMsg(paste0("AIC: ", sprintf(AIC(model), fmt = paste0('%#.', rnd, 'f'))))
+  }
 
   invisible(f)
 }

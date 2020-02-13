@@ -8,15 +8,15 @@
 \alias{tab.data.frame}
 \title{Tabulation}
 \usage{
-tab(x, data = NULL, na.rm = FALSE, rnd = 1)
+tab(x, data = NULL, na.rm = FALSE, rnd = 1, print.table = TRUE)
 
 \method{tab}{default}(...)
 
-\method{tab}{character}(x, data = NULL, na.rm = FALSE, rnd = 1)
+\method{tab}{character}(x, data = NULL, na.rm = FALSE, rnd = 1, print.table = TRUE)
 
-\method{tab}{list}(x, data = NULL, na.rm = FALSE, rnd = 1)
+\method{tab}{list}(x, data = NULL, na.rm = FALSE, rnd = 1, print.table = TRUE)
 
-\method{tab}{data.frame}(x, data = NULL, na.rm = FALSE, rnd = 1)
+\method{tab}{data.frame}(x, data = NULL, na.rm = FALSE, rnd = 1, print.table = TRUE)
 }
 \arguments{
 \item{x}{a character, factor or logical object OR list OR data frame}
@@ -26,6 +26,8 @@ tab(x, data = NULL, na.rm = FALSE, rnd = 1)
 \item{na.rm}{A logical value to specify missing values, <NA> in the table}
 
 \item{rnd}{specify rounding of numbers. See \code{\link{round}}.}
+
+\item{print.table}{logical value to display formatted outputs}
 
 \item{...}{optional arguments}
 }
@@ -53,10 +55,19 @@ it tabulates all variables with three data types: 1) character, 2) factor, and
 }
 \examples{
 \dontrun{
-# factor
+# vectors
+x <- rep(c("M", "F"), c(40, 60))
+tab(x)
+
+# factors
 tab(infert$education)
-# numeric
-tab(infert$case)
+tab(iris$Species)
+tab(Species, iris)
+tab(agegp, esoph)
+
+# numeric as categorical
+tab(case, infert)
+tab()
 
 # multiple variables of mixed types
 tab(c(infert$case, infert$education, infert$induced))

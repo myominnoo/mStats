@@ -6,14 +6,32 @@
 \alias{egen.data.frame}
 \title{An extension to generate function}
 \usage{
-egen(data = NULL, old.var, cut = NULL, lbl = NULL, new.var = NULL,
-  na.rm = FALSE)
+egen(
+  data = NULL,
+  old.var,
+  cut = NULL,
+  lbl = NULL,
+  new.var = NULL,
+  na.rm = FALSE
+)
 
-\method{egen}{default}(data = NULL, old.var, cut = NULL, lbl = NULL,
-  new.var = NULL, na.rm = FALSE)
+\method{egen}{default}(
+  data = NULL,
+  old.var,
+  cut = NULL,
+  lbl = NULL,
+  new.var = NULL,
+  na.rm = FALSE
+)
 
-\method{egen}{data.frame}(data = NULL, old.var, cut = NULL,
-  lbl = NULL, new.var = NULL, na.rm = FALSE)
+\method{egen}{data.frame}(
+  data = NULL,
+  old.var,
+  cut = NULL,
+  lbl = NULL,
+  new.var = NULL,
+  na.rm = FALSE
+)
 }
 \arguments{
 \item{data}{dataframe}

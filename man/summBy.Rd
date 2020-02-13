@@ -6,12 +6,11 @@
 \alias{summBy.data.frame}
 \title{Number summary grouped by a factor}
 \usage{
-summBy(x, y, data = NULL, rnd = 1, na.rm = FALSE)
+summBy(x, y, data = NULL, rnd = 1, na.rm = FALSE, print.table = TRUE)
 
-\method{summBy}{list}(x, y, data = NULL, rnd = 1, na.rm = FALSE)
+\method{summBy}{list}(x, y, data = NULL, rnd = 1, na.rm = FALSE, print.table = TRUE)
 
-\method{summBy}{data.frame}(x, y, data = NULL, rnd = 1,
-  na.rm = FALSE)
+\method{summBy}{data.frame}(x, y, data = NULL, rnd = 1, na.rm = FALSE, print.table = TRUE)
 }
 \arguments{
 \item{x}{a numeric object}
@@ -23,6 +22,8 @@ summBy(x, y, data = NULL, rnd = 1, na.rm = FALSE)
 \item{rnd}{specify rounding of numbers. See \code{\link{round}}.}
 
 \item{na.rm}{A logical value to specify missing values, <NA> in the table}
+
+\item{print.table}{logical value to display formatted outputs}
 }
 \description{
 \code{summ.by} generates seven number summary statistics and tests normality

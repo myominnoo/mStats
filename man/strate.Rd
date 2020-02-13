@@ -2,10 +2,12 @@
 % Please edit documentation in R/strate.R
 \name{strate}
 \alias{strate}
+\alias{strate.calc}
 \title{Calculate incidence rates from time-to-event data}
 \usage{
-strate(data = NULL, time, status, by = NULL, fail = NULL, per = 1,
-  rnd = 5)
+strate(data = NULL, time, status, by = NULL, fail = NULL, per = 1, rnd = 5)
+
+strate.calc(t, s, f, p, r, v)
 }
 \arguments{
 \item{data}{an optional data frame}
@@ -21,6 +23,18 @@ strate(data = NULL, time, status, by = NULL, fail = NULL, per = 1,
 \item{per}{units to be used in reported rates}
 
 \item{rnd}{Rounding of numbers}
+
+\item{t}{time var}
+
+\item{s}{status var}
+
+\item{f}{failure var}
+
+\item{p}{person-time var}
+
+\item{r}{rnd var}
+
+\item{v}{vector}
 }
 \description{
 \code{strate} calculates incidence rates of the cohort.

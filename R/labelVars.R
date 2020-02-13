@@ -1,9 +1,9 @@
 #' @title Manipulate labels: Label variables or dataframe
 #' @description
 #' \code{labelVars} attaches a label to variables or a dataframe
-#' @param var vectors or list
-#' @param lbl specify a string
 #' @param data a dataframe object (Optional)
+#' @param vars vectors or list
+#' @param lbl specify a string
 #' @details
 #'
 #' Labels are displayed when you \code{\link{codebook}}
@@ -28,28 +28,28 @@
 
 
 #' @export
-labelVars <- function(data = NULL, var, lbl)
+labelVars <- function(data = NULL, vars, lbl)
 {
   arguments <- as.list(match.call())
-  var.x <- as.character(arguments$var)
-  catch <- tryCatch((var), error=function(e) {})
+  vars.x <- as.character(arguments$vars)
+  catch <- tryCatch((vars), error=function(e) {})
 
   if (is.null(catch)) {
-    if (length(var.x) > 1)
-      var <- list(var.x) else
-        var <- as.character(var.x)
+    if (length(vars.x) > 1)
+      vars <- list(vars.x) else
+        vars <- as.character(vars.x)
   } else {
-    if (length(var.x) > 1)
+    if (length(vars.x) > 1)
       stop("... use only one variable at a time ...") else
-        var <- as.character(var.x)
+        vars <- as.character(vars.x)
   }
-  UseMethod("labelVars", var)
+  UseMethod("labelVars", vars)
 }
 
 
 #' @rdname labelVars
 #' @export
-labelVars.default <- function(data = NULL, var, lbl)
+labelVars.default <- function(data = NULL, vars, lbl)
 {
   stop("... Wrong data type ...")
 }
@@ -57,20 +57,20 @@ labelVars.default <- function(data = NULL, var, lbl)
 
 #' @rdname labelVars
 #' @export
-labelVars.character <- function(data = NULL, var, lbl)
+labelVars.character <- function(data = NULL, vars, lbl)
 {
   arguments <- as.list(match.call())
-  var.name <- deparse(substitute(var))
+  vars.name <- deparse(substitute(vars))
 
   if (is.null(data)) {
-    attr(var, "label") <- lbl
-    f <- var
+    attr(vars, "label") <- lbl
+    f <- vars
   } else {
-    attr(data[, var.name], "label") <- lbl
+    attr(data[, vars.name], "label") <- lbl
     f <- data
   }
 
-  printMsg(paste0("Variable: labelled '", var.name,
+  printMsg(paste0("Variable: labelled '", vars.name,
                   "' as '", lbl, "'"))
   return(f)
 }
@@ -78,19 +78,19 @@ labelVars.character <- function(data = NULL, var, lbl)
 
 #' @rdname labelVars
 #' @export
-labelVars.list <- function(data = NULL, var, lbl)
+labelVars.list <- function(data = NULL, vars, lbl)
 {
   arguments <- as.list(match.call())
   lbl <- as.character(arguments$lbl)[-1]
 
-  var.name <- as.character(arguments$var)[-1]
+  vars.name <- as.character(arguments$vars)[-1]
 
-  if (length(lbl) != length(var.name))
-    stop("... var and lbl must have the same length ...")
+  if (length(lbl) != length(vars.name))
+    stop("... vars and lbl must have the same length ...")
 
-  for (n in 1:length(var.name)) {
-    attr(data[, var.name[n]], "label") <- lbl[n]
-    printMsg(paste0("Variable: labelled '", var.name[n],
+  for (n in 1:length(vars.name)) {
+    attr(data[, vars.name[n]], "label") <- lbl[n]
+    printMsg(paste0("Variable: labelled '", vars.name[n],
                     "' as '", lbl[n], "'"))
   }
 

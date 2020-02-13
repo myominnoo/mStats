@@ -8,18 +8,47 @@
 \alias{xtab.data.frame}
 \title{Cross tabulation, contigency table or two-by-two table}
 \usage{
-xtab(x, y, data = NULL, row.pct = TRUE, na.rm = FALSE, rnd = 1)
+xtab(
+  x,
+  y,
+  data = NULL,
+  row.pct = TRUE,
+  na.rm = FALSE,
+  rnd = 1,
+  print.table = TRUE
+)
 
 \method{xtab}{default}(...)
 
-\method{xtab}{character}(x, y, data = NULL, row.pct = TRUE,
-  na.rm = FALSE, rnd = 1)
+\method{xtab}{character}(
+  x,
+  y,
+  data = NULL,
+  row.pct = TRUE,
+  na.rm = FALSE,
+  rnd = 1,
+  print.table = TRUE
+)
 
-\method{xtab}{list}(x, y, data = NULL, row.pct = TRUE, na.rm = FALSE,
-  rnd = 1)
+\method{xtab}{list}(
+  x,
+  y,
+  data = NULL,
+  row.pct = TRUE,
+  na.rm = FALSE,
+  rnd = 1,
+  print.table = TRUE
+)
 
-\method{xtab}{data.frame}(x, y, data = NULL, row.pct = TRUE,
-  na.rm = FALSE, rnd = 1)
+\method{xtab}{data.frame}(
+  x,
+  y,
+  data = NULL,
+  row.pct = TRUE,
+  na.rm = FALSE,
+  rnd = 1,
+  print.table = TRUE
+)
 }
 \arguments{
 \item{x}{a character, factor or logical object OR list OR data frame}
@@ -34,6 +63,8 @@ is produced. If TRUE, row percentages are shown and if FALSE, column percentages
 \item{na.rm}{A logical value to specify missing values, <NA> in the table}
 
 \item{rnd}{specify rounding of numbers. See \code{\link{round}}.}
+
+\item{print.table}{logical value to display formatted outputs}
 
 \item{...}{optional arguments}
 }

@@ -2,15 +2,15 @@
 % Please edit documentation in R/printText.R
 \name{printText}
 \alias{printText}
-\alias{printDeco}
+\alias{printLines}
 \alias{printMsg}
 \alias{warningText}
 \alias{wrapText}
-\title{Support Print Functions for mStats package}
+\title{Printing Functions for supporting mStats package}
 \usage{
 printText(x, txt, split = NULL)
 
-printDeco(x = "=", width = 80)
+printLines(x = "=", width = 80)
 
 printMsg(txt = NULL)
 
@@ -19,7 +19,7 @@ warningText(txt = NULL)
 wrapText(txt, width = 80, sep = "\\n")
 }
 \arguments{
-\item{x}{vector, matrix, dataframe or separator (in case of printDeco)}
+\item{x}{vector, matrix, dataframe or separator (in case of printLines)}
 
 \item{txt}{texts}
 
@@ -30,7 +30,7 @@ wrapText(txt, width = 80, sep = "\\n")
 \item{sep}{separator for line break}
 }
 \description{
-A collection of Support Print Functions for mStats package
+Printing Functions to format the outputs from mStats package
 }
 \examples{
 \dontrun{

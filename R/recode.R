@@ -19,9 +19,13 @@
 #' Common rules:
 #'
 #' Old.value  New.value  Example             Meaning
+#'
 #' #          #          0 >>> 1             0 recoded to 1
+#'
 #' c(#, #)    c(#, #)    c(1,2) >>> c(3,4)   1 to 3; 2 to 4
+#'
 #' c(#, #)    #          c(1,2) >>> 1        1 to 1; 2 to 1
+#'
 #' #:#        #          1:5 >>> 1           1 to 1; 2 to 1; ... ; 5 to 1
 #'
 #' @seealso \code{\link{generate}}

@@ -104,6 +104,7 @@ strate <- function(data = NULL, time, status, by = NULL, fail = NULL,
     )
     names(dimnames(f)) <- c(by.name, "")
     by.txt <- paste0("\nby categories of: ", by.name)
+    row.names(f) <- by.lvl
   }
 
   names(f) <- c("Event", "Person Year", "Inc Rate (IR)", "Lower CI", "Upper CI")
@@ -126,6 +127,14 @@ strate <- function(data = NULL, time, status, by = NULL, fail = NULL,
 }
 
 
+#' @param t time var
+#' @param s status var
+#' @param f failure var
+#' @param p person-time var
+#' @param r rnd var
+#' @param v vector
+#' @rdname strate
+#' @export
 strate.calc <- function(t, s, f, p, r, v)
 {
   d <- length(s[s == f])

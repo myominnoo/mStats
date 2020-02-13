@@ -7,6 +7,7 @@
 #' @param data a data frame object (Optional)
 #' @param rnd specify rounding of numbers. See \code{\link{round}}.
 #' @param na.rm A logical value to specify missing values, <NA> in the table
+#' @param print.table logical value to display formatted outputs
 #' @details
 #' Similar to \code{summ} output, \code{summBy}
 #' reports number of observations in the dataset, missing data, seven number
@@ -77,7 +78,8 @@
 
 
 #' @export
-summBy <- function(x, y, data = NULL, rnd = 1, na.rm = FALSE)
+summBy <- function(x, y, data = NULL, rnd = 1, na.rm = FALSE,
+                   print.table = TRUE)
 {
   arguments <- as.list(match.call())
   x.name <- (deparse(substitute(x)))
@@ -95,14 +97,15 @@ summBy <- function(x, y, data = NULL, rnd = 1, na.rm = FALSE)
 
 #' @rdname summ
 #' @export
-summBy.default <- function(x, y, data = NULL, rnd = 1, na.rm = FALSE)
+summBy.default <- function(...)
 {
   stop("... Wrong data type ...")
 }
 
 #' @rdname summ
 #' @export
-summBy.numeric <- function(x, y, data = NULL, rnd = 1, na.rm = FALSE)
+summBy.numeric <- function(x, y, data = NULL, rnd = 1, na.rm = FALSE,
+                           print.table = TRUE)
 {
   x.name <- deparse(substitute(x))
   y.name <- deparse(substitute(y))
@@ -120,13 +123,11 @@ summBy.numeric <- function(x, y, data = NULL, rnd = 1, na.rm = FALSE)
   lvl <- names(t)
   lvl[is.na(lvl)] <- "<NA>"
 
-  sink(tempfile())
   f <- do.call(rbind, lapply(lvl, function(z) {
     if (z == "<NA>") d <- data[is.na(y), x.name] else
       d <- data[y == z, x.name]
-    suppressWarnings(summ(d))
+    suppressWarnings(summ(d, print.table = FALSE))
   }))
-  sink()
 
   f <- f[,c(1:7,11)]
   row.names(f) <- lvl
@@ -170,9 +171,11 @@ summBy.numeric <- function(x, y, data = NULL, rnd = 1, na.rm = FALSE)
                       matrix(rep("", 2 * (length(lvl) - 1)), ncol = 2)))
   names(f)[9:10] <- pvalue.name
 
-  texts <- paste0("Number Summary: ", x.name, "\nby categories of: ",
-                  y.name, collapse = "")
-  printText(f, texts)
+  if (print.table) {
+    texts <- paste0("Number Summary: ", x.name, "\nby categories of: ",
+                    y.name, collapse = "")
+    printText(f, texts)
+  }
 
   invisible(f)
 }
@@ -180,7 +183,8 @@ summBy.numeric <- function(x, y, data = NULL, rnd = 1, na.rm = FALSE)
 
 #' @rdname summBy
 #' @export
-summBy.list <- function(x, y, data = NULL, rnd = 1, na.rm = FALSE)
+summBy.list <- function(x, y, data = NULL, rnd = 1, na.rm = FALSE,
+                        print.table = TRUE)
 {
   arguments <- as.list(match.call())
   y.name <- deparse(substitute(y))
@@ -190,31 +194,35 @@ summBy.list <- function(x, y, data = NULL, rnd = 1, na.rm = FALSE)
   x.name <- gsub(" ", "", x.name)
   data <- data[, x.names]
 
-  sink(tempfile())
-  f <- do.call(rbind,
-               lapply(data, function(z) {
-                 t <- rbind(summBy.numeric(z, y, na.rm = na.rm, rnd = rnd),
-                            rep("", 10))
-                 row.names(t)[nrow(t)] <- ""
-                 t
-               }))
-  sink()
+  f <- do.call(
+    rbind,
+    lapply(data, function(z) {
+      t <- rbind(summBy.numeric(z, y, na.rm = na.rm, rnd = rnd,
+                                print.table = FALSE),
+                 rep("", 10))
+      row.names(t)[nrow(t)] <- ""
+      t
+    })
+  )
 
-  texts <- paste0("Number Summary: ",
-                  paste0(x.name, collapse = " | "),
-                  "\nby categories of: ", y.name, collapse = "")
-  printText(f, texts)
 
-  x.lbl <- sapply(data, function(z) attr(z, "label"))
-  y.lbl <- attr(y, "label")
+  if (print.table) {
+    texts <- paste0("Number Summary: ",
+                    paste0(x.name, collapse = " | "),
+                    "\nby categories of: ", y.name, collapse = "")
+    printText(f, texts)
 
-  for (i in 1:length(x.names)) {
-    if (!is.null(unlist(x.lbl[i]))) {
-      printMsg("labels:")
-      printMsg(paste0(x.name[i], ": ", x.lbl[i], collapse = ""))
+    x.lbl <- sapply(data, function(z) attr(z, "label"))
+    y.lbl <- attr(y, "label")
+
+    for (i in 1:length(x.names)) {
+      if (!is.null(unlist(x.lbl[i]))) {
+        printMsg("labels:")
+        printMsg(paste0(x.name[i], ": ", x.lbl[i], collapse = ""))
+      }
+      if (!is.null(y.lbl))
+        printMsg(paste0(y.name, ": ", y.lbl, collapse = ""))
     }
-    if (!is.null(y.lbl))
-      printMsg(paste0(y.name, ": ", y.lbl, collapse = ""))
   }
 
   invisible(f)
@@ -223,7 +231,8 @@ summBy.list <- function(x, y, data = NULL, rnd = 1, na.rm = FALSE)
 
 #' @rdname summBy
 #' @export
-summBy.data.frame <- function(x, y, data = NULL, rnd = 1, na.rm = FALSE)
+summBy.data.frame <- function(x, y, data = NULL, rnd = 1, na.rm = FALSE,
+                              print.table = TRUE)
 {
   arguments <- as.list(match.call())
   y.name <- arguments$y
@@ -247,38 +256,40 @@ summBy.data.frame <- function(x, y, data = NULL, rnd = 1, na.rm = FALSE)
     }
   }
 
-  sink(tempfile())
   if (is.data.frame(data)) {
     f <- do.call(rbind, lapply(data, function(z) {
-      t <- rbind(summBy.numeric(z, y, na.rm = na.rm, rnd = rnd),
+      t <- rbind(summBy.numeric(z, y, na.rm = na.rm, rnd = rnd,
+                                print.table = FALSE),
                  rep("", 10))
       row.names(t)[nrow(t)] <- ""
       t }))
     x.lbl <- lapply(data, function(z) attr(z, "label"))
   } else {
-    f <- summBy.numeric(data, y, na.rm = na.rm, rnd = rnd)
+    f <- summBy.numeric(data, y, na.rm = na.rm, rnd = rnd,
+                        print.table = FALSE)
     row.names(f) <- vars.names
     x.lbl <- attr(data, "label")
   }
-  sink()
 
-  x.lbl <- sapply(data, function(z) attr(z, "label"))
-  y.lbl <- attr(y, "label")
+  if (print.table) {
+    x.lbl <- sapply(data, function(z) attr(z, "label"))
+    y.lbl <- attr(y, "label")
 
-  texts <- paste0("Number Summary: ",
-                  paste0(vars.names, collapse = " | "),
-                  "\nby categories of: ", y.name, collapse = "")
-  printText(f, texts, "by categories of: ")
+    texts <- paste0("Number Summary: ",
+                    paste0(vars.names, collapse = " | "),
+                    "\nby categories of: ", y.name, collapse = "")
+    printText(f, texts, "by categories of: ")
 
-  if (!all(is.null(unlist(x.lbl))))
-    printMsg("labels: ")
-  for (i in 1:length(x.lbl)) {
-    if (!is.null(unlist(x.lbl[i]))) {
-      printMsg(paste0(vars.names[i], ": ", x.lbl[i], collapse = ""))
+    if (!all(is.null(unlist(x.lbl))))
+      printMsg("labels: ")
+    for (i in 1:length(x.lbl)) {
+      if (!is.null(unlist(x.lbl[i]))) {
+        printMsg(paste0(vars.names[i], ": ", x.lbl[i], collapse = ""))
+      }
     }
+    if (!is.null(y.lbl))
+      printMsg(paste0(y.name, ": ", y.lbl, collapse = ""))
   }
-  if (!is.null(y.lbl))
-    printMsg(paste0(y.name, ": ", y.lbl, collapse = ""))
 
   invisible(f)
 }

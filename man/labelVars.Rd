@@ -8,20 +8,20 @@
 \alias{labelData}
 \title{Manipulate labels: Label variables or dataframe}
 \usage{
-labelVars(data = NULL, var, lbl)
+labelVars(data = NULL, vars, lbl)
 
-\method{labelVars}{default}(data = NULL, var, lbl)
+\method{labelVars}{default}(data = NULL, vars, lbl)
 
-\method{labelVars}{character}(data = NULL, var, lbl)
+\method{labelVars}{character}(data = NULL, vars, lbl)
 
-\method{labelVars}{list}(data = NULL, var, lbl)
+\method{labelVars}{list}(data = NULL, vars, lbl)
 
 labelData(data, lbl)
 }
 \arguments{
 \item{data}{a dataframe object (Optional)}
 
-\item{var}{vectors or list}
+\item{vars}{vectors or list}
 
 \item{lbl}{specify a string}
 }

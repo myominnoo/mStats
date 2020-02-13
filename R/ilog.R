@@ -108,7 +108,7 @@ ilog.close <- function() {
   if(.logenv$res) {
     sink()
     close(.logenv$con.out)
-    closeAllConnections()
+    # closeAllConnections()
   }
   # writing log info
   sink(.logenv$logfile, append = TRUE, split = TRUE)

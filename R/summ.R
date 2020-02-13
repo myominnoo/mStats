@@ -10,6 +10,8 @@
 #' @param data a data frame object (Optional)
 #' @param rnd specify rounding of numbers. See \code{\link{round}}.
 #' @param na.rm A logical value to specify missing values, <NA> in the table
+#' @param print.table logical value to display formatted outputs
+#' @param ... optional arguments
 #'
 #' @import stats
 #' @details
@@ -68,7 +70,8 @@
 
 
 #' @export
-summ <- function(x, data = NULL, rnd = 1, na.rm = FALSE)
+summ <- function(x, data = NULL, rnd = 1, na.rm = FALSE,
+                 print.table = TRUE)
 {
   arguments <- as.list(match.call())
   x.name <- (deparse(substitute(x)))
@@ -86,14 +89,15 @@ summ <- function(x, data = NULL, rnd = 1, na.rm = FALSE)
 
 #' @rdname summ
 #' @export
-summ.default <- function(x, data = NULL, rnd = 1, na.rm = FALSE)
+summ.default <- function(...)
 {
   stop("... Wrong data type ...")
 }
 
 #' @rdname summ
 #' @export
-summ.numeric <- function(x, data = NULL, rnd = 1, na.rm = FALSE)
+summ.numeric <- function(x, data = NULL, rnd = 1, na.rm = FALSE,
+                         print.table = TRUE)
 {
   x.name <- deparse(substitute(x))
   if (!is.null(data)) {
@@ -128,7 +132,7 @@ summ.numeric <- function(x, data = NULL, rnd = 1, na.rm = FALSE)
   texts <- paste("Number Summary: ", x.name, "\n",
                  "label: ", paste0(x.lbl), sep = "", collapse = "")
 
-  printText(f, texts, "label: ")
+  if (print.table) printText(f, texts, "label: ")
 
   invisible(f)
 }
@@ -136,7 +140,8 @@ summ.numeric <- function(x, data = NULL, rnd = 1, na.rm = FALSE)
 
 #' @rdname summ
 #' @export
-summ.list <- function(x, data = NULL, rnd = 1, na.rm = FALSE)
+summ.list <- function(x, data = NULL, rnd = 1, na.rm = FALSE,
+                      print.table = TRUE)
 {
   arguments <- as.list(match.call())
   x.name <- deparse(substitute(x))
@@ -153,19 +158,19 @@ summ.list <- function(x, data = NULL, rnd = 1, na.rm = FALSE)
     names(data) <- x.name
   }
 
-  sink(tempfile())
   f <- do.call(rbind, lapply(data, function(z){
-    summ.numeric(z, na.rm = na.rm, rnd = rnd) }))
-  sink()
-
-  texts <- paste0("Number Summary: ", paste(x.name, collapse = " | "), collapse = "")
-  printText(f, texts)
+    summ.numeric(z, na.rm = na.rm, rnd = rnd, print.table = FALSE) }))
 
   x.lbl <- (sapply(x.name, function(z) attr(data[, z], "label")))
-  if (!is.null(unlist(x.lbl))) {
-    printMsg(paste0("labels: "))
-    for (i in 1:length(x.name)) {
-      printMsg(paste0(x.name[i], ": ", x.lbl[i], collapse = ""))
+  if (print.table) {
+    texts <- paste0("Number Summary: ", paste(x.name, collapse = " | "), collapse = "")
+    printText(f, texts)
+
+    if (!is.null(unlist(x.lbl))) {
+      printMsg(paste0("labels: "))
+      for (i in 1:length(x.name)) {
+        printMsg(paste0(x.name[i], ": ", x.lbl[i], collapse = ""))
+      }
     }
   }
 
@@ -174,7 +179,8 @@ summ.list <- function(x, data = NULL, rnd = 1, na.rm = FALSE)
 
 #' @rdname summ
 #' @export
-summ.data.frame <- function(x, data = NULL, rnd = 1, na.rm = FALSE)
+summ.data.frame <- function(x, data = NULL, rnd = 1, na.rm = FALSE,
+                            print.table = TRUE)
 {
   data <- x
   vars <- names(x)
@@ -195,37 +201,37 @@ summ.data.frame <- function(x, data = NULL, rnd = 1, na.rm = FALSE)
     }
   }
 
-  sink(tempfile())
   if (is.data.frame(data)) {
     f <- do.call(rbind, lapply(data, function(z){
-      summ.numeric(z, na.rm = na.rm, rnd = rnd) }))
+      summ.numeric(z, na.rm = na.rm, rnd = rnd, print.table = FALSE) }))
     x.lbl <- lapply(data, function(z) attr(z, "label"))
   } else {
-    f <- summ.numeric(data, na.rm = na.rm, rnd = rnd)
+    f <- summ.numeric(data, na.rm = na.rm, rnd = rnd, print.table = FALSE)
     row.names(f) <- vars.names
     x.lbl <- attr(data, "label")
   }
-  sink()
 
-  if (is.data.frame(data)) {
-    texts <- paste0("Number Summary: ",
-                    paste(vars.names, collapse = " | "),
-                    collapse = "")
-    printText(f, texts)
+  if (print.table) {
+    if (is.data.frame(data)) {
+      texts <- paste0("Number Summary: ",
+                      paste(vars.names, collapse = " | "),
+                      collapse = "")
+      printText(f, texts)
 
-    x.lbl <- (sapply(vars.names, function(z) attr(data[, z], "label")))
-    if (!is.null(unlist(x.lbl))) {
-      printMsg(paste0("labels: "))
-      for (i in 1:length(vars.names)) {
-        printMsg(paste0(vars.names[i], ": ", x.lbl[i], collapse = ""))
+      x.lbl <- (sapply(vars.names, function(z) attr(data[, z], "label")))
+      if (!is.null(unlist(x.lbl))) {
+        printMsg(paste0("labels: "))
+        for (i in 1:length(vars.names)) {
+          printMsg(paste0(vars.names[i], ": ", x.lbl[i], collapse = ""))
+        }
       }
-    }
 
-  } else {
-    x.lbl <- ifelse(is.null(x.lbl), "NULL", x.lbl)
-    texts <- paste0("Number Summary: ", vars.names, "\n",
-                    "label: ", paste0(x.lbl), collapse = "")
-    printText(f, texts, "label: ")
+    } else {
+      x.lbl <- ifelse(is.null(x.lbl), "NULL", x.lbl)
+      texts <- paste0("Number Summary: ", vars.names, "\n",
+                      "label: ", paste0(x.lbl), collapse = "")
+      printText(f, texts, "label: ")
+    }
   }
 
   invisible(f)

@@ -7,13 +7,13 @@
 \alias{diagTest.numeric}
 \title{Statistics of Diagnostic Tests}
 \usage{
-diagTest(x, y = NULL, p = NULL, rnd = 2)
+diagTest(x, y = NULL, p = NULL, rnd = 2, print.table = TRUE)
 
-\method{diagTest}{default}(x, y = NULL, p = NULL, rnd = 2)
+\method{diagTest}{default}(...)
 
-\method{diagTest}{table}(x, y = NULL, p = NULL, rnd = 2)
+\method{diagTest}{table}(x, y = NULL, p = NULL, rnd = 2, print.table = TRUE)
 
-\method{diagTest}{numeric}(x, y = NULL, p = NULL, rnd = 2)
+\method{diagTest}{numeric}(x, y = NULL, p = NULL, rnd = 2, print.table = TRUE)
 }
 \arguments{
 \item{x}{a factor object or a table}
@@ -23,9 +23,13 @@ diagTest(x, y = NULL, p = NULL, rnd = 2)
 \item{p}{disease prevalence}
 
 \item{rnd}{specify rounding of numbers. See \code{\link{round}}.}
+
+\item{print.table}{logical value to display formatted outputs}
+
+\item{...}{optional arguments}
 }
 \description{
-\code{screening} reports statistics of diagnostic tests
+\code{diagTest} reports statistics of diagnostic tests
 }
 \details{
 The screening tests are based on Bayes' Theorem. These tests help clinicians to
