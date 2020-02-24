@@ -1,0 +1,20 @@
+# Chapter 1 Introduction 
+
+R has a steep learning curve. People working in health sector, especially medical doctors and public health professionals, just want to get on with data analysis, rather than spending several months or even years to master the basics or programming aspects of R. These may be core advantages to data scientists, programmers or statisticians but to them, it seems like spinning around in their heads with R. To counter this, the `mStats` package intends to ease the learning process or even just to get them on with the much-required data management and analysis, preceded by minimal R basics.  
+
+R is a powerful environment for statistical computing and quality graphing. Unlike some other software for statistical computing, R can handle multiple datasets concurrently. The `mStats` still maintains this principle while making subsetting (calling different variables within the same datset) easier. It provides users an extended conceptualized solution of passing dataset and variables as function's arguments, hencing removing their need of symbolizing the subsetting process. This eases the already stressed mind of data analysts or researchers to a certain extent. 
+
+Furthermore, the `mStats` still maintains labels and most functions of data management return the whole dataset at the end. This lets users being free of worrying about returned data types for further processing. 
+
+The `mStats` package is essentially **a tool for data management and statistical analysis as well as calculating Epidemiological measures. 
+
+1. Supporting Functions 
+2. Functions for data management 
+3. Functions for data analysis
+
+
+This is chapter 1.
+
+```{r}
+1
+```

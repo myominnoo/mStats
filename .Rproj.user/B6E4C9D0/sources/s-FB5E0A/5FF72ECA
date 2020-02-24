@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1582556791638.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "5FF72ECA",
+    "lastKnownWriteTime" : 1582557555,
+    "last_content_update" : 1582557555958,
+    "path" : "C:/MEGA/GitHub/mStats/mStats_Guide/Current/mStats_Guide_Chapter01.Rmd",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "6,30",
+        "scrollLine" : "3"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

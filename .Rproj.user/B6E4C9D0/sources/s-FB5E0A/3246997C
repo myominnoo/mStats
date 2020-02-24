@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1582555035352.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2128935337",
+    "id" : "3246997C",
+    "lastKnownWriteTime" : 1582169185,
+    "last_content_update" : 1582169185,
+    "path" : "C:/MEGA/GitHub/mStats/mStats_Guide/Old Versions/mStats_Guide_PDFV3.1.0_2020_02_15.Rmd",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "14,3",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

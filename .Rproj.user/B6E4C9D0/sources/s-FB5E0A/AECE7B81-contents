@@ -1,0 +1,53 @@
+---
+title: \vspace{3in}`mStats` `3.1.1` 
+subtitle: A Definitive Guide
+author: Myo Minn Oo
+date: \vspace{3in}`r Sys.Date()`
+output:
+  pdf_document:
+    highlight: tango
+    number_sections: yes
+header-includes:
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+- \fancyhead[C]{A Definitive Guide to `mStats`}
+- \fancyhead[R]{Myo Minn Oo}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(width = 80)
+library(mStats)
+```
+
+\thispagestyle{empty}
+
+
+\newpage
+\thispagestyle{empty}
+\vspace*{\fill} 
+\begin{quote} 
+\centering 
+% inline
+{\Large Best way to learn a new thing is to try it out.\par}
+\end{quote}
+\vspace*{\fill}
+
+
+\newpage
+\thispagestyle{empty}
+\section*{In case of any feedback, reach out to me via}
+Myo Minn Oo  
+Email: [dr.myominnoo@gmail.com](mailto:dr.myominnoo@gmail.com)  
+Website: [https://myominnoo.github.io/](https://myominnoo.github.io/)
+
+
+\newpage
+\tableofcontents
+
+
+\newpage
+```{r child = "mStats_Guide_Chapter01.Rmd"}
+```
+
+
