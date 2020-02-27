@@ -4,19 +4,19 @@
 \alias{printText}
 \alias{printLines}
 \alias{printMsg}
-\alias{warningText}
+\alias{printWarning}
 \alias{wrapText}
 \title{\code{mStats}'s Printing Functions}
 \usage{
-printText(x, txt, split = NULL)
+printText(x, txt, split = NULL, printDF = FALSE)
 
 printLines(x = "=", width = 80)
 
 printMsg(txt = NULL)
 
-warningText(txt = NULL)
+printWarning(txt = NULL)
 
-wrapText(txt, width = 80, sep = "\\n")
+wrapText(txt, width = 70, sep = "\\n")
 }
 \arguments{
 \item{x}{vector, matrix, dataframe or separator (in case of printLines)}
@@ -31,7 +31,7 @@ wrapText(txt, width = 80, sep = "\\n")
 }
 \description{
 \code{printText()}, \code{printLines()}, \code{printMsg()},
-\code{warningText()}, \code{wrapText()}
+\code{printWarning()}, \code{wrapText()}
 
 Printing Functions to format and display outputs from mStats package
 }
@@ -40,7 +40,7 @@ For any feedback, please contact \code{Myo Minn Oo} via:
 
 Email: \email{dr.myominnoo@gmail.com}
 
-Website: \url{https://myominnoo.github.io/})
+Website: \url{https://myominnoo.github.io/}
 }
 \keyword{print}
 \keyword{support,}

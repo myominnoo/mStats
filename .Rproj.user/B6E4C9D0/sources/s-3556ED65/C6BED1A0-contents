@@ -1,0 +1,97 @@
+#' @title Duplicate observations within a dataframe
+#'
+#' @description
+#'
+#' \code{expand2} generates duplicated observations within a dataframe.
+#'
+#' @param data a data frame object
+#' @param n_n index or indexes specifying row numbers
+#' @param copies desired number of copies
+#' @param original a logical indicating whether to keep the original dataframe
+#'
+#' @details
+#'
+#' \code{expand2} appends observations from the dataframe
+#' with n copies of the observations with
+#' specified indexes of observations or all data.
+#'
+#' @references
+#'
+#' HOW CAN I DETECT DUPLICATE OBSERVATIONS? | STATA FAQ.
+#' UCLA: Statistical Consulting Group.
+#' from https://stats.idre.ucla.edu/stata/faq/how-can-i-detect-duplicate-observations-3/
+#' (accessed September 27, 2019).
+#'
+#'
+#' @seealso
+#'
+#' \code{\link{expandTables}}, \code{\link{keep}}
+#'
+#' \code{\link{generate}}, \code{\link{egen}}
+#'
+#' @keywords duplicates, observations, expand, duplicate rows
+#'
+#' @author
+#'
+#' For any feedback, please contact \code{Myo Minn Oo} via:
+#'
+#' Email: \email{dr.myominnoo@@gmail.com}
+#'
+#' Website: \url{https://myominnoo.github.io/}
+#'
+#' @examples
+#' \dontrun{
+#' # using IDRE UCLA Example
+#' path <- "https://stats.idre.ucla.edu/stat/stata/notes/hsb2.dta"
+#' hsb2 <- haven::read_dta(path)
+#' codebook(hsb2)
+#'
+#' # copy the first 5 rows for 4 times
+#' hsb2.new <- expand2(hsb2, 1:5, 4)
+#' codebook(hsb2.new)
+#'
+#' # copy the first 5 rows for 4 times and keep only duplicated records
+#' hsb2.new <- expand2(hsb2, 1:5, 4, original = FALSE)
+#' codebook(hsb2.new)
+#' }
+
+
+#' @export
+expand2 <- function(data, n_n = NULL, copies = 2, original = TRUE)
+{
+  data.lbl <- attr(data, "label")
+  data <- data.frame(data)
+  vars.lbl <- sapply(data, function(z) {
+    lbl <- attr(z, "label")
+    if (is.null(lbl)) {
+      lbl <- "<NA>"
+    } else {
+      lbl <- paste(attr(z, "label"), collapse = " ")
+    }
+    lbl
+  })
+  #### if n_n is empty, put number of all rows to n_n
+  if (is.null(n_n)) {
+    n_n <- nrow(data)
+  }
+  #### if there are more than one values in n_n, take the last value
+  if (length(n_n) == 1) {
+    n_n <- 1:n_n
+  }
+  t <- data[n_n, ]
+
+  if (original) {
+    f <- data
+  } else {
+    f <- NULL
+  }
+  for (i in 1:(copies)) {
+    f <- rbind(f, t)
+  }
+  attr(f, "label") <- data.lbl
+  for (i in 1:ncol(f)) {
+    attr(f[, i], "label") <- vars.lbl[i]
+  }
+
+  return(f)
+}

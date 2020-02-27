@@ -1,0 +1,85 @@
+#
+# rm(list = ls())
+# paths <- "C:/MEGA/Library/Workshops/stata_nt/Stata files/DATA/"
+# onch <- haven::read_dta(paste0(paths, "onch1302.DTA", collapse = ""))
+#
+# # whitehall <- haven::read_dta(paste0(paths, "WHITEHAL.DTA", collapse = ""))
+# #
+# # library(mStats)
+# # str(whitehall)
+# # whitehall <- generate(whitehall, obs_time,
+# #                       as.numeric(timeout - timein) / 365.25)
+# #
+# #
+# # summ(obs_time, whitehall)
+# #
+# #
+# # strate(whitehall, obs_time, all)
+# # strate(whitehall, obs_time, all, per = 1000)
+# #
+# # strate(whitehall, obs_time, all, grade, per = 1000)
+# #
+# # strate(whitehall, obs_time, all, sbpgrp, per = 1000)
+# #
+# #
+# # strate(whitehall, obs_time, all)
+# # strate(whitehall, obs_time, all, grade, per = 1000)
+# # strate(whitehall, obs_time, all, grade, per = 1000, plot = FALSE)
+# # strate(whitehall, obs_time, all, sbpgrp, per = 1000)
+# # stmh(whitehall, obs_time, all, grade, per = 1000)
+# # stmh(whitehall, obs_time, all, sbpgrp, per = 1000)
+# # strate(whitehall, obs_time, all, grade, per = 1000)
+# # strate(whitehall, obs_time, all, sbpgrp, per = 1000)
+# #
+# #
+# # tabodds(mf, sex, onch)
+# # tabodds(mf, agegrp, onch)
+# # mhodds(mf, sex, onch)
+# # mhodds(mf, agegrp, onch)
+# #
+# #
+# # library(magrittr)
+# # whitehall <- egen(whitehall, agein, c(45, 50, 55, 60, 65),
+# #                   c(30, 45, 50, 55, 60, 65),
+# #                   new.var = agecat)
+# # tab(agecat, whitehall)
+# #
+# #
+# # strate(whitehall, obs_time, all, sbpgrp, per = 1000)
+# # stmh(whitehall, obs_time, all, sbpgrp, per = 1000)
+# # strate(whitehall, obs_time, all, agecat, per = 1000)
+# # stmh(whitehall, obs_time, all, agecat, per = 1000)
+# # whitehall %>%
+# #     pick(agecat, agecat == 30) %>%
+# #     stmh(obs_time, all, grade, per = 1000)
+# #
+# # whitehall %>%
+# #     pick(agecat, agecat == 45) %>%
+# #     stmh(obs_time, all, grade, per = 1000)
+# #
+#
+#
+# bdesop <- haven::read_dta("~/../Downloads/bdesop.dta")
+#
+#
+#
+#
+# tab <- expandTables(male = c(36, 14, 50, 50),
+#                     female = c(24, 126, 10, 90),
+#                     exp_name = "Type of area",
+#                     exp_lvl = c("Rural", "Urban"),
+#                     case_name = "Antibodies",
+#                     case_lvl = c("Yes", "No"),
+#                     strata_name = "gender")
+#
+#
+# tab %>%
+#     pick(gender == "male") %>%
+#     xtab(`Type of area`, `Antibodies`, .)
+# tab %>%
+#     pick(gender == "female") %>%
+#     xtab(`Type of area`, `Antibodies`, .)
+# library(magrittr)
+# library(mStats)
+#
+# mhodds(onch, mf, sex)

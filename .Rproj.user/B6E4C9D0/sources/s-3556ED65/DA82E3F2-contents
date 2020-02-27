@@ -1,0 +1,16 @@
+
+
+
+
+
+
+modelDisplay(logit.multi)
+logit.multi <- glm(admit ~ gre + gpa + factor(rank), data = mydata, family = "binomial")
+modelDisplay(logit.gre)
+logit.gre <- glm(admit ~ gre, data = mydata, family = "binomial")
+logit.gre <- glm(admit ~ 1, data = mydata, family = "binomial")
+
+
+
+mydata <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")
+codebook(mydata)
