@@ -83,7 +83,7 @@ rename <- function(data, var_old, var_new)
 
 #' @rdname rename
 #' @export
-rename.default <- function(...)
+rename.default <- function(data, var_old, var_new)
 {
     stop(" ... Wrong data type ... ")
 }

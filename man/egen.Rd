@@ -20,6 +20,7 @@ egen(
   data = NULL,
   var_old,
   cut = NULL,
+  var_new = NULL,
   lbl = NULL,
   na.rm = FALSE,
   print.notes = TRUE
@@ -31,7 +32,8 @@ egen(
   cut = NULL,
   var_new = NULL,
   lbl = NULL,
-  na.rm = FALSE
+  na.rm = FALSE,
+  print.notes = TRUE
 )
 }
 \arguments{

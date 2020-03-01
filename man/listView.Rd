@@ -19,12 +19,16 @@ varsColonSplit(data, vars, hasColon)
 
 \method{listView}{list}(data, ...)
 
-\method{listView}{data.frame}(data)
+\method{listView}{data.frame}(data, ...)
 }
 \arguments{
 \item{data}{a data frame object}
 
 \item{...}{Names of variables to be subsetted.}
+
+\item{vars}{variable's names}
+
+\item{hasColon}{Logical indicating where colon is present or not}
 }
 \description{
 \code{listView()} displays a list of observations of specified or all

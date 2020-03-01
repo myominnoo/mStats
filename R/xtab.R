@@ -7,6 +7,7 @@
 #' @param data dataset (optional)
 #' @param ... a variable or variables. Colon separator \code{:} can be
 #' used for multiple variables. See details.
+#' @param x exposure variable
 #' @param by outcome variable for cross-tabulation
 #' @param row.pct TRUE or FALSE: If \code{TRUE}, row percentages
 #' are shown and if \code{FALSE}, column percentages.
@@ -388,6 +389,7 @@ xtab.data.frame <- function(data = NULL, ... , by = NULL,
                             na.rm = FALSE, rnd = 1,
                             print.table = TRUE)
 {
+  arguments <- as.list(match.call())
   vars <- names(data)
   by <- eval(substitute(by), data)
   x.name <- arguments$x

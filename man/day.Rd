@@ -13,10 +13,11 @@ day(x)
 \code{day} retrieves day from a Date
 }
 \examples{
-
+\dontrun{
 dates <- formatDate(c("2019-01-15", "2019-01-20", "2019-01-21", "2019-01-22"),
                     "Ymd", "-")
 day(dates)
+}
 }
 \seealso{
 \code{\link{formatDate}}, \code{\link{year}}, \code{\link{day}}

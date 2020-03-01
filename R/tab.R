@@ -8,6 +8,7 @@
 #' @param data dataset (optional)
 #' @param ... a variable or variables. Colon separator \code{:} can be
 #' used for multiple variables. See details.
+#' @param x exposure variable
 #' @param by outcome variable for cross-tabulation
 #' @param row.pct TRUE or FALSE: If \code{TRUE}, row percentages
 #' are shown and if \code{FALSE}, column percentages.
@@ -87,7 +88,7 @@
 #'
 #' @seealso
 #'
-#' \code{\link{xtab}}, \code{\link{tab1}}, \code{\link{summ}}
+#' \code{\link{xtab}}, \code{\link{summ}}
 #'
 #' @keywords frequency distribution, tabulation, one-way table,
 #' statistics, descriptive

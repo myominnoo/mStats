@@ -412,6 +412,7 @@ summBy.data.frame <- function(data = NULL, ... , by,
                               na.rm = FALSE, rnd = 1,
                               print.table = TRUE)
 {
+  arguments <- as.list(match.call())
   vars <- names(data)
   by.name <- arguments$by
   by <- eval(substitute(by), data)

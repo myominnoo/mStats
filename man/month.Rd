@@ -14,9 +14,11 @@ month(x)
 }
 \examples{
 
+\dontrun{
 dates <- formatDate(c("2019-01-15", "2019-01-20", "2019-01-21", "2019-01-22"),
                     "Ymd", "-")
 month(dates)
+}
 }
 \seealso{
 \code{\link{formatDate}}, \code{\link{year}}, \code{\link{day}}

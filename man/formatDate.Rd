@@ -48,7 +48,6 @@ Origin is set at \code{1899-12-30}.
 See \code{\link{as.Date}} for more date formats.
 }
 \examples{
-
 \dontrun{
 ## texts in Date format
 dates <- c("2019-01-15", "2019-01-20", "2019-01-21", "2019-01-22")

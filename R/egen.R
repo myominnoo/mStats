@@ -96,7 +96,7 @@ egen <- function(data = NULL, var_old, cut = NULL,
 #' @rdname egen
 #' @export
 egen.numeric <- function(data = NULL, var_old, cut = NULL,
-                         lbl = NULL, na.rm = FALSE,
+                         var_new = NULL, lbl = NULL, na.rm = FALSE,
                          print.notes = TRUE)
 {
     arguments <- as.list(match.call())
@@ -174,7 +174,8 @@ egen.numeric <- function(data = NULL, var_old, cut = NULL,
 #' @rdname egen
 #' @export
 egen.data.frame <- function(data = NULL, var_old, cut = NULL,
-                            var_new = NULL, lbl = NULL, na.rm = FALSE)
+                            var_new = NULL, lbl = NULL, na.rm = FALSE,
+                            print.notes = TRUE)
 {
     arguments <- as.list(match.call())
     data.name <- arguments$data

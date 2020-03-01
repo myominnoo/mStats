@@ -6,6 +6,7 @@
 \alias{printMsg}
 \alias{printWarning}
 \alias{wrapText}
+\alias{generateLinesDF}
 \title{\code{mStats}'s Printing Functions}
 \usage{
 printText(x, txt, split = NULL, printDF = FALSE)
@@ -17,6 +18,8 @@ printMsg(txt = NULL)
 printWarning(txt = NULL)
 
 wrapText(txt, width = 70, sep = "\\n")
+
+generateLinesDF(x, sep = "-")
 }
 \arguments{
 \item{x}{vector, matrix, dataframe or separator (in case of printLines)}
@@ -24,6 +27,8 @@ wrapText(txt, width = 70, sep = "\\n")
 \item{txt}{texts}
 
 \item{split}{separator for printText}
+
+\item{printDF}{If yes, print as Data.frame}
 
 \item{width}{desired character length to display}
 

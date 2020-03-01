@@ -109,6 +109,8 @@ listView.character <- function(data, ... )
 }
 
 
+#' @param vars variable's names
+#' @param hasColon Logical indicating where colon is present or not
 #' @rdname listView
 #' @export
 varsColonSplit <- function(data, vars, hasColon)
@@ -154,7 +156,7 @@ listView.list <- function(data, ... )
 
 #' @rdname listView
 #' @export
-listView.data.frame <- function(data)
+listView.data.frame <- function(data, ... )
 {
     data <- data.frame(data)
     print.data.frame(data, max = 1e5)

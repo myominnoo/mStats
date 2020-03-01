@@ -8,6 +8,7 @@
 #' @param model object glm or lm type
 #' @param rnd rounding digits
 #' @param print.table logical value to display formatted outputs
+#' @param ... optional arguments
 #' @details
 #'
 #' \code{modelDisplay()} reports parameters from regression models.

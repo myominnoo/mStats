@@ -38,6 +38,8 @@ used for multiple variables. See details.}
 \item{rnd}{specify rounding of numbers. See \code{\link{round}}.}
 
 \item{print.table}{logical value to display formatted outputs}
+
+\item{x}{exposure variable}
 }
 \description{
 \code{summ()} generates summary statistics for numerical data

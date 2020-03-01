@@ -77,6 +77,8 @@ is produced.}
 \item{rnd}{specify rounding of numbers. See \code{\link{round}}.}
 
 \item{print.table}{logical value to display formatted outputs}
+
+\item{x}{exposure variable}
 }
 \value{
 \enumerate{

@@ -69,6 +69,8 @@ is produced.}
 \item{rnd}{specify rounding of numbers. See \code{\link{round}}.}
 
 \item{print.table}{logical value to display formatted outputs}
+
+\item{x}{exposure variable}
 }
 \value{
 \enumerate{
@@ -224,7 +226,7 @@ tab(hosp, by = remission)
 }
 }
 \seealso{
-\code{\link{xtab}}, \code{\link{tab1}}, \code{\link{summ}}
+\code{\link{xtab}}, \code{\link{summ}}
 }
 \author{
 For any feedback, please contact \code{Myo Minn Oo} via:

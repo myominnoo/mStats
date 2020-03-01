@@ -50,7 +50,6 @@
 #' Website: \url{https://myominnoo.github.io/}
 #'
 #' @examples
-#'
 #' \dontrun{
 #' ## texts in Date format
 #' dates <- c("2019-01-15", "2019-01-20", "2019-01-21", "2019-01-22")
@@ -128,10 +127,11 @@ is.Date <- function(x) {
 #' Website: \url{https://myominnoo.github.io/}
 #'
 #' @examples
-#'
-#' dates <- formatDate(c("2019-01-15", "2019-01-20", "2019-01-21", "2019-01-22"),
-#'                     "Ymd", "-")
+#' \dontrun{
+#' dates <- formatDate(c("2019-01-15", "2019-01-20", "2019-01-21",
+#'                       "2019-01-22"), "Ymd", "-")
 #' year(dates)
+#' }
 
 #' @export
 year <- function(x)
@@ -168,9 +168,11 @@ year <- function(x)
 #'
 #' @examples
 #'
+#' \dontrun{
 #' dates <- formatDate(c("2019-01-15", "2019-01-20", "2019-01-21", "2019-01-22"),
 #'                     "Ymd", "-")
 #' month(dates)
+#' }
 
 #' @export
 month <- function(x)
@@ -204,10 +206,11 @@ month <- function(x)
 #' Website: \url{https://myominnoo.github.io/}
 #'
 #' @examples
-#'
+#' \dontrun{
 #' dates <- formatDate(c("2019-01-15", "2019-01-20", "2019-01-21", "2019-01-22"),
 #'                     "Ymd", "-")
 #' day(dates)
+#' }
 
 #' @export
 day <- function(x)

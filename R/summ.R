@@ -7,6 +7,7 @@
 #' @param data dataset (optional)
 #' @param ... a variable or variables. Colon separator \code{:} can be
 #' used for multiple variables. See details.
+#' @param x exposure variable
 #' @param by outcome variable for cross-tabulation
 #' @param na.rm A logical value to specify missing values,
 #' <NA> in the table

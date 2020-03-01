@@ -11,6 +11,7 @@
 #' @param width desired character length to display
 #' @param sep separator for line break
 #' @param split separator for printText
+#' @param printDF If yes, print as Data.frame
 #'
 #' @keywords support, print
 #'
@@ -104,4 +105,18 @@ wrapText <- function(txt, width = 70, sep = "\n") {
     return(txt)
 }
 
+
+#' @rdname printText
+#' @export
+generateLinesDF <- function(x, sep = "-")
+{
+    do.call(
+        c,
+        lapply(x, function(z) {
+            v <- max(nchar(as.character(z)), na.rm = TRUE)
+            v <- paste0(rep(sep, v), collapse = "")
+            v
+        })
+    )
+}
 

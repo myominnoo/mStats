@@ -21,6 +21,8 @@ modelDisplay(model, rnd = 1, print.table = TRUE)
 \item{rnd}{rounding digits}
 
 \item{print.table}{logical value to display formatted outputs}
+
+\item{...}{optional arguments}
 }
 \description{
 \code{modelDisplay()} displays formatted estimates

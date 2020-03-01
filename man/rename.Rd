@@ -9,7 +9,7 @@
 \usage{
 rename(data, var_old, var_new)
 
-\method{rename}{default}(...)
+\method{rename}{default}(data, var_old, var_new)
 
 \method{rename}{character}(data, var_old, var_new)
 
