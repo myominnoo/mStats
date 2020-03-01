@@ -1,0 +1,263 @@
+#' @title Report parameters from regression models
+#'
+#' @description
+#' \code{modelDisplay()} displays formatted estimates
+#' from different models along with 95% confidence intervals
+#' and p-values.
+#'
+#' @param model object glm or lm type
+#' @param rnd rounding digits
+#' @param print.table logical value to display formatted outputs
+#' @param ... optional arguments
+#' @details
+#'
+#' \code{modelDisplay()} reports parameters from regression models.
+#'
+#' Currently supporting model is \code{logistic} or \code{binomial}.
+#' Other types will be incoporated in future works. Any specific
+#' request can be made to the author. See author section for contact.
+#'
+#' \strong{Unadjusted or bivariate analysis}
+#'
+#' \code{modelDisplay} reports unajdusted odds ratios, 95\% Confidence
+#' interval and \code{Wald\'s p-value}.
+#'
+#' \strong{Adjusted or multivariable analysis}
+#'
+#' Both unadjusted and adjusted parameters are reported in different
+#' tables.
+#'
+#' The reports are well-formatted texts which can be readily copied
+#' into spreadsheet programs or formatted in \code{Word} file.
+#'
+#'
+#' @note
+#'
+#' This is an ongoing work. In case of comments or suggestions,
+#' please reach out to me at \email{dr.myominnoo@@gmail.com}.
+#'
+#' @references
+#'
+#' \enumerate{
+#'   \item LOGIT REGRESSION | R DATA ANALYSIS EXAMPLES. UCLA:
+#'   Statistical Consulting Group.
+#'   from https://stats.idre.ucla.edu/r/dae/logit-regression/
+#'   (accessed September 27, 2019)
+#' }
+#'
+#' @seealso
+#'
+#' \code{\link{testModelFit}}
+#'
+#' @keywords
+#'
+#' model output, coefficients display, logistic regression
+#'
+#' @author
+#'
+#' For any feedback, please contact \code{Myo Minn Oo} via:
+#'
+#' Email: \email{dr.myominnoo@@gmail.com}
+#'
+#' Website: \url{https://myominnoo.github.io/}
+#'
+#' @examples
+#' \dontrun{
+#'
+#' ## Example IDRE UCLA
+#' # reading dataset
+#' mydata <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")
+#'
+#' # checking dataset
+#' codebook(mydata)
+#'
+#' # tabulation of outcome and exposure
+#' tab(mydata, admit)
+#' tab(mydata, rank)
+#'
+#'
+#'
+#' ### Logistic regression modelling
+#' # Univariate
+#' logit.gre <- glm(admit ~ gre, data = mydata, family = "binomial")
+#'
+#' # checking summary
+#' summary(logit.gre)
+#'
+#' # generating outputs
+#' modelDisplay(logit.gre)
+#'
+#' # test overall fit
+#' testModelFit(logit.gre)
+#'
+#'
+#'
+#'
+#' ## Multivariable logistic regression
+#' logit.multi <- glm(admit ~ gre + gpa + factor(rank), data = mydata, family = "binomial")
+#'
+#' # checking summary
+#' summary(logit.multi)
+#'
+#' # dislpaying model estimates
+#' modelDisplay(logit.multi) # generates parameters
+#'
+#' # test overall fit
+#' testModelFit(logit.multi) # test overall significant of the model
+#' }
+
+#' @export
+modelDisplay <- function(model, rnd = 1, print.table = TRUE)
+{
+    mod.sum <- summary(model)
+    raw <- coef(mod.sum)
+    m.call <- as.character(mod.sum$call$formula)[-1]
+    vars <- gsub(" ", "", unlist(strsplit(m.call, "+", fixed = TRUE)))
+
+    if (length(vars) > 2) {
+        model <- structure(model, class = "adjusted")
+    } else {
+        model <- structure(model, class = "unAdjusted")
+    }
+    UseMethod("modelDisplay", model)
+}
+
+
+
+#' @rdname modelDisplay
+#' @export
+modelDisplay.default <- function(...)
+{
+    stop(" >>> Model type is not supported yet. <<< ")
+}
+
+
+#' @rdname modelDisplay
+#' @export
+modelDisplay.unAdjusted <- function(model, rnd = 1,
+                                    print.table = TRUE)
+{
+    mod.sum <- summary(model)
+    raw <- coef(mod.sum)
+    if (nrow(raw) < 2)
+        stop(" >>> NULL model is not evaluated <<< ")
+
+    e <- sprintf(exp(raw[, 1]), fmt = paste0('%#.', rnd, 'f'))
+    ci <- suppressMessages(exp(confint(model)))
+    ll <- sprintf(ci[, 1], fmt = paste0('%#.', rnd, 'f'))
+    ul <- sprintf(ci[, 2], fmt = paste0('%#.', rnd, 'f'))
+    p <- sprintf(raw[,4], fmt = paste0('%#.', 5, 'f'))
+    t <- data.frame(cbind(e, ll, ul, p), stringsAsFactors = FALSE)
+    row.names(t) <- row.names(raw)
+    names(t) <- c("Odds Ratio", "[95% Conf.",
+                  "Interval]", "Pr(>|z|)")
+    t <- t[!(row.names(t) %in% "(Intercept)"), ]
+
+    if (print.table) {
+        texts <- ifelse((mod.sum$family$family) == "binomial",
+                        "Logistic Regression", "<NA>")
+        texts <- paste0("Unadjusted ", texts, "\n")
+        printText(t, paste0(texts, "Number of obs: ",
+                            length(model$y)),
+                  split = "Number of obs: ")
+
+        printMsg("Model Information:")
+
+        fm <- as.character(mod.sum$call)
+        fm <- paste0(fm[1], "(", fm[2], ", family = ", fm[3],
+                     ", data = ", fm[4], ")")
+        printMsg(paste0("Formula: ", fm, collapse = ""))
+        printMsg(
+            paste0("Log-likelihood: ",
+                   sprintf(logLik(model),
+                           fmt = paste0('%#.', rnd, 'f')))
+        )
+        printMsg(paste0("AIC: ",
+                        sprintf(AIC(model),
+                                fmt = paste0('%#.', rnd, 'f'))))
+    }
+
+    invisible(t)
+}
+
+
+
+
+#' @rdname modelDisplay
+#' @export
+modelDisplay.adjusted <- function(model, rnd = 1,
+                                  print.table = TRUE)
+{
+    mod.sum <- summary(model)
+    raw <- coef(mod.sum)
+    m.call <- as.character(mod.sum$call$formula)[-1]
+    vars <- gsub(" ", "", unlist(strsplit(m.call, "+", fixed = TRUE)))
+    vars.ex <- vars[-1]
+
+    t.uOR <- do.call(
+        rbind, lapply(1:length(vars.ex), function(z) {
+            texts <- paste0("glm(", vars[1], " ~ ", vars.ex[z],
+                            ", family = ", mod.sum$call$family,
+                            ", data = ", mod.sum$call$data, ")")
+            v <- modelDisplay.unAdjusted(eval(parse(text = texts)),
+                                         print.table = FALSE)
+            v
+        })
+    )
+
+    e <- sprintf(exp(raw[, 1]), fmt = paste0('%#.', rnd, 'f'))
+    ci <- suppressMessages(exp(confint(model)))
+    ll <- sprintf(ci[, 1], fmt = paste0('%#.', rnd, 'f'))
+    ul <- sprintf(ci[, 2], fmt = paste0('%#.', rnd, 'f'))
+    p <- sprintf(raw[,4], fmt = paste0('%#.', 5, 'f'))
+    t.aOR <- data.frame(cbind(e, ll, ul, p))
+    names(t.aOR) <- c("Odds Ratio", "[95% Conf.",
+                      "Interval]", "Pr(>|z|)")
+    row.names(t.aOR) <- row.names(raw)
+    t.aOR <- t.aOR[!(row.names(t.aOR) %in% "(Intercept)"), ]
+
+
+    p.uOR <- as.numeric(as.character(t.uOR[,4]))
+    p.aOR <- as.numeric(as.character(t.aOR[,4]))
+    p.uOR <- ifelse(p.uOR < 0.001, "***",
+                    ifelse(p.uOR < 0.01, "**",
+                           ifelse(p.uOR < 0.05, "*", ".")))
+    p.aOR <- ifelse(p.aOR < 0.001, "***",
+                    ifelse(p.aOR < 0.01, "**",
+                           ifelse(p.aOR < 0.05, "*", ".")))
+
+    f.uOR <- cbind(t.uOR, Signif. = p.uOR)
+    f.aOR <- cbind(t.aOR, Signif. = p.aOR)
+    f <- list(UnAjustedOR = f.uOR, AjustedOR = f.aOR)
+
+    if (print.table) {
+        texts <- ifelse((mod.sum$family$family) == "binomial",
+                        "Logistic Regression", "<NA>")
+
+        printText(f.uOR, paste0(
+            paste0("Unadjusted ", texts, "\n"), "Number of obs: ",
+            length(model$y)),
+            split = "Number of obs: ")
+
+        printText(f.aOR, paste0(
+            paste0("Adjusted ", texts, "\n"), "Number of obs: ",
+            length(model$y)),
+            split = "Number of obs: ")
+
+        printMsg("Model Information:")
+        fm <- as.character(mod.sum$call)
+        fm <- paste0(fm[1], "(", fm[2], ", family = ", fm[3],
+                     ", data = ", fm[4], ")")
+        printMsg(paste0("Formula: ", fm, collapse = ""))
+
+        printMsg(paste0("Log-likelihood: ",
+                        sprintf(logLik(model),
+                                fmt = paste0('%#.', rnd, 'f'))))
+        printMsg(paste0("AIC: ",
+                        sprintf(AIC(model),
+                                fmt = paste0('%#.', rnd, 'f'))))
+
+    }
+
+    invisible(f)
+}

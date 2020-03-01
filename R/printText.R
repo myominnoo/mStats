@@ -2,7 +2,7 @@
 #'
 #' @description
 #' \code{printText()}, \code{printLines()}, \code{printMsg()},
-#' \code{warningText()}, \code{wrapText()}
+#' \code{printWarning()}, \code{wrapText()}
 #'
 #' Printing Functions to format and display outputs from mStats package
 #'
@@ -11,6 +11,7 @@
 #' @param width desired character length to display
 #' @param sep separator for line break
 #' @param split separator for printText
+#' @param printDF If yes, print as Data.frame
 #'
 #' @keywords support, print
 #'
@@ -20,10 +21,10 @@
 #'
 #' Email: \email{dr.myominnoo@@gmail.com}
 #'
-#' Website: \url{https://myominnoo.github.io/})
-
+#' Website: \url{https://myominnoo.github.io/}
+#'
 #' @export
-printText <- function(x, txt, split = NULL) {
+printText <- function(x, txt, split = NULL, printDF = FALSE) {
     vars <- names(x)
     n.ds <- data.frame(
         rbind(sapply(vars, function(z) nchar(as.character(z))),
@@ -45,12 +46,17 @@ printText <- function(x, txt, split = NULL) {
     printLines(x = "=", width = x.width)
     cat(txt, "\n")
     printLines(x = "_", width = x.width)
-    print(x)
+    if (printDF) {
+        print.data.frame(x, row.names = FALSE, max = 1e9)
+    } else {
+        print(x)
+    }
     printLines(x = "=", width = x.width)
 }
 
 
 #' @rdname printText
+#' @export
 printLines <- function(x = "=", width = 80)
 {
     cat(paste(rep(x, width), collapse = ""), "\n")
@@ -58,6 +64,7 @@ printLines <- function(x = "=", width = 80)
 
 
 #' @rdname printText
+#' @export
 printMsg <- function(txt = NULL)
 {
     txt <- paste0("(", txt, ")\n", collapse = "")
@@ -67,7 +74,8 @@ printMsg <- function(txt = NULL)
 
 
 #' @rdname printText
-warningText <- function(txt = NULL)
+#' @export
+printWarning <- function(txt = NULL)
 {
     txt <- paste0(" >>> ", txt, " <<< \n", collapse = "")
     txt <- wrapText(txt)
@@ -77,7 +85,8 @@ warningText <- function(txt = NULL)
 
 
 #' @rdname printText
-wrapText <- function(txt, width = 80, sep = "\n") {
+#' @export
+wrapText <- function(txt, width = 70, sep = "\n") {
     #check character length
     ch.len <- nchar(txt)
     # if character length is more than console width (80)
@@ -96,4 +105,18 @@ wrapText <- function(txt, width = 80, sep = "\n") {
     return(txt)
 }
 
+
+#' @rdname printText
+#' @export
+generateLinesDF <- function(x, sep = "-")
+{
+    do.call(
+        c,
+        lapply(x, function(z) {
+            v <- max(nchar(as.character(z)), na.rm = TRUE)
+            v <- paste0(rep(sep, v), collapse = "")
+            v
+        })
+    )
+}
 

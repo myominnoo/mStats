@@ -1,0 +1,465 @@
+#' @title Cross tabulation, contigency table or two-by-two table
+#'
+#' @description
+#'
+#' \code{xtab()} generates cross tabulation of two variables.
+#'
+#' @param data dataset (optional)
+#' @param ... a variable or variables. Colon separator \code{:} can be
+#' used for multiple variables. See details.
+#' @param x exposure variable
+#' @param by outcome variable for cross-tabulation
+#' @param row.pct TRUE or FALSE: If \code{TRUE}, row percentages
+#' are shown and if \code{FALSE}, column percentages.
+#' if \code{NULL}, a table without any row or column percentages
+#' is produced.
+#' @param na.rm A logical value to specify missing values,
+#' \code{<NA>} in the table
+#' @param rnd specify rounding of numbers. See \code{\link{round}}.
+#' @param print.table logical value to display formatted outputs
+#'
+#' @details
+#'
+#' Exploring data before jumping into complex analysis is always a
+#' necessity.
+#' The first step of an analysis is always to summarize and display data.
+#'
+#' \code{xtab()} produces \code{2x2} or contigency tables.
+#'
+#'
+#' \strong{Two-way tabulation}
+#'
+#' When \code{by} is specified, \code{tab()} or \code{xtab()} generates
+#' two-way tabulation of a variable or multiple variables.
+#' THere is no argument for \code{x}. Instead, \code{...} accepts
+#' multiple variables and produces corresponding tabulations.
+#'
+#' Tabulation is displayed in number for corresponding categories
+#' and corresponding row \code{(r\%)} or column \code{(c\%)}
+#' percentages. Totals for both direction are also produced along
+#' with different tests as follows:
+#'
+#' \enumerate{
+#'    \item Pearson Chi-squared test of Independence \code{Chi.Square}
+#'    \item Fisher's Exact Test \code{F.Exact}
+#' }
+#'
+#' \strong{Row or column percentages}
+#'
+#' If \code{row.pct} is \code{TRUE}, row percentages are displayed.
+#' If not, column percentages will be tabulated. If put as \code{NULL},
+#' a default table without percentages will be displayed.
+#'
+#' @return
+#'
+#' \enumerate{
+#'    \item \code{vector} or \code{list}: corresponding unformatted table(s)
+#'    \item output: formatted texts
+#' }
+#'
+#'
+#' @references
+#'
+#' \enumerate{
+#'   \item Essential Medical Statistics, Betty R. Kirkwood & Jonathan
+#'   A.C. Sterne,
+#'   Second Edition.
+#'   \item An Introduction to Medical Statistics, Martin Bland,
+#'   Thrid Edition,
+#'   \item STATA DATA MANAGEMENT. UCLA: Statistical Consulting Group.
+#'    from https://stats.idre.ucla.edu/stata/seminars/stata-data-management/
+#'    (accessed Febrary 25, 2020).
+#' }
+#'
+#' @seealso
+#'
+#' \code{\link{tab}}
+#'
+#' @keywords
+#'
+#' two-by-two table, 2x2 table, two-way table, statistics, descriptive
+#'
+#' @author
+#'
+#' For any feedback, please contact \code{Myo Minn Oo} via:
+#'
+#' Email: \email{dr.myominnoo@@gmail.com}
+#'
+#' Website: \url{https://myominnoo.github.io/}
+#'
+#' @examples
+#' \dontrun{
+#'
+#'
+#' ## Cross-tabulation
+#' ## using infert dataset
+#' # one variable
+#' xtab(infert, education, by = case)
+#'
+#' # multiple variables
+#' xtab(infert, education, age:induced, spontaneous, by = case)
+#'
+#' # the whole dataset
+#' xtab(infert, by = case)
+#'
+#'
+#'
+#' ## IDRE UCLA Example 1
+#' ## using hosp dataset
+#' path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
+#' hosp <- haven::read_dta(path)
+#' codebook(hosp)
+#'
+#' # one variable
+#' xtab(hosp, sex, by = remission)
+#'
+#' # multiple variables
+#' xtab(hosp, hospital, married:lengthofstay, by = remission)
+#'
+#' # the whole dataset
+#' xtab(hosp, by = remission)
+#'
+#'
+#' ## Cross-tabulation
+#' ## using infert dataset
+#' # one variable
+#' tab(infert, education, by = case)
+#'
+#' # multiple variables
+#' tab(infert, education, age:induced, spontaneous, by = case)
+#'
+#' # the whole dataset
+#' tab(infert, by = case)
+#'
+#'
+#'
+#'
+#' ## IDRE UCLA Example 1
+#' ## using hosp dataset
+#' path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
+#' hosp <- haven::read_dta(path)
+#' codebook(hosp)
+#'
+#' # one variable
+#' tab(hosp, sex, by = remission)
+#'
+#' # multiple variables
+#' tab(hosp, hospital, married:lengthofstay, by = remission)
+#'
+#' # the whole dataset
+#' tab(hosp, by = remission)
+#'
+#' }
+
+#' @export
+xtab <- function(data = NULL, ... , by,
+                 row.pct = TRUE,
+                 na.rm = FALSE, rnd = 1,
+                 print.table = TRUE)
+{
+  arguments <- as.list(match.call())[-1]
+  if (!is.null(data)) {
+    by <- eval(substitute(by), data)
+  }
+  nonX <- c("data", "by", "row.pct", "na.rm", "rnd", "print.table")
+  x <- as.character(arguments[!(names(arguments) %in% nonX)])
+
+  if (length(x) > 1) {
+    x <- list()
+  } else if (length(x) == 1 ) {
+    if (any(grepl(":", x))) {
+      x <- list()
+    } else {
+      x <- character()
+    }
+  } else {
+    x <- data.frame()
+  }
+
+  if (is.null(by)) {
+    stop(" >>> Specify 'by' variable <<< ")
+  } else {
+    UseMethod("xtab", x)
+  }
+}
+
+
+#' @rdname xtab
+#' @export
+xtab.default <- function(data = NULL, ... , by,
+                         row.pct = TRUE,
+                         na.rm = FALSE, rnd = 1,
+                         print.table = TRUE)
+{
+  stop(" >>> Data type is not supported. <<< ")
+}
+
+
+#' @rdname xtab
+#' @export
+xtab.character <- function(data = NULL, x, by,
+                           row.pct = TRUE,
+                           na.rm = FALSE, rnd = 1,
+                           print.table = TRUE)
+{
+  arguments <- as.list(match.call())[-1]
+  if (!is.null(data)) {
+    x <- eval(substitute(x), data)
+    by <- eval(substitute(by), data)
+  }
+  x.name <- arguments$x
+  by.name <- arguments$by
+  na.rm <- ifelse(na.rm, "no", "ifany")
+
+  row.pct <- ifelse(is.null(row.pct), "none",
+                    ifelse(row.pct, "row",
+                           ifelse(!row.pct, "column", NULL)))
+
+  # get tables
+  t <- table(x, by, useNA = na.rm)
+  t.c <- rbind(t, Total = colSums(t))
+  t.r <- cbind(t, Total = rowSums(t))
+  t.f <- cbind(t.c, Total = rowSums(t.c))
+
+  p.r <- round(t.f / rowSums(t.c) * 100, rnd)
+  p.c <- round(t(t(t.f) / colSums(t.r)) * 100, rnd)
+
+  t.c.p <- NULL; t.r.p <- NULL
+  n.c.p <- NULL; n.r.p <- NULL # names for headers
+  for (i in seq_len(ncol(t.f)))
+  {
+    t.c.p <- cbind(t.c.p, cbind(t.f[,i], p.c[,i]))
+    n.c.p <- c(n.c.p, c(colnames(t.f)[i], "(c%)"))
+    t.r.p <- cbind(t.r.p, cbind(t.f[,i], p.r[,i]))
+    n.r.p <- c(n.r.p, c(colnames(t.f)[i], "(r%)"))
+  }
+  colnames(t.c.p) <- n.c.p
+  colnames(t.r.p) <- n.r.p
+  names(attributes(t.f)$dimnames) <- c(x.name, by.name)
+  names(attributes(t.c.p)$dimnames) <- c(x.name, by.name)
+  names(attributes(t.r.p)$dimnames) <- c(x.name, by.name)
+
+  f <- switch(row.pct,
+              none = t.f,
+              row = t.r.p,
+              column = t.c.p)
+
+  if (na.rm == "no") {
+    data <- data.frame(cbind(x = x, by = by))
+    data <- na.omit(data)
+    x <- data$x
+    by <- data$by
+  }
+
+  pvalue <- tryCatch({
+    suppressWarnings(chisq.test(x, by, correct = FALSE)$p.value)
+  }, error = function(err) {
+    return(NA)
+  })
+  pvalue <- c(
+    pvalue,
+    tryCatch({
+      suppressWarnings(fisher.test(
+        x, by, simulate.p.value = FALSE)$p.value
+      )
+    }, error = function(err) {
+      return(NA)
+    })
+  )
+
+  pvalue <- sprintf(pvalue, fmt = '%#.5f')
+  f <- cbind(as.data.frame(f),
+             as.data.frame(rbind(
+               pvalue,
+               matrix(rep("", 2 * (nrow(f) - 1)), ncol = 2)))
+  )
+  names(f)[(ncol(f)-1):ncol(f)] <- c("Chi.Square", "F.Exact")
+
+  if (print.table) {
+    texts <- paste0("Tabulation: ", x.name, " ~ ", by.name, collapse = "")
+    printText(f, texts)
+
+    if (!is.null(attr(x, "label"))) {
+      printMsg("Labels:")
+      printMsg(paste0(x.name, ": ", attr(x, "label"), collapse = ""))
+    }
+    if (!is.null(attr(by, "label"))) {
+      printMsg(paste0(by.name, ": ", attr(by, "label"), collapse = ""))
+    }
+  }
+
+  invisible(f)
+}
+
+
+#' @rdname xtab
+#' @export
+xtab.list <- function(data = NULL, ... , by,
+                      row.pct = TRUE,
+                      na.rm = FALSE, rnd = 1,
+                      print.table = TRUE)
+{
+  arguments <- as.list(match.call())[-1]
+  if (!is.null(data)) {
+    by <- eval(substitute(by), data)
+  }
+  nonX <- c("data", "by", "row.pct", "na.rm", "rnd", "print.table")
+  x.names <- arguments[!names(arguments) %in% nonX]
+  by.name <- arguments[["by"]]
+
+
+  hasColon <- grepl(":", as.character(x.names))
+  if (any(hasColon) & !is.null(data)) {
+    data <- data.frame(data)
+    x.names <- do.call(
+      c,
+      lapply(as.character(x.names), function(z) {
+        hasColon <- grepl(":", z)
+        if (hasColon) {
+          varsColonSplit(data, z, hasColon)
+        } else {
+          z
+        }
+      })
+    )
+    data <- data[, as.character(x.names)]
+  } else if (!is.null(data)) {
+    data <- data[, as.character(x.names)]
+  } else {
+    # restructure label of x
+    if (any(grepl("\\$", x.names))) {
+      varsNames <- do.call(
+        c,
+        lapply(x.names, function(z) {
+          v <- as.character(z)
+          v[3]
+        })
+      )
+      x.lbl <- lapply(x.names, function(z) {
+        v <- as.character(z)
+        paste0(v[2], v[1], v[3], collapse = "")
+      })
+    }
+    if (any(grepl("\\$", by.name))) {
+      by.lbl <- as.character(by.name)
+      by.lbl <- by.lbl[3]
+      by.name <- by.lbl
+    }
+    data <- do.call(data.frame, x.names)
+    names(data) <- varsNames
+  }
+
+  f <- lapply(data, function(z){
+    xtab.character(NULL, z, by, row.pct = row.pct,
+                   na.rm = na.rm, rnd = rnd,
+                   print.table = FALSE)
+  })
+
+
+
+  if (exists("x.lbl")) {
+    x.names <- varsNames
+  }
+  x.lbl <- sapply(data, function(z) attr(z, "label"))
+  by.lbl <- attr(by, "label")
+
+  if (print.table) {
+    for (i in 1:length(x.names)) {
+      t <- f[[i]]
+      texts <- paste0("Tabulation: ", x.names[i], " ~ ", by.name,
+                      collapse = "")
+      printText(t, texts)
+      if (!is.null(unlist(x.lbl[i]))) {
+        printMsg("Labels:")
+        printMsg(paste0(x.names[i], ": ", x.lbl[i], collapse = ""))
+      }
+      if (!is.null(by.lbl))
+        printMsg(paste0(by.name, ": ", by.lbl, collapse = ""))
+    }
+  }
+
+  invisible(f)
+}
+
+
+#' @rdname xtab
+#' @export
+xtab.data.frame <- function(data = NULL, ... , by = NULL,
+                            row.pct = TRUE,
+                            na.rm = FALSE, rnd = 1,
+                            print.table = TRUE)
+{
+  arguments <- as.list(match.call())
+  vars <- names(data)
+  by <- eval(substitute(by), data)
+  x.name <- arguments$x
+  by.name <- arguments$by
+  type.character <- c("factor", "character", "orderedfactor")
+  type.logical <- c("logical")
+
+  vars.type <- sapply(vars, function(z)
+    paste0(class(unlist(data[ , z])), collapse = ""))
+  vars.names <- vars[(vars.type %in% type.character) |
+                       (vars.type %in% type.logical)]
+  data <- data[, vars.names]
+
+  if (is.data.frame(data)) {
+    if (ncol(data) == 0)
+      stop(" >>> no categorical variables found <<< ")
+
+    names.invalid <- grep("^([[:alpha:]]|[.][._[:alpha:]])[._[:alnum:]]*$",
+                          vars.names, value = TRUE, invert = TRUE)
+    if (length(names.invalid) > 0) {
+      vars.names[vars.names %in% names.invalid] <- paste0("v", names.invalid)
+      names(data) <- vars.names
+    }
+  }
+
+  if (is.data.frame(data)) {
+    f <- lapply(data, function(z)
+      xtab.character(NULL, z, by = by, row.pct = row.pct,
+                     na.rm = na.rm, rnd = rnd,
+                     print.table = FALSE))
+    x.lbl <- sapply(data, function(z) attr(z, "label"))
+  } else {
+    f <- xtab.character(NULL, data, by = by, row.pct = row.pct,
+                        na.rm = na.rm, rnd = rnd,
+                        print.table = FALSE)
+    x.lbl <- attr(data, "label")
+  }
+  by.lbl <- attr(by, "label")
+
+  if (is.data.frame(data)) {
+    if (print.table) {
+      for (i in 1:length(vars.names)) {
+        texts <- paste0("Tabulation: ",
+                        vars.names[i], " ~ ", by.name,
+                        collapse = "")
+        printText(f[[i]], texts)
+        if (!is.null(unlist(x.lbl[i]))) {
+          printMsg("Labels:")
+          printMsg(paste0(vars.names[i], ": ", x.lbl[i],
+                          collapse = ""))
+        }
+        if (!is.null(by.lbl)) {
+          printMsg(paste0(by.name, ": ", by.lbl, collapse = ""))
+        }
+      }
+    }
+  } else {
+    if (print.table) {
+      texts <- paste0("Tabulation: ", vars.names, " ~ ", by.name,
+                      collapse = "")
+      printText(f, texts)
+      if (!is.null(x.lbl)) {
+        printMsg("Labels:")
+        printMsg(paste0(vars.names, ": ", x.lbl, collapse = ""))
+      }
+      if (!is.null(by.lbl)) {
+        printMsg(paste0(by.name, ": ", by.lbl, collapse = ""))
+      }
+    }
+  }
+
+  invisible(f)
+}

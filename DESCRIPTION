@@ -4,7 +4,7 @@ Title: A Tool for Data Management, Statistical Analysis and calculating Epidemio
 Version: 3.1.1
 Author: Myo Minn Oo
 Maintainer: Myo Minn Oo <dr.myominnoo@gmail.com>
-Description: A tool for Data Management, Statistical Analysis and calculating Epidemiological measures. Contains three sets of functions for: Supports Data Management Data Analysis
+Description: This is a tool for Data Management, Statistical Analysis and calculating Epidemiological measures. It contains three sets of functions for: Data Management, Epidemiological Calculation and Data Analysis.
 Depends: R (>= 3.0.0)
 Imports: stats, utils
 License: GPL-2 | GPL-3
