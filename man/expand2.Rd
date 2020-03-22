@@ -33,14 +33,24 @@ path <- "https://stats.idre.ucla.edu/stat/stata/notes/hsb2.dta"
 hsb2 <- haven::read_dta(path)
 codebook(hsb2)
 
+
+## use pipe function
 library(magrittr)
+
+
+## keep id female ses math read write
+hsb2 <- hsb2 \%>\%
+    keep(id, female, ses, read:math)
+
+
 # copy the first 5 rows for 4 times
-hsb2.new <- hsb2 \%>\%
+hsb2 \%>\%
      expand2(1:5, 4) \%>\%
+     duplicates \%>\%
      codebook
 
 # copy the first 5 rows for 4 times and keep only duplicated records
-hsb2.new <- hsb2 \%>\%
+hsb2 \%>\%
      expand2(1:5, 4, original = FALSE) \%>\%
      codebook
 }
@@ -52,8 +62,6 @@ from https://stats.idre.ucla.edu/stata/faq/how-can-i-detect-duplicate-observatio
 (accessed September 27, 2019).
 }
 \seealso{
-\code{\link{expandTables}}, \code{\link{keep}}
-
 \code{\link{generate}}, \code{\link{egen}}
 }
 \author{
@@ -63,8 +71,4 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\keyword{duplicate}
-\keyword{duplicates,}
-\keyword{expand,}
-\keyword{observations,}
-\keyword{rows}
+\concept{duplicates observations expand duplicate rows}

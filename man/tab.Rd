@@ -2,231 +2,144 @@
 % Please edit documentation in R/tab.R
 \name{tab}
 \alias{tab}
-\alias{tab.default}
-\alias{tab.character}
-\alias{tab.list}
-\alias{tab.data.frame}
 \title{Tabulation}
 \usage{
-tab(
-  data = NULL,
-  ...,
-  by = NULL,
-  row.pct = TRUE,
-  na.rm = FALSE,
-  rnd = 1,
-  print.table = TRUE
-)
-
-\method{tab}{default}(...)
-
-\method{tab}{character}(
-  data = NULL,
-  x,
-  by = NULL,
-  row.pct = TRUE,
-  na.rm = FALSE,
-  rnd = 1,
-  print.table = TRUE
-)
-
-\method{tab}{list}(
-  data = NULL,
-  ...,
-  by = NULL,
-  row.pct = TRUE,
-  na.rm = FALSE,
-  rnd = 1,
-  print.table = TRUE
-)
-
-\method{tab}{data.frame}(
-  data = NULL,
-  ...,
-  by = NULL,
-  row.pct = TRUE,
-  na.rm = FALSE,
-  rnd = 1,
-  print.table = TRUE
-)
+tab(data, ..., by = NULL, row.pct = TRUE, na.rm = FALSE, rnd = 1)
 }
 \arguments{
-\item{data}{dataset (optional)}
+\item{data}{Dataset}
 
-\item{...}{a variable or variables. Colon separator \code{:} can be
-used for multiple variables. See details.}
+\item{...}{Variable or multiple variables
+Colon separator \code{:} can be used to specify multiple variables.}
 
-\item{by}{outcome variable for cross-tabulation}
+\item{by}{Varaiable for cross-tabulation}
 
-\item{row.pct}{TRUE or FALSE: If \code{TRUE}, row percentages
-are shown and if \code{FALSE}, column percentages.
-if \code{NULL}, a table without any row or column percentages
-is produced.}
+\item{row.pct}{\code{TRUE}, \code{FALSE} or \code{NULL}:
 
-\item{na.rm}{A logical value to specify missing values,
-<NA> in the table}
+\code{TRUE} shows row percentages.
+
+\code{FALSE} shows column percentages.
+
+\code{NULL} shows no percentages.}
+
+\item{na.rm}{A logical value to specify missing values,}
 
 \item{rnd}{specify rounding of numbers. See \code{\link{round}}.}
-
-\item{print.table}{logical value to display formatted outputs}
-
-\item{x}{exposure variable}
 }
 \value{
-\enumerate{
-   \item \code{vector} or \code{list}: corresponding unformatted table(s)
-   \item output: formatted texts
-}
+tabulation as \code{list}
 }
 \description{
-\code{tab()} generates one-way or two-way tabulation of
-a categorical variable.
+\code{tab()} generates one-way or two-way tabulation of variables.
 }
 \details{
-\code{tab()} produces one-way or \code{2x2} tables.
-
 \strong{One-way tabulation}
 
 If \code{by} is not specified, \code{tab} generates one-way tabulation of
-a variable or multiple variables. There is no argument for \code{x}.
-Instead, \code{...} accepts multiple variables and produces
-corresponding tabulations.
+a variable or multiple variables. \code{...} accepts multiple variables and
+produces corresponding tabulations.
 
 Tabulation is displayed in \code{Freq.} (frequency), \code{Percent.}
-(Relative Frequency) and \code{Cum.Percent.} (Cumulative frequency).
+(Relative Frequency) and \code{Cum.Percent.} (Cumulative Relative frequency).
 
+\preformatted{tab(data, var1)}
+
+\preformatted{tab(data, var1, var2, var3:var5, var10)}
+
+\strong{Two-way tabulation}
+
+Specifying \code{by} produces two-way tables. P-values from
+Chi-squared and Fisher's Exact tests are also shown.
 
 \strong{Data type}
 
-For tabulating the whole dataset, variables with either of
-four data types (character,
-factor, ordered factor and logical) are tabulated.
+Tabulation of the whole dataset requires variables to be in either of
+these data types: \code{character}, \code{factor}, \verb{order factor}, \code{logical}.
+\subsection{if \code{...} is not specified, tabulation of the whole dataset is produced.}{
 
 \preformatted{tab(data)}
 
-For tabulating
-variables with other data types, variables have to be called separately.
+\strong{Using colon \code{:} spearator}
 
-\preformatted{tab(data, var1, var2, etc)}
-
-
-\strong{Multiple variables}
-
-\code{tab()} accepts multiple variables. They can be put after
-\code{data} arguments as many as possible.
 Colon separator \code{:} can be used to indicate sequence of variables.
 
-\preformatted{tab(data, var1, var2, var3:var6, var7, var10:var15)}
-
-\strong{Two-way or \code{2x2} tabulation}
-
-\code{2x2} tables can also be produced by \code{\link{xtab}}. This is
-called explicit calling of \code{xtab}. Otherwise, the same tabulation
-can be implicitly generated in \code{tab} function by specifying
-outcome variable, \code{by}.
-
-See details in \code{\link{xtab}}.
+\preformatted{tab(data, var1, var2, var3:var5, var10)}
+}
 }
 \examples{
 \dontrun{
-## Using infert dataset
-# one variable
-tab(infert, education)
 
-# multiple variable
-tab(infert, education, parity, case)
-
-# multiple variable using colon separator
-tab(infert, case:parity)
-tab(infert, education, case:parity, age:case)
-
-# the whole dataset
-tab(infert)
-tab(esoph)
-
-# without using data argument
-education <- infert$education
-case <- infert$case
-parity <- infert$parity
-tab(NULL, education, case, parity)
+## UCLA IDRE Example
+## Website:
+path <- "https://stats.idre.ucla.edu/stat/data/hsbdemo.dta"
+hsb <- haven::read_dta(path)
+codebook(hsb)
 
 
+## to use piping function
+library(magrittr)
 
-## IDRE UCLA Example 1
+
+## one variable
+tab(hsb, female)
+tab(hsb, schtyp)
+tab(hsb, prog)
+
+
+## multiple variables
+tab(hsb, female, ses, schtyp, prog)
+tab(hsb, female:prog)
+
+
+## the whole dataset
+## all variables are numeric so this does not work.
+tab(hsb)
+
+## some recoding for hsb
+hsb \%>\%
+    recode(female, 0:1, c("male", "female")) \%>\%
+    recode(ses, 1:3, c("low", "mid", "high")) \%>\%
+    recode(schtyp, 1:2, c("public", "private")) \%>\%
+    recode(prog, 1:3, c("general", "academic", "vocation")) \%>\%
+    tab
+
+
+
+
+# Example from IDRE UCLA
 path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
 hosp <- haven::read_dta(path)
 codebook(hosp)
 
-# one variable
-tab(hosp, sex)
 
-# multiple variables
-tab(hosp, hospital, wound, remission, married:lengthofstay)
+## to use piping function
+library(magrittr)
 
-# whole dataset
+
+## tabulation of hosp
 tab(hosp)
 
 
-
-
-## IDRE UCLA Example 2
-path <- "https://stats.idre.ucla.edu/stat/stata/modules/kids.dta"
-kids <- haven::read_dta(path)
-
-# display codebook
-codebook(kids)
-
-# one variable
-tab(kids, famid)
-
-# multiple variables
-tab(kids, famid, birth:sex)
-
-# the whole dataset
-tab(kids)
-
-
-
-
-## Cross-tabulation
-## using infert dataset
-# one variable
-tab(infert, education, by = case)
-
-# multiple variables
-tab(infert, education, age:induced, spontaneous, by = case)
-
-# the whole dataset
-tab(infert, by = case)
-
-
-
-
-## using hosp dataset
-# one variable
-tab(hosp, sex, by = remission)
-
-# multiple variables
-tab(hosp, hospital, married:lengthofstay, by = remission)
-
-# the whole dataset
-tab(hosp, by = remission)
+hosp \%>\%
+    recode(married, 0:1, c("No", "Yes")) \%>\%
+    # recode(sex, 12.2, NA) \%>\% ## same statement as the command below
+    replace(sex, NA, sex == 12.2) \%>\% ## same here
+    replace(wbc, as.numeric(wbc)) \%>\%
+    tab
 }
+
 }
 \references{
 \enumerate{
-  \item Essential Medical Statistics, Betty R. Kirkwood & Jonathan
-  A.C. Sterne,
-  Second Edition.
-  \item An Introduction to MEdical Statistics, Martin Bland,
-  Thrid Edition,
-  \item STATA DATA MANAGEMENT. UCLA: Statistical Consulting Group.
-   from https://stats.idre.ucla.edu/stata/seminars/stata-data-management/
-   (accessed Febrary 25, 2020).
+\item Essential Medical Statistics, Betty R. Kirkwood & Jonathan
+A.C. Sterne,
+Second Edition.
+\item An Introduction to MEdical Statistics, Martin Bland,
+Thrid Edition,
+\item STATA DATA MANAGEMENT. UCLA: Statistical Consulting Group.
+from https://stats.idre.ucla.edu/stata/seminars/stata-data-management/
+(accessed Febrary 25, 2020).
 }
-}
-\seealso{
-\code{\link{xtab}}, \code{\link{summ}}
 }
 \author{
 For any feedback, please contact \code{Myo Minn Oo} via:
@@ -235,10 +148,8 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\keyword{descriptive}
-\keyword{distribution,}
-\keyword{frequency}
-\keyword{one-way}
-\keyword{statistics,}
-\keyword{table,}
-\keyword{tabulation,}
+\concept{frequency distribution tabulation one-way table two-way cross-tabulation
+
+contigency tables marginal
+
+statistics descriptives fisher exact chi square}

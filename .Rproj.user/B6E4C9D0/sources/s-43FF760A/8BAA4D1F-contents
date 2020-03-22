@@ -1,0 +1,93 @@
+#' @title Create a new variable
+#'
+#' @description
+#' \code{generate} creates a new variable within the data frame
+#'
+#' \code{gen}, short-hand, can be used.
+#'
+#' @param data data frame
+#' @param var name of a new variable
+#' @param expr value or Expression for simple arithmetic or logical operations:
+#' See examples.
+#'
+#' @details
+#'
+#' If the data is specified, it returns the whole dataframe with
+#' recoded variables. If \code{expr} is NULL, \code{generate} produce a vector
+#' \code{NA}. The value of the variable are specified by \code{expr} argument.
+#'
+#' @references
+#'
+#' STATA DATA MANAGEMENT. UCLA: Statistical Consulting Group.
+#' from https://stats.idre.ucla.edu/stata/seminars/stata-data-management/
+#' (accessed Febrary 25, 2020).
+#'
+#' @seealso
+#'
+#' \code{\link{recode}}
+#'
+#' @keywords new variable, generate, produce, create, transform
+#'
+#' @author
+#'
+#' For any feedback, please contact \code{Myo Minn Oo} via:
+#'
+#' Email: \email{dr.myominnoo@@gmail.com}
+#'
+#' Website: \url{https://myominnoo.github.io/}
+#'
+#' @examples
+#' \dontrun{
+#'
+#' }
+#'
+#' @export
+generate <- function(data, var, .expr = NULL)
+{
+    ## if data is not data.frame, stop
+    if (!is.data.frame(data))
+        stop(paste0(" ... '", deparse(substitute(data)), "' is not data.frame ... "))
+
+    .args <- as.list(match.call())
+
+    ## assign data into .data for further evaluation
+    .data <- data
+
+
+
+    ## get variables' and arguments' names
+    .vars.names <- names(data)
+    var <- as.character(.args$var)
+    .expr <- deparse(substitute(.expr))
+
+    ## if variable already exisits, then stop
+    if (any(.vars.names %in% var)) {
+        stop(paste0(" ... '", var, "' already exisits! ... "))
+    }
+
+
+
+
+    ## formulate text syntax, evaluate and assign to .data
+    .expr.txt <- paste0("within(.data, ", var, " <- ", .expr, ")")
+
+    tryCatch({
+        .data <- eval(parse(text = .expr.txt))
+    }, error = function(cnd) {
+        stop(" ... Expression cannot be evaluated! ... ")
+    })
+
+
+    ## Display message to nofity changes
+    # printMsg(paste0("Expression used to generate: '", .expr.txt, "'"))
+    printMsg(paste0(nrow(.data), " observations generated"))
+
+    return(.data)
+}
+
+#' @rdname generate
+#' @export
+gen <- function(data, var, .expr = NULL)
+{
+    generate(data, var, .expr)
+}

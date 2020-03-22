@@ -1,0 +1,512 @@
+.lbl <- ifelse(is.null(.lbl), "<NA>",
+ifelse(nchar(.lbl) > 32, paste0(strtrim(.lbl, 32), "..."),
+.lbl))
+}))
+## get count numbers for all observations, obs. without NA and NAs
+.obs.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(!is.na(data[, z])), na.rm = TRUE))
+.na.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(is.na(data[, z])), na.rm = TRUE))
+.data <- data.frame(
+.vars.names,
+.vars.lbl,
+.vars.type,
+.obs.counts,
+.na.counts,
+round(.na.counts / .obs.counts * 100, 1),
+row.names = NULL
+)
+names(.data) <- c("Variable", "Label", "Type", "_Obs", "_NA", "_NA(%)")
+.data
+}
+codebook(pwid)
+library(mStats2)
+library(mStats2)
+codebook <- function(data)
+{
+## if data is not data.frame, stop
+if (!is.data.frame(data))
+stop(" ... 'data' is not data.frame ... ")
+.vars.names <- names(data)
+.vars.numeric <- c("integer", "double", "numeric")
+.vars.factor <- c("factor", "character")
+.vars.logical <- c("logical")
+.vars.date <- c("Date")
+## get the types of variables
+.vars.type <- unlist(lapply(data, function(z) class(unlist(z))[1]))
+## get the labels
+.vars.lbl <- paste(sapply(.vars.names, function(z) {
+.lbl <- attr(data[[z]], "label")
+.lbl <- ifelse(is.null(.lbl), "<NA>",
+ifelse(nchar(.lbl) > 32,
+paste0(strtrim(.lbl, 32), "..."), .lbl))
+}))
+## get count numbers for all observations, obs. without NA and NAs
+.obs.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(!is.na(data[, z])), na.rm = TRUE))
+.na.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(is.na(data[, z])), na.rm = TRUE))
+.data <- data.frame(
+.vars.names,
+.vars.lbl,
+.vars.type,
+.obs.counts,
+.na.counts,
+round(.na.counts / .obs.counts * 100, 1),
+row.names = NULL
+)
+names(.data) <- c("Variable", "Label", "Type", "_Obs", "_NA", "_NA(%)")
+printMsg("This works .... ")
+}
+codebook(pwid)
+codebook(hcv)
+codebook <- function(data)
+{
+## if data is not data.frame, stop
+if (!is.data.frame(data))
+stop(" ... 'data' is not data.frame ... ")
+.vars.names <- names(data)
+.vars.numeric <- c("integer", "double", "numeric")
+.vars.factor <- c("factor", "character")
+.vars.logical <- c("logical")
+.vars.date <- c("Date")
+## get the types of variables
+.vars.type <- unlist(lapply(data, function(z) class(unlist(z))[1]))
+## get the labels
+.vars.lbl <- paste(sapply(.vars.names, function(z) {
+.lbl <- attr(data[[z]], "label")
+.lbl <- ifelse(is.null(.lbl), "<NA>",
+ifelse(nchar(.lbl) > 32,
+paste0(strtrim(.lbl, 32), "..."), .lbl))
+}))
+## get count numbers for all observations, obs. without NA and NAs
+.obs.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(!is.na(data[, z])), na.rm = TRUE))
+.na.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(is.na(data[, z])), na.rm = TRUE))
+.data <- data.frame(
+.vars.names,
+.vars.lbl,
+.vars.type,
+.obs.counts,
+.na.counts,
+round(.na.counts / .obs.counts * 100, 1),
+row.names = NULL
+)
+names(.data) <- c("Variable", "Label", "Type", "_Obs", "_NA", "_NA(%)")
+printMsg("This works .... ")
+}
+codebook <- function(data)
+{
+## if data is not data.frame, stop
+if (!is.data.frame(data))
+stop(" ... 'data' is not data.frame ... ")
+.vars.names <- names(data)
+.vars.numeric <- c("integer", "double", "numeric")
+.vars.factor <- c("factor", "character")
+.vars.logical <- c("logical")
+.vars.date <- c("Date")
+## get the types of variables
+.vars.type <- unlist(lapply(data, function(z) class(unlist(z))[1]))
+## get the labels
+.vars.lbl <- paste(sapply(.vars.names, function(z) {
+.lbl <- attr(data[[z]], "label")
+.lbl <- ifelse(is.null(.lbl), "<NA>",
+ifelse(nchar(.lbl) > 32,
+paste0(strtrim(.lbl, 32), "..."), .lbl))
+}))
+## get count numbers for all observations, obs. without NA and NAs
+.obs.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(!is.na(data[, z])), na.rm = TRUE))
+.na.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(is.na(data[, z])), na.rm = TRUE))
+.data <- data.frame(
+.vars.names,
+.vars.lbl,
+.vars.type,
+.obs.counts,
+.na.counts,
+round(.na.counts / .obs.counts * 100, 1),
+row.names = NULL
+)
+names(.data) <- c("Variable", "Label", "Type", "_Obs", "_NA", "_NA(%)")
+printMsg("This works .... This works .... This works .... This works .... This works .... This works .... This works .... This works .... This works .... This works .... This works .... This works .... ")
+}
+codebook(pwid)
+library(mStats2)
+codebook <- function(data)
+{
+## if data is not data.frame, stop
+if (!is.data.frame(data))
+stop(" ... 'data' is not data.frame ... ")
+.vars.names <- names(data)
+.vars.numeric <- c("integer", "double", "numeric")
+.vars.factor <- c("factor", "character")
+.vars.logical <- c("logical")
+.vars.date <- c("Date")
+## get the types of variables
+.vars.type <- unlist(lapply(data, function(z) class(unlist(z))[1]))
+## get the labels
+.vars.lbl <- paste(sapply(.vars.names, function(z) {
+.lbl <- attr(data[[z]], "label")
+.lbl <- ifelse(is.null(.lbl), "<NA>",
+ifelse(nchar(.lbl) > 32,
+paste0(strtrim(.lbl, 32), "..."), .lbl))
+}))
+## get count numbers for all observations, obs. without NA and NAs
+.obs.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(!is.na(data[, z])), na.rm = TRUE))
+.na.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(is.na(data[, z])), na.rm = TRUE))
+.data <- data.frame(
+.vars.names,
+.vars.lbl,
+.vars.type,
+.obs.counts,
+.na.counts,
+round(.na.counts / .obs.counts * 100, 1),
+row.names = NULL
+)
+names(.data) <- c("Variable", "Label", "Type", "_Obs", "_NA", "_NA(%)")
+## display output
+.txt <- paste0("Codebook: ", deparse(substitute(data)))
+.txt
+}
+codebook(pwid)
+codebook(hcv)
+codebook <- function(data)
+{
+## if data is not data.frame, stop
+if (!is.data.frame(data))
+stop(" ... 'data' is not data.frame ... ")
+.vars.names <- names(data)
+.vars.numeric <- c("integer", "double", "numeric")
+.vars.factor <- c("factor", "character")
+.vars.logical <- c("logical")
+.vars.date <- c("Date")
+## get the types of variables
+.vars.type <- unlist(lapply(data, function(z) class(unlist(z))[1]))
+## get the labels
+.vars.lbl <- paste(sapply(.vars.names, function(z) {
+.lbl <- attr(data[[z]], "label")
+.lbl <- ifelse(is.null(.lbl), "<NA>",
+ifelse(nchar(.lbl) > 32,
+paste0(strtrim(.lbl, 32), "..."), .lbl))
+}))
+## get count numbers for all observations, obs. without NA and NAs
+.obs.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(!is.na(data[, z])), na.rm = TRUE))
+.na.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(is.na(data[, z])), na.rm = TRUE))
+.data <- data.frame(
+.vars.names,
+.vars.lbl,
+.vars.type,
+.obs.counts,
+.na.counts,
+round(.na.counts / .obs.counts * 100, 1),
+row.names = NULL
+)
+names(.data) <- c("Variable", "Label", "Type", "_Obs", "_NA", "_NA(%)")
+## display output
+.txt <- paste0("Codebook: '", deparse(substitute(data)), "'")
+.txt
+}
+codebook(pwid)
+codebook(hcv)
+codebook <- function(data)
+{
+## if data is not data.frame, stop
+if (!is.data.frame(data))
+stop(" ... 'data' is not data.frame ... ")
+.vars.names <- names(data)
+.vars.numeric <- c("integer", "double", "numeric")
+.vars.factor <- c("factor", "character")
+.vars.logical <- c("logical")
+.vars.date <- c("Date")
+## get the types of variables
+.vars.type <- unlist(lapply(data, function(z) class(unlist(z))[1]))
+## get the labels
+.vars.lbl <- paste(sapply(.vars.names, function(z) {
+.lbl <- attr(data[[z]], "label")
+.lbl <- ifelse(is.null(.lbl), "<NA>",
+ifelse(nchar(.lbl) > 32,
+paste0(strtrim(.lbl, 32), "..."), .lbl))
+}))
+## get count numbers for all observations, obs. without NA and NAs
+.obs.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(!is.na(data[, z])), na.rm = TRUE))
+.na.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(is.na(data[, z])), na.rm = TRUE))
+.data <- data.frame(
+.vars.names,
+.vars.lbl,
+.vars.type,
+.obs.counts,
+.na.counts,
+round(.na.counts / .obs.counts * 100, 1),
+row.names = NULL
+)
+names(.data) <- c("Variable", "Label", "Type", "_Obs", "_NA", "_NA(%)")
+## display output
+.txt <- paste0("Codebook: '", deparse(substitute(data)), "'")
+printText(.data, .txt)
+}
+codebook(pwid)
+codebook <- function(data)
+{
+## if data is not data.frame, stop
+if (!is.data.frame(data))
+stop(" ... 'data' is not data.frame ... ")
+.vars.names <- names(data)
+.vars.numeric <- c("integer", "double", "numeric")
+.vars.factor <- c("factor", "character")
+.vars.logical <- c("logical")
+.vars.date <- c("Date")
+## get the types of variables
+.vars.type <- unlist(lapply(data, function(z) class(unlist(z))[1]))
+## get the labels
+.vars.lbl <- paste(sapply(.vars.names, function(z) {
+.lbl <- attr(data[[z]], "label")
+.lbl <- ifelse(is.null(.lbl), "<NA>",
+ifelse(nchar(.lbl) > 32,
+paste0(strtrim(.lbl, 32), "..."), .lbl))
+}))
+## get count numbers for all observations, obs. without NA and NAs
+.obs.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(!is.na(data[, z])), na.rm = TRUE))
+.na.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(is.na(data[, z])), na.rm = TRUE))
+.data <- data.frame(
+.vars.names,
+.vars.lbl,
+.vars.type,
+.obs.counts,
+.na.counts,
+round(.na.counts / .obs.counts * 100, 1),
+row.names = NULL
+)
+names(.data) <- c("Variable", "Label", "Type", "_Obs", "_NA", "_NA(%)")
+## display output
+.txt <- paste0("Codebook: '", deparse(substitute(data)), "'")
+printText(.data, .txt)
+}
+library(mStats2)
+codebook(pwid)
+library(mStats2)
+codebook <- function(data)
+{
+## if data is not data.frame, stop
+if (!is.data.frame(data))
+stop(" ... 'data' is not data.frame ... ")
+.vars.names <- names(data)
+.vars.numeric <- c("integer", "double", "numeric")
+.vars.factor <- c("factor", "character")
+.vars.logical <- c("logical")
+.vars.date <- c("Date")
+## get the types of variables
+.vars.type <- unlist(lapply(data, function(z) class(unlist(z))[1]))
+## get the labels
+.vars.lbl <- paste(sapply(.vars.names, function(z) {
+.lbl <- attr(data[[z]], "label")
+.lbl <- ifelse(is.null(.lbl), "<NA>",
+ifelse(nchar(.lbl) > 32,
+paste0(strtrim(.lbl, 32), "..."), .lbl))
+}))
+## get count numbers for all observations, obs. without NA and NAs
+.obs.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(!is.na(data[, z])), na.rm = TRUE))
+.na.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(is.na(data[, z])), na.rm = TRUE))
+.data <- data.frame(
+.vars.names,
+.vars.lbl,
+.vars.type,
+.obs.counts,
+.na.counts,
+round(.na.counts / .obs.counts * 100, 1),
+row.names = NULL
+)
+names(.data) <- c("Variable", "Label", "Type", "_Obs", "_NA", "_NA(%)")
+## display output
+.txt <- paste0("Codebook: '", deparse(substitute(data)), "'")
+printText(.data, .txt)
+}
+codebook(pwid)
+library(mStats2)
+codebook <- function(data)
+{
+## if data is not data.frame, stop
+if (!is.data.frame(data))
+stop(" ... 'data' is not data.frame ... ")
+.vars.names <- names(data)
+.vars.numeric <- c("integer", "double", "numeric")
+.vars.factor <- c("factor", "character")
+.vars.logical <- c("logical")
+.vars.date <- c("Date")
+## get the types of variables
+.vars.type <- unlist(lapply(data, function(z) class(unlist(z))[1]))
+## get the labels
+.vars.lbl <- paste(sapply(.vars.names, function(z) {
+.lbl <- attr(data[[z]], "label")
+.lbl <- ifelse(is.null(.lbl), "<NA>",
+ifelse(nchar(.lbl) > 32,
+paste0(strtrim(.lbl, 32), "..."), .lbl))
+}))
+## get count numbers for all observations, obs. without NA and NAs
+.obs.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(!is.na(data[, z])), na.rm = TRUE))
+.na.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(is.na(data[, z])), na.rm = TRUE))
+.data <- data.frame(
+.vars.names,
+.vars.lbl,
+.vars.type,
+.obs.counts,
+.na.counts,
+round(.na.counts / .obs.counts * 100, 1),
+row.names = NULL
+)
+names(.data) <- c("Variable", "Label", "Type", "_Obs", "_NA", "_NA(%)")
+## display output
+.txt <- paste0("Codebook: '", deparse(substitute(data)), "'")
+printText(.data, .txt)
+}
+codebook(pwid)
+codebook <- function(data)
+{
+## if data is not data.frame, stop
+if (!is.data.frame(data))
+stop(" ... 'data' is not data.frame ... ")
+.vars.names <- names(data)
+.vars.numeric <- c("integer", "double", "numeric")
+.vars.factor <- c("factor", "character")
+.vars.logical <- c("logical")
+.vars.date <- c("Date")
+## get the types of variables
+.vars.type <- unlist(lapply(data, function(z) class(unlist(z))[1]))
+## get the labels
+.vars.lbl <- paste(sapply(.vars.names, function(z) {
+.lbl <- attr(data[[z]], "label")
+.lbl <- ifelse(is.null(.lbl), "<NA>",
+ifelse(nchar(.lbl) > 32,
+paste0(strtrim(.lbl, 32), "..."), .lbl))
+}))
+## get count numbers for all observations, obs. without NA and NAs
+.obs.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(!is.na(data[, z])), na.rm = TRUE))
+.na.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(is.na(data[, z])), na.rm = TRUE))
+.data <- data.frame(
+.vars.names,
+.vars.lbl,
+.vars.type,
+.obs.counts,
+.na.counts,
+round(.na.counts / .obs.counts * 100, 1),
+row.names = NULL
+)
+names(.data) <- c("Variable", "Label", "Type", "_Obs", "_NA", "_NA(%)")
+## display output
+.txt <- paste0("Codebook: '", deparse(substitute(data)), "'")
+printText(.data, .txt)
+## display dataset label
+.data.lbl <- attr(data, "label")
+if (!is.null(.data.lbl)) {
+printMsg("Dataset label:")
+printMsg(.data.lbl)
+}
+return(.data)
+}
+codebook(pwid)
+codebook <- function(data)
+{
+## if data is not data.frame, stop
+if (!is.data.frame(data))
+stop(" ... 'data' is not data.frame ... ")
+.vars.names <- names(data)
+.vars.numeric <- c("integer", "double", "numeric")
+.vars.factor <- c("factor", "character")
+.vars.logical <- c("logical")
+.vars.date <- c("Date")
+## get the types of variables
+.vars.type <- unlist(lapply(data, function(z) class(unlist(z))[1]))
+## get the labels
+.vars.lbl <- paste(sapply(.vars.names, function(z) {
+.lbl <- attr(data[[z]], "label")
+.lbl <- ifelse(is.null(.lbl), "<NA>",
+ifelse(nchar(.lbl) > 32,
+paste0(strtrim(.lbl, 32), "..."), .lbl))
+}))
+## get count numbers for all observations, obs. without NA and NAs
+.obs.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(!is.na(data[, z])), na.rm = TRUE))
+.na.counts <- sapply(.vars.names, function(z)
+sum(as.numeric(is.na(data[, z])), na.rm = TRUE))
+.data <- data.frame(
+.vars.names,
+.vars.lbl,
+.vars.type,
+.obs.counts,
+.na.counts,
+round(.na.counts / .obs.counts * 100, 1),
+row.names = NULL
+)
+names(.data) <- c("Variable", "Label", "Type", "_Obs", "_NA", "_NA(%)")
+## display output
+.txt <- paste0("Codebook: '", deparse(substitute(data)), "'")
+printText(.data, .txt)
+## display dataset label
+.data.lbl <- attr(data, "label")
+if (!is.null(.data.lbl)) {
+printMsg("Dataset label:")
+printMsg(.data.lbl)
+}
+invisible(.data)
+}
+codebook(pwid)
+codebook(hcv)
+codebook(infert)
+codebook(iris)
+# if something else
+codebook(iris$Species)
+rm(list = ls())
+hcv <- readRDS("C:/MEGA/GitHub/data/hcv_final.RDS")
+pwid <- readxl::read_excel("C:/MEGA/GitHub/data/pwid_nsa_v3.xlsx")
+library(magrittr)
+attr(pwid[["regno"]], "label") <- "registration number"
+### Function guides for mStats
+## General
+# get variables' names from .args <- as.list(match.call())
+# if no, deparse(substitute(NAME))
+## for core functions
+# Give contextual names
+# Except names of arguments, start names with dots.
+## for helper functions
+# start object names with dot, e.g. ".args"
+library(mStats2)
+library(mStats2)
+codebook(infert)
+codebook(iris)
+# if something else
+codebook(iris$Species)
+library(mStats2)
+rm(list = ls())
+hcv <- readRDS("C:/MEGA/GitHub/data/hcv_final.RDS")
+pwid <- readxl::read_excel("C:/MEGA/GitHub/data/pwid_nsa_v3.xlsx")
+pwid.df <- data.frame(pwid)
+library(magrittr)
+attr(pwid[["regno"]], "label") <- "registration number"
+### Function guides for mStats
+## General
+# get variables' names from .args <- as.list(match.call())
+# if no, deparse(substitute(NAME))
+## for core functions
+# Give contextual names
+# Except names of arguments, start names with dots.
+## for helper functions
+# start object names with dot, e.g. ".args"
+?codebook
+path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
+hosp <- haven::read_dta(path)
+codebook(hosp)

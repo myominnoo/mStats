@@ -2,79 +2,47 @@
 % Please edit documentation in R/tabRisks.R
 \name{tabRisks}
 \alias{tabRisks}
-\alias{tblRowColOrder}
-\alias{plotRisks}
-\title{Calculating Risks}
+\title{Calculating Risks and Relative Risks}
 \usage{
 tabRisks(
-  data = NULL,
-  var_exp,
-  var_case,
-  ref_exp = NULL,
-  ref_case = NULL,
-  na.rm = FALSE,
-  rnd = 3,
+  data,
+  ...,
+  by,
+  exp_value = NULL,
+  case_value = NULL,
   plot = TRUE,
-  print.table = TRUE
+  na.rm = FALSE,
+  rnd = 3
 )
-
-tblRowColOrder(t, ref_row = NULL, ref_col = NULL)
-
-plotRisks(t, exp_name, case_name, ylab = "Risks")
 }
 \arguments{
-\item{data}{a data frame object (Optional)}
+\item{data}{Dataset}
 
-\item{var_exp}{Exposure variable.}
+\item{...}{Variable or multiple variables
+Colon separator \code{:} can be used to specify multiple variables.}
 
-\item{var_case}{Case or outcome variable should be binary vector.}
+\item{by}{Varaiable for cross-tabulation}
 
-\item{ref_exp}{Exposed level}
+\item{exp_value}{value for exposure as reference}
 
-\item{ref_case}{outcome}
-
-\item{na.rm}{A logical value to specify missing values, <NA> in the table}
-
-\item{rnd}{specify rounding of numbers. See \code{\link{round}}.}
+\item{case_value}{value for outcome as reference}
 
 \item{plot}{logical value to display plots of rates across a categorical
 variable}
 
-\item{print.table}{logical value to display formatted outputs}
+\item{na.rm}{A logical value to specify missing values, \code{NA} in the table}
 
-\item{t}{table}
-
-\item{ref_row}{name of row levels}
-
-\item{ref_col}{name of column levels}
-
-\item{exp_name}{name of exposure variable}
-
-\item{case_name}{name of outcome variable}
-
-\item{ylab}{name of y axis}
+\item{rnd}{specify rounding of numbers. See \code{\link{round}}.}
 }
 \description{
 \code{tabRisks()} cross-tabulates two variables and
-reports risks of failure \code{var_case} among exposed and
-unexposed levels of explanatory variable \code{var_exp}.
-It is used with cross-sectional data.
-
-\code{tblRowColOrder()} changes the order of levels in rows or
-columns by specifying names of levels.
-
-\code{plotRisks()} produces a bar plot with estimates and
-corresponding CIs.
+reports risks of failure \code{by} among exposed and
+unexposed levels of explanatory variable \code{...}.
+It is used in cross-sectional studies.
 }
 \details{
-The variable \code{var_case} typically should be coded
-1 for case and 0 for non-case. A tabulation with Risks and
-corresponding 95\% Confidence Intervals (CI) is displayed.
-
 Risks are sometimes called proportions, incidence proportions or
 prevalence.
-
-95\% CI is calculated by large sample method.
 
 \strong{Calculating Risks}
 
@@ -83,109 +51,48 @@ prevalence.
 \deqn{Standard Error, SE = \sqrt(p x (1 - p) / n)}
 
 \deqn{95\% CI = Risks +/- (1.96 x SE)}
-
-This function is used in calculating risks and odds.
 }
-\section{Functions}{
-\itemize{
-\item \code{tblRowColOrder}: 
-
-\item \code{plotRisks}: 
-}}
-
 \note{
 This method should be avoided in small samples. Quadratic or
 exact binomial methods are preferred in this regard.
 }
 \examples{
 \dontrun{
-### Simpson's Paradox: Example from Burt Gerstman's Epidemiology
-### Chapter 14, Page 326
-
-library(magrittr)
-simpson <- expandTables(
-    "1" = c(1000, 9000, 50, 950),
-    "2" = c(95, 5, 5000, 5000),
-    exp_name = "treatment",
-    exp_lvl = c("new", "standard"),
-    case_name = "outcome",
-    case_lvl = c("alive", "dead"),
-    strata_name = "clinic") \%>\%
-    labelVars(c(treatment, outcome, clinic),
-              c("Treatment: new or standard",
-                "Outcome: alive or dead", "clinic: 1 or 2")) \%>\%
-    labelData("Example of Simpson's Paradox")
-
-## checking structure
-codebook(simpson)
-
-tabRisks(simpson, treatment, outcome)
-tabRisks(simpson, treatment, outcome, ref_exp = "standard")
-tabRisks(simpson, treatment, outcome, ref_case = "dead")
-tabRisks(simpson, treatment, outcome, "standard", "dead")
-
-## Risks for Clinic 1
-simpson \%>\%
-    pick(clinic == 1) \%>\%
-    tabRisks(treatment, outcome)
-
-## Risks for Clinic 2
-simpson \%>\%
-    pick(clinic == 2) \%>\%
-    tabRisks(treatment, outcome)
 
 
+## Example from Altman Statistics with Confidence, Chapter 7, Page 59
+ulcers <- expandTables(c(6, 112, 16, 729),
+                       exp_name = "pylori",
+                       exp_lvl = c("Yes", "No"),
+                       case_name = "history",
+                       case_lvl = c("Yes", "No")) \%>\%
+   labelVar(c(pylori, history),
+            c("Infected with H. pylori", "History of Ulcer in mother")) \%>\%
+   labelData(paste0("Prevalence of H. pylori infection in preschool children",
+                    " according to mother's history of ulcer"))
 
 
-
-## Asthma Example from Essential Medical Statistics
-## page 160
-
-library(magrittr)
-asthma <- expandTables(c(81, 995, 57, 867),
-              exp_name = "sex",
-              exp_lvl = c("Women", "Man"),
-              case_name = "asthma",
-              case_lvl = c("Yes", "No")) \%>\%
-          labelData("Hypothetical Data of Asthma Prevalence") \%>\%
-          labelVars(c(sex, asthma),
-              c("Man or Woman", "Asthma or No Asthma"))
-
-## Checking codebook
-codebook(asthma)
-
-tabRisks(asthma, sex, asthma)
+## codebook
+codebook(ulcers)
 
 
+## tabulate risks with plot
+tabRisks(ulcers, pylori, by = history)
+tabRisks(ulcers, pylori, by = history, exp_value = "Yes", case_value = "Yes")
 
-
-
-
-## The odds ratio, J Martin Bland, Douglas G Altman, BMJ 2000;320:1468
-hay <- expandTables(c(141, 420, 928, 13525),
-                    exp_name = "eczema",
-                    exp_lvl = c("Yes", "No"),
-                    case_name = "hayFever",
-                    case_lvl = c("Yes", "No")) \%>\%
-       labelData("hay fever and eczema in 11 year old children") \%>\%
-       labelVars(c(eczema, hayFever),
-                c("prevalence of eczema", "prevalence of hay fever"))
-
-codebook(hay)
-
-tabRisks(hay, eczema, hayFever)
+## without plot
+tabRisks(ulcers, pylori, by = history, exp_value = "Yes", case_value = "Yes",
+         plot = FALSE)
 }
+
 }
 \references{
-B. Burt Gerstman. Epidemology Kept Simple. Wiley-Blackwell, 2013:
-Chapter 13, Confidence Intervals and p-values
+\enumerate{
+\item Essential Medical Statistics, Betty R. Kirkwood & Jonathan A.C.
+Sterne, Second Edition.
+\item B. Burt Gerstman. Epidemology Kept Simple. Wiley-Blackwell, 2013:
+\item Statistics with confidence, Douglas G Altman, second edition
 }
-\seealso{
-\code{\link{tabOdds}}, \code{\link{mhodds}}
-
-\code{\link{tabRisks}}, \code{\link{tabOdds}}
-
-\code{\link{tabRisks}}, \code{\link{tabOdds}}
 }
 \author{
 For any feedback, please contact \code{Myo Minn Oo} via:
@@ -194,12 +101,6 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\keyword{Risks,}
-\keyword{descriptive}
-\keyword{frequency}
-\keyword{incidence,}
-\keyword{prevalence,}
-\keyword{ratio,}
-\keyword{risk}
-\keyword{statistics,}
-\keyword{table,}
+\concept{Risks risk ratio incidence prevalence
+
+frequency table statistics descriptive}

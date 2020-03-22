@@ -1,0 +1,120 @@
+#' @title Change contents of an existing variable
+#'
+#' @description
+#'
+#' \code{replace()} alters the values of a variable when specified
+#' conditions are met.
+#'
+#'
+#' \preformatted{replace(data, var, value,
+#'      var < somevalue | var > somevalue, is.na(var))}
+#'
+#'
+#' If conditions are not specified, \code{replac()} changes the whole
+#' variable with specified value.
+#'
+#' \preformatted{replace(data, var, value)}
+#'
+#' @param data Dataset
+#' @param var Variable
+#' @param value Replacement value
+#' @param ... Conditions
+#'
+#' @details
+#'
+#' It is used when multiple conditions have to be met to change a value.
+#'
+#' @return
+#' Modified Dataset
+#'
+#' @keywords
+#'
+#' replace, recode, change values
+#'
+#'
+#' @author
+#'
+#' For any feedback, please contact \code{Myo Minn Oo} via:
+#'
+#' Email: \email{dr.myominnoo@@gmail.com}
+#'
+#' Website: \url{https://myominnoo.github.io/}
+#'
+#' @examples
+#' \dontrun{
+#'
+#'
+#' # Example from IDRE UCLA
+#' path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
+#' hosp <- haven::read_dta(path)
+#' codebook(hosp)
+#'
+#' ## to use piping function
+#' library(magrittr)
+#'
+#' hosp %>% replace(pain, 0, pain < 4)
+#' hosp %>% replace(pain, NA, pain < 4)
+#'
+#' ## conditions separated by comma as `AND` statement
+#' hosp %>% replace(pain, 0, pain < 4, mobility < 2)
+#'
+#' ## Conditions not specified
+#' hosp %>% replace(pain, 0)
+#' hosp %>% replace(pain, NA)
+#'
+#'
+#' ## Mixed multiple conditions met
+#' hosp %>% replace(co2, NA, mobility == 2, pain < 4)
+#' hosp %>% replace(co2, NA, mobility == 2, pain < 4, tumorsize < 70)
+#' }
+#'
+#' @export
+replace <- function(data, var, values, ... )
+{
+    ## if data is not data.frame, stop
+    if (!is.data.frame(data))
+        stop(paste0(" ... '", deparse(substitute(data)), "' is not data.frame ... "))
+
+    .args <- as.list(match.call())
+
+    ## assign data into .data for further evaluation
+    .data <- data
+
+    ## variable name
+    .var.name <- as.character(.args$var)
+
+
+
+    ## get variables' names within three dots
+    .expr <- as.character(enquos(.args, c("data", "var", "values")))
+
+    ## if more than one expression, combine with & operator
+    if (length(.expr) > 1) {
+        .expr <- paste0("(", .expr, ")", collapse = " & ")
+    } else if (length(.expr) == 0) {
+        .expr <- NULL
+    }
+
+    ## formulate text syntax, evaluate and assign to .data
+    .expr.txt <- paste0("within(.data, ", .var.name, "[", .expr, "] <- ", values, ")")
+    tryCatch({
+        if (length(.expr) == 0) {
+            .changed.values.count <- .data[[.var.name]]
+        } else {
+            .changed.values.count <- eval(parse(text = (
+                paste0("with(.data, ", .var.name, "[with(.data, ", .expr, ")])")
+            )))
+        }
+        .data <- eval(parse(text = .expr.txt))
+    }, error = function(cnd) {
+        stop(" ... Expression cannot be evaluated! ... ")
+    })
+
+    ## Display message to nofity changes
+    printMsg(paste0("Expression used to filter: '", .expr.txt, "'"))
+    printMsg(paste0(length(.changed.values.count), " observations recoded into '",
+                    values, "'"))
+
+    return(.data)
+}
+

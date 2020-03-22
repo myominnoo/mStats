@@ -3,12 +3,11 @@
 #' @description
 #' \code{egen()} transforms a numeric vector to a factor vector.
 #'
-#' @param data dataset
-#' @param var_old variable to perform cut
+#' @param data Dataset
+#' @param var Exisitng variable
 #' @param cut either a single number or a numeric vector.
-#' @param var_new name of new variable generated
-#' @param lbl specify to name the factor levels.
-#' @param na.rm A logical value to specify missing values
+#' @param new_var name of new variable to be generated
+#' @param lbl labels to specify
 #'
 #' @details
 #' \code{egen} allows easy conversion of a numerical variable to a categorical
@@ -27,13 +26,10 @@
 #' If \code{lbl} is not specified, labels are constructed in
 #' this format: \code{lbl[##-##]}
 #'
-#' @seealso
 #'
-#' \code{\link{generate}}, \code{\link{duplicates}}, \code{\link{listView}}
+#' @concept
 #'
-#' @keywords
-#'
-#' new variable, generate, produce, create, transform, conversion, transform
+#' new variable generate produce create transform conversion transform
 #'
 #' @author
 #'
@@ -45,163 +41,151 @@
 #'
 #' @examples
 #' \dontrun{
-#' ## variable with dataframe
-#' # automatically categorized into interval of 10
-#' infert.new <- egen(infert, age)
-#' str(infert.new)
 #'
-#' infert.new <- egen(infert, age, c(31, 36, 41))
-#' str(infert.new)
 #'
-#' # give variable name as age.grp
-#' infert.new <- egen(infert, age, c(31, 36, 41), age.grp,
-#'                 c("young", "mid", "old", "oldest"))
-#' str(infert.new)
 #'
-#' # age.grp duplicates
-#' infert.new <- egen(infert.new, age, c(31, 36, 41), age.grp,
-#'                 c("young", "mid", "old", "oldest"))
-#' str(infert.new)
-#'
-#' # Example dataset from IDRE website
+#' # Example from IDRE UCLA
 #' path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
 #' hosp <- haven::read_dta(path)
-#' hosp <- egen(hosp, bmi, c(16, 18.5, 25, 30, 35, 40))
-#' str(hosp)
+#' codebook(hosp)
+#'
+#'
+#' ## to use piping function
+#' library(magrittr)
+#'
+#'
+#' ## generate bmi.cat without cut points
+#' egen(hosp, bmi) %>%
+#'     tab(bmi.cat)
+#'
+#'
+#' ## generate bmi.cat with cut points
+#' egen(hosp, bmi, c(0, 15, 16, 18.5, 25, 30, 35, 40, 500)) %>%
+#'     tab(bmi.cat)
+#'
+#'
+#' ## generate bmi.cat with cut points
+#' egen(hosp, bmi, c(0, 15, 16, 18.5, 25, 30, 35, 40, 500),
+#'      lbl = c("<18.5", "18.5-24", "25-29", "30-34", "35-39", "40+"),
+#'      new_var = BMI) %>%
+#'     tab(BMI)
+#'
 #' }
-
-
+#'
 #' @export
-egen <- function(data = NULL, var_old, cut = NULL,
-                 var_new = NULL, lbl = NULL, na.rm = FALSE,
-                 print.notes = TRUE)
+egen <- function(data, var, cut = NULL, new_var = NULL, lbl = NULL)
 {
-    arguments <- as.list(match.call())
+    ## NA should not be removed because var is from a dataset
 
-    if (is.null(data)) {
-        x <- numeric()
-    } else {
-        if (!is.data.frame(data)) {
-            stop(" >>> Data must be data.frame <<< ")
-        }
-        x <- data.frame()
-    }
-    UseMethod("egen", x)
-    typeof(x)
-}
+    ## if data is not data.frame, stop
+    if (!is.data.frame(data))
+        stop(paste0(" ... '", deparse(substitute(data)), "' is not data.frame ... "))
+
+    .args <- as.list(match.call())
+
+    ## assign data into .data for further evaluation
+    .data <- data
 
 
-#' @param print.notes logical value to indicate whether notes will be
-#' printed
-#' @rdname egen
-#' @export
-egen.numeric <- function(data = NULL, var_old, cut = NULL,
-                         var_new = NULL, lbl = NULL, na.rm = FALSE,
-                         print.notes = TRUE)
-{
-    arguments <- as.list(match.call())
-    var_old.name <- deparse(substitute(var_old))
-    if (!is.null(data)) {
-        var_old <- eval(substitute(var_old), data)
+    ## create new var's name
+    .data.names <- names(.data)
+    new_var <- .args$new_var
+    new_var <- ifelse(is.null(new_var), paste0(.args$var, ".cat"), paste(new_var))
+    if (any(.data.names %in% new_var)) {
+        stop(paste0(" ... '", new_var, "' already exisits! ... "))
     }
 
-    if (na.rm) var_old <- var_old[!is.na(var_old)]
-
+    ## assign var to data
+    var <- eval(substitute(var), data)
+    ## if cut is not specified, cut <- 10
     if (is.null(cut)) {
-        cut <- 10
-        var_new.brk <- seq(min(var_old, na.rm = TRUE),
-                           max(var_old, na.rm = TRUE),
-                           cut)
-        var_new.brk <- c(var_new.brk[1],
-                         var_new.brk[2:(length(var_new.brk)-1)] - 1,
-                         var_new.brk[length(var_new.brk)] - 1)
+        cut <- 10L
+    }
+
+    ## create break / cut-off labels
+    if (length(cut) > 1) {
+        .brk <- cut
     } else {
-        if (length(cut) == 1) {
-            var_new.brk <- seq(min(var_old, na.rm = TRUE),
-                               max(var_old, na.rm = TRUE),
-                               cut)
-            var_new.brk <- c(var_new.brk[1],
-                             var_new.brk[2:(length(var_new.brk)-1)] - 1,
-                             var_new.brk[length(var_new.brk)] - 1)
-        } else {
-            var_new.brk <- cut
-        }
-    }
-    var_old.min <- min(var_old, na.rm = TRUE)
-    var_new.brk <- var_new.brk[var_old.min < var_new.brk]
-    if (var_old.min != var_new.brk[1]) {
-        var_new.brk <- c(var_old.min, var_new.brk)
+        .brk <- seq(min(var, na.rm = TRUE),
+                    max(var, na.rm = TRUE), cut)
+        .brk <- c(.brk[1],
+                  .brk[2:(length(.brk)-1)] - 1,
+                  .brk[length(.brk)] - 1)
     }
 
-    var_old.max <- max(var_old, na.rm = TRUE)
-    var_new.brk <- var_new.brk[var_old.max > var_new.brk]
-    if (var_old.max != var_new.brk[length(var_new.brk)]) {
-        var_new.brk <- c(var_new.brk, var_old.max)
+
+    ## get minimum value, check and add to the cut sequence
+    .brk.min <- min(var, na.rm = TRUE)
+    .brk <- .brk[.brk.min < .brk]
+    if (.brk.min != .brk[1]) {
+        .brk <- c(.brk.min, .brk)
     }
 
-    decimal <- grepl("\\.", cut)
-    if (any(decimal)) {
-        decimal <- strsplit(as.character(cut[decimal][1]), "\\.")[[1]][2]
-        decimal <- nchar(decimal)
-    } else {
-        decimal <- 0
+    ## get minimum value, check and add to the cut sequence
+    .brk.max <- max(var, na.rm = TRUE)
+    .brk <- .brk[.brk.max > .brk]
+    if (.brk.max != .brk[length(.brk)]) {
+        .brk <- c(.brk, ceiling(.brk.max))
     }
-    var_new.brk <- round(var_new.brk, decimal)
 
+
+    ## check decimals
+    .decimal <- checkDecimals(cut)
+
+    ## change numbers to decimal values
+    .brk <- round(.brk, .decimal)
+
+
+    ## construct labels
     if (is.null(lbl)) {
-        lastSec <- length(var_new.brk) - 1
-        var_new.lbl <- paste(
-            "lbl[", var_new.brk[1:lastSec], "-",
-            c(var_new.brk[2:lastSec] - (1 / (10 ^ decimal)),
-              var_new.brk[length(var_new.brk)]), "]",
+        .last.sec.pos <- length(.brk) - 1
+        .lbl <- paste(
+            "lbl[", .brk[1:.last.sec.pos], "-",
+            c(.brk[2:.last.sec.pos] - (1 / (10 ^ .decimal)),
+              .brk[length(.brk)]), "]",
             sep = ""
         )
-    } else {var_new.lbl <- lbl}
-
-    var_new <- cut(var_old, breaks = as.numeric(var_new.brk),
-                   labels = var_new.lbl,
-                   right = FALSE,
-                   include.lowest = TRUE)
-    if (print.notes) {
-        printMsg(paste0(length(var_new), " values generated from '",
-                        var_old.name, "'"))
-        printMsg(paste0("Labels created: ",
-                        paste0(var_new.lbl, collapse = ", ")))
+    } else {
+        .lbl <- lbl
     }
-    return(var_new)
+
+
+
+    ## create new var
+    .var <- cut(var, breaks = as.numeric(.brk),
+                labels = .lbl, right = FALSE,
+                include.lowest = TRUE)
+
+    ## assign .var back to data and change the names
+    .data$new_var <- .var
+    names(.data)[ncol(.data)] <- new_var
+
+
+    ## Display message to nofity changes
+    .var.na <- is.na(.var)
+    if (any(.var.na)) {
+        printMsg(paste0(length(.var[!.var.na]), " real values generated | ",
+                        length(.var[.var.na]), " missing values generated"))
+    } else {
+        printMsg(paste0(length(.var[!.var.na]), " real values generated"))
+    }
+
+    return(.data)
 }
 
-#' @rdname egen
-#' @export
-egen.data.frame <- function(data = NULL, var_old, cut = NULL,
-                            var_new = NULL, lbl = NULL, na.rm = FALSE,
-                            print.notes = TRUE)
+
+
+# Helpers -----------------------------------------------------------------
+
+checkDecimals <- function(x)
 {
-    arguments <- as.list(match.call())
-    data.name <- arguments$data
-    var_new.name <- arguments$var_new
-    vars.names <- names(data)
-
-    var_old.name <- gsub(" ", "", arguments$var_old)
-    data <- data.frame(data)
-    var_old <- data[, var_old.name]
-
-    var_new <- egen.numeric(NULL, var_old, cut, lbl, na.rm, FALSE)
-    data <- cbind(data, var_new)
-
-    if (is.null(var_new.name)) {
-        var_new.name <- paste0(var_old.name, ".cat")
+    ## check if there are any decimal values
+    .decimal <- grepl("\\.", x)
+    if (any(.decimal)) {
+        .decimal <- strsplit(as.character(x[.decimal][1]), "\\.")[[1]][2]
+        .decimal <- nchar(.decimal)
     } else {
-        var_new.name <- as.character(var_new.name)
+        .decimal <- 0
     }
-
-    if (any(names(data) %in% var_new.name)) {
-        stop(paste0(" >>> variable '", var_new.name, "' already existed.",
-                    " <<< "))
-    }
-
-    names(data)[length(data)] <- var_new.name
-    printMsg(paste0("Generated ", length(var_new), " values into '",
-                    var_new.name, "' from '", var_old.name, "'"))
-    return(data)
+    .decimal
 }

@@ -2,25 +2,16 @@
 % Please edit documentation in R/rename.R
 \name{rename}
 \alias{rename}
-\alias{rename.default}
-\alias{rename.character}
-\alias{rename.list}
 \title{Rename variable}
 \usage{
-rename(data, var_old, var_new)
-
-\method{rename}{default}(data, var_old, var_new)
-
-\method{rename}{character}(data, var_old, var_new)
-
-\method{rename}{list}(data, var_old, var_new)
+rename(data, old_var, new_var)
 }
 \arguments{
 \item{data}{dataset}
 
-\item{var_old}{name of existing variable}
+\item{old_var}{name of existing variable}
 
-\item{var_new}{new name to be changed}
+\item{new_var}{new name to be changed}
 }
 \value{
 \code{data.frame}
@@ -68,9 +59,6 @@ hosp <- rename(hosp,
 codebook(hosp)
 }
 }
-\seealso{
-\code{\link{recode}}, \code{\link{generate}}, \code{\link{egen}}
-}
 \author{
 For any feedback, please contact \code{Myo Minn Oo} via:
 
@@ -78,6 +66,4 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\keyword{change}
-\keyword{names}
-\keyword{rename,}
+\concept{rename change names}

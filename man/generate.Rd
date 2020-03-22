@@ -4,66 +4,54 @@
 \alias{generate}
 \title{Create a new variable}
 \usage{
-generate(data = NULL, var, expr = NULL)
+generate(data, var, .expr = NULL)
 }
 \arguments{
-\item{data}{data frame}
+\item{data}{Dataset}
 
-\item{var}{name of a new variable}
+\item{var}{New variable}
 
-\item{expr}{value or Expression for simple arithmetic or logical operations:
+\item{.expr}{value or Expression for simple arithmetic or logical operations:
 See examples.}
 }
 \description{
-\code{generate} creates a new variable within the data frame
+\code{generate()} creates a new variable within the data frame
 }
 \details{
-If the data is specified, it returns the whole dataframe with
-recoded variables. If \code{expr} is NULL, \code{generate} produce a vector
-\code{NA}. The value of the variable are specified by \code{expr} argument.
+If the data is specified, it returns modified dataset with
+newly created variable.
+The value of the variable are specified by \code{expr} argument.
 }
 \examples{
 \dontrun{
-# create a NA variable age.grp in infert
-infert.new <- generate(infert, age.grp)
-listView(infert.new, age, age.grp)
 
-# create variable age.cat using expression
-infert.new <- generate(infert, age.cat,
-         ifelse(age < 20, 1,
-                ifelse(age >= 20 & age < 30, 2,
-                       ifelse(age >= 30 & age < 40, 3, 4))))
-listView(infert.new, age, age.cat)
 
-# create variable age.cat using expression with "labels"
-infert.new <- generate(infert, age.cat,
-         ifelse(age <= 20, "<=20",
-                ifelse(age > 20 & age <= 30, "21-30",
-                       ifelse(age > 30 & age <= 40, "31-40", "41+"))))
-listView(infert.new, age, age.cat)
-
-# based on vector
-age <- infert$age
-age.cat <- generate(NULL, age.cat, ifelse(age < 20, 1,
-                 ifelse(age >= 20 & age < 30, 2,
-                    ifelse(age >= 30 & age < 40, 3, 4))))
-age.cat
-
-# Example from IDRE website in STATA
+# Example from IDRE UCLA
 path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
 hosp <- haven::read_dta(path)
-hosp <- generate(hosp, average, (test1 + test2) / 2)
-str(hosp)
-listView(hosp, test1:average)
+codebook(hosp)
+
+
+## to use piping function
+library(magrittr)
+
+## generate variable with NA
+generate(hosp, average, NA) \%>\%
+    keep(average)
+
+
+## generate variable with other variables
+generate(hosp, average, pain) \%>\%
+    keep(pain, average)
+
+generate(hosp, average, (test1 + test2) / 2) \%>\%
+    keep(test1, test2, average)
+
+
+## existing variable cann't be generated.
+generate(hosp, pain)
 }
-}
-\references{
-STATA DATA MANAGEMENT. UCLA: Statistical Consulting Group.
-from https://stats.idre.ucla.edu/stata/seminars/stata-data-management/
-(accessed Febrary 25, 2020).
-}
-\seealso{
-\code{\link{recode}}
+
 }
 \author{
 For any feedback, please contact \code{Myo Minn Oo} via:
@@ -72,9 +60,4 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\keyword{create,}
-\keyword{generate,}
-\keyword{new}
-\keyword{produce,}
-\keyword{transform}
-\keyword{variable,}
+\concept{new variable generate produce create transform}

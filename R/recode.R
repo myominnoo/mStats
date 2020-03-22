@@ -5,8 +5,8 @@
 #'
 #' @param data dataset
 #' @param var name of a new variable
-#' @param values_old vector
-#' @param values_new vector (length of 1 or same with values_old)
+#' @param old_values vector
+#' @param new_values vector (length of 1 or same with values_old)
 #' @details
 #'
 #' \code{recode}
@@ -30,11 +30,8 @@
 #'
 #'    #:#      >>>>       #
 #'
-#' @seealso
 #'
-#' \code{\link{generate}}, \code{\link{egen}}, \code{\link{duplicates}}
-#'
-#' @keywords recode, change, generate, produce
+#' @concept recode change generate produce
 #'
 #' @author
 #'
@@ -46,87 +43,100 @@
 #'
 #' @examples
 #' \dontrun{
-#' table(infert$case)
-#' infert.new <- recode(infert, case, 0, 2)
-#' table(infert.new$case)
 #'
-#' infert.new <- recode(infert.new, case, c(1, 2), c(3, 4))
-#' table(infert.new$case)
 #'
-#' table(infert$parity)
-#' infert.new <- recode(infert, parity, c(1,2,3,4), 0)
-#' table(infert.new$parity)
+#' # Example from IDRE UCLA
+#' path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
+#' hosp <- haven::read_dta(path)
+#' codebook(hosp)
 #'
-#' table(infert$age)
-#' infert.new <- recode(infert, age, 21:30, 1)
-#' infert.new <- recode(infert.new, age, 31:40, 2)
-#' infert.new <- recode(infert.new, age, 41:44, 3)
-#' table(infert.new$age)
 #'
-#' # errors
-#' recode(infert, age, 21:30, c(1, 2))
+#' ## to use piping function
+#' library(magrittr)
+#'
+#' hosp %>% recode(hospital, "UCLA", "UCLA Example")
+#'
+#' hosp %>% recode(sex, c("male", "female"), c(1, 2))
+#' hosp %>% recode(sex, c("male", "female"), 1:2)
+#'
+#' hosp %>% recode(pain, 1:4, 1)
+#' hosp %>% recode(pain, 1:4, "Low")
+#'
+#'
+#' hosp %>%
+#'     recode(smokinghx, c("former", "never", "current"), c("No", "No", "Yes")) %>%
+#'     keep(age:smokinghx)
+#'
 #' }
-
+#'
 #' @export
-recode <- function(data = NULL, var, values_old, values_new)
+recode <- function(data, var, old_values, new_values)
 {
-  arguments <- as.list(match.call())
-  data.name <- deparse(substitute(data))
-  var.name <- deparse(substitute(var))
+    ## if data is not data.frame, stop
+    if (!is.data.frame(data))
+        stop(paste0(" ... '", deparse(substitute(data)), "' is not data.frame ... "))
 
-  if (!is.null(data)) {
-    var <- eval(substitute(var), data)
-  }
+    .args <- as.list(match.call())
+    ## get var's name
+    .var.name <- as.character(.args$var)
 
-  if (is.factor(var)) {
-    var.factor <- TRUE
-    var <- as.character(var)
-  } else {var.factor <- FALSE}
 
-  old.len <- length(values_old)
-  new.len <- length(values_new)
+    if (!is.null(data)) {
+        var <- eval(substitute(var), data)
+    }
 
-  # if old value == 1, new value should be 1
-  # if old value > 1, then new value can be 1 or same as old value
-  if (old.len > 1) {
-    if (new.len == 1) {
-      values_new <- rep(values_new, old.len)
+
+    ## if var is factor, say YES to .is.var.factor and convert to character.
+    if (is.factor(var)) {
+        .is.var.factor <- TRUE
+        var <- as.character(var)
     } else {
-      if (new.len != old.len)
-        stop(paste0(" >>> New values must have the same lenth",
-                    "as old values or contain one value. <<< "))
+        .is.var.factor <- FALSE
     }
-  } else {
-    if (new.len != 1) {
-      stop("... At least one new value must be specified ...")
+
+    .old.values.len <- length(old_values)
+    .new.values.len <- length(new_values)
+
+    # if old value == 1, new value should be 1
+    # if old value > 1, then new value can be 1 or same as old value
+    if (.old.values.len != .new.values.len) {
+        if (.new.values.len == 1) {
+            new_values <- rep(new_values, .old.values.len)
+        } else {
+            stop(" ... Inconsistent old and new values ... ")
+        }
     }
-  }
 
-  value.change.n <- NULL
-  for (i in 1:old.len) {
-    if (is.na(values_old[i])) {
-      value.change.n <- c(value.change.n,
-                          length(var[is.na(var)]))
-      var[is.na(var)] <- values_new[i]
-    } else {
-      value.change.n <- c(value.change.n,
-                          length(var[var == values_old[i]]))
-      var[var == values_old[i]] <- values_new[i]
+
+
+    ## if var is labelled num, removed labels
+    attr(var, "names") <- NULL
+    attr(var, "labels") <- NULL
+
+    ## log how many values are being recoded by categories
+    changed.values.count <- NULL
+    for (i in 1:.old.values.len) {
+        if (is.na(old_values[i])) {
+            changed.values.count <- c(changed.values.count, length(var[is.na(var)]))
+            var[is.na(var)] <- new_values[i]
+        } else {
+            changed.values.count <- c(changed.values.count,
+                                      length(var[var == old_values[i]]))
+            var[var == old_values[i]] <- new_values[i]
+        }
+        printMsg(paste0(changed.values.count[i], " values of '", .var.name,
+                        "' recoded from '",
+                        old_values[i], "' into '",
+                        new_values[i], "'"))
     }
-    printMsg(paste0(value.change.n[i], " values recoded from '",
-                    values_old[i], "' into '",
-                    values_new[i], "'"))
-  }
 
-  # change back to factor
-  if (var.factor) var <- factor(var)
+    ## change back to factor
+    if (.is.var.factor) {
+        var <- factor(var)
+    }
 
-  # return dataframe if any
-  if (is.null(data)) {
-    data <- var
-  } else {
-    data[, var.name] <- var
-  }
+    ## asign back to dataset
+    data[, .var.name] <- var
 
-  return(data)
+    return(data)
 }

@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1584868493505.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3546489459",
+    "id" : "6DCE6312",
+    "lastKnownWriteTime" : 1584868593,
+    "last_content_update" : 1584868593977,
+    "path" : "C:/MEGA/GitHub/mStats2/R/tabRates.R",
+    "project_path" : "R/tabRates.R",
+    "properties" : {
+        "cursorPosition" : "18,2",
+        "scrollLine" : "10"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

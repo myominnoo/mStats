@@ -1,0 +1,287 @@
+#' @title Keep or drop variables OR filter observations
+#'
+#' @description
+#'
+#' \code{keep()} or \code{drop()} variables within dataframe
+#'
+#' \code{arrange()} sorts variables or columns
+#'
+#' \code{filter()} keeps observations that satisfy specified conditions
+#'
+#' @param data Dataset
+#' @param ... Variables or expression in \code{filter()}
+#'
+#' @details
+#'
+#' # Select Variables
+#' \code{keep()} removes unspecified variables from the dataset.
+#' Variables are also rearranged based on the order they are mentioned.
+#'
+#' \preformatted{keep(data, var1, var2, var3, etc)}
+#'
+#' \code{drop()} works the opposite of \code{keep()} removed specified variables
+#' from the dataset.
+#'
+#' \preformatted{drop(data, var5, var6, var7, etc)}
+#'
+#' # Sort
+#'
+#' \code{arrange()} sorts the dataset by specifying variables. The minus symbol `-`
+#' indicates descending order.
+#'
+#' \preformatted{arrange(data, var1, var2, -var3, var4)}
+#'
+#'
+#' # Filter
+#'
+#' \code{filter} keeps observations that meet the specified conditions. If conditions
+#' are specified by comma, they are joined by `AND` operators
+#'
+#' \preformatted{filter(data, var1 == var2 | var3 > var4)}
+#'
+#' \preformatted{filter(data, var1 == var2, var3 > var4)}
+#'
+#'
+#' @return
+#' Modified Dataset
+#'
+#' @keywords
+#'
+#' keep, drop, delete, subset, select
+#'
+#' @author
+#'
+#' For any feedback, please contact \code{Myo Minn Oo} via:
+#'
+#' Email: \email{dr.myominnoo@@gmail.com}
+#'
+#' Website: \url{https://myominnoo.github.io/}
+#'
+#' @examples
+#' \dontrun{
+#'
+#' # Example from IDRE UCLA
+#' path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
+#' hosp <- haven::read_dta(path)
+#' codebook(hosp)
+#'
+#' library(magrittr)
+#'
+#' ## Demonstration for keep()
+#' hosp %>%
+#'     keep(hospid, age:test2) %>%
+#'     codebook
+#'
+#' hosp %>%
+#'     keep(hospid, dis_date, tumorsize:wound, age, married, sex:test2) %>%
+#'     codebook
+#'
+#'
+#'
+#' ## Demonstration for drop()
+#' hosp %>%
+#'     drop(hospid, age:test2) %>%
+#'     codebook
+#'
+#' hosp %>%
+#'     drop(hospid, dis_date, tumorsize:wound, age, married, sex:test2) %>%
+#'     codebook
+#'
+#'
+#'
+#' ## Demonstration for arrange()
+#' hosp %>%
+#'     arrange(pain)
+#'
+#' hosp %>%
+#'     arrange(hospid, docid)
+#'
+#' hosp %>%
+#'     arrange(hospid, -docid)
+#'
+#'
+#'
+#'
+#' ## Demonstration for filter()
+#' hosp %>%
+#'     filter(ntumors < 2)
+#'
+#' hosp %>%
+#'     filter(sex == "male", wound == 4)
+#'
+#' hosp %>%
+#'     filter(tumorsize > 60, tumorsize < 70, sex == "female")
+#' }
+#'
+#' @export
+keep <- function(data, ... )
+{
+    ## if data is not data.frame, stop
+    if (!is.data.frame(data))
+        stop(paste0(" ... '", deparse(substitute(data)), "' is not data.frame ... "))
+
+    .args <- as.list(match.call())
+
+    ## get variables' names within three dots
+    .vars.names <- as.character(enquos(.args, "data"))
+
+    ## Check if colon is there.
+    ## if present, retrieve variables between the two variables
+    if (any(grepl(":", .vars.names))) {
+        .vars.names <- do.call(
+            c,
+            lapply(.vars.names, function(z) {
+                .colon <- grepl(":", z)
+                if (.colon) {
+                    splitByColon(data, z, .colon)
+                } else {
+                    z
+                }
+            })
+        )
+    }
+
+    .data <- data[, .vars.names]
+
+    ## Display message to nofity changes
+    printMsg(paste0(length(.vars.names), " variables kept: ",
+                    paste(.vars.names, collapse = ", ")))
+
+    return(.data)
+}
+
+
+
+
+
+#' @rdname keep
+#' @export
+drop <- function(data, ... )
+{
+    ## if data is not data.frame, stop
+    if (!is.data.frame(data))
+        stop(paste0(" ... '", deparse(substitute(data)), "' is not data.frame ... "))
+
+    .args <- as.list(match.call())
+
+    ## get variables' names within three dots
+    .vars.names <- as.character(enquos(.args, "data"))
+
+    ## Check if colon is there.
+    ## if present, retrieve variables between the two variables
+    if (any(grepl(":", .vars.names))) {
+        .vars.names <- do.call(
+            c,
+            lapply(.vars.names, function(z) {
+                .colon <- grepl(":", z)
+                if (.colon) {
+                    splitByColon(data, z, .colon)
+                } else {
+                    z
+                }
+            })
+        )
+    }
+
+    .data <- data[, !(names(data) %in% .vars.names)]
+
+    ## Display message to nofity changes
+    printMsg(paste0(length(.vars.names), " variables dropped: ",
+                    paste(.vars.names, collapse = ", ")))
+
+    return(.data)
+}
+
+
+
+
+
+#' @rdname keep
+#' @export
+arrange <- function(data, ... )
+{
+    ## if data is not data.frame, stop
+    if (!is.data.frame(data))
+        stop(paste0(" ... '", deparse(substitute(data)), "' is not data.frame ... "))
+
+    .args <- as.list(match.call())
+
+    ## get variables' names within three dots
+    .expr <- as.character(enquos(.args, "data"))
+
+    ## remove minus sign "-", subset data and assign to .data
+    .vars.names <- gsub("-", "", .expr)
+    .data <- data[, .vars.names]
+
+    ## get the types of variables and variables with minus sign
+    .vars.type <- unlist(lapply(.data, function(z) class(unlist(z))[1]))
+    .minus.contain <- grepl("-", .expr)
+
+    ## assing minus symbol back to elements and collapse to put them into order()
+    .vars.edit <- .vars.type %in% c("character", "factor") & .minus.contain
+    .vars.type <- ifelse(.vars.edit,
+                         paste0("-as.numeric(as.factor(", .vars.names, "))"),
+                         .vars.names)
+
+    .expr <- paste0(.vars.type, collapse = ", ")
+
+
+    ## assign data into .data for further evaluation
+    .data <- data
+
+    ## formulate text syntax, evaluate and assign to .data
+    .expr.txt <- paste0(".data[with(.data, order(", .expr, ")), ]")
+
+    tryCatch({
+        .data <- eval(parse(text = .expr.txt))
+    }, error = function(cnd) {
+        stop(" ... Expression cannot be evaluated! ... ")
+    })
+
+
+    ## Display message to nofity changes
+    printMsg(paste0("Expression used to arrange: '", .expr.txt, "'"))
+    printMsg(paste0(nrow(.data), " observations arranged."))
+
+    return(.data)
+}
+
+
+
+#' @rdname keep
+#' @export
+
+filter <- function(data, ... )
+{
+    ## if data is not data.frame, stop
+    if (!is.data.frame(data))
+        stop(paste0(" ... '", deparse(substitute(data)), "' is not data.frame ... "))
+
+    .args <- as.list(match.call())
+
+    ## assign data into .data for further evaluation
+    .data <- data
+
+    ## get variables' names within three dots
+    .expr <- as.character(enquos(.args, "data"))
+
+
+    ## if more than one expression, combine with & operator
+    if (length(.expr) > 1) {
+        .expr <- paste0("(", .expr, ")", collapse = " & ")
+    }
+
+    ## formulate text syntax, evaluate and assign to .data
+    .expr.txt <- paste0(".data[with(.data, (", .expr, ")), ]")
+    tryCatch({
+        .data <- eval(parse(text = .expr.txt))
+    }, error = function(cnd) {
+        stop(" ... Expression cannot be evaluated! ... ")
+    })
+
+    ## Display message to nofity changes
+    printMsg(paste0("Expression used to filter: '", .expr.txt, "'"))
+    printMsg(paste0(nrow(.data), " observations filtered."))
+
+    return(.data)
+}
