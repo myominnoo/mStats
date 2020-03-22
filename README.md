@@ -1,4 +1,5 @@
-# Repository for releasing beta versions of mStats
+# `mStats`
+A tool for Epidemiological Data Analysis.
 
 Please visit [https://myominnoo.github.io/pages/R/r_intro.html](https://myominnoo.github.io/pages/R/r_intro.html) to install stable version. It's advisable to use stable version for routine works and beta version to test. 
 
