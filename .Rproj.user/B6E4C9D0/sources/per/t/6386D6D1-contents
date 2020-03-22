@@ -1,8 +1,0 @@
-
-
-# source("../beta2.R", echo = TRUE)
-
-rm(list = ls())
-library(mStats)
-library(magrittr)
-pwid <- readxl::read_excel("C:/MEGA/GitHub/data/pwid_nsa_v3.xlsx")
