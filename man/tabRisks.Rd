@@ -101,6 +101,3 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\concept{Risks risk ratio incidence prevalence
-
-frequency table statistics descriptive}

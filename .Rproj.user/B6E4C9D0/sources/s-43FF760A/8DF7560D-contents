@@ -1,0 +1,61 @@
+#' @title Export outputs to `.csv` format
+#'
+#' @description
+#'
+#' \code{export()} writes to `.csv` file
+#'
+#' @param .data Outputs as `data.frame` or `list`
+#' @param file file name
+#' @param .append logical.
+#'
+#' If `TRUE`, the output is appended to the file.
+#'
+#' If `FALSE`, any existing file of the name is destroyed.
+#'
+#' @details
+#' Outputs from the following commands of mStats can be used.
+#'
+#' \code{tab}
+#'
+#' \code{summ}
+#'
+#' ...
+#'
+#'
+#' @concept write
+#'
+#' @author
+#'
+#' For any feedback, please contact \code{Myo Minn Oo} via:
+#'
+#' Email: \email{dr.myominnoo@@gmail.com}
+#'
+#' Website: \url{https://myominnoo.github.io/}
+#'
+#' @export
+export <- function(.data, file = "output.csv", .append = FALSE)
+{
+    .len <- length(.data)
+    tryCatch({
+        lapply(1:.len, function(z) {
+            if (z == 1) {
+                write.table(.data[[z]], file, append = .append,
+                            sep = ",", row.names = FALSE)
+            } else {
+                suppressWarnings(
+                    write.table(rep("-", 2), file, append = TRUE, sep = ",",
+                                row.names = F, col.names = F)
+                )
+                suppressWarnings(
+                    write.table(.data[[z]], file, append = TRUE, sep = ",",
+                                row.names = F)
+                )
+            }
+
+        })
+        printMsg(paste0("saved as '", file, "'"))
+    }, error = function(cnd) {
+        printMsg(paste0("failed to save '", file, "'"))
+        print(cnd)
+    })
+}

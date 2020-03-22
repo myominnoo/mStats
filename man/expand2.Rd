@@ -61,9 +61,6 @@ UCLA: Statistical Consulting Group.
 from https://stats.idre.ucla.edu/stata/faq/how-can-i-detect-duplicate-observations-3/
 (accessed September 27, 2019).
 }
-\seealso{
-\code{\link{generate}}, \code{\link{egen}}
-}
 \author{
 For any feedback, please contact \code{Myo Minn Oo} via:
 
@@ -71,4 +68,3 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\concept{duplicates observations expand duplicate rows}

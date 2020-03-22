@@ -77,4 +77,3 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\concept{recode change generate produce}

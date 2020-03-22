@@ -143,4 +143,3 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\concept{data.frame label data label data frame label}

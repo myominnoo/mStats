@@ -9,12 +9,13 @@ Authors@R:
              email = "dr.myominnoo@gmail.com",
              comment = c(ORCID = "0000-0003-4089-016X")))
 Maintainer: Myo Minn Oo <dr.myominnoo@gmail.com>
-Description: This package is for epidemiologist, medical data analyst, 
+Description: This is a tool for epidemiologist, medical data analyst, 
     medical or public health professionals. It contains three domains of functions:
     functions for 1) data management, 2) statistical analysis and 3) calculating 
     epidemiological measures. The calculations are mainly based on three books, 
-    1) Essential Medical Statistics, Betty R. Kirkwood, 2) Gertsman's Epidemiology Kept
-    Simple and 3) Statistics with confidence, Douglas G. Altman, Second Edition. 
+    1) Essential Medical Statistics, Betty R. K., 2) Epidemiology Kept
+    Simple, B. Burt Gerstman, Third Edition and 3) Statistics with confidence, 
+    Douglas G. Altman, Second Edition. 
 License: GPL-2 | GPL-3
 URL: https://myominnoo.github.io/
 BugReports: https://github.com/myominnoo/mStats/issues

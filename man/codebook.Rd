@@ -68,4 +68,3 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\concept{codebook summary structure layout}

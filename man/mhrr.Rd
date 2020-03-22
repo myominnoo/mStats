@@ -112,20 +112,21 @@ Risk ratio is sometimes called as relative risk (RR).
 
 k = Strata
 
-\deqn{φˆMH = \sum{Ak x N0k / Nk} / \sum{Ck x N1k / Nk}}
+\deqn{RR_MH = \sum{Ak x N0k / Nk} / \sum{Ck x N1k / Nk}}
 
-\deqn{SE(log φˆMH) = \sqrt{ \sum{D1k x N1k x N0k / Nk^2 - Ak x Ck / Nk} / \sum{Ak x N0k / Nk} x \sum{Ck x N1k / Nk}}}
+\deqn{SE(log RR_MH) = \sqrt{ \sum{D1k x N1k x N0k / Nk^2 - Ak x Ck / Nk} / \sum{Ak x N0k / Nk} x \sum{Ck x N1k / Nk}}}
 
+\deqn{Lower Limit of CI = exp(log RR_MH - 1.96 x SE(log RR_MH)) }
 
-GEpsF2kWPP2CTj4JOaWwPgBRw0T8UTSL-1\deqn{Upper Limit of CI = exp(log φˆMH + 1.96 x SE(log φˆMH)) }
+\deqn{Upper Limit of CI = exp(log RR_MH + 1.96 x SE(log RR_MH)) }
+}
 
+\subsection{Mantel–Haenszel test statistic}{
 
-## Mantel–Haenszel test statistic
-
-A test of association (H0: φMH = 1 cohort studies; H0: ψMH = 1 case–control studies)
+A test of association (H0: RR_MH = 1 cohort studies; H0: RR_MH = 1 case–control studies)
 is carried out with the Mantel–Haenszel test statistic using chi-squared distribution:
 
-\deqn{χ2MH = (\sum{Ak} - \sum{N1k x M1k / Nk})^2 / \sum{N1k x N0k x M1k x M0k / Nk^2 x (Nk - 1)}}
+\deqn{x2_MH = (\sum{Ak} - \sum{N1k x M1k / Nk})^2 / \sum{N1k x N0k x M1k x M0k / Nk^2 x (Nk - 1)}}
 
 Degree of freedom is 1.
 
@@ -170,10 +171,10 @@ k = strata
 
 \subsection{Mantel–Haenszel test statistic: Same as Risk Ratio}{
 
-A test of association (H0: φMH = 1 cohort studies; H0: ψMH = 1 case–control studies)
+A test of association (H0: RD_CMH = 1 cohort studies; H0: RD_CMH = 1 case–control studies)
 is carried out with the Mantel–Haenszel test statistic using chi-squared distribution:
 
-\deqn{χ2MH = (\sum{Ak} - \sum{N1k x M1k / Nk})^2 / \sum{N1k x N0k x M1k x M0k / Nk^2 x (Nk - 1)}}
+\deqn{x2_MH = (\sum{Ak} - \sum{N1k x M1k / Nk})^2 / \sum{N1k x N0k x M1k x M0k / Nk^2 x (Nk - 1)}}
 
 Degree of freedom is 1.
 
@@ -524,8 +525,3 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\concept{risk ratio relative risk risk difference, attributable risk population attributable
-
-Efficacy mantel-haenszel cochran CMH pooled estimates
-
-AR PAR RR}
