@@ -117,7 +117,7 @@ k = Strata
 \deqn{SE(log φˆMH) = \sqrt{ \sum{D1k x N1k x N0k / Nk^2 - Ak x Ck / Nk} / \sum{Ak x N0k / Nk} x \sum{Ck x N1k / Nk}}}
 
 
-3UqcXDnfPtXhzPNnmYfMFJGH5wznlFX3-1\deqn{Upper Limit of CI = exp(log φˆMH + 1.96 x SE(log φˆMH)) }
+GEpsF2kWPP2CTj4JOaWwPgBRw0T8UTSL-1\deqn{Upper Limit of CI = exp(log φˆMH + 1.96 x SE(log φˆMH)) }
 
 
 ## Mantel–Haenszel test statistic

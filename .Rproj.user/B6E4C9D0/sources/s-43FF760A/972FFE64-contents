@@ -18,7 +18,7 @@
 #' @param data Dataset
 #' @param var Variable
 #' @param value Replacement value
-#' @param ... Conditions
+#' @param ... `if` conditions.
 #'
 #' @details
 #'
@@ -31,9 +31,9 @@
 #' @return
 #' Modified Dataset
 #'
-#' @keywords
+#' @concept
 #'
-#' replace, recode, change values
+#' replace recode change values
 #'
 #'
 #' @author
@@ -70,6 +70,20 @@
 #' ## Mixed multiple conditions met
 #' hosp %>% replace(co2, NA, mobility == 2, pain < 4)
 #' hosp %>% replace(co2, NA, mobility == 2, pain < 4, tumorsize < 70)
+#'
+#'
+#' ## replace with values from another variable
+#' hosp %>% replace(pain, mobility, pain < 4)
+#' hosp %>% replace(co2, tumorsize, mobility == 2, pain < 4)
+#' hosp %>% replace(co2, tumorsize, mobility == 2, pain < 4, tumorsize < 70)
+#'
+#'
+#' ## convert data type without expression
+#' replace(hosp, wbc, as.numeric(wbc)) %>%
+#'     codebook
+#'
+#' replace(hosp, wbc, sex) %>%
+#'     keep(sex, wbc)
 #' }
 #'
 #' @export
@@ -104,11 +118,19 @@ replace <- function(data, var, value, ... )
     ## check if value is a variable
     .value.var <- FALSE
     if (any(names(data) %in% as.character(.args$value))) {
-        .value.var <- TRUE
-        .value <- as.character(.args$value)
-        assign(.value, eval(parse(text = paste0("data$", .value))))
-        value <- .value
+        if (length(as.character(.args$value)) > 1) {
+            value <- deparse(substitute(value))
+        } else {
+            .value.var <- TRUE
+            .value <- as.character(.args$value)
+            assign(.value, eval(parse(text = paste0("data$", .value))))
+            value <- .value
+        }
+    } else {
+        ## check if value is a character
+        value <- ifelse(is.character(value), paste0("'", value, "'"), value)
     }
+
 
 
     ## formulate text syntax, evaluate and assign to .data
@@ -120,6 +142,18 @@ replace <- function(data, var, value, ... )
         .expr.txt <- paste0("within(.data, ", .var.name,
                             "[", .expr, "] <- ", value, ")")
     }
+
+    if (is.null(.expr)) {
+        .expr.txt <- paste0("within(.data, ", .var.name, " <- ", value, ")")
+    }
+
+    ## if var is labelled num, removed labels
+    attr(.data[[.var.name]], "names") <- NULL
+    attr(.data[[.var.name]], "labels") <- NULL
+
+
+
+    ## getting the data
     tryCatch({
         if (length(.expr) == 0) {
             .changed.values.count <- .data[[.var.name]]
@@ -135,13 +169,13 @@ replace <- function(data, var, value, ... )
     })
 
     ## Display message to nofity changes
-    printMsg(paste0("Expression used to filter: '", .expr.txt, "'"))
-    printMsg(paste0(length(.changed.values.count), " observations recoded",
+    printMsg(paste0("Expression used to replace: '", .expr.txt, "'"))
+    printMsg(paste0(length(.changed.values.count),
+                    " observations replaced with",
                     ifelse(.value.var,
-                           paste0(" with the values from '", value),
-                           paste0(" into '", value))
+                           paste0(" the values from '", value),
+                           paste0(" '", value))
                     , "'"))
 
     return(.data)
 }
-
