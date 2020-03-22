@@ -4,8 +4,8 @@
 #' \code{rename()} changes names of variables.
 #'
 #' @param data dataset
-#' @param var_old name of existing variable
-#' @param var_new new name to be changed
+#' @param old_var name of existing variable
+#' @param new_var new name to be changed
 #'
 #' @details
 #'
@@ -20,11 +20,8 @@
 #'
 #' \code{data.frame}
 #'
-#' @keywords rename, change names
+#' @concept rename change names
 #'
-#' @seealso
-#'
-#' \code{\link{recode}}, \code{\link{generate}}, \code{\link{egen}}
 #'
 #' @author
 #'
@@ -68,66 +65,85 @@
 
 
 #' @export
-rename <- function(data, var_old, var_new)
+rename <- function(data, old_var, new_var)
 {
-    arguments <- as.list(match.call())
-    var_old.names <- (deparse(substitute(var_old)))
-    var_old.names <- unlist(strsplit(gsub("^c\\(|\\)$", "", var_old.names), ","))
+    ## if data is not data.frame, stop
+    if (!is.data.frame(data))
+        stop(paste0(" ... '", deparse(substitute(data)), "' is not data.frame ... "))
 
-    var.len <- length(var_old.names)
-    if (var.len > 1) var_old <- list() else var_old <- as.character()
-    UseMethod("rename", var_old)
-}
+    .args <- as.list(match.call())
 
-
-
-#' @rdname rename
-#' @export
-rename.default <- function(data, var_old, var_new)
-{
-    stop(" ... Wrong data type ... ")
-}
-
-
-#' @rdname rename
-#' @export
-rename.character <- function(data, var_old, var_new)
-{
-    arguments <- as.list(match.call())
-    var_old <- as.character(arguments$var_old)
-    var_new <- as.character(arguments$var_new)
-    contain <- names(data) %in% var_old
-    names(data)[contain] <- var_new
-    printMsg(paste0("Variable: renamed '", var_old,
-                    "' to '", var_new, "'"))
-    return(data)
-}
-
-
-#' @rdname rename
-#' @export
-rename.list <- function(data, var_old, var_new)
-{
-    arguments <- as.list(match.call())
-    var_old <- as.character(arguments$var_old)[-1]
-    var_new <- as.character(arguments$var_new)[-1]
-    vars <- names(data)
-
-    var.found <- vars[vars %in% var_old]
-    var.missed <- var_old[!(var_old %in% var.found)]
-
-    if (length(var.missed) > 0)
-        stop(paste0("\n... '", var.missed, "' not found ..."))
-
-    len.var_old <- length(var_old)
-    if (len.var_old != length(var_new)) {
-        stop("... Old and new variables must have the same length ...")
+    ## check old vars if vector. If so, remove c() and convert to character.
+    old_var <- deparse(substitute(old_var))
+    if (grepl("^c\\(|\\)$", old_var)) {
+        .vars.old <- unlist(strsplit(gsub("^c\\(|\\)$", "", old_var), ","))
+    } else {
+        .vars.old <- old_var
     }
 
-    names(data)[vars %in% var_old] <- var_new
-    for (i in 1:len.var_old)
-        printMsg(paste0("Variable: renamed '", var_old[i], "' to '", var_new[i], "'"))
+    ## trim white spaces
+    .vars.old <- trimws(.vars.old)
+
+    ## Check if colon is there.
+    ## if present, retrieve variables between the two variables
+    if (any(grepl(":", .vars.old))) {
+        .vars.old <- do.call(
+            c,
+            lapply(.vars.old, function(z) {
+                .colon <- grepl(":", z)
+                if (.colon) {
+                    splitByColon(data, z, .colon)
+                } else {
+                    z
+                }
+            })
+        )
+    }
+
+    ## check new vars if vector. If so, remove c() and convert to character.
+    new_var <- deparse(substitute(new_var))
+    if (grepl("^c\\(|\\)$", new_var)) {
+        .vars.new <- unlist(strsplit(gsub("^c\\(|\\)$", "", new_var), ","))
+    } else {
+        .vars.new <- new_var
+    }
+
+    ## trim white spaces
+    .vars.new <- trimws(.vars.new)
+
+    ## Check if colon is there.
+    ## if present, retrieve variables between the two variables
+    if (any(grepl(":", .vars.new))) {
+        .vars.new <- do.call(
+            c,
+            lapply(.vars.new, function(z) {
+                .colon <- grepl(":", z)
+                if (.colon) {
+                    splitByColon(data, z, .colon)
+                } else {
+                    z
+                }
+            })
+        )
+    }
+
+    ## old and new vectors must have the same length.
+    .vars.old.len <- length(.vars.old)
+    if (.vars.old.len != length(.vars.new))
+        stop(" ... Old and new variables must have the same length! ... ")
+
+
+    ## change the names of variables
+    names(data)[names(data) %in% .vars.old] <- .vars.new
+
+    ## Display message to nofity changes
+    if (.vars.old.len == 1) {
+        printMsg(paste0("Variable: renamed '", .vars.old, "' to '", .vars.new, "'"))
+    } else {
+        for (i in 1:.vars.old.len) {
+            printMsg(paste0("Variable: renamed '", .vars.old[i], "' to '", .vars.new[i], "'"))
+        }
+    }
 
     return(data)
 }
-

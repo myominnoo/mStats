@@ -2,29 +2,32 @@
 #'
 #' @description
 #'
-#' \code{summ()} generates summary statistics for numerical data
+#' \code{summ()} generates summary statistics for numerical data as well as
+#' grouped summary measures.
 #'
-#' @param data dataset (optional)
-#' @param ... a variable or variables. Colon separator \code{:} can be
-#' used for multiple variables. See details.
-#' @param x exposure variable
-#' @param by outcome variable for cross-tabulation
+#' @param data Dataset
+#' @param ... Variable or multiple variables
+#' Colon separator \code{:} can be used to specify multiple variables.
+#' @param by Varaiable for cross-tabulation
 #' @param na.rm A logical value to specify missing values,
-#' <NA> in the table
 #' @param rnd specify rounding of numbers. See \code{\link{round}}.
-#' @param print.table logical value to display formatted outputs
+#'
 #'
 #' @details
 #'
-#' \code{summ()} reports number of observations in the dataset,
-#' missing data,
-#' seven number summary statistics, coefficient of
-#' variation (CV) and normality
-#' test.
+#' \code{summ()} reports seven number summary statistics, normality and other additional
+#' metadata.
+#'
+#' \preformatted{summ(data, var1)}
+#'
+#' \preformatted{summ(data, var1, var2, var3:var5, var10)}
+#'
+#' \preformatted{summ(data)}
 #'
 #' Normality test is perfomed by Shapiro-Wilk Normality Test. See more at
 #' \code{\link{shapiro.test}}.
 #'
+#''
 #' \strong{ANNOTATIONS}
 #'
 #' \code{Obs.} = observation
@@ -47,20 +50,65 @@
 #'
 #' \code{Normality} = P-value from Shapiro-Wilk Normality Test
 #'
-#' @note
 #'
-#' In case of using the whole dataset for grouped summary measures,
-#' the dataset must be \code{data.frame}.
+#' \strong{`Grouped Summary Measures`}
 #'
-#' @seealso
+#' If `by` is specified, grouped summary measures are calculated and
+#' produced five number summary, excluding minimum and maximum. In addition,
+#' if levels of `by` are more than 2, p-values from ANOVA and Kruskal Wallis tests
+#' are displayed. Otherwise, Student's t-test and Wilcoxon signed rank test are
+#' measured and their respective p-values are tabulated.
 #'
-#' \code{\link{summBy}}, \code{\link{tab}}, \code{\link{xtab}}
+#' There are two parts of the final table. The first part tabulates
+#' grouped summary measures and second part tabulates one-variable summary
+#' measures for corresponding variables.
+#'
+#'
+#' \preformatted{summ(data, var1, var2, by = var3)}
+#'
+#' \preformatted{summ(data, var1, var2, var3:var5, var10, by = var11)}
+#'
+#' \preformatted{summ(data, by = var11)}
+#'
+#'
+#' \strong{Using colon `:` spearator}
+#'
+#' Colon separator \code{:} can be used to indicate sequence of variables.
+#'
+#'
+#' \preformatted{summ(data, var1, var2, var3:var5, var10)}
+#'
+#'
+#'
+#' @return
+#'
+#' summary measures as \code{data.frame}
+#'
+#'
+#'
+#' @references
+#'
+#' \enumerate{
+#'   \item Essential Medical Statistics, Betty R. Kirkwood & Jonathan
+#'   A.C. Sterne,
+#'   Second Edition.
+#'   \item An Introduction to MEdical Statistics, Martin Bland,
+#'   Thrid Edition,
+#'   \item STATA DATA MANAGEMENT. UCLA: Statistical Consulting Group.
+#'    from https://stats.idre.ucla.edu/stata/seminars/stata-data-management/
+#'    (accessed Febrary 25, 2020).
+#' }
+#'
 #'
 #' @import stats
 #'
-#' @keywords
+#' @concept
 #'
-#' number summary, statistics, descriptive, five number
+#' number summary statistics descriptive five number seven number
+#'
+#' gouped summary grouped by student t test t-test wilcoxon signed rank
+#'
+#' ANOVA analyis of variance kruskal-wallis
 #'
 #' @author
 #'
@@ -72,343 +120,331 @@
 #'
 #' @examples
 #' \dontrun{
-#' ## Using infert dataset
-#' # one variable
-#' summ(infert, age)
 #'
-#' # multiple variable
-#' summ(infert, age, induced, case)
 #'
-#' # multiple variable using colon separator
-#' summ(infert, age:case)
-#' summ(infert, age, parity:pooled.stratum)
-#'
-#' # the whole dataset
-#' summ(infert)
-#' summ(iris)
-#'
-#' # without using data argument
-#' induced <- infert$induced
-#' case <- infert$case
-#' parity <- infert$parity
-#' summ(NULL, induced, case, parity)
+#' ## UCLA IDRE Example
+#' ## Website:
+#' path <- "https://stats.idre.ucla.edu/stat/data/hsbdemo.dta"
+#' hsb <- haven::read_dta(path)
+#' codebook(hsb)
 #'
 #'
 #'
-#' ## IDRE UCLA Example 1
+#'
+#' ## single variable
+#' summ(hsb, math)
+#'
+#' ## multiple variables
+#' summ(hsb, math, write)
+#'
+#' ## using colon separator
+#' summ(hsb, write:socst, awards, cid)
+#'
+#' ## the whole dataset
+#' summ(hsb)
+#'
+#'
+#'
+#'
+#' # Example from IDRE UCLA
 #' path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
 #' hosp <- haven::read_dta(path)
 #' codebook(hosp)
 #'
-#' # one variable
-#' summ(hosp, rbc)
 #'
-#' # multiple variables
-#' summ(hosp, tumorsize:age, lengthofstay, rbc:test2)
+#' ## to use piping function
+#' library(magrittr)
 #'
-#' # whole dataset
+#'
+#' ## summary measures
 #' summ(hosp)
 #'
+#' ## grouped summary measures by sex
+#' summ(hosp, age, rbc:test2, by = sex)
 #'
 #'
-#'
-#' ## IDRE UCLA Example 2
-#' path <- "https://stats.idre.ucla.edu/stat/stata/modules/kids.dta"
-#' kids <- haven::read_dta(path)
-#'
-#' # display codebook
-#' codebook(kids)
-#'
-#' # one variable
-#' summ(kids, age)
-#'
-#' # multiple variables
-#' listView(kids, age, wt, birth)
-#' summ(kids, age, wt, birth)
-#'
-#' # the whole dataset
-#' summ(kids)
+#' ## remove NA values from summary measures
+#' hosp %>%
+#'     replace(sex, NA, sex == 12.2) %>%
+#'     summ(age, rbc:test2, by = sex, na.rm = FALSE)
 #'
 #'
+#' hosp %>%
+#'     replace(sex, NA, sex == 12.2) %>%
+#'     summ(age, rbc:test2, by = sex, na.rm = TRUE)
 #'
 #'
-#'
-#' ### GROUPED SUMMARY MEASURES
-#' # using infert dataset
-#' # one variable
-#' summ(infert, age, by = education)
-#'
-#' # multiple variables
-#' summ(infert, age, induced, case, by = education)
-#' summ(infert, age:pooled.stratum, by = education)
-#'
-#' # the whole dataset
-#' summ(infert, by = education)
-#'
-#'
-#'
-#'
-#' ## IDRE UCLA Example 1
-#' path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
-#' hosp <- haven::read_dta(path)
-#' codebook(hosp)
-#'
-#' # one variable
-#' summ(hosp, rbc, by = cancerstage)
-#'
-#' # multiple variables
-#' summ(hosp, tumorsize:age, lengthofstay, rbc:test2, by = cancerstage)
-#'
-#' # whole dataset
-#' summ(hosp, by = cancerstage) ## Error
-#'
-#' ## change to data.frame and then summ
-#' library(magrittr)
-#' hosp %>% data.frame %>% summ(by = cancerstage)
-#'
-#'
-#'
-#' ## IDRE UCLA Example 2
-#' path <- "https://stats.idre.ucla.edu/stat/stata/modules/kids.dta"
-#' kids <- haven::read_dta(path)
-#'
-#' # display codebook
-#' codebook(kids)
-#'
-#' # one variable
-#' summ(kids, age, by = sex)
-#'
-#' # multiple variables
-#' summ(kids, age, wt, by = sex)
-#'
-#' # the whole dataset
-#' summ(kids, by = sex) # Error
-#'
-#' library(magrittr)
-#' kids %>% data.frame %>% summ(by = sex)
+#' ## the whole dataset
+#' summ(hosp, by = sex)
 #' }
-
-
+#'
 #' @export
-summ <- function(data = NULL, ... , by = NULL,
-                 na.rm = FALSE, rnd = 1,
-                 print.table = TRUE)
+summ <- function(data, ... , by = NULL, na.rm = FALSE, rnd = 1)
 {
-  arguments <- as.list(match.call())[-1]
-  if (!is.null(data)) {
-    by <- eval(substitute(by), data)
-  }
-  nonX <- c("data", "by", "row.pct", "na.rm", "rnd", "print.table")
-  x <- as.character(arguments[!(names(arguments) %in% nonX)])
+    ## if data is not data.frame, stop
+    if (!is.data.frame(data))
+        stop(paste0(" ... '", deparse(substitute(data)), "' is not data.frame ... "))
 
-  if (length(x) > 1) {
-    x <- list()
-  } else if (length(x) == 1 ) {
-    if (any(grepl(":", x))) {
-      x <- list()
+    .args <- as.list(match.call())
+
+    ## assign data into .data for further evaluation
+    .data <- data
+    .vars.names <- names(.data)
+
+
+    ## get variable names within three dots to search for duplicates
+    .vars <- as.character(enquos(.args, c("data", "by", "row.pct", "na.rm", "rnd")))
+
+
+    ## Check if colon is there.
+    ## if present, retrieve variables between the two variables
+    if (any(grepl(":", .vars))) {
+        .vars <- do.call(
+            c,
+            lapply(.vars, function(z) {
+                .colon <- grepl(":", z)
+                if (.colon) {
+                    splitByColon(data, z, .colon)
+                } else {
+                    z
+                }
+            })
+        )
+    }
+
+
+
+    ## if .vars is length zero, then .vars is all variables
+    if (length(.vars) == 0) {
+        .vars <- .vars.names
+        .summ.type <- c("numeric", "double", "integer", "logical")
+
+        ## get the types of variables
+        .vars.type <- unlist(lapply(data, function(z) {
+            .class <- class(unlist(z))[1]
+            if (.class == "haven_labelled") {
+                .class <- typeof(unlist(z))[1]
+            }
+            .class
+        }))
+
+        ## get only those whose type are in .summ.type
+        .vars <- .vars[.vars.type %in% .summ.type]
+    }
+
+
+    ## if no variable is available, stop
+    if (length(.vars) == 0) {
+        stop(" ... No variable found for tabulation ... ")
+    }
+
+
+    ## summary statistics
+    by <- as.character(.args$by)
+    by <- ifelse(length(by) == 0, "NULL", by)
+    if (by == "NULL") {
+        .df <- do.call(
+            rbind,
+            lapply(.vars, function(z) {
+                summ1(.data, z, na.rm, rnd)
+            })
+        )
+
+        ## formulate title
+        .sum.txt <- "Summary"
     } else {
-      x <- numeric()
+        .df <- do.call(
+            rbind,
+            lapply(.vars, function(z) {
+                summ2(.data, z, by, na.rm, rnd)
+            })
+        )
+        .sum.txt <- paste0("Summary grouped by '", .args$by, "'")
     }
-  } else {
-    x <- data.frame()
-  }
-
-  if (is.null(by)) {
-    UseMethod("summ", x)
-  } else {
-    UseMethod("summBy", x)
-  }
-}
 
 
-#' @rdname summ
-#' @export
-summ.default <- function( ... )
-{
-  stop(" >>> Data type is not suppored. <<< ")
-}
+    ## add Dash lines
+    .df <- addDashLines(.df, .vLine = 2)
 
-#' @rdname summ
-#' @export
-summ.numeric <- function(data = NULL, x, by = NULL,
-                         na.rm = FALSE, rnd = 1,
-                         print.table = TRUE)
-{
-  arguments <- as.list(match.call())[-1]
-  if (!is.null(data)) {
-    x <- eval(substitute(x), data)
-  }
-  x.name <- arguments$x
 
-  len <- ifelse(na.rm, length(x[!is.na(x)]), length(x))
-  na <- length(x[is.na(x)])
-  na.rm <- TRUE
-  mu <- mean(x, na.rm = na.rm)
-  std <- sd(x, na.rm = na.rm)
-  cv <- std / mu * 100
-  q <- round(quantile(x, probs = c(0, .25, .5, .75, 1), na.rm = na.rm), rnd)
-  v <- round(c(mu, std, cv, q), rnd)
+    ## add total summary for group summary
+    if (by != "NULL") {
+        .df.total <- do.call(
+            rbind,
+            lapply(.vars, function(z) {
+                summ1(.data, z, na.rm, rnd)
+            })
+        )
 
-  pvalue <- tryCatch({
-    suppressWarnings(shapiro.test(x)$p.value)
-  }, error = function(err) {
-    return(NA)
-  })
-  pvalue <- sprintf(pvalue, fmt = '%#.3f')
+        ## subset output show only Obs. to Q3
+        .display <- c("Variable", "|",
+                      "Obs.", "NA.", "Mean", "Std.Dev", "Median", "Q1", "Q3",
+                      "Normality")
 
-  f <- data.frame(Obs. = len, NA. = na, Mean = v[1], Std.Dev = v[2],
-                  Median = v[6], Q1 = v[5], Q3 = v[7],
-                  Min = v[4], Max = v[8],
-                  Normality = pvalue,
-                  stringsAsFactors = FALSE)
-  row.names(f) <- x.name
-
-  if (print.table) {
-    texts <- paste("Number Summary: ", x.name, collapse = "")
-    printText(f, texts)
-    x.lbl <- attr(x, "label")
-    if (!is.null(x.lbl)) {
-      printMsg("Labels:")
-      printMsg(paste0(x.name, ": ", x.lbl, collapse = ""))
+        .df.total <- .df.total[, .display]
+        ## add pvalue back to .df
+        .df.total$p1 <- .df.total$p2 <- rep("", nrow(.df.total))
+        names(.df.total)[(ncol(.df.total)-1):ncol(.df.total)] <- names(.df)[11:12]
+        .df <- rbind(.df, .df.total)
     }
-  }
-
-  invisible(f)
-}
 
 
-#' @rdname summ
-#' @export
-summ.list <- function(data = NULL, ... , by = NULL,
-                      na.rm = FALSE, rnd = 1,
-                      print.table = TRUE)
-{
-  arguments <- as.list(match.call())[-1]
-  nonX <- c("data", "by", "row.pct", "na.rm", "rnd", "print.table")
-  x.names <- arguments[!names(arguments) %in% nonX]
 
-  hasColon <- grepl(":", as.character(x.names))
+    ## constructs labels
+    ## add label for by: cross-tabulation
+    .lbl <- sapply(.vars, function(z) attr(.data[[z]], "label"))
 
-  if (any(hasColon) & !is.null(data)) {
-    data <- data.frame(data)
-    x.names <- do.call(
-      c,
-      lapply(as.character(x.names), function(z) {
-        hasColon <- grepl(":", z)
-        if (hasColon) {
-          varsColonSplit(data, z, hasColon)
-        } else {
-          z
+    ## Print tabulation
+    printText2(.df, .sum.txt, .printDF = TRUE)
+
+    ## print labels
+    if (any(.lbl != "NULL")) {
+        printMsg("Labels")
+    }
+    sapply(1:length(.vars), function(z) {
+        if (.lbl[z] != "NULL") {
+            printMsg(paste0(.vars[z], ": ", .lbl[z]))
         }
-      })
+    })
+
+
+    ## print by label
+    getnPrintLabel(.data, .args$by)
+
+    invisible(.df)
+}
+
+
+
+
+# Helpers -----------------------------------------------------------------
+
+
+summ1 <- function(data, x, na.rm = FALSE, rnd = 1)
+{
+    ## assign as .data and .x for further evaluation
+    .data <- data
+    .x.name <- x
+    .x <- data[[x]]
+
+
+    ## get number of missing values
+    .len <- ifelse(na.rm, length(.x[!is.na(x)]), length(.x))
+
+    .na <- length(.x[is.na(.x)])
+
+    ## assign na.rm as TRUE for all future calculation
+    na.rm <- TRUE
+
+
+    ## construct 7 number summary statistics
+    .mu <- mean(.x, na.rm = na.rm)
+    .std <- sd(.x, na.rm = na.rm)
+    # .cv <- std / mu * 100
+    .q <- round(quantile(.x, probs = c(0, .25, .5, .75, 1), na.rm = na.rm), rnd)
+    .v <- round(c(.mu, .std, .q), rnd)
+
+    ## get p value from normality test
+    pvalue <- tryCatch({
+        suppressWarnings(shapiro.test(.x)$p.value)
+    }, error = function(err) {
+        return(NA)
+    })
+
+    pvalue <- sprintf(pvalue, fmt = '%#.3f')
+
+
+    ## final .df for return
+    .df <- data.frame(Variable = .x.name, "|" = "|",
+                      Obs. = .len, NA. = .na, Mean = .v[1], Std.Dev = .v[2],
+                      Median = .v[5], Q1 = .v[4], Q3 = .v[6],
+                      Min = .v[3], Max = .v[7],
+                      Normality = pvalue,
+                      stringsAsFactors = FALSE)
+
+    names(.df)[2] <- "|"
+    row.names(.df) <- NULL
+
+    return(.df)
+}
+
+
+summ2 <- function(data, x, by, na.rm = FALSE, rnd = 1)
+{
+    ## assign as .data and .x for further evaluation
+    .data <- data
+    .x.name <- x
+    .x <- data[[x]]
+    .by.name <- by
+    .by <- data[[by]]
+
+
+    ## check NA
+    .useNA <- ifelse(na.rm, "no", "ifany")
+
+
+    ## get levels of character and process NA value if any
+    .tbl <- table(.by, useNA = .useNA)
+    .lvl <- names(.tbl)
+    .lvl[is.na(.lvl)] <- "<NA>"
+
+
+    .df <- do.call(
+        rbind,
+        lapply(.lvl, function(z) {
+            if (z == "<NA>") {
+                .d <- .data[is.na(.by), ]
+            } else {
+                .d <- .data[.by == z, ]
+            }
+            .d <- summ1(.d, .x.name, rnd = rnd)
+            .d[1, "Variable"] <- paste0("[", z, "]", .x.name)
+            .d
+        })
     )
-    x.names <- lapply(x.names, function(z) z)
-  }
 
-  if (!is.null(data)) {
-    data <- data[, as.character(x.names)]
-  } else {
-    data <- do.call(
-      cbind,
-      lapply(x.names, function(z) {
-        eval(z)
-      })
-    )
-    data <- data.frame(data, stringsAsFactors = FALSE)
-    names(data) <- x.names
-  }
 
-  # one way tabulation for multiple variables
-  f <- do.call(rbind, lapply(data, function(z){
-    summ.numeric(NULL, z, na.rm = na.rm, rnd = rnd,
-                 print.table = FALSE) }))
+    ## subset output show only Obs. to Q3
+    .display <- c("Variable", "|",
+                  "Obs.", "NA.", "Mean", "Std.Dev", "Median", "Q1", "Q3",
+                  "Normality")
 
-  if (print.table) {
-    texts <- paste0("Number Summary: ",
-                    paste(x.names, collapse = ", "), collapse = "")
-    printText(f, texts)
+    .df <- .df[, .display]
 
-    x.names <- as.character(x.names)
-    x.lbl <- (sapply(x.names, function(z)
-      attr(data[, z], "label")))
-    if (!is.null(unlist(x.lbl))) {
-      printMsg(paste0("labels:"))
-      for (i in 1:length(x.names)) {
-        if (x.lbl[i] != "NULL") {
-          printMsg(paste0(x.names[i], ": ", x.lbl[i],
-                          collapse = ""))
-        }
-      }
-    }
-  }
 
-  invisible(f)
-}
 
-#' @rdname summ
-#' @export
-summ.data.frame <- function(data = NULL, ... , by = NULL,
-                            na.rm = FALSE, rnd = 1,
-                            print.table = TRUE)
-{
-  vars <- names(data)
-  type.numeric <- c("int", "double", "numeric")
+    ## get pvalue  from ANOVA and Kruskal Wallis or t.test / Wilcox
 
-  vars.type <- sapply(data, function(z)
-    paste0(class(unlist(z)), collapse = ""))
-  vars.names <- vars[(vars.type %in% type.numeric)]
-  data <- data[, vars.names]
+    ## calculate p-values from ANOVA and Kruskal Wallis or t.test / Wilcox
+    if (length(.lvl) > 2) {
+        pvalue <- tryCatch({suppressWarnings(summary(aov(.x ~ .by))[[1]][1,5])},
+                           error = function(cnd) {return(NA)})
 
-  if (is.data.frame(data)) {
-    if (ncol(data) == 0)
-      stop(" >>> no numeric variables found <<< ")
+        pvalue <- c(
+            pvalue,
+            tryCatch({suppressWarnings(kruskal.test(.x ~ .by)$p.value)},
+                     error = function(cnd) {return(NA)}))
 
-    names.invalid <- grep("^([[:alpha:]]|[.][._[:alpha:]])[._[:alnum:]]*$",
-                          vars.names, value = TRUE, invert = TRUE)
-    if (length(names.invalid) > 0) {
-      vars.names[vars.names %in% names.invalid] <- paste0("v", names.invalid)
-      names(data) <- vars.names
-    }
-  }
-
-  if (is.data.frame(data)) {
-    f <- do.call(rbind, lapply(data, function(z){
-      summ.numeric(NULL, z, na.rm = na.rm, rnd = rnd,
-                   print.table = FALSE) }))
-    x.lbl <- lapply(data, function(z) attr(z, "label"))
-  } else {
-    f <- summ.numeric(NULL, data, na.rm = na.rm, rnd = rnd,
-                      print.table = FALSE)
-    row.names(f) <- vars.names
-    x.lbl <- attr(data, "label")
-  }
-
-  if (print.table) {
-    if (is.data.frame(data)) {
-      texts <- paste0("Number Summary: ",
-                      paste(vars.names, collapse = ", "),
-                      collapse = "")
-      printText(f, texts)
-
-      x.lbl <- (sapply(vars.names, function(z) attr(data[, z], "label")))
-      if (!is.null(unlist(x.lbl))) {
-        printMsg(paste0("labels:"))
-        for (i in 1:length(vars.names)) {
-          if (x.lbl[i] != "NULL") {
-            printMsg(paste0(vars.names[i], ": ", x.lbl[i], collapse = ""))
-          }
-        }
-      }
-
+        .pvalue.name <- c("ANOVA", "K-Wallis")
     } else {
-      texts <- paste0("Number Summary: ", vars.names, collapse = "")
-      printText(f, texts, "label:")
-      if (x.lbl != "NULL") {
-        printMsg(paste0(vars.names, ": ", x.lbl, collapse = ""))
-      }
+        pvalue <- tryCatch({suppressWarnings(t.test(.x ~ .by)$p.value)},
+                           error = function(cnd) {return(NA)})
 
+        pvalue <- c(
+            pvalue,
+            tryCatch({suppressWarnings(suppressWarnings(wilcox.test(.x ~ .by)$p.value))},
+                     error = function(cnd) {return(NA)}))
+
+        .pvalue.name <- c("t-test", "Wilcoxon")
     }
-  }
+    pvalue <- sprintf(pvalue, fmt = '%#.3f')
 
-  invisible(f)
+
+    ## add pvalue back to .df
+    .df$p1 <- c(pvalue[1], rep("", nrow(.df) - 1))
+    .df$p2 <- c(pvalue[2], rep("", nrow(.df) - 1))
+    names(.df)[(ncol(.df)-1):ncol(.df)] <- .pvalue.name
+
+
+    return(.df)
 }

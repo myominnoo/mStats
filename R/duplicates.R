@@ -1,50 +1,53 @@
-#' @title Tag, report, delete or keep duplicated observations
+#' @title Report and tag duplicated observations
 #'
 #' @description
-#' \code{duplicates} reports numbers of duplicated observations
+#' \code{duplicates()} reports duplications and creates indexes.
 #'
-#' @param data dataframe
-#' @param ... any variables within dataframe for unique id
-#' @param print.table logical value to display formatted outputs
+#' @param data Dataset
+#' @param ... Variables to find duplications.
+#' @param drop if `TRUE`, delete all duplicated records, keeping all unique.
+#' If not specified, all variables are used.
+#'
 #'
 #' @details
-#' \code{duplicates} tags duplicate observations within dataframe
-#' with a new variable called \code{dupID_} and reports statistics.
-#' Duplicates are observations with identical values either on
-#' all variables
-#' if no variable is specified in the optional argument \code{...}
-#' or on a specified list of variables.
+#'
+#' Specified variables are used to search for duplications. If not
+#' specified, all variables are used.
+#'
+#'
+#' Then they are pasted as a character vector for speedy operation,
+#' extract duplication data and make a report.
+#'
+#' The return dataset is added a new variable called \code{dup}
+#' for further use.
+#'
 #'
 #' \strong{ANNOTATIONS}:
 #'
-#' \code{Copies}       - Number of duplicates
+#' \code{Copies}       - nth Copies
 #'
-#' \code{Observations} - Number of records per Copies
+#' \code{Observations} - Number of corresponding observations
 #'
-#' \code{Surplus}  - Number of surplus copies
+#' \code{Surplus}  - Number of surplus observations
 #'
-#' \code{dupID_} - indicates copies within the dataset. Example, 1 indicates
-#' that there is no duplicates, 2 = two identical record, 3 = three records,
-#' so on.
+#' \code{dup} - indicates copies within the dataset:
 #'
-#' \code{keepUnique} delete all but the first occurrence of each group of
-#' duplicated observations.
+#' 0 = unique observations
 #'
-#' \code{keepDup} keep all but the first occurrence of each group of
-#' duplicated observations. This function returns the opposite dataset
-#' generated from \code{keepUnique}
+#' 2 = duplicated two times
+#'
+#' 3 = duplicated three times and so on ...
+#'
 #'
 #' @return
 #'
-#' \code{data.frame}: original dataset plus \code{dupID_}
+#' Modified dataset with additional variable \code{dup}
 #'
-#' \code{formated_table}: display information about duplicated observations
 #'
-#' @seealso
+#' @import stats
 #'
-#' \code{\link{expand2}}, \code{\link{keep}}
 #'
-#' @keywords duplicates, report, distinct, unique
+#' @concept duplicates report distinct unique
 #'
 #' @author
 #'
@@ -56,245 +59,138 @@
 #'
 #' @examples
 #' \dontrun{
-#' # finding duplicates across all variables
-#' iris_dup <- duplicates(iris)
-#' str(iris_dup)
-#'
-#' # finding duplicates on variables of interest
-#' iris_dup <- duplicates(iris, Sepal.Length, Sepal.Width)
-#' str(iris_dup)
-#'
-#' iris_dup <- duplicates(iris, Species)
-#' str(iris_dup)
-#'
-#' iris_dup <- duplicates(iris, Sepal.Length, Sepal.Width, print.table = FALSE)
-#' str(iris_dup)
-#'
-#' # Keep Unique records
-#' iris_dup <- keepUnique(iris, Sepal.Length)
-#' str(iris_dup)
-#'
-#' iris_dup <- keepUnique(iris, Species)
-#' str(iris_dup)
-#'
-#' iris_dup <- keepUnique(infert, case)
-#' str(iris_dup)
 #'
 #'
-#' # Keep duplicated records (opposite of keep unique records)
-#' iris_dup <- keepDup(iris, Sepal.Length)
-#' str(iris_dup)
+#' # Example from IDRE UCLA
+#' path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
+#' hosp <- haven::read_dta(path)
+#' codebook(hosp)
 #'
-#' iris_dup <- keepDup(iris, Species)
-#' str(iris_dup)
 #'
-#' iris_dup <- keepDup(infert, case)
-#' str(iris_dup)
+#' ## to use piping function
+#' library(magrittr)
+#'
+#'
+#' ## find duplicated records using all variables
+#' duplicates(hosp) %>%
+#'     codebook
+#'
+#'
+#'
+#' ## find duplicated records using one variables
+#' duplicates(hosp, hospid) %>%
+#'     codebook
+#'
+#'
+#'
+#' ## find duplicated records using two variables
+#' duplicates(hosp, hospid, docid) %>%
+#'     codebook
+#'
+#'
+#'
+#' ## removing duplicated records
+#' duplicates(hosp, drop = TRUE) %>%
+#'     codebook
+#'
+#' duplicates(hosp, hospid, drop = TRUE) %>%
+#'     codebook
+#'
+#' duplicates(hosp, hospid, docid, drop = TRUE) %>%
+#'     codebook
 #' }
-
+#'
 #' @export
-duplicates <- function(data, ... , print.table = TRUE)
+duplicates <- function(data, ... , drop = FALSE)
 {
-  data <- data
-  arguments <- as.list(match.call())
-  lastArg <- grep("^TRUE$|^FALSE$|^T$|^F$", arguments)
-  id <- arguments[-c(1,2, ifelse(length(lastArg) == 0, 1, lastArg))]
-  id <- gsub(" ", "", id)
 
-  if (any(names(data) %in% "dupID_"))
-    data <- data[, !(names(data) %in% "dupID_")]
+    ## if data is not data.frame, stop
+    if (!is.data.frame(data))
+        stop(paste0(" ... '", deparse(substitute(data)), "' is not data.frame ... "))
 
-  if (length(id) == 0) {
-    texts <- paste0("data[with(data, order(",
-                    paste0(names(data), collapse = ", "),
-                    ")), ]", collapse = "")
-    data <- eval(parse(text = texts))
-    dupID_ <- unlist(lapply(1:nrow(data), function(z) {
-      paste0(data[z, ], collapse = "")
-    }))
-    dupID_ <- ave(dupID_, dupID_, FUN = seq_along)
-  } else {
-    if (length(id) > 1) {
+    .args <- as.list(match.call())
 
-      texts <- paste0("data[with(data, order(",
-                      paste0(id, collapse = ", "),
-                      ")), ]", collapse = "")
-      data <- eval(parse(text = texts))
-      dupID_ <- ave(1:nrow(data), data[, id], FUN = seq_along)
-    } else {
-      texts <- paste0("data[with(data, order(", id,
-                      ")), ]", collapse = "")
-      data <- eval(parse(text = texts))
-      dupID_ <- ave(1:nrow(data), data[, id], FUN = seq_along)
+    ## assign data into .data for further evaluation
+    .data <- data
+    .vars.names <- names(data)
+    .data.nrow <- nrow(.data)
+
+
+    ## get variable names within three dots to search for duplicates
+    .dup.vars <- as.character(enquos(.args, c("data", "drop")))
+    # If length is 0, then this is equal to all variables
+    .dup.vars.len <- length(.dup.vars)
+
+    ## check vars to find duplicates. If none, use all variables.
+    if (.dup.vars.len == 0) {
+        .dup.vars <- .vars.names
     }
-  }
-
-  f <- cbind(data, dupID_ = as.numeric(dupID_))
-  row.names(f) <- 1:nrow(f)
-
-  t <- table(f$dupID_)
-  t.counts <- as.numeric(t)
-  t.constant_ <- NULL
-  for (i in 1:(length(t.counts) - 1)) {
-    t.constant_ <- c(t.constant_, t.counts[i] - t.counts[i + 1])
-  }
-  t.constant_ <- c(t.constant_, t.counts[length(t.counts)])
-  t.dup.num <- 1:length(t.constant_) * t.constant_
-  t <- data.frame(cbind("|", copies = 1:length(t.dup.num), "|",
-                        observations = t.dup.num,
-                        "|", surplus = c(0, t.constant_[-1]), "|"))
-  colnames(t) <- c("+", "Copies", "+", "Observations", "+",
-                   "Surplus", "+")
-
-  #### printing
-  if (print.table) {
-    printText(t, paste0("Duplicates in terms of ",
-                        ifelse(length(id) == 0, "all variables",
-                               paste0(id, collapse = " + "))))
-    printMsg(paste0("Note:"))
-    printMsg(paste0("Total No. of obs: ", nrow(data)))
-  }
-  invisible(f)
-}
 
 
+    ## create expression to order data
+    .expr.txt <- paste0(".data[with(.data, order(",
+                        paste0(.dup.vars, collapse = ", "),
+                        ")), ]")
+    .data <- eval(parse(text = .expr.txt))
 
-#' @rdname duplicates
-#' @export
-keepUnique <- function(data, ... , print.table = TRUE)
-{
-  arguments <- as.list(match.call())
-  lastArg <- grep("^TRUE$|^FALSE$|^T$|^F$", arguments)
-  id <- arguments[-c(1,2, ifelse(length(lastArg) == 0, 1, lastArg))]
-  id <- gsub(" ", "", id)
-  data.nrow <- nrow(data)
+    ## create unique id. if variables not specified, then all variables are
+    # used.
+    .dup.id <- sapply(1:.data.nrow, function(z) {
+        if (.dup.vars.len == 0) {
+            paste(.data[z, ], collapse = "")
+        } else {
+            paste(.data[z, .dup.vars], collapse = "")
+        }
+    })
 
-  if (any(names(data) %in% "dupID_"))
-    data <- data[, !(names(data) %in% "dupID_")]
+    # Create serial id for ave function
+    ## this is later to create another function like _n or _N
+    .dup.ave <- as.numeric(ave(.dup.id, .dup.id, FUN = seq_along))
+    ## get the last number of serial number
+    .dup.obs <- sapply(.dup.id, function(z) {
+        .dup <- .dup.ave[.dup.id == z]
+        .dup[length(.dup)]
+    })
 
-  if (length(id) == 0) {
-    texts <- paste0("data[with(data, order(",
-                    paste0(names(data), collapse = ", "),
-                    ")), ]", collapse = "")
-    data <- eval(parse(text = texts))
-    dupID_ <- unlist(lapply(1:nrow(data), function(z) {
-      paste0(data[z, ], collapse = "")
-    }))
-    dupID_ <- ave(dupID_, dupID_, FUN = seq_along)
-  } else {
-    if (length(id) > 1) {
 
-      texts <- paste0("data[with(data, order(",
-                      paste0(id, collapse = ", "),
-                      ")), ]", collapse = "")
-      data <- eval(parse(text = texts))
-      dupID_ <- ave(1:nrow(data), data[, id], FUN = seq_along)
-    } else {
-      texts <- paste0("data[with(data, order(", id,
-                      ")), ]", collapse = "")
-      data <- eval(parse(text = texts))
-      dupID_ <- ave(1:nrow(data), data[, id], FUN = seq_along)
+    ## create table and use the categories to calculate surplus number
+    .dup.obs.tbl <- table(.dup.obs)
+    .dup.obs.tbl.names <- as.numeric(names(.dup.obs.tbl))
+    .non.dup <- sapply(.dup.obs.tbl.names, function(z) {
+        .id <- .dup.id[.dup.obs == z]
+        length(.id[!duplicated(.id)])
+    })
+
+
+    ## create final table for report
+    .tbl <- data.frame(
+        cbind("|", .dup.obs.tbl.names, "|",
+              .dup.obs.tbl, "|",
+              .dup.obs.tbl - .non.dup, "|")
+    )
+    names(.tbl) <- c("+", "Copies", "+", "Observations", "+",
+                     "Surplus", "+")
+
+    ## display report
+    printText(.tbl,
+              paste0("Duplicates in terms of ",
+                     ifelse(.dup.vars.len == 0, "all variables",
+                            paste0(.dup.vars, collapse = " + "))),
+              .printDF = TRUE)
+    printMsg(paste0("Number of Observation: ", nrow(.data)))
+
+
+    ## create a dup variable for indication
+    .data$dup <- .dup.obs - 1
+
+
+
+    ## if drop is TRUE, then drop all duplications and keep all unique.
+    if (drop) {
+        .dup.drop <- .dup.ave == 1
+        .data <- .data[.dup.drop, ]
+        printMsg(paste0(sum(!.dup.drop * 1), " observations deleted"))
     }
-  }
 
-  f <- cbind(data, dupID_ = as.numeric(dupID_))
-  row.names(f) <- 1:nrow(f)
-
-  t <- table(f$dupID_)
-  t.counts <- as.numeric(t)
-  t.constant_ <- NULL
-  for (i in 1:(length(t.counts) - 1)) {
-    t.constant_ <- c(t.constant_, t.counts[i] - t.counts[i + 1])
-  }
-  t.constant_ <- c(t.constant_, t.counts[length(t.counts)])
-  t.dup.num <- 1:length(t.constant_) * t.constant_
-  t <- data.frame(cbind("|", copies = 1:length(t.dup.num), "|",
-                        observations = t.dup.num,
-                        "|", surplus = c(0, t.constant_[-1]), "|"))
-  colnames(t) <- c("+", "Copies", "+", "Observations", "+",
-                   "Surplus", "+")
-
-  f <- f[f$dupID_ == 1, ]
-  f <- f[, -ncol(f)]
-  #### printing
-  if (print.table) {
-    printText(t, paste0("Duplicates in terms of ",
-                        ifelse(length(id) == 0, "all variables",
-                               paste0(id, collapse = " + "))))
-    printMsg(paste0("Note:"))
-    printMsg(paste0("Total No. of obs: ", nrow(data)))
-    printMsg(paste0(data.nrow - nrow(f), " observations deleted"))
-  }
-  invisible(f)
-}
-
-
-
-#' @rdname duplicates
-#' @export
-keepDup <- function(data, ... , print.table = TRUE)
-{
-  arguments <- as.list(match.call())
-  lastArg <- grep("^TRUE$|^FALSE$|^T$|^F$", arguments)
-  id <- arguments[-c(1,2, ifelse(length(lastArg) == 0, 1, lastArg))]
-  id <- gsub(" ", "", id)
-  data.nrow <- nrow(data)
-
-  if (any(names(data) %in% "dupID_"))
-    data <- data[, !(names(data) %in% "dupID_")]
-
-  if (length(id) == 0) {
-    texts <- paste0("data[with(data, order(",
-                    paste0(names(data), collapse = ", "),
-                    ")), ]", collapse = "")
-    data <- eval(parse(text = texts))
-    dupID_ <- unlist(lapply(1:nrow(data), function(z) {
-      paste0(data[z, ], collapse = "")
-    }))
-    dupID_ <- ave(dupID_, dupID_, FUN = seq_along)
-  } else {
-    if (length(id) > 1) {
-
-      texts <- paste0("data[with(data, order(",
-                      paste0(id, collapse = ", "),
-                      ")), ]", collapse = "")
-      data <- eval(parse(text = texts))
-      dupID_ <- ave(1:nrow(data), data[, id], FUN = seq_along)
-    } else {
-      texts <- paste0("data[with(data, order(", id,
-                      ")), ]", collapse = "")
-      data <- eval(parse(text = texts))
-      dupID_ <- ave(1:nrow(data), data[, id], FUN = seq_along)
-    }
-  }
-
-  f <- cbind(data, dupID_ = as.numeric(dupID_))
-  row.names(f) <- 1:nrow(f)
-
-  t <- table(f$dupID_)
-  t.counts <- as.numeric(t)
-  t.constant_ <- NULL
-  for (i in 1:(length(t.counts) - 1)) {
-    t.constant_ <- c(t.constant_, t.counts[i] - t.counts[i + 1])
-  }
-  t.constant_ <- c(t.constant_, t.counts[length(t.counts)])
-  t.dup.num <- 1:length(t.constant_) * t.constant_
-  t <- data.frame(cbind("|", copies = 1:length(t.dup.num), "|",
-                        observations = t.dup.num,
-                        "|", surplus = c(0, t.constant_[-1]), "|"))
-  colnames(t) <- c("+", "Copies", "+", "Observations", "+",
-                   "Surplus", "+")
-
-  f <- f[f$dupID_ != 1, ]
-  f <- f[, -ncol(f)]
-  #### printing
-  if (print.table) {
-    printText(t, paste0("Duplicates in terms of ",
-                        ifelse(length(id) == 0, "all variables",
-                               paste0(id, collapse = " + "))))
-    printMsg(paste0("Note:"))
-    printMsg(paste0("Total No. of obs: ", nrow(data)))
-    printMsg(paste0(data.nrow - nrow(f), " observations deleted"))
-  }
-  invisible(f)
+    return(.data)
 }

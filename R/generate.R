@@ -1,30 +1,21 @@
 #' @title Create a new variable
 #'
 #' @description
-#' \code{generate} creates a new variable within the data frame
+#' \code{generate()} creates a new variable within the data frame
 #'
-#' @param data data frame
-#' @param var name of a new variable
-#' @param expr value or Expression for simple arithmetic or logical operations:
+#' @param data Dataset
+#' @param var New variable
+#' @param .expr value or Expression for simple arithmetic or logical operations:
 #' See examples.
 #'
 #' @details
 #'
-#' If the data is specified, it returns the whole dataframe with
-#' recoded variables. If \code{expr} is NULL, \code{generate} produce a vector
-#' \code{NA}. The value of the variable are specified by \code{expr} argument.
+#' If the data is specified, it returns modified dataset with
+#' newly created variable.
+#' The value of the variable are specified by \code{expr} argument.
 #'
-#' @references
 #'
-#' STATA DATA MANAGEMENT. UCLA: Statistical Consulting Group.
-#' from https://stats.idre.ucla.edu/stata/seminars/stata-data-management/
-#' (accessed Febrary 25, 2020).
-#'
-#' @seealso
-#'
-#' \code{\link{recode}}
-#'
-#' @keywords new variable, generate, produce, create, transform
+#' @concept new variable generate produce create transform
 #'
 #' @author
 #'
@@ -36,78 +27,79 @@
 #'
 #' @examples
 #' \dontrun{
-#' # create a NA variable age.grp in infert
-#' infert.new <- generate(infert, age.grp)
-#' listView(infert.new, age, age.grp)
 #'
-#' # create variable age.cat using expression
-#' infert.new <- generate(infert, age.cat,
-#'          ifelse(age < 20, 1,
-#'                 ifelse(age >= 20 & age < 30, 2,
-#'                        ifelse(age >= 30 & age < 40, 3, 4))))
-#' listView(infert.new, age, age.cat)
 #'
-#' # create variable age.cat using expression with "labels"
-#' infert.new <- generate(infert, age.cat,
-#'          ifelse(age <= 20, "<=20",
-#'                 ifelse(age > 20 & age <= 30, "21-30",
-#'                        ifelse(age > 30 & age <= 40, "31-40", "41+"))))
-#' listView(infert.new, age, age.cat)
-#'
-#' # based on vector
-#' age <- infert$age
-#' age.cat <- generate(NULL, age.cat, ifelse(age < 20, 1,
-#'                  ifelse(age >= 20 & age < 30, 2,
-#'                     ifelse(age >= 30 & age < 40, 3, 4))))
-#' age.cat
-#'
-#' # Example from IDRE website in STATA
+#' # Example from IDRE UCLA
 #' path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
 #' hosp <- haven::read_dta(path)
-#' hosp <- generate(hosp, average, (test1 + test2) / 2)
-#' str(hosp)
-#' listView(hosp, test1:average)
+#' codebook(hosp)
+#'
+#'
+#' ## to use piping function
+#' library(magrittr)
+#'
+#' ## generate variable with NA
+#' generate(hosp, average, NA) %>%
+#'     keep(average)
+#'
+#'
+#' ## generate variable with other variables
+#' generate(hosp, average, pain) %>%
+#'     keep(pain, average)
+#'
+#' generate(hosp, average, (test1 + test2) / 2) %>%
+#'     keep(test1, test2, average)
+#'
+#'
+#' ## existing variable cann't be generated.
+#' generate(hosp, pain)
 #' }
-
-
+#'
 #' @export
-generate <- function(data = NULL, var, expr = NULL)
+generate <- function(data, var, .expr = NULL)
 {
-  arguments <- as.list(match.call())
-  data.null <- is.null(data)
+    ## if data is not data.frame, stop
+    if (!is.data.frame(data))
+        stop(paste0(" ... '", deparse(substitute(data)), "' is not data.frame ... "))
 
-  var.name <- deparse(substitute(var))
-  data.name <- deparse(substitute(data))
-  expr <- paste(deparse(substitute(expr)), collapse = "")
+    .args <- as.list(match.call())
 
-  if (data.null) {
-    expr.txt <- expr
-    expr.lbl <- expr
-  } else {
-    if (var.name %in% names(data))
-      stop(paste0("... '", var.name, "' already exists ... "))
-    expr.txt <- paste0("with(data, ", expr, ")")
-    expr.lbl <- paste0("with(", data.name, ", ", expr, ")")
-  }
+    ## assign data into .data for further evaluation
+    .data <- data
 
-  f <- tryCatch(eval(parse(text = expr.txt)),
-                error=function(cond) {
-                  message(paste0(" ... cannot evaluate the expression '",
-                                 expr.txt, "'  ... "))
-                })
 
-  f.len <- length(f)
 
-  if (!data.null) {
-    if (length(f) != nrow(data))
-      f <- c(f, rep(NA, (nrow(data) - length(f)) ))
-    f <- cbind(data, f)
-    names(f)[length(f)] <- var.name
-    f.len <- length(f[, var.name])
-  }
+    ## get variables' and arguments' names
+    .vars.names <- names(data)
+    var <- as.character(.args$var)
+    .expr <- deparse(substitute(.expr))
 
-  printMsg(paste0(f.len, " values generated"))
-  printMsg(paste0("Expression used: '", expr.lbl, "'"))
+    ## if variable already exisits, then stop
+    if (any(.vars.names %in% var)) {
+        stop(paste0(" ... '", var, "' already exisits! ... "))
+    }
 
-  return(f)
+
+
+    ## formulate text syntax, evaluate and assign to .data
+    .expr.txt <- paste0("within(.data, ", var, " <- ", .expr, ")")
+
+    tryCatch({
+        .data <- eval(parse(text = .expr.txt))
+    }, error = function(cnd) {
+        stop(" ... Expression cannot be evaluated! ... ")
+    })
+
+
+    ## Display message to nofity changes
+    # printMsg(paste0("Expression used to generate: '", .expr.txt, "'"))
+    .var <- is.na(.data[, var])
+    if (any(.var)) {
+        printMsg(paste0(nrow(.data[!.var, var]), " real values generated | ",
+                        nrow(.data[.var, var]), " missing values generated"))
+    } else {
+        printMsg(paste0(nrow(.data[, var]), " real values generated"))
+    }
+
+    return(.data)
 }

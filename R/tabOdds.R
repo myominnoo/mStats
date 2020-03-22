@@ -2,27 +2,26 @@
 #'
 #' @description
 #' \code{tabOdds} generates cross-tabulation between two variables and
-#' display odds of failure \code{var_case} against a categorical
-#' explanatory variable \code{var_exp}. It is used with cross-sectional
-#' data.
+#' display odds of failure \code{var_case} among exposure variable
+#' \code{var_exp}. It is used in case-control studies.
 #'
-#' @param data a data frame object (Optional)
-#' @param var_exp Exposure variable.
-#' @param var_case Case or outcome variable should be binary vector.
-#' @param ref_exp Exposed level
-#' @param ref_case outcome
-#' @param na.rm A logical value to specify missing values, <NA> in the table
-#' @param rnd specify rounding of numbers. See \code{\link{round}}.
+#' @param data Dataset
+#' @param ... Variable or multiple variables
+#' Colon separator \code{:} can be used to specify multiple variables.
+#' @param by Varaiable for cross-tabulation
+#' @param exp_value value for exposure as reference
+#' @param case_value value for outcome as reference
 #' @param plot logical value to display plots of rates across a categorical
 #' variable
-#' @param print.table logical value to display formatted outputs
+#' @param na.rm A logical value to specify missing values, `NA` in the table
+#' @param rnd specify rounding of numbers. See \code{\link{round}}.
+#'
 #'
 #' @details
-#' The variable \code{var_case} should coded 1 for case and 0 for non-case.
-#' A simple table illustrating cases and controls as well as odds for each
-#' category is generated.
+#' A table tabulating odds and corresponding 95\% confidence interval
+#' is generated.
 #'
-#' \strong{Calculating Odds}
+#' \strong{Formula for calculating Odds}
 #'
 #' \deqn{OR = d1 x h0 / d0 x h1}
 #'
@@ -40,15 +39,17 @@
 #'
 #'     \item Statistics Notes: The odds ratio; J Martin Bland, Douglas G Altman
 #' BMJ 2000;320:1468
+#'
+#'    \item Altman, Statistics with confidence
 #' }
 #'
-#' @seealso
 #'
-#' \code{\link{mhodds}}, \code{\link{tabRisks}}
+#' @import graphics
 #'
-#' @keywords
 #'
-#' odds, odds ratio, frequency table, statistics, descriptive
+#' @concept
+#'
+#' odds odds ratio frequency table statistics descriptive
 #'
 #' @author
 #'
@@ -62,131 +63,159 @@
 #' \dontrun{
 #'
 #'
-#' ### Simpson's Paradox: Example from Burt Gerstman's Epidemiology
-#' ### Chapter 14, Page 326
-#'
-#' library(magrittr)
-#' simpson <- expandTables(
-#'     "1" = c(1000, 9000, 50, 950),
-#'     "2" = c(95, 5, 5000, 5000),
-#'     exp_name = "treatment",
-#'     exp_lvl = c("new", "standard"),
-#'     case_name = "outcome",
-#'     case_lvl = c("alive", "dead"),
-#'     strata_name = "clinic") %>%
-#'     labelVars(c(treatment, outcome, clinic),
-#'               c("Treatment: new or standard",
-#'                 "Outcome: alive or dead", "clinic: 1 or 2")) %>%
-#'     labelData("Example of Simpson's Paradox")
-#'
-#' ## checking structure
-#' codebook(simpson)
-#'
-#' tabOdds(simpson, treatment, outcome)
-#' tabOdds(simpson, treatment, outcome, ref_exp = "standard")
-#' tabOdds(simpson, treatment, outcome, ref_case = "dead")
-#' tabOdds(simpson, treatment, outcome, "standard", "dead")
-#'
-#' ## Odds for Clinic 1
-#' simpson %>%
-#'     pick(clinic == 1) %>%
-#'     tabOdds(treatment, outcome)
-#'
-#' ## Odds for Clinic 2
-#' simpson %>%
-#'     pick(clinic == 2) %>%
-#'     tabOdds(treatment, outcome)
+#' #' ## Example from Altman Statistics with Confidence, Chapter 7, Page 62
+#' abo <- expandTables(c(54, 60, 89, 245),
+#'                        exp_name = "study",
+#'                        exp_lvl = c("cases", "controls"),
+#'                        case_name = "state",
+#'                        case_lvl = c("Yes", "No")) %>%
+#'     labelVar(c(study, state),
+#'              c("study group", "ABO non-secretor state")) %>%
+#'     labelData(paste0("ABO non-secretor state for 114 patients with",
+#'                      " spondyloarthropathies and 334 controls"))
 #'
 #'
+#' ## check dataset
+#' codebook(abo)
 #'
 #'
+#' ## tabulate odds
+#' tabOdds(abo, study, by = state)
 #'
+#' ## change case value to "Yes"
+#' tabOdds(abo, study, by = state, case_value = "Yes")
 #'
-#' ## Asthma Example from Essential Medical Statistics
-#' ## page 160
-#'
-#' library(magrittr)
-#' asthma <- expandTables(c(81, 995, 57, 867),
-#'               exp_name = "sex",
-#'               exp_lvl = c("Women", "Man"),
-#'               case_name = "asthma",
-#'               case_lvl = c("Yes", "No")) %>%
-#'           labelData("Hypothetical Data of Asthma Prevalence") %>%
-#'           labelVars(c(sex, asthma),
-#'               c("Man or Woman", "Asthma or No Asthma"))
-#'
-#' ## Checking codebook
-#' codebook(asthma)
-#'
-#' tabOdds(asthma, sex, asthma)
-#'
-#'
-#'
-#'
-#'
-#'
-#' ## The odds ratio, J Martin Bland, Douglas G Altman, BMJ 2000;320:1468
-#' hay <- expandTables(c(141, 420, 928, 13525),
-#'                     exp_name = "eczema",
-#'                     exp_lvl = c("Yes", "No"),
-#'                     case_name = "hayFever",
-#'                     case_lvl = c("Yes", "No")) %>%
-#'        labelData("hay fever and eczema in 11 year old children") %>%
-#'        labelVars(c(eczema, hayFever),
-#'                 c("prevalence of eczema", "prevalence of hay fever"))
-#'
-#' codebook(hay)
-#'
-#' tabOdds(hay, eczema, hayFever)
+#' ## without plot
+#' tabOdds(abo, study, by = state, case_value = "Yes", plot = FALSE)
 #' }
-
+#'
 #' @export
-tabOdds <- function(data = NULL, var_exp, var_case, ref_exp = NULL,
-                    ref_case = NULL, na.rm = FALSE, rnd = 3,
-                    plot = TRUE, print.table = TRUE)
+tabOdds <- function(data, ... , by, exp_value = NULL, case_value = NULL, plot = TRUE,
+                    na.rm = FALSE, rnd = 3)
 {
-    arguments <- as.list(match.call())
-    if (!is.null(data)) {
-        var_exp <- eval(substitute(var_exp), data)
-        var_case <- eval(substitute(var_case), data)
+    ## if data is not data.frame, stop
+    if (!is.data.frame(data))
+        stop(paste0(" ... '", deparse(substitute(data)), "' is not data.frame ... "))
+
+    .args <- as.list(match.call())
+
+    ## assign data into .data for further evaluation
+    .data <- data
+
+    ## get variable names within three dots to search for duplicates
+    ## <<<< Change this ----- <<<<<<<<
+    .vars <- as.character(enquos(.args, c("data", "by", "exp_value", "case_value",
+                                          "plot", "na.rm", "rnd")))
+
+    ## check colon, and check data types if the whole dataset
+    .vars <- checkEnquos(.data, .vars, .types = "tab")
+
+
+    ## if by not specify, stop
+    by <- as.character(.args$by)
+    if (length(by) == 0) {
+        stop(" ... Specify 'by' ... ")
     }
 
-    exp_name <- arguments$var_exp
-    case_name <- arguments$var_case
+    .df <- lapply(.vars, function(z) {
+        tabodds(.data, z, by, exp_value, case_value, plot, na.rm, rnd)
+    })
 
-    na.rm <- ifelse(na.rm, "no", "ifany")
 
-    t <- table(var_exp, var_case, useNA = na.rm)
-    # change table order by reference level in exp and case
-    t <- tblRowColOrder(t, ref_exp, ref_case)
-    t <- data.frame(rbind(t, Total = colSums(t)),
-                    stringsAsFactors = FALSE)
+    ## constructs labels
+    ## add label for by: cross-tabulation
+    .lbl <- sapply(.vars, function(z) attr(.data[[z]], "label"))
 
-    odds <- t[, 1] / t[, 2]
-    SE <- sqrt((1/sum(t[, 1])) + (1/sum(t[, 2])))
-    EF <- exp(1.96 * SE)
-    lower <- odds / EF
-    upper <- odds * EF
-    t <- cbind(t, round(cbind(Odds = odds, "[95% Conf." = lower,
-                              "Interval]" = upper), rnd))
-
-    if (print.table) {
-        printText(t, paste0("Odds of '", case_name, "' among '",
-                            exp_name, "'"))
-
-        if (!is.null(attr(var_case, "label")) |
-            !is.null(attr(var_exp, "label"))) {
-            printMsg("Labels:")
-            printMsg(paste0(exp_name, ": ",
-                            attr(var_exp, "label"), collapse = ""))
-            printMsg(paste0(case_name, ": ",
-                            attr(var_case, "label"), collapse = ""))
+    ## Print tabulation
+    sapply(1:length(.vars), function(z) {
+        printText2(.df[[z]],
+                   paste0("Estimates of Risks of '", .args$by, "'"),
+                   .printDF = TRUE)
+        if (.lbl[z] != "NULL") {
+            printMsg("Labels")
+            printMsg(paste0(.vars[z], ": ", .lbl[z]))
         }
+    })
+
+
+    ## print by label
+    .by.name <- as.character(.args$by)
+    .by.lbl <- attr(.data[[.by.name]], "label")
+    if (!is.null(.by.lbl)) {
+        printMsg(paste0(.by.name, ": ", .by.lbl))
     }
 
+    invisible(.df)
+}
+
+
+
+# Helpers -----------------------------------------------------------------
+
+tabodds <- function(.data, .x, .by, exp_value = NULL, case_value = NULL, plot = TRUE,
+                    na.rm = FALSE, rnd = 1)
+{
+    .x.name <- .x
+    .by.name <- .by
+    .x <- .data[[.x]]
+    .by <- .data[[.by]]
+
+
+    ## check NA
+    .useNA <- ifelse(na.rm, "no", "ifany")
+
+    ## create tables
+    .tbl <- table(.x, .by, useNA = .useNA)
+
+
+    ## if by is not binary, stop
+    if (length(colnames(.tbl)) > 2)
+        stop(" ... 'by' must be binary ... ")
+
+
+    ## change row and col orders
+    .tbl <- rowColOrder(.tbl, exp_value, case_value)
+
+
+    ## calculate total
+    .tbl <- data.frame(rbind(.tbl, Total = colSums(.tbl)),
+                       stringsAsFactors = FALSE)
+
+    ## calculate odds
+    .odds <- .tbl[, 1] / .tbl[, 2]
+    .se <- sqrt((1/sum(.tbl[, 1])) + (1/sum(.tbl[, 2])))
+    .ll <- .odds / exp(1.96 * .se)
+    .ul <- .odds * exp(1.96 * .se)
+
+
+    ## create data frame
+    .df <- data.frame(x.name = rownames(.tbl), "|" = "|",
+                      .tbl,
+                      Odds = cbind(sprintf(.odds, fmt = paste0('%#.', rnd, 'f')),
+                                   sprintf(.ll, fmt = paste0('%#.', rnd, 'f')),
+                                   sprintf(.ul, fmt = paste0('%#.', rnd, 'f'))),
+                      stringsAsFactors = FALSE
+    )
+    names(.df)[1] <- .x.name
+    names(.df)[c(2, 5:7)] <- c("|", "Odds", "[95% Conf.", "Interval]")
+
+    ## separate total row
+    .df.total <- .df["Total", ]
+
+    ## add dash lines
+    .df <- addDashLines(.df[-nrow(.df), ], .vLine = 2)
+
+    ## add total row
+    .df <- rbind(.df, .df.total)
+
+    row.names(.df) <- NULL
+
+
+    ## plotting
     if (plot) {
-        plotRisks(t, exp_name, case_name, "Odds")
+        names(.odds) <- row.names(.tbl)
+        plotRisks(.odds, .ll, .ul, .x.name, .by.name, "Odds")
     }
 
-    invisible(t)
+    return(.df)
 }

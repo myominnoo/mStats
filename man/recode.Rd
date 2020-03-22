@@ -4,16 +4,16 @@
 \alias{recode}
 \title{Recode contents of a variable}
 \usage{
-recode(data = NULL, var, values_old, values_new)
+recode(data, var, old_values, new_values)
 }
 \arguments{
 \item{data}{dataset}
 
 \item{var}{name of a new variable}
 
-\item{values_old}{vector}
+\item{old_values}{vector}
 
-\item{values_new}{vector (length of 1 or same with values_old)}
+\item{new_values}{vector (length of 1 or same with values_old)}
 }
 \description{
 \code{recode} easily manipulates contents of a new variable
@@ -32,40 +32,43 @@ If data is specified, it returns the whole dataframe with recoded variables.
 \strong{Sample Inputs for conversion}:
 
 Old.value    to    New.value
-
-   #        >>>>       #
-
+}
+\section{>>>>}{
 c(#, #)     >>>>    c(#, #)
 
 c(#, #)     >>>>       #
 
-   #:#      >>>>       #
+#:#      >>>>       #
 }
+
 \examples{
 \dontrun{
-table(infert$case)
-infert.new <- recode(infert, case, 0, 2)
-table(infert.new$case)
 
-infert.new <- recode(infert.new, case, c(1, 2), c(3, 4))
-table(infert.new$case)
 
-table(infert$parity)
-infert.new <- recode(infert, parity, c(1,2,3,4), 0)
-table(infert.new$parity)
+# Example from IDRE UCLA
+path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
+hosp <- haven::read_dta(path)
+codebook(hosp)
 
-table(infert$age)
-infert.new <- recode(infert, age, 21:30, 1)
-infert.new <- recode(infert.new, age, 31:40, 2)
-infert.new <- recode(infert.new, age, 41:44, 3)
-table(infert.new$age)
 
-# errors
-recode(infert, age, 21:30, c(1, 2))
+## to use piping function
+library(magrittr)
+
+hosp \%>\% recode(hospital, "UCLA", "UCLA Example")
+
+hosp \%>\% recode(sex, c("male", "female"), c(1, 2))
+hosp \%>\% recode(sex, c("male", "female"), 1:2)
+
+hosp \%>\% recode(pain, 1:4, 1)
+hosp \%>\% recode(pain, 1:4, "Low")
+
+
+hosp \%>\%
+    recode(smokinghx, c("former", "never", "current"), c("No", "No", "Yes")) \%>\%
+    keep(age:smokinghx)
+
 }
-}
-\seealso{
-\code{\link{generate}}, \code{\link{egen}}, \code{\link{duplicates}}
+
 }
 \author{
 For any feedback, please contact \code{Myo Minn Oo} via:
@@ -74,7 +77,4 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\keyword{change,}
-\keyword{generate,}
-\keyword{produce}
-\keyword{recode,}
+\concept{recode change generate produce}

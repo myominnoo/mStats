@@ -1,13 +1,24 @@
 Package: mStats
 Type: Package
-Title: A Tool for Data Management, Statistical Analysis and calculating Epidemiological measures  
-Version: 3.1.1
-Author: Myo Minn Oo
+Title: Epidemiological Analysis
+Version: 3.2.0
+Authors@R: 
+    c(person(given = "Myo Minn",
+             family = "Oo",
+             role = c("aut", "cre"),
+             email = "dr.myominnoo@gmail.com",
+             comment = c(ORCID = "0000-0003-4089-016X")))
 Maintainer: Myo Minn Oo <dr.myominnoo@gmail.com>
-Description: This is a tool for Data Management, Statistical Analysis and calculating Epidemiological measures. It contains three sets of functions for: Data Management, Epidemiological Calculation and Data Analysis.
-Depends: R (>= 3.0.0)
-Imports: stats, utils
+Description: A tool for data management, displaying formatted outputs 
+    of statistical and epidemiological calculations.
 License: GPL-2 | GPL-3
+URL: https://myominnoo.github.io/
+BugReports: https://github.com/myominnoo/mStats/issues
+Depends: R (>= 3.0.0)
+Imports: 
+    stats, 
+    utils
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.0.2
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.0

@@ -2,98 +2,93 @@
 % Please edit documentation in R/duplicates.R
 \name{duplicates}
 \alias{duplicates}
-\alias{keepUnique}
-\alias{keepDup}
-\title{Tag, report, delete or keep duplicated observations}
+\title{Report and tag duplicated observations}
 \usage{
-duplicates(data, ..., print.table = TRUE)
-
-keepUnique(data, ..., print.table = TRUE)
-
-keepDup(data, ..., print.table = TRUE)
+duplicates(data, ..., drop = FALSE)
 }
 \arguments{
-\item{data}{dataframe}
+\item{data}{Dataset}
 
-\item{...}{any variables within dataframe for unique id}
+\item{...}{Variables to find duplications.}
 
-\item{print.table}{logical value to display formatted outputs}
+\item{drop}{if \code{TRUE}, delete all duplicated records, keeping all unique.
+If not specified, all variables are used.}
 }
 \value{
-\code{data.frame}: original dataset plus \code{dupID_}
-
-\code{formated_table}: display information about duplicated observations
+Modified dataset with additional variable \code{dup}
 }
 \description{
-\code{duplicates} reports numbers of duplicated observations
+\code{duplicates()} reports duplications and creates indexes.
 }
 \details{
-\code{duplicates} tags duplicate observations within dataframe
-with a new variable called \code{dupID_} and reports statistics.
-Duplicates are observations with identical values either on
-all variables
-if no variable is specified in the optional argument \code{...}
-or on a specified list of variables.
+Specified variables are used to search for duplications. If not
+specified, all variables are used.
+
+Then they are pasted as a character vector for speedy operation,
+extract duplication data and make a report.
+
+The return dataset is added a new variable called \code{dup}
+for further use.
 
 \strong{ANNOTATIONS}:
 
-\code{Copies}       - Number of duplicates
+\code{Copies}       - nth Copies
 
-\code{Observations} - Number of records per Copies
+\code{Observations} - Number of corresponding observations
 
-\code{Surplus}  - Number of surplus copies
+\code{Surplus}  - Number of surplus observations
 
-\code{dupID_} - indicates copies within the dataset. Example, 1 indicates
-that there is no duplicates, 2 = two identical record, 3 = three records,
-so on.
+\code{dup} - indicates copies within the dataset:
 
-\code{keepUnique} delete all but the first occurrence of each group of
-duplicated observations.
+0 = unique observations
 
-\code{keepDup} keep all but the first occurrence of each group of
-duplicated observations. This function returns the opposite dataset
-generated from \code{keepUnique}
+2 = duplicated two times
+
+3 = duplicated three times and so on ...
 }
 \examples{
 \dontrun{
-# finding duplicates across all variables
-iris_dup <- duplicates(iris)
-str(iris_dup)
-
-# finding duplicates on variables of interest
-iris_dup <- duplicates(iris, Sepal.Length, Sepal.Width)
-str(iris_dup)
-
-iris_dup <- duplicates(iris, Species)
-str(iris_dup)
-
-iris_dup <- duplicates(iris, Sepal.Length, Sepal.Width, print.table = FALSE)
-str(iris_dup)
-
-# Keep Unique records
-iris_dup <- keepUnique(iris, Sepal.Length)
-str(iris_dup)
-
-iris_dup <- keepUnique(iris, Species)
-str(iris_dup)
-
-iris_dup <- keepUnique(infert, case)
-str(iris_dup)
 
 
-# Keep duplicated records (opposite of keep unique records)
-iris_dup <- keepDup(iris, Sepal.Length)
-str(iris_dup)
+# Example from IDRE UCLA
+path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
+hosp <- haven::read_dta(path)
+codebook(hosp)
 
-iris_dup <- keepDup(iris, Species)
-str(iris_dup)
 
-iris_dup <- keepDup(infert, case)
-str(iris_dup)
+## to use piping function
+library(magrittr)
+
+
+## find duplicated records using all variables
+duplicates(hosp) \%>\%
+    codebook
+
+
+
+## find duplicated records using one variables
+duplicates(hosp, hospid) \%>\%
+    codebook
+
+
+
+## find duplicated records using two variables
+duplicates(hosp, hospid, docid) \%>\%
+    codebook
+
+
+
+## removing duplicated records
+duplicates(hosp, drop = TRUE) \%>\%
+    codebook
+
+duplicates(hosp, hospid, drop = TRUE) \%>\%
+    codebook
+
+duplicates(hosp, hospid, docid, drop = TRUE) \%>\%
+    codebook
 }
-}
-\seealso{
-\code{\link{expand2}}, \code{\link{keep}}
+
 }
 \author{
 For any feedback, please contact \code{Myo Minn Oo} via:
@@ -102,7 +97,4 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\keyword{distinct,}
-\keyword{duplicates,}
-\keyword{report,}
-\keyword{unique}
+\concept{duplicates report distinct unique}

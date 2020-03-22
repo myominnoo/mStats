@@ -29,6 +29,7 @@ Exposed and non-exposed}
 \item{strata_name}{Name of stratified variable}
 
 \item{stringsAsFactors}{\code{TRUE} or \code{FALSE}
+
 If \code{TRUE}, character vector is converted to a factor when
 \code{data.frame} is constructed.}
 }
@@ -36,7 +37,7 @@ If \code{TRUE}, character vector is converted to a factor when
 \code{data.frame}
 }
 \description{
-\code{expandTables} generates a data frame and supports two levels.
+\code{expandTables()} generates a data frame and supports two levels.
 }
 \details{
 \code{expandTables} uses the vectors of \code{2x2} tables and
@@ -70,62 +71,121 @@ If variables' names or levels are not specified, the followings are
 applied.
 
 \enumerate{
-    \item Exposure Name: \code{exposure}
-    \item Exposure levels: \code{exposed} and \code{unexposed}
-    \item Outcome Name: \code{outcome}
-    \item Outcome levels: \code{disease} and \code{healthy}
-    \item Strata Name: \code{strata}
-    \item Note: Strata levels are not considered as vectors must
-    be named.
+\item Exposure Name: \code{exposure}
+\item Exposure levels: \code{exposed} and \code{unexposed}
+\item Outcome Name: \code{outcome}
+\item Outcome levels: \code{disease} and \code{healthy}
+\item Strata Name: \code{strata}
+\item Note: Strata levels are not considered as vectors must
+be named.
 }
 }
 \examples{
 \dontrun{
-## creating a table
-df <- expandTables(c(60, 140, 60, 40))
-tab(df)
-tab(df, exposure)
-tab(df, exposure, by = outcome)
+
+
+## Asthma Example from Essential Medical Statistics
+## page 160
+
+library(magrittr)
+asthma <- expandTables(c(81, 995, 57, 867),
+              exp_name = "sex",
+              exp_lvl = c("woman", "man"),
+              case_name = "asthma",
+              case_lvl = c("yes", "no")) \%>\%
+          labelData("Hypothetical Data of Asthma Prevalence") \%>\%
+          labelVar(c(sex, asthma),
+              c("Man or Woman", "Asthma or No Asthma"))
+
+## Checking codebook
+codebook(asthma)
+
+
+## simple tabulation
+tab(asthma)
+
+## cross-tabulation
+tab(asthma, sex, by = asthma)
 
 
 
-## one table with full labels
-df <- expandTables(
-    c(60, 140, 60, 40),
-    exp_name = "areaType",
-    exp_lvl = c("Rural", "urban"),
-    case_name = "Antibodies",
-    case_lvl = c("Yes", "No"))
-tab(df)
-tab(df, areaType, by = Antibodies)
+
+### Simpson's Paradox: Example from Burt Gerstman's Epidemiology
+### Chapter 14, Page 326
+
+library(magrittr)
+simpson <- expandTables(
+    "1" = c(1000, 9000, 50, 950),
+    "2" = c(95, 5, 5000, 5000),
+    exp_name = "treatment",
+    exp_lvl = c("new", "standard"),
+    case_name = "outcome",
+    case_lvl = c("alive", "dead"),
+    strata_name = "clinic") \%>\%
+    labelVar(c(treatment, outcome, clinic),
+              c("Treatment: new or standard",
+                "Outcome: alive or dead", "clinic: 1 or 2")) \%>\%
+    labelData("Example of Simpson's Paradox")
+
+## checking structure
+codebook(simpson)
+
+## tabulate each variables
+tab(simpson)
+
+## cross tabulate
+tab(simpson, treatment, by = outcome)
+
+## stratified tabulation
+# clinic 1
+simpson \%>\%
+    filter(clinic == 1) \%>\%
+    tab(treatment, by = outcome)
+
+# clinic 2
+simpson \%>\%
+    filter(clinic == 2) \%>\%
+    tab(treatment, by = outcome)
 
 
 
-## TWo tables
-df <- expandTables(
-    male = c(36, 14, 50, 50),
-    female = c(24, 126, 10, 90),
-    exp_name = "areaType", exp_lvl = c("Rural", "Urban"),
-    case_name = "Antibodies", case_lvl = c("Yes", "No"),
-    strata_name = "gender")
-tab(df)
-tab(df, areaType, by = Antibodies)
 
 
 
-### checking numbers
-df \%>\%
-    pick(gender == "male") \%>\%
-    tab(areaType, Antibodies)
 
-df \%>\%
-    pick(gender == "female") \%>\%
-    tab(areaType, Antibodies)
+
+### Example from Essential Medical Statistics
+# Page 178, Chapter 18: Controlling for confounding: Stratification
+
+lepto <- expandTables(
+    male = c(36, 14, 50, 50), female = c(24, 126, 10, 90),
+    exp_name = "area", exp_lvl = c("Rural", "Urban"),
+    case_name = "ab", case_lvl = c("Yes", "No"),
+    strata_name = "gender"
+) \%>\%
+    labelData("Prevalence survey of leptospirosis in West Indies") \%>\%
+    labelVar(c(area, ab, gender),
+              c("Type of area", "Leptospirosis Antibodies",
+                "Gender: Male or female"))
+
+## checking structure
+codebook(lepto)
+
+## tabulate area and ab
+tab(lepto, area, by = ab)
+
+## stratified analysis
+lepto \%>\%
+    filter(gender == "male") \%>\%
+    tab(area, by = ab)
+
+lepto \%>\%
+    filter(gender == "female") \%>\%
+    tab(area, by = ab)
 }
+
 }
 \seealso{
-\code{\link{mhodds}}, \code{\link{stmh}}
-
 \code{\link{tab}}
 }
 \author{
@@ -135,8 +195,4 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\keyword{contigency}
-\keyword{expand}
-\keyword{tables}
-\keyword{tables,}
-\keyword{two-by-two}
+\concept{expand tables two-by-two tables contigency tables}

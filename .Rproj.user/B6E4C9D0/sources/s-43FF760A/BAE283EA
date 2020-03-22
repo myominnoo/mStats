@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1584430150533.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "BAE283EA",
+    "lastKnownWriteTime" : 1584432236,
+    "last_content_update" : 1584432236053,
+    "path" : "C:/MEGA/GitHub/beta4.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "68,13",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

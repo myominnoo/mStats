@@ -14,17 +14,21 @@
 #'
 #' \strong{ANNOTATIONS}:
 #'
-#' VARS_NAME - Names of variables
+#' Variable - Names of variables
 #'
-#' LABEL     - Labels of variables
+#' Label     - Labels of variables
 #'
-#' TYPE      - Types of
+#' Type     - Types of variables
 #'
-#' OBS_COUNT - Counts of valid observations
+#' _Obs - Counts of valid observations
 #'
-#' NA_COUNT  - Counts of observations with missing value
+#' _NA  - Counts of observations with missing value
 #'
-#' NA_(\%)    - Percentage of observations with missing value
+#' _NA(%)    - Percentage of observations with missing value
+#'
+#'
+#' @return
+#' Codebook in data.frame format
 #'
 #' @references
 #'
@@ -32,11 +36,8 @@
 #' from https://stats.idre.ucla.edu/stata/seminars/stata-data-management/
 #' (accessed Febrary 25, 2020).
 #'
-#' @seealso
 #'
-#' \code{\link{ilog}}, \code{\link{listView}}
-#'
-#' @keywords codebook, summary, structure, layout
+#' @concept codebook summary structure layout
 #'
 #' @author
 #'
@@ -64,59 +65,71 @@
 #' library(magrittr)
 #' hosp %>% labelData("Hospital Dataset Example") %>% codebook()
 #' }
-
+#'
 #' @export
 codebook <- function(data)
 {
-  UseMethod("codebook")
-}
+    .data.name <- deparse(substitute(data))
+    .vars.names <- names(data)
+    .vars.numeric <- c("integer", "double", "numeric")
+    .vars.factor <- c("factor", "character")
+    .vars.logical <- c("logical")
+    .vars.date <- c("Date")
 
+    ## if data is not data.frame, stop
+    if (!is.data.frame(data))
+        stop(paste0(" ... '", .data.name, "' is not data.frame ... "))
 
-#' @rdname codebook
-#' @export
-codebook.default <- function(data)
-{
-  printWarning("Try codebook(iris)")
-}
+    ## get the types of variables
+    .vars.type <- unlist(lapply(data, function(z) {
+        .class <- class(unlist(z))[1]
+        if (.class == "haven_labelled") {
+            .class <- typeof(unlist(z))[1]
+        }
+        .class
+    }))
 
-#' @rdname codebook
-#' @export
-codebook.data.frame <- function(data)
-{
-  vars <- names(data)
-  type.numeric <- c("integer", "double", "numeric")
-  type.factor <- c("factor", "character")
-  type.logical <- c("logical")
-  type.date <- c("Date")
+    ## get the labels
+    .vars.lbl <- paste(sapply(.vars.names, function(z) {
+        .lbl <- attr(data[[z]], "label")
+        .lbl <- ifelse(is.null(.lbl), "<NA>",
+                       ifelse(nchar(.lbl) > 32,
+                              paste0(strtrim(paste0(.lbl, collapse = ""), 32), "..."),
+                              paste0(.lbl, collapse = "")))
+    }))
 
-  vars.type <- sapply(data, function(z) class(unlist(z)))
-  vars.lbl <- paste(sapply(vars, function(z) {
-    lbl.attr <- attr(data[[z]], "label")
-    lbl.attr <- ifelse(is.null(lbl.attr), "<NA>", lbl.attr)
-    lbl.attr <- strtrim(lbl.attr, 40)
-  }))
+    ## get count numbers for all observations, obs. without NA and NAs
+    .obs.counts <- sapply(.vars.names, function(z)
+        sum(as.numeric(!is.na(data[, z])), na.rm = TRUE))
+    .na.counts <- sapply(.vars.names, function(z)
+        sum(as.numeric(is.na(data[, z])), na.rm = TRUE))
 
-  na.counts <- sapply(vars, function(z)
-    sum(as.numeric(is.na(data[, z])), na.rm = TRUE))
-  obs.counts <- sapply(vars, function(z)
-    sum(as.numeric(!is.na(data[, z])), na.rm = TRUE))
-  obs.nrow <- nrow(data)
+    .df <- data.frame(1:length(.vars.names),
+                      .vars.names, "|",
+                      .vars.lbl,
+                      .vars.type,
+                      .obs.counts,
+                      .na.counts,
+                      round(.na.counts / nrow(data) * 100, 1),
+        stringsAsFactors = FALSE,
+        row.names = NULL
+    )
 
-  f <- data.frame(names(vars.type), vars.lbl, vars.type, obs.counts,
-                  na.counts,
-                  paste(round(na.counts / nrow(data) * 100, 1), "%"),
-                  row.names = NULL)
-  names(f) <- c("VARS_NAME", "LABEL", "DATA_TYPE",
-                "OBS_COUNT", "NA_COUNT", "NA_(%)")
+    names(.df) <- c("No", "Variable", "|", "Label", "Type", "_Obs", "_NA", "_NA(%)")
 
-  texts <- paste("Codebook: ", deparse(substitute(data)),
-                 collapse = "")
-  printText(f, texts)
-  data.lbl <- attr(data, "label")
-  if (!is.null(data.lbl)) {
-    printMsg("Dataset label:")
-    printMsg(data.lbl)
-  }
+    ## add dash lines
+    .df <- addDashLines(.df, .vLine = 3)
 
-  invisible(f)
+    ## display output
+    .txt <- paste0("Codebook: '", .data.name, "'")
+
+    printText2(.df, .txt, .printDF = TRUE)
+
+    ## display dataset label
+    .data.lbl <- attr(data, "label")
+    if (!is.null(.data.lbl)) {
+        printMsg(paste0("Dataset label: ", .data.lbl))
+    }
+
+    invisible(.df)
 }

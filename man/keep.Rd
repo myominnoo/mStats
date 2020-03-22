@@ -2,103 +2,120 @@
 % Please edit documentation in R/keep.R
 \name{keep}
 \alias{keep}
-\alias{lose}
-\alias{pick}
+\alias{drop}
 \alias{arrange}
-\title{Keep or lose variables and pick rows}
+\alias{filter}
+\title{\code{Keep}, \code{drop} and \code{filter} variables; \code{arrange} observations}
 \usage{
 keep(data, ...)
 
-lose(data, ...)
-
-pick(data, ...)
+drop(data, ...)
 
 arrange(data, ...)
+
+filter(data, ...)
 }
 \arguments{
 \item{data}{Dataset}
 
-\item{...}{variables}
+\item{...}{Variables or conditions in \code{filter()}}
+}
+\value{
+Modified Dataset
 }
 \description{
-\code{keep} or \code{lose} variables within dataframe
+\code{keep()} or \code{drop()} variables within dataframe
 
-\code{pick} observations that satisfy specified condition
+\code{arrange()} sorts variables or columns
+
+\code{filter()} keeps observations that satisfy specified conditions
 }
-\details{
-\code{keep} remove all unspecified variables in the dataset.
+\section{Select Variables}{
+\code{keep()} removes unspecified variables from the dataset.
 Variables are also rearranged based on the order they are mentioned.
 
 \preformatted{keep(data, var1, var2, var3, etc)}
 
-\code{lose} works the same as \code{keep}, except that
-the variables mentioned are removed from the dataset.
+\code{drop()} works the opposite of \code{keep()} removed specified variables
+from the dataset.
 
-\preformatted{lose(data, va5, var6, var7, etc)}
-
-\code{pick} selects the rows that meets the specified conditions.
-This is the same as \strong{filter} function in spreadsheet or
-subset in R.
-
-\code{data.frame} or \code{filter} can be used with the same
-epxressions.
-
-\preformatted{pick(data, var1 == var2 | var3 > var4)}
-
-\code{arrange} orders the observations of current dataset
-into ascending order based on the names of the variables mentioned.
-There is no limit to the number of variables that can be specified
-in the arguments.
-
-It will be in decreasing order if specified negative sign or "-"
-in front of the desired variable(s) without spacing.
-
-\preformatted{arrange(data, var1, var2, -var3)}
+\preformatted{drop(data, var5, var6, var7, etc)}
 }
-\note{
-\code{drop} and \code{keep} are not reversible.  Once you have
-eliminated variables and assigned to the same name,
-deleted variables are gone. You need to go back and read the original
-dataset again.
 
-Hence, the best strategy is to assign to a different name rather than
-putting it back to the original dataset.
+\section{Sort}{
+\code{arrange()} sorts the dataset by specifying variables. The minus symbol \code{-}
+indicates descending order.
+
+\preformatted{arrange(data, var1, var2, -var3, var4)}
 }
+
+\section{Filter}{
+\code{filter} keeps observations that meet the specified conditions. If conditions
+are specified by comma, they are joined by \code{AND} operators
+
+\preformatted{filter(data, var1 == var2 | var3 > var4)}
+
+\preformatted{filter(data, var1 == var2, var3 > var4)}
+}
+
 \examples{
 \dontrun{
-## keeping variables
-keep(infert, education, age, parity)
-keep(infert, parity, age:spontaneous, stratum) # variables repositioned
 
-## losing or removing variables
-lose(infert, age, parity)
-lose(infert, age:case, education)
+# Example from IDRE UCLA
+path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
+hosp <- haven::read_dta(path)
+codebook(hosp)
 
-## pick observations
-pick(infert, age > 30)
-pick(infert, parity == 6)
-pick(infert, age > 30 & age < 35)
-pick(infert, case == 0, age > 30 & age < 35, parity == 6)
 
-# use vector instead of dataframe
-age <- infert$age
-pick(age, age > 40)
-pick(infert, age > 40)
+## to use piping function
+library(magrittr)
 
-## arrange observations
-arrange(infert, age)
-arrange(infert, -age)
-arrange(infert, age, induced)
-arrange(infert, age, -induced)
-arrange(infert, age, -induced, case)
-arrange(infert, age, -induced, -case)
+## Demonstration for keep()
+hosp \%>\%
+    keep(hospid, age:test2) \%>\%
+    codebook
 
-arrange(infert, education)
-arrange(infert, education, -age)
+hosp \%>\%
+    keep(hospid, dis_date, tumorsize:wound, age, married, sex:test2) \%>\%
+    codebook
+
+
+
+## Demonstration for drop()
+hosp \%>\%
+    drop(hospid, age:test2) \%>\%
+    codebook
+
+hosp \%>\%
+    drop(hospid, dis_date, tumorsize:wound, age, married, sex:test2) \%>\%
+    codebook
+
+
+
+## Demonstration for arrange()
+hosp \%>\%
+    arrange(pain)
+
+hosp \%>\%
+    arrange(hospid, docid)
+
+hosp \%>\%
+    arrange(hospid, -docid)
+
+
+
+
+## Demonstration for filter()
+hosp \%>\%
+    filter(ntumors < 2)
+
+hosp \%>\%
+    filter(sex == "male", wound == 4)
+
+hosp \%>\%
+    filter(tumorsize > 60, tumorsize < 70, sex == "female")
 }
-}
-\seealso{
-\code{\link{generate}}, \code{\link{egen}}, \code{\link{recode}}
+
 }
 \author{
 For any feedback, please contact \code{Myo Minn Oo} via:
@@ -107,11 +124,4 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\keyword{arrange,}
-\keyword{delete,}
-\keyword{drop,}
-\keyword{filter,}
-\keyword{keep,}
-\keyword{pick,}
-\keyword{select}
-\keyword{subset,}
+\concept{keep drop delete subset select filter arrange select if select by}

@@ -29,11 +29,9 @@
 #'
 #' @seealso
 #'
-#' \code{\link{expandTables}}, \code{\link{keep}}
-#'
 #' \code{\link{generate}}, \code{\link{egen}}
 #'
-#' @keywords duplicates, observations, expand, duplicate rows
+#' @concept duplicates observations expand duplicate rows
 #'
 #' @author
 #'
@@ -50,14 +48,24 @@
 #' hsb2 <- haven::read_dta(path)
 #' codebook(hsb2)
 #'
+#'
+#' ## use pipe function
 #' library(magrittr)
+#'
+#'
+#' ## keep id female ses math read write
+#' hsb2 <- hsb2 %>%
+#'     keep(id, female, ses, read:math)
+#'
+#'
 #' # copy the first 5 rows for 4 times
-#' hsb2.new <- hsb2 %>%
+#' hsb2 %>%
 #'      expand2(1:5, 4) %>%
+#'      duplicates %>%
 #'      codebook
 #'
 #' # copy the first 5 rows for 4 times and keep only duplicated records
-#' hsb2.new <- hsb2 %>%
+#' hsb2 %>%
 #'      expand2(1:5, 4, original = FALSE) %>%
 #'      codebook
 #' }
@@ -66,39 +74,39 @@
 #' @export
 expand2 <- function(data, n_n = NULL, copies = 2, original = TRUE)
 {
-  data.lbl <- attr(data, "label")
-  data <- data.frame(data)
-  vars.lbl <- sapply(data, function(z) {
-    lbl <- attr(z, "label")
-    if (is.null(lbl)) {
-      lbl <- "<NA>"
-    } else {
-      lbl <- paste(attr(z, "label"), collapse = " ")
+    data.lbl <- attr(data, "label")
+    data <- data.frame(data)
+    vars.lbl <- sapply(data, function(z) {
+        lbl <- attr(z, "label")
+        if (is.null(lbl)) {
+            lbl <- "<NA>"
+        } else {
+            lbl <- paste(attr(z, "label"), collapse = " ")
+        }
+        lbl
+    })
+    #### if n_n is empty, put number of all rows to n_n
+    if (is.null(n_n)) {
+        n_n <- nrow(data)
     }
-    lbl
-  })
-  #### if n_n is empty, put number of all rows to n_n
-  if (is.null(n_n)) {
-    n_n <- nrow(data)
-  }
-  #### if there are more than one values in n_n, take the last value
-  if (length(n_n) == 1) {
-    n_n <- 1:n_n
-  }
-  t <- data[n_n, ]
+    #### if there are more than one values in n_n, take the last value
+    if (length(n_n) == 1) {
+        n_n <- 1:n_n
+    }
+    t <- data[n_n, ]
 
-  if (original) {
-    f <- data
-  } else {
-    f <- NULL
-  }
-  for (i in 1:(copies)) {
-    f <- rbind(f, t)
-  }
-  attr(f, "label") <- data.lbl
-  for (i in 1:ncol(f)) {
-    attr(f[, i], "label") <- vars.lbl[i]
-  }
+    if (original) {
+        f <- data
+    } else {
+        f <- NULL
+    }
+    for (i in 1:(copies)) {
+        f <- rbind(f, t)
+    }
+    attr(f, "label") <- data.lbl
+    for (i in 1:ncol(f)) {
+        attr(f[, i], "label") <- vars.lbl[i]
+    }
 
-  return(f)
+    return(f)
 }

@@ -1,0 +1,39 @@
+rm(list = ls())
+hcv <- readRDS("C:/MEGA/GitHub/data/hcv_final.RDS")
+pwid <- readxl::read_excel("C:/MEGA/GitHub/data/pwid_nsa_v3.xlsx")
+
+
+library(magrittr)
+library(mStats2)
+
+
+
+path1 <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
+hosp <- haven::read_dta(path1)
+path1 <- "https://stats.idre.ucla.edu/stat/data/patient_pt2_stata_dm.dta"
+hosp2 <- haven::read_dta(path1)
+path2 <- "https://stats.idre.ucla.edu/stat/data/doctor_stata_dm.dta"
+doc <- haven::read_dta(path2)
+
+attr(pwid[["regno"]], "label") <- "registration number"
+
+
+### Function guides for mStats
+
+
+## General
+
+# get variables' names from .args <- as.list(match.call())
+# if no, deparse(substitute(NAME))
+
+
+
+## for core functions
+
+# Give contextual names
+# Except names of arguments, start names with dots.
+
+
+## for helper functions
+
+# start object names with dot, e.g. ".args"

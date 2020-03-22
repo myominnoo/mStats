@@ -5,49 +5,45 @@
 \title{Calculating Odds}
 \usage{
 tabOdds(
-  data = NULL,
-  var_exp,
-  var_case,
-  ref_exp = NULL,
-  ref_case = NULL,
-  na.rm = FALSE,
-  rnd = 3,
+  data,
+  ...,
+  by,
+  exp_value = NULL,
+  case_value = NULL,
   plot = TRUE,
-  print.table = TRUE
+  na.rm = FALSE,
+  rnd = 3
 )
 }
 \arguments{
-\item{data}{a data frame object (Optional)}
+\item{data}{Dataset}
 
-\item{var_exp}{Exposure variable.}
+\item{...}{Variable or multiple variables
+Colon separator \code{:} can be used to specify multiple variables.}
 
-\item{var_case}{Case or outcome variable should be binary vector.}
+\item{by}{Varaiable for cross-tabulation}
 
-\item{ref_exp}{Exposed level}
+\item{exp_value}{value for exposure as reference}
 
-\item{ref_case}{outcome}
-
-\item{na.rm}{A logical value to specify missing values, <NA> in the table}
-
-\item{rnd}{specify rounding of numbers. See \code{\link{round}}.}
+\item{case_value}{value for outcome as reference}
 
 \item{plot}{logical value to display plots of rates across a categorical
 variable}
 
-\item{print.table}{logical value to display formatted outputs}
+\item{na.rm}{A logical value to specify missing values, \code{NA} in the table}
+
+\item{rnd}{specify rounding of numbers. See \code{\link{round}}.}
 }
 \description{
 \code{tabOdds} generates cross-tabulation between two variables and
-display odds of failure \code{var_case} against a categorical
-explanatory variable \code{var_exp}. It is used with cross-sectional
-data.
+display odds of failure \code{var_case} among exposure variable
+\code{var_exp}. It is used in case-control studies.
 }
 \details{
-The variable \code{var_case} should coded 1 for case and 0 for non-case.
-A simple table illustrating cases and controls as well as odds for each
-category is generated.
+A table tabulating odds and corresponding 95\\% confidence interval
+is generated.
 
-\strong{Calculating Odds}
+\strong{Formula for calculating Odds}
 
 \deqn{OR = d1 x h0 / d0 x h1}
 
@@ -61,95 +57,43 @@ category is generated.
 \dontrun{
 
 
-### Simpson's Paradox: Example from Burt Gerstman's Epidemiology
-### Chapter 14, Page 326
-
-library(magrittr)
-simpson <- expandTables(
-    "1" = c(1000, 9000, 50, 950),
-    "2" = c(95, 5, 5000, 5000),
-    exp_name = "treatment",
-    exp_lvl = c("new", "standard"),
-    case_name = "outcome",
-    case_lvl = c("alive", "dead"),
-    strata_name = "clinic") \%>\%
-    labelVars(c(treatment, outcome, clinic),
-              c("Treatment: new or standard",
-                "Outcome: alive or dead", "clinic: 1 or 2")) \%>\%
-    labelData("Example of Simpson's Paradox")
-
-## checking structure
-codebook(simpson)
-
-tabOdds(simpson, treatment, outcome)
-tabOdds(simpson, treatment, outcome, ref_exp = "standard")
-tabOdds(simpson, treatment, outcome, ref_case = "dead")
-tabOdds(simpson, treatment, outcome, "standard", "dead")
-
-## Odds for Clinic 1
-simpson \%>\%
-    pick(clinic == 1) \%>\%
-    tabOdds(treatment, outcome)
-
-## Odds for Clinic 2
-simpson \%>\%
-    pick(clinic == 2) \%>\%
-    tabOdds(treatment, outcome)
+#' ## Example from Altman Statistics with Confidence, Chapter 7, Page 62
+abo <- expandTables(c(54, 60, 89, 245),
+                       exp_name = "study",
+                       exp_lvl = c("cases", "controls"),
+                       case_name = "state",
+                       case_lvl = c("Yes", "No")) \%>\%
+    labelVar(c(study, state),
+             c("study group", "ABO non-secretor state")) \%>\%
+    labelData(paste0("ABO non-secretor state for 114 patients with",
+                     " spondyloarthropathies and 334 controls"))
 
 
+## check dataset
+codebook(abo)
 
 
+## tabulate odds
+tabOdds(abo, study, by = state)
 
+## change case value to "Yes"
+tabOdds(abo, study, by = state, case_value = "Yes")
 
-## Asthma Example from Essential Medical Statistics
-## page 160
-
-library(magrittr)
-asthma <- expandTables(c(81, 995, 57, 867),
-              exp_name = "sex",
-              exp_lvl = c("Women", "Man"),
-              case_name = "asthma",
-              case_lvl = c("Yes", "No")) \%>\%
-          labelData("Hypothetical Data of Asthma Prevalence") \%>\%
-          labelVars(c(sex, asthma),
-              c("Man or Woman", "Asthma or No Asthma"))
-
-## Checking codebook
-codebook(asthma)
-
-tabOdds(asthma, sex, asthma)
-
-
-
-
-
-
-## The odds ratio, J Martin Bland, Douglas G Altman, BMJ 2000;320:1468
-hay <- expandTables(c(141, 420, 928, 13525),
-                    exp_name = "eczema",
-                    exp_lvl = c("Yes", "No"),
-                    case_name = "hayFever",
-                    case_lvl = c("Yes", "No")) \%>\%
-       labelData("hay fever and eczema in 11 year old children") \%>\%
-       labelVars(c(eczema, hayFever),
-                c("prevalence of eczema", "prevalence of hay fever"))
-
-codebook(hay)
-
-tabOdds(hay, eczema, hayFever)
+## without plot
+tabOdds(abo, study, by = state, case_value = "Yes", plot = FALSE)
 }
+
 }
 \references{
 \enumerate{
-    \item Essential Medical Statistics, Betty R. Kirwood, Second
-Edition
+\item Essential Medical Statistics, Betty R. Kirwood, Second
+Edition\preformatted{\\item Statistics Notes: The odds ratio; J Martin Bland, Douglas G Altman
+}
 
-    \item Statistics Notes: The odds ratio; J Martin Bland, Douglas G Altman
 BMJ 2000;320:1468
+
+\item Altman, Statistics with confidence
 }
-}
-\seealso{
-\code{\link{mhodds}}, \code{\link{tabRisks}}
 }
 \author{
 For any feedback, please contact \code{Myo Minn Oo} via:
@@ -158,10 +102,4 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\keyword{descriptive}
-\keyword{frequency}
-\keyword{odds}
-\keyword{odds,}
-\keyword{ratio,}
-\keyword{statistics,}
-\keyword{table,}
+\concept{odds odds ratio frequency table statistics descriptive}

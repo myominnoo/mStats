@@ -2,18 +2,15 @@
 % Please edit documentation in R/codebook.R
 \name{codebook}
 \alias{codebook}
-\alias{codebook.default}
-\alias{codebook.data.frame}
 \title{Codebook: Detailed information about variables}
 \usage{
 codebook(data)
-
-\method{codebook}{default}(data)
-
-\method{codebook}{data.frame}(data)
 }
 \arguments{
 \item{data}{dataframe}
+}
+\value{
+Codebook in data.frame format
 }
 \description{
 \code{codebook()} provides detailed information about each variable
@@ -27,17 +24,17 @@ percentage of observations with missing values.
 
 \strong{ANNOTATIONS}:
 
-VARS_NAME - Names of variables
+Variable - Names of variables
 
-LABEL     - Labels of variables
+Label     - Labels of variables
 
-TYPE      - Types of
+Type     - Types of variables
 
-OBS_COUNT - Counts of valid observations
+_Obs - Counts of valid observations
 
-NA_COUNT  - Counts of observations with missing value
+_NA  - Counts of observations with missing value
 
-NA_(\%)    - Percentage of observations with missing value
+_NA(\%)    - Percentage of observations with missing value
 }
 \examples{
 \dontrun{
@@ -57,14 +54,12 @@ codebook(hosp)
 library(magrittr)
 hosp \%>\% labelData("Hospital Dataset Example") \%>\% codebook()
 }
+
 }
 \references{
 STATA DATA MANAGEMENT. UCLA: Statistical Consulting Group.
 from https://stats.idre.ucla.edu/stata/seminars/stata-data-management/
 (accessed Febrary 25, 2020).
-}
-\seealso{
-\code{\link{ilog}}, \code{\link{listView}}
 }
 \author{
 For any feedback, please contact \code{Myo Minn Oo} via:
@@ -73,7 +68,4 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\keyword{codebook,}
-\keyword{layout}
-\keyword{structure,}
-\keyword{summary,}
+\concept{codebook summary structure layout}
