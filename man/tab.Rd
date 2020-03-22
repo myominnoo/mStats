@@ -148,8 +148,3 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\concept{frequency distribution tabulation one-way table two-way cross-tabulation
-
-contigency tables marginal
-
-statistics descriptives fisher exact chi square}

@@ -165,8 +165,3 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\concept{number summary statistics descriptive five number seven number
-
-gouped summary grouped by student t test t-test wilcoxon signed rank
-
-ANOVA analyis of variance kruskal-wallis}

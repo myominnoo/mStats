@@ -124,4 +124,3 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\concept{keep drop delete subset select filter arrange select if select by}

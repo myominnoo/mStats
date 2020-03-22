@@ -185,9 +185,6 @@ lepto \%>\%
 }
 
 }
-\seealso{
-\code{\link{tab}}
-}
 \author{
 For any feedback, please contact \code{Myo Minn Oo} via:
 
@@ -195,4 +192,3 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\concept{expand tables two-by-two tables contigency tables}

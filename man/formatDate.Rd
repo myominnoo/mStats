@@ -69,9 +69,6 @@ y <- formatDate(x)
 y
 }
 }
-\seealso{
-\code{\link{generate}}, \code{\link{egen}}, \code{\link{labelVar}}
-}
 \author{
 For any feedback, please contact \code{Myo Minn Oo} via:
 
@@ -79,4 +76,3 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\concept{date conversion}

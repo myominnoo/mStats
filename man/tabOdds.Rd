@@ -102,4 +102,3 @@ Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}
 }
-\concept{odds odds ratio frequency table statistics descriptive}
