@@ -1,0 +1,9 @@
+
+rm(list = ls())
+
+library(mStats)
+library(magrittr)
+path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
+patient <- haven::read_dta(path)
+codebook(patient)
+

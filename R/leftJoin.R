@@ -42,20 +42,30 @@
 #' Website: \url{https://myominnoo.github.io/}
 #'
 #' @examples
-#' \dontrun{
 #'
-#' # Example from IDRE UCLA
-#' path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
-#' hosp <- haven::read_dta(path)
-#' codebook(hosp)
 #'
-#' path <- "https://stats.idre.ucla.edu/stat/data/doctor_stata_dm.dta"
-#' doc <- haven::read_dta(path)
-#' codebook(doc)
+#' ## set seed
+#' set.seed(123)
+#' ## first, create a patient dataset
+#' patient <- data.frame(
+#'     hospid = 1:100,
+#'     docid = round(runif(100, 1, 15)),
+#'     sex = runif(100, 1, 2),
+#'     age = runif(100, 30, 60)
+#' )
 #'
-#' leftJoin(hosp, doc, by = "docid") %>%
-#'     codebook
-#' }
+#' ## now create a doctor dataset
+#' doc <- data.frame(
+#'    docid = c(1:10, 21:25),
+#'    rating = round(runif(15, 1, 5))
+#' )
+#'
+#' ## left join the two dataset
+#' leftJoin(patient, doc, by = "docid")
+#'
+#' ## there are 36 records not matched, 31 not matched from master dataset,
+#' ## 5 not matched from merger dataset. 69 Final matched records
+#'
 #'
 #' @export
 leftJoin <- function(data, ... , by)
@@ -67,20 +77,24 @@ leftJoin <- function(data, ... , by)
 
     .args <- as.list(match.call())
 
-    ## get dataset names within three dots
+    ## get variable names within three dots to search for duplicates
     .data.names <- as.character(enquos(.args, c("data", "by")))
 
+    ## get all data within three dots
+    .data2 <- list(...)
 
 
     ## Global data
     .data <- data
-    lapply(.data.names, function(z) {
+    lapply(1:length(.data.names), function(z) {
+
+        ## assign to .y for easy coding
+        .y <- .data2[[z]]
 
         ## add dummy x to data
         ## add index 1 as mater, 2 as merger, 3 as matched.
         .data$dummy_x <- 1
 
-        .y <- eval(parse(text = z))
 
         ## add dummy y for comparison
         .y$dummy_y <- 2
@@ -113,9 +127,10 @@ leftJoin <- function(data, ... , by)
             merge_ = c("", "1", "2", "", "3")
         )
 
-        printText(.dis, paste0("Notes on Joining '", .args$data, "'"), .printDF = TRUE)
+        printText(.dis, paste0("Notes on Joining '", .args$data, "'"),
+                  .printDF = TRUE)
         printMsg(paste0("master: ", .args$data))
-        printMsg(paste0("merger: ", z))
+        printMsg(paste0("merger: ", .data.names[z]))
 
     })
 

@@ -27,39 +27,27 @@ with n copies of the observations with
 specified indexes of observations or all data.
 }
 \examples{
-\dontrun{
-# using IDRE UCLA Example
-path <- "https://stats.idre.ucla.edu/stat/stata/notes/hsb2.dta"
-hsb2 <- haven::read_dta(path)
-codebook(hsb2)
+
+## use infert data
+data(infert)
+codebook(infert)
+
+## create duplicates
+infert.new <- expand2(infert, 1:5, copies = 2)
+codebook(infert.new)
 
 
-## use pipe function
-library(magrittr)
+## check duplicates report and rmeove dup
+infert.dupremove <- duplicates(infert.new, drop = TRUE)
+codebook(infert.dupremove)
 
+## remove only 3 copies
+infert.3copies <- duplicates(infert.new)
+tab(infert.3copies, dup)
 
-## keep id female ses math read write
-hsb2 <- hsb2 \%>\%
-    keep(id, female, ses, read:math)
+infert.3copies <- filter(infert.3copies, dup < 2)
+codebook(infert.3copies)
 
-
-# copy the first 5 rows for 4 times
-hsb2 \%>\%
-     expand2(1:5, 4) \%>\%
-     duplicates \%>\%
-     codebook
-
-# copy the first 5 rows for 4 times and keep only duplicated records
-hsb2 \%>\%
-     expand2(1:5, 4, original = FALSE) \%>\%
-     codebook
-}
-}
-\references{
-HOW CAN I DETECT DUPLICATE OBSERVATIONS? | STATA FAQ.
-UCLA: Statistical Consulting Group.
-from https://stats.idre.ucla.edu/stata/faq/how-can-i-detect-duplicate-observations-3/
-(accessed September 27, 2019).
 }
 \author{
 For any feedback, please contact \code{Myo Minn Oo} via:

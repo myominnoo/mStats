@@ -81,21 +81,20 @@ be named.
 }
 }
 \examples{
-\dontrun{
 
 
 ## Asthma Example from Essential Medical Statistics
 ## page 160
 
-library(magrittr)
 asthma <- expandTables(c(81, 995, 57, 867),
               exp_name = "sex",
               exp_lvl = c("woman", "man"),
               case_name = "asthma",
-              case_lvl = c("yes", "no")) \%>\%
-          labelData("Hypothetical Data of Asthma Prevalence") \%>\%
-          labelVar(c(sex, asthma),
-              c("Man or Woman", "Asthma or No Asthma"))
+              case_lvl = c("yes", "no"))
+
+## label variable and dataset
+asthma <- labelData(asthma, "Hypothetical Data of Asthma Prevalence")
+asthma <- labelVar(asthma, c(sex, asthma), c("Man or Woman", "Asthma or No Asthma"))
 
 ## Checking codebook
 codebook(asthma)
@@ -109,6 +108,7 @@ tab(asthma, sex, by = asthma)
 
 
 
+\dontrun{
 
 ### Simpson's Paradox: Example from Burt Gerstman's Epidemiology
 ### Chapter 14, Page 326

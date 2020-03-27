@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1585109525317.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "97FF2F8F",
+    "lastKnownWriteTime" : 1585326809,
+    "last_content_update" : 1585326809545,
+    "path" : "C:/MEGA/GitHub/mStats_Dev/beta1.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "9,0",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

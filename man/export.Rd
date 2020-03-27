@@ -2,16 +2,16 @@
 % Please edit documentation in R/export.R
 \name{export}
 \alias{export}
-\title{Export outputs to \code{.csv} format}
+\title{Export outputs}
 \usage{
-export(.data, file = "output.csv", .append = FALSE)
+export(.data, file = "", append = FALSE)
 }
 \arguments{
 \item{.data}{Outputs as \code{data.frame} or \code{list}}
 
 \item{file}{file name}
 
-\item{.append}{logical.
+\item{append}{logical.
 
 If \code{TRUE}, the output is appended to the file.
 
@@ -21,13 +21,25 @@ If \code{FALSE}, any existing file of the name is destroyed.}
 \code{export()} writes to \code{.csv} file
 }
 \details{
-Outputs from the following commands of mStats can be used.
+Outputs from the following functions can be exported.
 
-\code{tab}
+\code{\link{tab}}
 
-\code{summ}
+\code{\link{summ}}
 
-...
+\code{\link{tabOdds}}
+
+\code{\link{tabRisks}}
+
+\code{\link{mhor}}
+
+\code{\link{mhrr}}
+
+\code{\link{logistic}}
+
+\code{\link{regress}}
+
+\code{\link{strate}}
 }
 \author{
 For any feedback, please contact \code{Myo Minn Oo} via:

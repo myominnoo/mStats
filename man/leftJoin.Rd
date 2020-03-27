@@ -38,20 +38,30 @@ by \code{STATA}.
 }
 
 \examples{
-\dontrun{
 
-# Example from IDRE UCLA
-path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
-hosp <- haven::read_dta(path)
-codebook(hosp)
 
-path <- "https://stats.idre.ucla.edu/stat/data/doctor_stata_dm.dta"
-doc <- haven::read_dta(path)
-codebook(doc)
+## set seed
+set.seed(123)
+## first, create a patient dataset
+patient <- data.frame(
+    hospid = 1:100,
+    docid = round(runif(100, 1, 15)),
+    sex = runif(100, 1, 2),
+    age = runif(100, 30, 60)
+)
 
-leftJoin(hosp, doc, by = "docid") \%>\%
-    codebook
-}
+## now create a doctor dataset
+doc <- data.frame(
+   docid = c(1:10, 21:25),
+   rating = round(runif(15, 1, 5))
+)
+
+## left join the two dataset
+leftJoin(patient, doc, by = "docid")
+
+## there are 36 records not matched, 31 not matched from master dataset,
+## 5 not matched from merger dataset. 69 Final matched records
+
 
 }
 \author{

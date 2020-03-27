@@ -23,34 +23,18 @@ newly created variable.
 The value of the variable are specified by \code{expr} argument.
 }
 \examples{
-\dontrun{
 
+## use infert data
+data(infert)
+codebook(infert)
 
-# Example from IDRE UCLA
-path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
-hosp <- haven::read_dta(path)
-codebook(hosp)
+## create a new variable induced2 with 0 and 1+2
+infert.new <- generate(infert, induced2, as.numeric(induced == 0))
+tab(infert.new, induced2)
 
-
-## to use piping function
-library(magrittr)
-
-## generate variable with NA
-generate(hosp, average, NA) \%>\%
-    keep(average)
-
-
-## generate variable with other variables
-generate(hosp, average, pain) \%>\%
-    keep(pain, average)
-
-generate(hosp, average, (test1 + test2) / 2) \%>\%
-    keep(test1, test2, average)
-
-
-## existing variable cann't be generated.
-generate(hosp, pain)
-}
+## create a new variable with values the same as education
+infert.new <- generate(infert, edu, education)
+tab(infert.new, edu)
 
 }
 \author{

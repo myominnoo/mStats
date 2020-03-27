@@ -88,17 +88,7 @@
 #'
 #' @references
 #'
-#' \enumerate{
-#'   \item Essential Medical Statistics, Betty R. Kirkwood & Jonathan
-#'   A.C. Sterne,
-#'   Second Edition.
-#'   \item An Introduction to MEdical Statistics, Martin Bland,
-#'   Thrid Edition,
-#'   \item STATA DATA MANAGEMENT. UCLA: Statistical Consulting Group.
-#'    from https://stats.idre.ucla.edu/stata/seminars/stata-data-management/
-#'    (accessed Febrary 25, 2020).
-#' }
-#'
+#' Betty R. Kirkwood, Jonathan A.C. Sterne (2006, ISBN:978–0–86542–871–3)
 #'
 #' @import stats
 #'
@@ -112,64 +102,14 @@
 #' Website: \url{https://myominnoo.github.io/}
 #'
 #' @examples
-#' \dontrun{
 #'
+#' ## use iris dataset
+#' data(iris)
 #'
-#' ## UCLA IDRE Example
-#' ## Website:
-#' path <- "https://stats.idre.ucla.edu/stat/data/hsbdemo.dta"
-#' hsb <- haven::read_dta(path)
-#' codebook(hsb)
+#' summ(iris, Sepal.Length)
+#' summ(iris, Sepal.Length:Petal.Width)
 #'
-#'
-#'
-#'
-#' ## single variable
-#' summ(hsb, math)
-#'
-#' ## multiple variables
-#' summ(hsb, math, write)
-#'
-#' ## using colon separator
-#' summ(hsb, write:socst, awards, cid)
-#'
-#' ## the whole dataset
-#' summ(hsb)
-#'
-#'
-#'
-#'
-#' # Example from IDRE UCLA
-#' path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
-#' hosp <- haven::read_dta(path)
-#' codebook(hosp)
-#'
-#'
-#' ## to use piping function
-#' library(magrittr)
-#'
-#'
-#' ## summary measures
-#' summ(hosp)
-#'
-#' ## grouped summary measures by sex
-#' summ(hosp, age, rbc:test2, by = sex)
-#'
-#'
-#' ## remove NA values from summary measures
-#' hosp %>%
-#'     replace(sex, NA, sex == 12.2) %>%
-#'     summ(age, rbc:test2, by = sex, na.rm = FALSE)
-#'
-#'
-#' hosp %>%
-#'     replace(sex, NA, sex == 12.2) %>%
-#'     summ(age, rbc:test2, by = sex, na.rm = TRUE)
-#'
-#'
-#' ## the whole dataset
-#' summ(hosp, by = sex)
-#' }
+#' summ(iris)
 #'
 #' @export
 summ <- function(data, ... , by = NULL, na.rm = FALSE, rnd = 1)
@@ -304,9 +244,8 @@ summ <- function(data, ... , by = NULL, na.rm = FALSE, rnd = 1)
     ## print by label
     getnPrintLabel(.data, .args$by)
 
-    invisible(.df)
+    invisible(list(.df))
 }
-
 
 
 
