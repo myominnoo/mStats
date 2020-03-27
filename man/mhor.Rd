@@ -120,6 +120,7 @@ codebook(lepto)
 ## Calculate OR
 mhor(lepto, area, by = ab, case_value = "Yes")
 
+\dontrun{
 ## calculate stratified OR
 mhor(filter(lepto, gender == "male"), area, by = ab, case_value = "Yes")
 mhor(filter(lepto, gender == "female"), area, by = ab, case_value = "Yes")
@@ -128,7 +129,6 @@ mhor(filter(lepto, gender == "female"), area, by = ab, case_value = "Yes")
 ## Calculate MHOR
 mhor(lepto, area, by = ab, strata = gender, case_value = "Yes")
 
-\dontrun{
 ### Simpson's Paradox: Example from Burt Gerstman's Epidemiology
 ### Chapter 14, Page 326
 

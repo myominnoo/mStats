@@ -520,7 +520,6 @@ mhrr(lung, alcohol, by = cancer, strata = smoking, case_value = "Yes")
 \item  Betty R. Kirkwood, Jonathan A.C. Sterne (2006, ISBN:978–0–86542–871–3)
 \item B. Burt Gerstman (2013, ISBN:978-1-4443-3608-5)
 \item Douglas G Altman (2005, ISBN:0 7279 1375 1)
-\item Thomas W. O'Gorman (1994) \url{doi:10.1016/0197-2456(94)90017-5}
 }
 }
 \author{
