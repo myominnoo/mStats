@@ -21,5 +21,4 @@ use `install_github` function from devtools
 
 
 ## Contact me!
-For any comments or feedback, contact me via [dr.myominnoo@gmail.com](mailto:dr.myominnoo@gmail.com). 
-OR Create an issue in my github repository. 
+For any comments or feedback, contact me via [dr.myominnoo@gmail.com](mailto:dr.myominnoo@gmail.com) or please create an issue on this github repository. 
