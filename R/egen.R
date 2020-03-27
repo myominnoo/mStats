@@ -36,37 +36,22 @@
 #' Website: \url{https://myominnoo.github.io/}
 #'
 #' @examples
-#' \dontrun{
+#'
+#' ## use infert data
+#'
+#' data(infert)
+#' codebook(infert)
+#' summ(infert, age)
 #'
 #'
+#' ## transform continuous to category
+#' infert.new <- egen(infert, age, c(20, 30, 40, 50))
+#' tab(infert.new, age.cat)
 #'
-#' # Example from IDRE UCLA
-#' path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
-#' hosp <- haven::read_dta(path)
-#' codebook(hosp)
+#' ## specifiy labels and name
+#' infert.new <- egen(infert, age, c(20, 30, 40), "age_cat", c("<30", "30-39", "40+"))
+#' tab(infert.new, age_cat)
 #'
-#'
-#' ## to use piping function
-#' library(magrittr)
-#'
-#'
-#' ## generate bmi.cat without cut points
-#' egen(hosp, bmi) %>%
-#'     tab(bmi.cat)
-#'
-#'
-#' ## generate bmi.cat with cut points
-#' egen(hosp, bmi, c(0, 15, 16, 18.5, 25, 30, 35, 40, 500)) %>%
-#'     tab(bmi.cat)
-#'
-#'
-#' ## generate bmi.cat with cut points
-#' egen(hosp, bmi, c(0, 15, 16, 18.5, 25, 30, 35, 40, 500),
-#'      lbl = c("<18.5", "18.5-24", "25-29", "30-34", "35-39", "40+"),
-#'      new_var = BMI) %>%
-#'     tab(BMI)
-#'
-#' }
 #'
 #' @export
 egen <- function(data, var, cut = NULL, new_var = NULL, lbl = NULL)

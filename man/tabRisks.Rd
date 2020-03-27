@@ -57,41 +57,21 @@ This method should be avoided in small samples. Quadratic or
 exact binomial methods are preferred in this regard.
 }
 \examples{
-\dontrun{
 
+## use infert data
+data(infert)
 
-## Example from Altman Statistics with Confidence, Chapter 7, Page 59
-ulcers <- expandTables(c(6, 112, 16, 729),
-                       exp_name = "pylori",
-                       exp_lvl = c("Yes", "No"),
-                       case_name = "history",
-                       case_lvl = c("Yes", "No")) \%>\%
-   labelVar(c(pylori, history),
-            c("Infected with H. pylori", "History of Ulcer in mother")) \%>\%
-   labelData(paste0("Prevalence of H. pylori infection in preschool children",
-                    " according to mother's history of ulcer"))
+tabRisks(infert, education, by = case, case_value = 1)
+tabRisks(infert, induced, by = case)
 
-
-## codebook
-codebook(ulcers)
-
-
-## tabulate risks with plot
-tabRisks(ulcers, pylori, by = history)
-tabRisks(ulcers, pylori, by = history, exp_value = "Yes", case_value = "Yes")
-
-## without plot
-tabRisks(ulcers, pylori, by = history, exp_value = "Yes", case_value = "Yes",
-         plot = FALSE)
-}
+tabRisks(infert, education, induced, by = case)
 
 }
 \references{
 \enumerate{
-\item Essential Medical Statistics, Betty R. Kirkwood & Jonathan A.C.
-Sterne, Second Edition.
-\item B. Burt Gerstman. Epidemology Kept Simple. Wiley-Blackwell, 2013:
-\item Statistics with confidence, Douglas G Altman, second edition
+\item  Betty R. Kirkwood, Jonathan A.C. Sterne (2006, ISBN:978–0–86542–871–3)
+\item B. Burt Gerstman (2013, ISBN:978-1-4443-3608-5)
+\item Douglas G Altman (2005, ISBN:0 7279 1375 1)
 }
 }
 \author{

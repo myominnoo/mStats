@@ -68,17 +68,7 @@
 #'
 #' @references
 #'
-#' \enumerate{
-#'   \item Essential Medical Statistics, Betty R. Kirkwood & Jonathan
-#'   A.C. Sterne,
-#'   Second Edition.
-#'   \item An Introduction to MEdical Statistics, Martin Bland,
-#'   Thrid Edition,
-#'   \item STATA DATA MANAGEMENT. UCLA: Statistical Consulting Group.
-#'    from https://stats.idre.ucla.edu/stata/seminars/stata-data-management/
-#'    (accessed Febrary 25, 2020).
-#' }
-#'
+#' Betty R. Kirkwood, Jonathan A.C. Sterne (2006, ISBN:978–0–86542–871–3)
 #'
 #' @import stats
 #'
@@ -92,66 +82,29 @@
 #' Website: \url{https://myominnoo.github.io/}
 #'
 #' @examples
-#' \dontrun{
 #'
-#' ## UCLA IDRE Example
-#' ## Website:
-#' path <- "https://stats.idre.ucla.edu/stat/data/hsbdemo.dta"
-#' hsb <- haven::read_dta(path)
-#' codebook(hsb)
+#' ## use infert data
+#' data(infert)
 #'
-#'
-#' ## to use piping function
-#' library(magrittr)
-#'
-#'
-#' ## one variable
-#' tab(hsb, female)
-#' tab(hsb, schtyp)
-#' tab(hsb, prog)
-#'
+#' ## single variable
+#' tab(infert, parity)
 #'
 #' ## multiple variables
-#' tab(hsb, female, ses, schtyp, prog)
-#' tab(hsb, female:prog)
+#' tab(infert, parity, induced, case:pooled.stratum)
 #'
-#'
-#' ## the whole dataset
-#' ## all variables are numeric so this does not work.
-#' tab(hsb)
-#'
-#' ## some recoding for hsb
-#' hsb %>%
-#'     recode(female, 0:1, c("male", "female")) %>%
-#'     recode(ses, 1:3, c("low", "mid", "high")) %>%
-#'     recode(schtyp, 1:2, c("public", "private")) %>%
-#'     recode(prog, 1:3, c("general", "academic", "vocation")) %>%
-#'     tab
+#' ## tabulate the whole dataset
+#' tab(infert)
 #'
 #'
 #'
-#'
-#' # Example from IDRE UCLA
-#' path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
-#' hosp <- haven::read_dta(path)
-#' codebook(hosp)
-#'
-#'
-#' ## to use piping function
-#' library(magrittr)
+#' ## cross-tabulation
+#' tab(infert, parity, by = case)
+#' tab(infert, parity, by = case, row.pct = FALSE)
+#' tab(infert, parity, by = case, row.pct = NULL)
 #'
 #'
-#' ## tabulation of hosp
-#' tab(hosp)
-#'
-#'
-#' hosp %>%
-#'     recode(married, 0:1, c("No", "Yes")) %>%
-#'     # recode(sex, 12.2, NA) %>% ## same statement as the command below
-#'     replace(sex, NA, sex == 12.2) %>% ## same here
-#'     replace(wbc, as.numeric(wbc)) %>%
-#'     tab
-#' }
+#' ## multiple variable
+#' tab(infert, age, parity:spontaneous, education, by = case)
 #'
 #' @export
 tab <- function(data, ... , by = NULL, row.pct = TRUE, na.rm = FALSE, rnd = 1)
@@ -208,12 +161,7 @@ tab <- function(data, ... , by = NULL, row.pct = TRUE, na.rm = FALSE, rnd = 1)
 
 
     ## print by label
-    .by.name <- as.character(.args$by)
-    if (length(.by.name) > 0) {
-        if (!is.null(attr(.data[[.by.name]], "label"))) {
-            printMsg(paste0(.by.name, ": ", attr(.data[[.by.name]], "label")))
-        }
-    }
+    getnPrintLabel(.data, .args$by)
 
     invisible(.df)
 }

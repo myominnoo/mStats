@@ -54,61 +54,60 @@
 #' Website: \url{https://myominnoo.github.io/}
 #'
 #' @examples
+#'
+#' ## use infert data
+#' data(infert)
+#' codebook(infert)
+#'
+#' ## DEMONSTRATION: KEEP
+#' ## suppose we want to keep education, age, induced and case
+#' infert.new <- keep(infert, education, age, induced, case)
+#' codebook(infert.new)
+#'
+#' ## use colon separator :
+#' infert.new <- keep(infert, education:case)
+#' codebook(infert.new)
+#'
+#' ## change the order of variables
+#' infert.new <- keep(infert, stratum, pooled.stratum, education:spontaneous)
+#' codebook(infert.new)
+#'
+#'
 #' \dontrun{
+#' ## DEMONSTRATION: drop
 #'
-#' # Example from IDRE UCLA
-#' path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
-#' hosp <- haven::read_dta(path)
-#' codebook(hosp)
+#' ## suppose we want to remove education, age, induced and case
+#' infert.new <- drop(infert, education, age, induced, case)
+#' codebook(infert.new)
 #'
-#'
-#' ## to use piping function
-#' library(magrittr)
-#'
-#' ## Demonstration for keep()
-#' hosp %>%
-#'     keep(hospid, age:test2) %>%
-#'     codebook
-#'
-#' hosp %>%
-#'     keep(hospid, dis_date, tumorsize:wound, age, married, sex:test2) %>%
-#'     codebook
+#' ## use colon separator :
+#' infert.new <- drop(infert, education:case)
+#' codebook(infert.new)
 #'
 #'
 #'
-#' ## Demonstration for drop()
-#' hosp %>%
-#'     drop(hospid, age:test2) %>%
-#'     codebook
+#' ## DEMONSTRATION: filter
 #'
-#' hosp %>%
-#'     drop(hospid, dis_date, tumorsize:wound, age, married, sex:test2) %>%
-#'     codebook
+#' ## suppose we want to remove rows with parity less than 5 or less than or equal to 4
+#' tab(infert, parity)
+#' infert.new <- filter(infert, parity < 5)
+#' tab(infert.new, parity)
 #'
+#' ## we want parity value between 2 and 5
+#' infert.new <- filter(infert, parity > 1, parity < 6)
+#' tab(infert.new, parity)
 #'
+#' ## or we can write like this.
+#' infert.new <- filter(infert, parity >= 2 & parity <= 5)
+#' tab(infert.new, parity)
 #'
-#' ## Demonstration for arrange()
-#' hosp %>%
-#'     arrange(pain)
+#' ## DEMONSTRATION: arrange
 #'
-#' hosp %>%
-#'     arrange(hospid, docid)
+#' ## arrange by education
+#' arrange(infert, education)
+#' arrange(infert, -education)
+#' arrange(infert, education, age, case)
 #'
-#' hosp %>%
-#'     arrange(hospid, -docid)
-#'
-#'
-#'
-#'
-#' ## Demonstration for filter()
-#' hosp %>%
-#'     filter(ntumors < 2)
-#'
-#' hosp %>%
-#'     filter(sex == "male", wound == 4)
-#'
-#' hosp %>%
-#'     filter(tumorsize > 60, tumorsize < 70, sex == "female")
 #' }
 #'
 #' @export
@@ -250,14 +249,13 @@ arrange <- function(data, ... )
         stop(" ... Expression cannot be evaluated! ... ")
     })
 
-
-
-    ## add labels back
-    .data.names <- names(data)
-    for (i in 1:length(.data.names)) {
-        attr(.data[[.data.names[i]]], "label") <- attr(data[[.data.names[i]]], "label")
+    for (i in 1:length(.vars.names)) {
+        .lbl <- attr(data[[.vars.names[i]]], "label")
+        if (length(.lbl) > 1) {
+            .lbl <- paste0(.lbl, collapse = ", ")
+        }
+        attr(.data[[.vars.names[i]]], "label") <- .lbl
     }
-
 
     ## Display message to nofity changes
     printMsg(paste0("Expression used to arrange: '", .expr.txt, "'"))
@@ -265,7 +263,6 @@ arrange <- function(data, ... )
 
     return(.data)
 }
-
 
 
 #' @rdname keep

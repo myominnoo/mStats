@@ -3,11 +3,20 @@
 \name{formatDate}
 \alias{formatDate}
 \alias{is.Date}
+\alias{year}
+\alias{month}
+\alias{day}
 \title{Format Dates}
 \usage{
 formatDate(x, format = "dmY", sep = "/", century = NULL)
 
 is.Date(x)
+
+year(x)
+
+month(x)
+
+day(x)
 }
 \arguments{
 \item{x}{a character or numeric object}
@@ -47,15 +56,15 @@ Origin is set at \code{1899-12-30}.
 See \code{\link{as.Date}} for more date formats.
 }
 \examples{
-\dontrun{
-## texts in Date format
-dates <- c("2019-01-15", "2019-01-20", "2019-01-21", "2019-01-22")
-# check if it is a Date format
-is.Date(dates)
 
-# formatting as Dates
-formatDate(dates, "Ymd", "-")
-y <- formatDate(dates, "Ymd", "-")
+
+## convert strings to dates
+x <- c("2019-01-15", "2019-01-20", "2019-01-21", "2019-01-22")
+
+# check if it is a Date format
+is.Date(x)
+
+y <- formatDate(x, "Ymd", "-")
 
 # check if it is a Date format
 is.Date(y)
@@ -63,11 +72,18 @@ y
 
 
 
-## dates in numeric format MS excel
+## convert numbers to dates
 x <- 42705:42710
 y <- formatDate(x)
+is.Date(y)
 y
-}
+
+
+## get day, month or year
+day(y)
+month(y)
+year(y)
+
 }
 \author{
 For any feedback, please contact \code{Myo Minn Oo} via:

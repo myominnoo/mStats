@@ -235,8 +235,13 @@ printMsg <- function(.txt = NULL)
 getnPrintLabel <- function(.data, .var.name)
 {
     .var.name <- as.character(.var.name)
-    .var <- .data[[.var.name]]
-    .lbl <- attr(.var, "label")
+    if (length(.var.name) > 0) {
+        .var <- .data[[.var.name]]
+        .lbl <- attr(.var, "label")
+    } else {
+        .lbl <- NULL
+    }
+
     if (!is.null(.lbl)) {
         printMsg(paste0(.var.name, ": ", .lbl))
     }

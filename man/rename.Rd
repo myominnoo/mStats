@@ -28,10 +28,10 @@ A group of variables can be also \code{renamed} by specifying the same
 number of variables in both \code{var_old} and \code{var_new}
 }
 \examples{
-\dontrun{
 ## using infert dataset
+data(infert)
+
 # renaming one variable
-codebook(infert)
 infert.new <- rename(infert, age, AGE)
 codebook(infert.new)
 
@@ -42,6 +42,7 @@ infert.new <- rename(infert,
 codebook(infert.new)
 
 
+\dontrun{
 
 ## IDRE UCLA Example 1
 path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"

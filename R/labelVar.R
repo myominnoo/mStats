@@ -37,14 +37,6 @@
 #' \preformatted{labelData(data, lbl)}
 #'
 #'
-#' @references
-#'
-#' LABELING DATA | STATA LEARNING MODULES. UCLA: Statistical Consulting Group.
-#'
-#' from https://stats.idre.ucla.edu/stata/modules/labeling-data/
-#' (accessed March 19, 2016).
-#'
-#'
 #'
 #' @author
 #'
@@ -55,87 +47,24 @@
 #' Website: \url{https://myominnoo.github.io/}
 #'
 #' @examples
-#' \dontrun{
 #'
+#' ## use infert data
+#' data(infert)
 #'
+#' ## label education
+#' infert.new <- labelVar(infert, education, "patient's education")
+#' codebook(infert.new)
 #'
-#' # Example from IDRE UCLA
-#' path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
-#' hosp <- haven::read_dta(path)
-#' codebook(hosp)
-#'
-#'
-#' ## to use piping function
-#' library(magrittr)
-#'
-#'
-#' ## rename test1 to il6 and label
-#' hosp %>%
-#'     rename(test1, il6) %>%
-#'     labelVar(il6, "Concentration of interleukin 6") %>%
-#'     codebook
-#'
-#'
-#' ## multiple variables
-#' # rename test1 and test2 to il6 and crp and label
-#' hosp %>%
-#'     rename(test1, il6) %>%
-#'     rename(test2, crp) %>%
-#'     labelVar(c(il6, crp),
-#'              c("Concentration of interleukin 6", "C-Reactive Protein (CRP)")
-#'     ) %>%
-#'     codebook
-#'
-#'
-#' ## remove label
-#' hosp %>%
-#'     labelVar(c(age, married, familyhx, smokinghx, sex)) %>%
-#'     codebook
-#'
-#'
-#' ## remove labels using colon separators
-#' hosp %>%
-#'     labelVar(c(age:sex)) %>%
-#'     codebook
+#' ## label multiple variables
+#' infert.new <- labelVar(infert, c(education, age, case),
+#'                        c("patient's education", "age in years", "case status"))
+#' codebook(infert.new)
 #'
 #'
 #' ## label dataset
-#' labelData(hosp, "Fake cancer patient data for demonstration") %>%
-#'     codebook
-#'
-#'
-#'
-#' # Example from IDRE UCLA
-#' path <- "https://stats.idre.ucla.edu/stat/stata/modules/autolab.dta"
-#' auto <- haven::read_dta(path)
-#' codebook(auto)
-#'
-#'
-#' ## to use piping function
-#' library(magrittr)
-#'
-#' ## label dataset
-#' labelData(auto, "This file contains auto data for the year 1978") %>%
-#'     codebook
-#'
-#'
-#' ## label variables
-#' auto %>%
-#'     labelVar(rep78, "the repair record from 1978") %>%
-#'     codebook
-#'
-#'
-#' auto %>%
-#'     ## add labels
-#'     labelVar(c(rep78, price, mpg, foreign),
-#'              c("the repair record from 1978", "the price of the car in 1978",
-#'                "the miles per gallon for the car",
-#'                "the origin of the car, foreign or domestic")) %>%
-#'     ## remove labels
-#'     labelVar(c(headroom, trunk, weight, length, turn, displacement,
-#'                gear_ratio)) %>%
-#'     codebook
-#' }
+#' infert.new <- labelData(infert.new,
+#'                         "Infertility after Spontaneous and Induced Abortion")
+#' codebook(infert.new)
 #'
 #' @export
 labelVar <- function(data, var, lbl = NULL)

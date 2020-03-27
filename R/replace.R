@@ -41,46 +41,20 @@
 #' Website: \url{https://myominnoo.github.io/}
 #'
 #' @examples
-#' \dontrun{
 #'
+#' ## use infert dataset
+#' data(infert)
 #'
-#' # Example from IDRE UCLA
-#' path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
-#' hosp <- haven::read_dta(path)
-#' codebook(hosp)
+#' ## replace parity == NA if parity > 4
+#' tab(infert, parity)
 #'
-#' ## to use piping function
-#' library(magrittr)
+#' infert.new <- replace(infert, parity, NA, parity > 4)
+#' tab(infert.new, parity)
 #'
-#' hosp %>% replace(pain, 0, pain < 4)
-#' hosp %>% replace(pain, NA, pain < 4)
-#'
-#' ## conditions separated by comma as `AND` statement
-#' hosp %>% replace(pain, 0, pain < 4, mobility < 2)
-#'
-#' ## Conditions not specified
-#' hosp %>% replace(pain, 0)
-#' hosp %>% replace(pain, NA)
-#'
-#'
-#' ## Mixed multiple conditions met
-#' hosp %>% replace(co2, NA, mobility == 2, pain < 4)
-#' hosp %>% replace(co2, NA, mobility == 2, pain < 4, tumorsize < 70)
-#'
-#'
-#' ## replace with values from another variable
-#' hosp %>% replace(pain, mobility, pain < 4)
-#' hosp %>% replace(co2, tumorsize, mobility == 2, pain < 4)
-#' hosp %>% replace(co2, tumorsize, mobility == 2, pain < 4, tumorsize < 70)
-#'
-#'
-#' ## convert data type without expression
-#' replace(hosp, wbc, as.numeric(wbc)) %>%
-#'     codebook
-#'
-#' replace(hosp, wbc, sex) %>%
-#'     keep(sex, wbc)
-#' }
+#' ## replace education as character
+#' infert.new <- replace(infert, education, as.character(education))
+#' codebook(infert.new)
+#' tab(infert.new, education)
 #'
 #' @export
 replace <- function(data, var, value, ... )

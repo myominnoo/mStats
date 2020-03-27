@@ -30,29 +30,14 @@
 #' Website: \url{https://myominnoo.github.io/}
 #'
 #' @examples
-#' \dontrun{
 #'
+#' ## use infert dataset
+#' data(infert)
+#' codebook(infert)
 #'
-#' # Example from IDRE UCLA
-#' path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
-#' hosp <- haven::read_dta(path)
-#' codebook(hosp)
+#' infert.new <- append(infert, infert)
+#' codebook(infert.new)
 #'
-#'
-#'
-#' ## use piping function
-#' library(magrittr)
-#'
-#'
-#' ## appending three times
-#' append(hosp, hosp, hosp, hosp) %>%
-#'     codebook
-#'
-#'
-#' ## appending directly from web
-#' append(hosp, haven::read_dta(path)) %>%
-#'     codebook
-#' }
 #'
 #' @export
 append <- function(data, ... )

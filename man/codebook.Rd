@@ -37,29 +37,24 @@ _NA  - Counts of observations with missing value
 _NA(\%)    - Percentage of observations with missing value
 }
 \examples{
-\dontrun{
+
+## use infert data
+data(infert)
 codebook(infert)
-codebook(iris)
 
-# if something else
-codebook(iris$Species)
+## add labels
+infert.new <- labelVar(infert,
+                       c(education, age, parity, induced, case, spontaneous,
+                         stratum, pooled.stratum),
+                       c("Education", "Age in years of case", "Count",
+                         "# of prior induced abortions", "case status",
+                         "# of prior spon. abortions",
+                         "Matched set number", "Stratum Number"))
+infert.new <- labelData(infert.new,
+                        "Infertility after Spontaneous and Induced Abortion")
+codebook(infert.new)
 
 
-
-# Example from IDRE UCLA
-path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
-hosp <- haven::read_dta(path)
-codebook(hosp)
-
-library(magrittr)
-hosp \%>\% labelData("Hospital Dataset Example") \%>\% codebook()
-}
-
-}
-\references{
-STATA DATA MANAGEMENT. UCLA: Statistical Consulting Group.
-from https://stats.idre.ucla.edu/stata/seminars/stata-data-management/
-(accessed Febrary 25, 2020).
 }
 \author{
 For any feedback, please contact \code{Myo Minn Oo} via:

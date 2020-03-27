@@ -42,32 +42,18 @@ c(#, #)     >>>>       #
 }
 
 \examples{
-\dontrun{
 
+## use infert data
+data(infert)
 
-# Example from IDRE UCLA
-path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
-hosp <- haven::read_dta(path)
-codebook(hosp)
+## tabulate induced to check values
+tab(infert, induced)
 
+## recode induced: 1 and 2 into 1
+infert.new <- recode(infert, induced, c(1, 2), 1)
 
-## to use piping function
-library(magrittr)
-
-hosp \%>\% recode(hospital, "UCLA", "UCLA Example")
-
-hosp \%>\% recode(sex, c("male", "female"), c(1, 2))
-hosp \%>\% recode(sex, c("male", "female"), 1:2)
-
-hosp \%>\% recode(pain, 1:4, 1)
-hosp \%>\% recode(pain, 1:4, "Low")
-
-
-hosp \%>\%
-    recode(smokinghx, c("former", "never", "current"), c("No", "No", "Yes")) \%>\%
-    keep(age:smokinghx)
-
-}
+## tabulate to check
+tab(infert.new, induced)
 
 }
 \author{

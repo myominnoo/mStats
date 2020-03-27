@@ -47,47 +47,19 @@ for further use.
 3 = duplicated three times and so on ...
 }
 \examples{
-\dontrun{
 
+## use infert data
+data(infert)
+codebook(infert)
 
-# Example from IDRE UCLA
-path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
-hosp <- haven::read_dta(path)
-codebook(hosp)
+## find duplicates by pooled.stratum
+duplicates(infert, pooled.stratum)
 
+## find duplicates by stratum and pooled.stratum
+duplicates(infert, stratum, pooled.stratum)
 
-## to use piping function
-library(magrittr)
-
-
-## find duplicated records using all variables
-duplicates(hosp) \%>\%
-    codebook
-
-
-
-## find duplicated records using one variables
-duplicates(hosp, hospid) \%>\%
-    codebook
-
-
-
-## find duplicated records using two variables
-duplicates(hosp, hospid, docid) \%>\%
-    codebook
-
-
-
-## removing duplicated records
-duplicates(hosp, drop = TRUE) \%>\%
-    codebook
-
-duplicates(hosp, hospid, drop = TRUE) \%>\%
-    codebook
-
-duplicates(hosp, hospid, docid, drop = TRUE) \%>\%
-    codebook
-}
+## find and remove duplicates by pooled.stratum
+duplicates(infert, pooled.stratum, drop = TRUE)
 
 }
 \author{

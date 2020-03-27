@@ -33,14 +33,11 @@
 #'
 #' @references
 #'
+#'
 #' \enumerate{
-#'     \item Essential Medical Statistics, Betty R. Kirwood, Second
-#' Edition
-#'
-#'     \item Statistics Notes: The odds ratio; J Martin Bland, Douglas G Altman
-#' BMJ 2000;320:1468
-#'
-#'    \item Altman, Statistics with confidence
+#'     \item  Betty R. Kirkwood, Jonathan A.C. Sterne (2006, ISBN:978–0–86542–871–3)
+#'     \item B. Burt Gerstman (2013, ISBN:978-1-4443-3608-5)
+#'     \item Douglas G Altman (2005, ISBN:0 7279 1375 1)
 #' }
 #'
 #'
@@ -56,34 +53,11 @@
 #' Website: \url{https://myominnoo.github.io/}
 #'
 #' @examples
-#' \dontrun{
 #'
+#' ## use infert data
+#' data(infert)
 #'
-#' #' ## Example from Altman Statistics with Confidence, Chapter 7, Page 62
-#' abo <- expandTables(c(54, 60, 89, 245),
-#'                        exp_name = "study",
-#'                        exp_lvl = c("cases", "controls"),
-#'                        case_name = "state",
-#'                        case_lvl = c("Yes", "No")) %>%
-#'     labelVar(c(study, state),
-#'              c("study group", "ABO non-secretor state")) %>%
-#'     labelData(paste0("ABO non-secretor state for 114 patients with",
-#'                      " spondyloarthropathies and 334 controls"))
-#'
-#'
-#' ## check dataset
-#' codebook(abo)
-#'
-#'
-#' ## tabulate odds
-#' tabOdds(abo, study, by = state)
-#'
-#' ## change case value to "Yes"
-#' tabOdds(abo, study, by = state, case_value = "Yes")
-#'
-#' ## without plot
-#' tabOdds(abo, study, by = state, case_value = "Yes", plot = FALSE)
-#' }
+#' tabOdds(infert, education, by = case)
 #'
 #' @export
 tabOdds <- function(data, ... , by, exp_value = NULL, case_value = NULL, plot = TRUE,

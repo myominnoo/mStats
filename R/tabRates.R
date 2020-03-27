@@ -48,10 +48,8 @@
 #'
 #' @references
 #'
-#' \enumerate{
-#'   \item Essential Medical Statistics, Betty R. Kirkwood & Jonathan A.C. Sterne,
-#'   Second Edition. Chapter 22, page 229 & 239
-#' }
+#'
+#' Betty R. Kirkwood, Jonathan A.C. Sterne (2006, ISBN:978–0–86542–871–3)
 #'
 #'
 #' @author

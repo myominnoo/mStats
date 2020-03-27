@@ -45,15 +45,15 @@
 #' Website: \url{https://myominnoo.github.io/}
 #'
 #' @examples
-#' \dontrun{
-#' ## texts in Date format
-#' dates <- c("2019-01-15", "2019-01-20", "2019-01-21", "2019-01-22")
-#' # check if it is a Date format
-#' is.Date(dates)
 #'
-#' # formatting as Dates
-#' formatDate(dates, "Ymd", "-")
-#' y <- formatDate(dates, "Ymd", "-")
+#'
+#' ## convert strings to dates
+#' x <- c("2019-01-15", "2019-01-20", "2019-01-21", "2019-01-22")
+#'
+#' # check if it is a Date format
+#' is.Date(x)
+#'
+#' y <- formatDate(x, "Ymd", "-")
 #'
 #' # check if it is a Date format
 #' is.Date(y)
@@ -61,12 +61,18 @@
 #'
 #'
 #'
-#' ## dates in numeric format MS excel
+#' ## convert numbers to dates
 #' x <- 42705:42710
 #' y <- formatDate(x)
+#' is.Date(y)
 #' y
-#' }
-
+#'
+#'
+#' ## get day, month or year
+#' day(y)
+#' month(y)
+#' year(y)
+#'
 #' @export
 formatDate <- function(x, format = "dmY", sep = "/", century = NULL)
 {
@@ -101,35 +107,7 @@ is.Date <- function(x)
 }
 
 
-#' @title Year from a Date
-#'
-#' @description
-#'
-#' \code{year} retrieves year from a Date
-#'
-#' @param x Date Object
-#'
-#' @seealso
-#'
-#' \code{\link{formatDate}}, \code{\link{month}}, \code{\link{day}}
-#'
-#' @concept year date
-#'
-#' @author
-#'
-#' For any feedback, please contact \code{Myo Minn Oo} via:
-#'
-#' Email: \email{dr.myominnoo@@gmail.com}
-#'
-#' Website: \url{https://myominnoo.github.io/}
-#'
-#' @examples
-#' \dontrun{
-#' dates <- formatDate(c("2019-01-15", "2019-01-20", "2019-01-21",
-#'                       "2019-01-22"), "Ymd", "-")
-#' year(dates)
-#' }
-
+#' @rdname formatDate
 #' @export
 year <- function(x)
 {
@@ -141,36 +119,7 @@ year <- function(x)
 
 
 
-#' @title Month from a Date
-#'
-#' @description
-#'
-#' \code{month} retrieves month from a Date
-#'
-#' @param x Date Object
-#'
-#' @seealso
-#'
-#' \code{\link{formatDate}}, \code{\link{year}}, \code{\link{day}}
-#'
-#' @concept month date
-#'
-#' @author
-#'
-#' For any feedback, please contact \code{Myo Minn Oo} via:
-#'
-#' Email: \email{dr.myominnoo@@gmail.com}
-#'
-#' Website: \url{https://myominnoo.github.io/}
-#'
-#' @examples
-#'
-#' \dontrun{
-#' dates <- formatDate(c("2019-01-15", "2019-01-20", "2019-01-21", "2019-01-22"),
-#'                     "Ymd", "-")
-#' month(dates)
-#' }
-
+#' @rdname formatDate
 #' @export
 month <- function(x)
 {
@@ -180,35 +129,8 @@ month <- function(x)
 
 
 
-#' @title Day from a Date
-#'
-#' @description
-#'
-#' \code{day} retrieves day from a Date
-#'
-#' @param x Date Object
-#'
-#' @seealso
-#'
-#' \code{\link{formatDate}}, \code{\link{year}}, \code{\link{day}}
-#'
-#' @concept day date
-#'
-#' @author
-#'
-#' For any feedback, please contact \code{Myo Minn Oo} via:
-#'
-#' Email: \email{dr.myominnoo@@gmail.com}
-#'
-#' Website: \url{https://myominnoo.github.io/}
-#'
-#' @examples
-#' \dontrun{
-#' dates <- formatDate(c("2019-01-15", "2019-01-20", "2019-01-21", "2019-01-22"),
-#'                     "Ymd", "-")
-#' day(dates)
-#' }
 
+#' @rdname formatDate
 #' @export
 day <- function(x)
 {

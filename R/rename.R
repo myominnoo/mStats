@@ -21,7 +21,6 @@
 #' \code{data.frame}
 #'
 #'
-#'
 #' @author
 #'
 #' For any feedback, please contact \code{Myo Minn Oo} via:
@@ -31,10 +30,10 @@
 #' Website: \url{https://myominnoo.github.io/}
 #'
 #' @examples
-#' \dontrun{
 #' ## using infert dataset
+#' data(infert)
+#'
 #' # renaming one variable
-#' codebook(infert)
 #' infert.new <- rename(infert, age, AGE)
 #' codebook(infert.new)
 #'
@@ -45,6 +44,7 @@
 #' codebook(infert.new)
 #'
 #'
+#' \dontrun{
 #'
 #' ## IDRE UCLA Example 1
 #' path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"

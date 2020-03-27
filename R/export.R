@@ -1,4 +1,4 @@
-#' @title Export outputs to `.csv` format
+#' @title Export outputs
 #'
 #' @description
 #'
@@ -6,21 +6,32 @@
 #'
 #' @param .data Outputs as `data.frame` or `list`
 #' @param file file name
-#' @param .append logical.
+#' @param append logical.
 #'
 #' If `TRUE`, the output is appended to the file.
 #'
 #' If `FALSE`, any existing file of the name is destroyed.
 #'
 #' @details
-#' Outputs from the following commands of mStats can be used.
+#' Outputs from the following functions can be exported.
 #'
-#' \code{tab}
+#' \code{\link{tab}}
 #'
-#' \code{summ}
+#' \code{\link{summ}}
 #'
-#' ...
+#' \code{\link{tabOdds}}
 #'
+#' \code{\link{tabRisks}}
+#'
+#' \code{\link{mhor}}
+#'
+#' \code{\link{mhrr}}
+#'
+#' \code{\link{logistic}}
+#'
+#' \code{\link{regress}}
+#'
+#' \code{\link{strate}}
 #'
 #' @author
 #'
@@ -31,29 +42,52 @@
 #' Website: \url{https://myominnoo.github.io/}
 #'
 #' @export
-export <- function(.data, file = "output.csv", .append = FALSE)
+export <- function(.data, file = "", append = FALSE)
 {
+    if (file == "") {
+        file <- file.path(tempdir(), "output.csv")
+    }
+
+    if (!is.list(.data)) {
+        .data <- list(.data)
+    }
+
     .len <- length(.data)
     tryCatch({
         lapply(1:.len, function(z) {
-            if (z == 1) {
-                write.table(.data[[z]], file, append = .append,
-                            sep = ",", row.names = FALSE)
-            } else {
-                suppressWarnings(
-                    write.table(rep("-", 2), file, append = TRUE, sep = ",",
-                                row.names = F, col.names = F)
-                )
-                suppressWarnings(
-                    write.table(.data[[z]], file, append = TRUE, sep = ",",
-                                row.names = F)
-                )
+            if (!any(class(.data[[z]]) %in% c("glm", "lm"))) {
+                if (z == 1) {
+                    if (append) {
+                        suppressWarnings(
+                            write.table(rep("-", 2), file, append = TRUE, sep = ",",
+                                        row.names = F, col.names = F)
+                        )
+                    }
+                    suppressWarnings(
+                        write.table(.data[[z]], file, append = append,
+                                    sep = ",", row.names = FALSE)
+                    )
+                } else {
+                    suppressWarnings(
+                        write.table(rep("-", 2), file, append = TRUE, sep = ",",
+                                    row.names = F, col.names = F)
+                    )
+                    suppressWarnings(
+                        write.table(.data[[z]], file, append = TRUE, sep = ",",
+                                    row.names = F)
+                    )
+                }
             }
 
         })
-        printMsg(paste0("saved as '", file, "'"))
+
+        if (append) {
+            printMsg(paste0("appended to '", file, "'"))
+        } else {
+            printMsg(paste0("saved as '", file, "'"))
+        }
     }, error = function(cnd) {
+        warning(cnd)
         printMsg(paste0("failed to save '", file, "'"))
-        print(cnd)
     })
 }

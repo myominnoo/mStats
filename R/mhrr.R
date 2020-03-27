@@ -28,6 +28,8 @@
 #'
 #' `par` = `Pop. AR` (`Population Attributable Risk`)
 #'
+#' `efficacy` = `Efficacy` of a certain treatment or exposure.
+#'
 #' For Mantel-Haenszel estimates,
 #'
 #' `ratio` = `Risk Ratio`
@@ -211,14 +213,13 @@
 #'
 #' @references
 #'
-#' \enumerate{
-#'     \item Essential Medical Statistics, Betty R. Kirkwood & Jonathan A.C.
-#' Sterne, Second Edition.
-#'     \item B. Burt Gerstman. Epidemology Kept Simple. Wiley-Blackwell, 2013:
-#'     \item Statistics with confidence, Douglas G Altman, second edition
-#'     \item Thomas W. O'Gorman (1994) doi.org/10.1016/0197-2456(94)90017-5
-#' }
 #'
+#' \enumerate{
+#'     \item  Betty R. Kirkwood, Jonathan A.C. Sterne (2006, ISBN:978–0–86542–871–3)
+#'     \item B. Burt Gerstman (2013, ISBN:978-1-4443-3608-5)
+#'     \item Douglas G Altman (2005, ISBN:0 7279 1375 1)
+#'     \item Thomas W. O'Gorman (1994) <doi:10.1016/0197-2456(94)90017-5>
+#' }
 #'
 #'
 #' @author
@@ -230,7 +231,6 @@
 #' Website: \url{https://myominnoo.github.io/}
 #'
 #' @examples
-#' \dontrun{
 #'
 #'
 #' ### Demonstration: Calculating Risk Ratios
@@ -245,11 +245,16 @@
 #'     exp_lvl = c("Smokers", "Non-smokers"),
 #'     case_name = "cancer",
 #'     case_lvl = c("Yes", "No")
-#' ) %>%
-#'     labelVar(c(smoking, cancer),
-#'              c("Smoking versus non-smoking", "Lung cancer: Yes or No")) %>%
-#'     labelData("Association between smoking and lung cancer (Follow up one year)")
+#' )
 #'
+#' ## label variable and dataset
+#' lung <- labelVar(lung,
+#'                  c(smoking, cancer),
+#'                  c("Smoking versus non-smoking", "Lung cancer: Yes or No"))
+#' lung <- labelData(lung,
+#'             "Association between smoking and lung cancer (Follow up one year)")
+#'
+#' ## check dataset
 #' codebook(lung)
 #'
 #' ## tabulate Risks
@@ -266,6 +271,7 @@
 #'
 #'
 #'
+#' \dontrun{
 #'
 #' ### Simpson's Paradox: Example from Burt Gerstman's Epidemiology
 #' ### Chapter 14, Page 326
@@ -346,7 +352,7 @@
 #' ) %>%
 #'     labelVar(c(treatment, outcome, trials),
 #'              c("Aspirin versus Placebo", "Preventing deaths", "Trials")) %>%
-#'     labelData(paste0("placebo-controlled randomized trials of the effect of ",
+#'     labelData(paste0("Placebo-controlled randomized trials of the effect of ",
 #'                      "aspirin in preventing death after myocardial infarction"))
 #'
 #' codebook(aspirin)
@@ -427,7 +433,6 @@
 #'
 #' ## Essential Medical Statistics, Betty R. Kirkwood, Second Edition
 #' ## Chapter 16, Table 16.2, Page 150
-#' ## For Risk Difference
 #' flu <- expandTables(
 #'     c(20, 220, 80, 140),
 #'     exp_name = "treatment",
@@ -612,7 +617,7 @@ mhrr <- function(data, ... , by, strata = NULL, exp_value = NULL, case_value = N
         printMsg(paste0(.strata.name, ": ", .strata.lbl))
     }
 
-    invisible(.df)
+    invisible(list(.df))
 }
 
 
@@ -817,11 +822,14 @@ calcAR <- function(.tbl, .x.name, rnd = 3)
     .n <- sum(.tbl)
 
     .rr <- .p1 / .p0
+    .rd <- .p1 - .p0
+    .p <- (.a + .c) / .n
+    .q <- 1 - .p
 
     .ar <- (.rr - 1) / .rr
-    .se <- sqrt( (.a + .c) / .n * (1 - ((.a + .c) / .n)) * (1/.n1 + 1/.n0))
-    .ll <- .ar - (1.96 * .se / ((.a / .n1) - (.c / .n0)))
-    .ul <- .ar + (1.96 * .se / ((.a / .n1) - (.c / .n0)))
+    .se <- sqrt(.p * .q * (1/.n1 + 1/.n0))
+    .ll <- .ar - (.ar * (1.96 * .se / .rd))
+    .ul <- .ar + (.ar * (1.96 * .se / .rd))
 
 
     ## Add p-value later
@@ -849,7 +857,6 @@ calcAR <- function(.tbl, .x.name, rnd = 3)
     ## add dash lines
     addDashLines(.df, .vLine = 2)
 }
-
 
 ## to add PAR for multivariate data <<<-----
 ## Calculate Population Attributable risks

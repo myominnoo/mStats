@@ -78,12 +78,10 @@
 #' @references
 #'
 #' \enumerate{
-#'     \item Essential Medical Statistics, Betty R. Kirkwood & Jonathan A.C.
-#' Sterne, Second Edition.
-#'     \item B. Burt Gerstman. Epidemology Kept Simple. Wiley-Blackwell, 2013:
-#'     \item Statistics with confidence, Douglas G Altman, second edition
+#'     \item Betty R. Kirkwood, Jonathan A.C. Sterne (2006, ISBN:978–0–86542–871–3)
+#'     \item B. Burt Gerstman (2013, ISBN:978-1-4443-3608-5)
+#'     \item Douglas G Altman (2005, ISBN:0 7279 1375 1)
 #' }
-#'
 #'
 #'
 #' @author
@@ -95,44 +93,39 @@
 #' Website: \url{https://myominnoo.github.io/}
 #'
 #' @examples
-#' \dontrun{
 #'
 #'
 #' ### Example from Essential Medical Statistics
 #' # Page 178, Chapter 18: Controlling for confounding: Stratification
-#' library(magrittr)
 #' lepto <- expandTables(
 #'     male = c(36, 14, 50, 50), female = c(24, 126, 10, 90),
 #'     exp_name = "area", exp_lvl = c("Rural", "Urban"),
 #'     case_name = "ab", case_lvl = c("Yes", "No"),
 #'     strata_name = "gender"
-#' ) %>%
-#'     labelData("Prevalence survey of leptospirosis in West Indies") %>%
-#'     labelVar(c(area, ab, gender),
+#' )
+#'
+#' ## label variables and data
+#' lepto <- labelData(lepto, "Prevalence survey of leptospirosis in West Indies")
+#' lepto <- labelVar(lepto,
+#'               c(area, ab, gender),
 #'               c("Type of area", "Leptospirosis Antibodies",
 #'                 "Gender: Male or female"))
 #'
+#' ## check dataset
 #' codebook(lepto)
 #'
 #' ## Calculate OR
 #' mhor(lepto, area, by = ab, case_value = "Yes")
 #'
 #' ## calculate stratified OR
-#' lepto %>%
-#'     filter(gender == "male") %>%
-#'     mhor(area, by = ab, case_value = "Yes")
-#'
-#' lepto %>%
-#'     filter(gender == "female") %>%
-#'     mhor(area, by = ab, case_value = "Yes")
+#' mhor(filter(lepto, gender == "male"), area, by = ab, case_value = "Yes")
+#' mhor(filter(lepto, gender == "female"), area, by = ab, case_value = "Yes")
 #'
 #'
 #' ## Calculate MHOR
 #' mhor(lepto, area, by = ab, strata = gender, case_value = "Yes")
 #'
-#'
-#'
-#'
+#' \dontrun{
 #' ### Simpson's Paradox: Example from Burt Gerstman's Epidemiology
 #' ### Chapter 14, Page 326
 #'
@@ -163,7 +156,8 @@
 #'
 #'
 #'
-#' ## Prevalence of asthma among patients at a particular general practice
+#' ## Exposure to passive smoking among female lung cancer cases
+#' ## and controls in four studies
 #' ## Statistics with confidence, Douglas G Altman, second edition
 #' ## Chapter 7, page 64
 #'
@@ -278,7 +272,7 @@ mhor <- function(data, ... , by, strata = NULL, exp_value = NULL, case_value = N
         printMsg(paste0(.strata.name, ": ", .strata.lbl))
     }
 
-    invisible(.df)
+    invisible(list(.df))
 }
 
 
@@ -350,6 +344,10 @@ tabOR <- function(.data, .x, .by, exp_value = NULL, case_value = NULL,
     ## change row and col orders
     .tbl <- rowColOrder(.tbl, exp_value, case_value)
 
+    .na <- is.na(row.names(.tbl))
+    if (any(.na)) {
+        row.names(.tbl)[.na] <- "NA"
+    }
 
     ## split tables to get 2x2 tables
     if (nrow(.tbl) > 2) {
@@ -357,7 +355,6 @@ tabOR <- function(.data, .x, .by, exp_value = NULL, case_value = NULL,
     } else {
         .tbl <- list(.tbl)
     }
-
 
 
     ## calcalate OR
