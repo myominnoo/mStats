@@ -58,7 +58,7 @@ is generated.
 ## use infert data
 data(infert)
 
-tabOdds(infert, education, by = case)
+tabOdds(infert, education, by = case, plot = FALSE)
 
 }
 \references{

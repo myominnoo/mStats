@@ -57,7 +57,7 @@
 #' ## use infert data
 #' data(infert)
 #'
-#' tabOdds(infert, education, by = case)
+#' tabOdds(infert, education, by = case, plot = FALSE)
 #'
 #' @export
 tabOdds <- function(data, ... , by, exp_value = NULL, case_value = NULL, plot = TRUE,

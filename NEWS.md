@@ -19,6 +19,12 @@
 
 ## New function 
 
+* `logistic` performs logistic regression and reports several associated statistics. 
+
+* `regress` computes linear regresssion and generates linears statistics along with the option for robust standard errors. 
+
+* `esttab` compiles regression estimates into in a table format seen in many journal articles. 
+
 * `lagRows()` creates lagged version of variables. See `?lagRows`.
 
 
