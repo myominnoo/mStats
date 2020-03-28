@@ -60,10 +60,10 @@
 #' ## use infert data
 #' data(infert)
 #'
-#' tabRisks(infert, education, by = case, case_value = 1)
-#' tabRisks(infert, induced, by = case)
+#' tabRisks(infert, education, by = case, case_value = 1, plot = FALSE)
+#' tabRisks(infert, induced, by = case, plot = FALSE)
 #'
-#' tabRisks(infert, education, induced, by = case)
+#' tabRisks(infert, education, induced, by = case, plot = FALSE)
 #'
 #' @export
 tabRisks <- function(data, ... , by, exp_value = NULL, case_value = NULL, plot = TRUE,

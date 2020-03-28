@@ -256,9 +256,6 @@
 #' ## check dataset
 #' codebook(lung)
 #'
-#' ## tabulate Risks
-#' tabRisks(lung, smoking, by = cancer, exp_value = "Smokers", case_value = "Yes")
-#'
 #' ## calculate RR
 #' mhrr(lung, smoking, by = cancer, exp_value = "Smokers", case_value = "Yes")
 #'
@@ -266,8 +263,6 @@
 #' mhrr(lung, smoking, by = cancer, exp_value = "Smokers", case_value = "Yes",
 #'      measure = "diff", rnd = 5)
 #' ## Risk difference = 0.0012 = 0.12 %
-#'
-#'
 #'
 #'
 #' \dontrun{
