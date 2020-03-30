@@ -78,42 +78,6 @@ infert.new <- keep(infert, stratum, pooled.stratum, education:spontaneous)
 codebook(infert.new)
 
 
-\dontrun{
-## DEMONSTRATION: drop
-
-## suppose we want to remove education, age, induced and case
-infert.new <- drop(infert, education, age, induced, case)
-codebook(infert.new)
-
-## use colon separator :
-infert.new <- drop(infert, education:case)
-codebook(infert.new)
-
-
-
-## DEMONSTRATION: filter
-
-## suppose we want to remove rows with parity less than 5 or less than or equal to 4
-tab(infert, parity)
-infert.new <- filter(infert, parity < 5)
-tab(infert.new, parity)
-
-## we want parity value between 2 and 5
-infert.new <- filter(infert, parity > 1, parity < 6)
-tab(infert.new, parity)
-
-## or we can write like this.
-infert.new <- filter(infert, parity >= 2 & parity <= 5)
-tab(infert.new, parity)
-
-## DEMONSTRATION: arrange
-
-## arrange by education
-arrange(infert, education)
-arrange(infert, -education)
-arrange(infert, education, age, case)
-
-}
 
 }
 \author{

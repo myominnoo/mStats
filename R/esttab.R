@@ -38,11 +38,6 @@
 #'                odds_ratio = FALSE)
 #' e <- esttab(m1, m2, m3, m4, m5)
 #'
-#' \dontrun{
-#' ## export table to CSV file for formatting publication-quality table
-#' export(e, "exporttest.csv")
-#' }
-#'
 #' @export
 esttab <- function( ... )
 {

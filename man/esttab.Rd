@@ -33,11 +33,6 @@ m5 <- logistic(infert, case, education, age, parity, induced, spontaneous,
                odds_ratio = FALSE)
 e <- esttab(m1, m2, m3, m4, m5)
 
-\dontrun{
-## export table to CSV file for formatting publication-quality table
-export(e, "exporttest.csv")
-}
-
 }
 \author{
 For any feedback, please contact \code{Myo Minn Oo} via:
