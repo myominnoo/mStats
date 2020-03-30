@@ -57,41 +57,6 @@ is derived using the following formula:
 \code{plot}, if \code{TRUE}, produces a graph of the rates against
 the numerical code used for categories of \code{by}.
 }
-\examples{
-\dontrun{
-library(survival)
-data(lung)
-
-## incidence rates
-strate(lung, time, status, per = 100000)
-
-## stratified incidence rates
-strate(lung, time, status, sex, fail = 1, per = 100000)
-strate(lung, time, status, sex, fail = 2, per = 100000)
-
-
-# use pipe function
-library(magrittr)
-
-## create ageband
-lung \%>\%
-   egen(age, c(56, 61, 71), new_var = ageband) \%>\%
-   tab(ageband)
-
-lung \%>\%
-   egen(age, c(56, 61, 71), new_var = ageband) \%>\%
-   strate(time, status, sex, ageband, fail = 1, per = 100000)
-
-
-## Mayo Clinic Primary Biliary Cirrhosis Data
-data(pbc)
-codebook(pbc)
-tab(pbc, trt, sex:edema)
-strate(pbc, time, status, fail = 1, per = 100000)
-strate(pbc, time, status, trt, sex:edema, fail = 1, per = 100000)
-}
-
-}
 \references{
 Betty R. Kirkwood, Jonathan A.C. Sterne (2006, ISBN:978–0–86542–871–3)
 }

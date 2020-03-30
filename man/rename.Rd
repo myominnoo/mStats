@@ -42,23 +42,6 @@ infert.new <- rename(infert,
 codebook(infert.new)
 
 
-\dontrun{
-
-## IDRE UCLA Example 1
-path <- "https://stats.idre.ucla.edu/stat/data/patient_pt1_stata_dm.dta"
-hosp <- haven::read_dta(path)
-codebook(hosp)
-
-# one variable
-hosp <- rename(hosp, sex, SEX)
-codebook(hosp)
-
-# multiple variables
-hosp <- rename(hosp,
-              c(wbc, rbc, bmi, test1, test2),
-              c(WBC, RBC, BMI, TEST1, TEST2))
-codebook(hosp)
-}
 }
 \author{
 For any feedback, please contact \code{Myo Minn Oo} via:

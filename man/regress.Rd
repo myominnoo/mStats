@@ -93,41 +93,6 @@ regress(airquality, Ozone, Wind, robust = TRUE, plot = TRUE)
 regress(airquality, Ozone, Wind, Solar.R, Temp, Month, Day,
         robust = TRUE, plot = TRUE)
 
-\dontrun{
-
-
-## Example: Regression 101, Oscar Torres-Reyna, 2007, Princeton University
-## http://dss.princeton.edu/training/
-paths <- "http://dss.princeton.edu/training/states.dta"
-state <- haven::read_dta(paths)
-
-## check data
-codebook(state)
-
-## summary statistics
-summ(state)
-
-
-
-## run simple linear regression
-regress(state, csat, expense)
-
-## using robust option to control for heteroskedasticity
-regress(state, csat, expense, robust = TRUE)
-
-
-
-### multiple linear regression
-regress(state, csat, expense, percent, income, high, college)
-
-# use robust
-regress(state, csat, expense, percent, income, high, college, robust = TRUE)
-
-## categorical variable in linear regression
-state \%>\%
-    recode(region, 1:4, c("1West", "2N.East", "3South", "4Mid.West")) \%>\%
-    regress(csat, expense, percent, income, high, college, region)
-}
 
 }
 \author{

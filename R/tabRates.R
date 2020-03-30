@@ -60,39 +60,6 @@
 #'
 #' Website: \url{https://myominnoo.github.io/}
 #'
-#' @examples
-#' \dontrun{
-#' library(survival)
-#' data(lung)
-#'
-#' ## incidence rates
-#' strate(lung, time, status, per = 100000)
-#'
-#' ## stratified incidence rates
-#' strate(lung, time, status, sex, fail = 1, per = 100000)
-#' strate(lung, time, status, sex, fail = 2, per = 100000)
-#'
-#'
-#' # use pipe function
-#' library(magrittr)
-#'
-#' ## create ageband
-#' lung %>%
-#'    egen(age, c(56, 61, 71), new_var = ageband) %>%
-#'    tab(ageband)
-#'
-#' lung %>%
-#'    egen(age, c(56, 61, 71), new_var = ageband) %>%
-#'    strate(time, status, sex, ageband, fail = 1, per = 100000)
-#'
-#'
-#' ## Mayo Clinic Primary Biliary Cirrhosis Data
-#' data(pbc)
-#' codebook(pbc)
-#' tab(pbc, trt, sex:edema)
-#' strate(pbc, time, status, fail = 1, per = 100000)
-#' strate(pbc, time, status, trt, sex:edema, fail = 1, per = 100000)
-#' }
 #'
 #' @export
 strate <- function(data, time, status, ... , fail = NULL,
