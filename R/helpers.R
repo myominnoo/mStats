@@ -337,12 +337,14 @@ addDashLines <- function(.df, .vLine = 0)
     .nchar <- sapply(.nchar, FUN = max)
 
     ## create dash lines
-    .dash <- sapply(.nchar, function(z) paste0(rep("-", z), collapse = ""))
+    .dash <- sapply(.nchar, function(z) {
+        z <- ifelse(is.na(z), 2, z)
+        paste0(rep("-", z), collapse = "")
+    })
     .dash[.vLine] <- "+"
 
     rbind(.df[0, ], .dash, .df[1:nrow(.df), ], .dash)
 }
-
 
 
 

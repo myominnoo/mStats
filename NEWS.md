@@ -1,4 +1,12 @@
-# mStats 3.2.1 (in development)
+# mStats 3.2.3 (in development)
+
+* Changed to appear fixed rounding decimal in `tab`.
+
+# mStats 3.2.2 
+
+* Updated references in description text and removed `\dontrun{}` in the example 
+
+# mStats 3.2.1
 
 ## Bug fixes
 

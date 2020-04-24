@@ -139,9 +139,9 @@ replace <- function(data, var, value, ... )
     })
 
     ## Display message to nofity changes
-    printMsg(paste0("Expression used to replace: '", .expr.txt, "'"))
+    # printMsg(paste0("Expression used to replace: '", .expr.txt, "'"))
     printMsg(paste0(length(.changed.values.count),
-                    " observations replaced with",
+                    " observation(s) of '", .var.name, "' replaced with",
                     ifelse(.value.var,
                            paste0(" the values from '", value),
                            paste0(" '", value))
