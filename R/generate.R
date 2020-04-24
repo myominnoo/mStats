@@ -49,6 +49,8 @@ generate <- function(data, var, .expr = NULL)
     ## assign data into .data for further evaluation
     .data <- data
 
+    ## variable name
+    .var.name <- as.character(.args$var)
 
 
     ## get variables' and arguments' names
@@ -77,10 +79,12 @@ generate <- function(data, var, .expr = NULL)
     # printMsg(paste0("Expression used to generate: '", .expr.txt, "'"))
     .var <- is.na(.data[, var])
     if (any(.var)) {
-        printMsg(paste0(nrow(.data[!.var, var]), " real values generated | ",
-                        nrow(.data[.var, var]), " missing values generated"))
+        printMsg(paste0(nrow(.data[!.var, var]), " real values & ",
+                        nrow(.data[.var, var]), " missing values of '",
+                        .var.name, "' generated"))
     } else {
-        printMsg(paste0(length(.data[[var]]), " real values generated"))
+        printMsg(paste0(length(.data[[var]]), " real values of '",
+                        .var.name, "' generated"))
     }
 
     return(.data)

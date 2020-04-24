@@ -127,7 +127,6 @@ tab <- function(data, ... , by = NULL, row.pct = TRUE, na.rm = FALSE, rnd = 1)
     .vars <- checkEnquos(.data, .vars, .types = "tab")
 
 
-
     ## one-way tabulation
     ## add two-way here
     by <- as.character(.args$by)
@@ -168,6 +167,7 @@ tab <- function(data, ... , by = NULL, row.pct = TRUE, na.rm = FALSE, rnd = 1)
 
 
 
+
 # Helpers -----------------------------------------------------------------
 
 
@@ -190,8 +190,8 @@ tab1 <- function(data, x, na.rm = FALSE, rnd = 1)
         cbind(names(.tbl),
               "|",
               .tbl,
-              round(.tbl / .total * 100, rnd),
-              round(cumsum(.tbl) / .total * 100, rnd)),
+              sprintf(.tbl / .total * 100, fmt = paste0('%#.', rnd, 'f')),
+              sprintf(cumsum(.tbl) / .total * 100, fmt = paste0('%#.', rnd, 'f'))),
         stringsAsFactors = FALSE
     )
     names(.df) <- c(.x.name, "|", "Freq.", "Percent.", "Cum.Percent.")
@@ -235,12 +235,11 @@ tab2 <- function(data, x, by, row.pct = TRUE, na.rm = FALSE, rnd = 1)
 
 
     ## get column percentages and add to .tbl.all
-    .tbl.col <- do.call(cbind,
-                        lapply(.tbl.all, function(z) {
-                            .total <- z[length(z)]
-                            z / .total * 100
-                        }))
-    .tbl.col <- round(.tbl.col, rnd)
+    .tbl.col <- .tbl.all
+    for (i in 1:ncol(.tbl.all)) {
+        .tbl.col[, i] <-  sprintf(.tbl.all[, i] / .tbl.all[nrow(.tbl.all), i] * 100,
+                                  fmt = paste0('%#.', rnd, 'f'))
+    }
     .tbl.col <- do.call(cbind,
                         lapply(1:ncol(.tbl.all), function(z) {
                             cbind(.tbl.all[, z], .tbl.col[, z])
@@ -252,9 +251,9 @@ tab2 <- function(data, x, by, row.pct = TRUE, na.rm = FALSE, rnd = 1)
                         lapply(1:nrow(.tbl.all), function(z) {
                             .row <- unlist(.tbl.all[z, ])
                             .total <- .row[length(.row)]
-                            .row / .total * 100
+                            sprintf(.row / .total * 100,
+                                    fmt = paste0('%#.', rnd, 'f'))
                         }))
-    .tbl.row <- round(.tbl.row, rnd)
     .tbl.row <- do.call(cbind,
                         lapply(1:ncol(.tbl.all), function(z) {
                             cbind(.tbl.all[, z], .tbl.row[, z])
