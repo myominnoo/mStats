@@ -47,7 +47,7 @@ jobs:
         run: |
           install.packages('remotes')
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), "depends.Rds", version = 2)
-        shell: pwsh
+        shell: Rscript {0}
 
       - name: Cache R packages
         if: runner.os != 'Windows'
@@ -69,11 +69,11 @@ jobs:
         run: |
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("rcmdcheck")
-        shell: pwsh
+        shell: Rscript {0}
 
       - name: Check
         run: rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "warning", check_dir = "check")
-        shell: pwsh
+        shell: Rscript {0}
 
       - name: Upload check results
         if: failure()
@@ -85,4 +85,4 @@ jobs:
       - name: Test coverage
         if: matrix.config.os == 'macOS-latest' && matrix.config.r == '3.6'
         run: covr::codecov()
-        shell: pwsh
+        shell: Rscript {0}
