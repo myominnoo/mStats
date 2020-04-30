@@ -3,6 +3,7 @@
 A tool for Epidemiological Data Analysis.
 
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/mStats)](https://cran.r-project.org/package=mStats)
+![R-CMD-check](https://github.com/myominnoo/mStats/workflows/R-CMD-check/badge.svg)
 ![CRAN\_Download\_Counter](http://cranlogs.r-pkg.org/badges/grand-total/mStats)
 
 Please visit [https://myominnoo.github.io/pages/R/r_intro.html](https://myominnoo.github.io/pages/R/r_intro.html) to install stable version. It's advisable to use stable version for routine works and beta version to test. 
