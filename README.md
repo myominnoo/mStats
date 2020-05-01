@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# mStats <a href='https://dplyr.tidyverse.org'><img src='man/figures/logo.png' align="right" height="120" /></a>
+# mStats <a href='https://myominnoo.github.io/'><img src='man/figures/logo.png' align="right" height="120" /></a>
 
 <!-- badges: start -->
 
