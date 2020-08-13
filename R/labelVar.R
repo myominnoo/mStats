@@ -1,34 +1,31 @@
-#' @title Add or replace labels of variables and dataset
+#' @title ADD, REPLACE or REMOVE labels of variables and dataset
 #'
 #' @description
 #'
-#' \code{labelVar} labels \code{variables}.
+#' \code{labelVar()} labels \code{variables}.
 #'
-#' \code{labelData} labels \code{Dataset}.
+#' \code{labelData()} labels \code{Dataset}.
 #'
 #' @param data dataset
-#' @param var one variable or variables
-#' @param lbl to specify labels. If not specified, label is removed
+#' @param ... variable = "label"
+#' @param lbl label for dataset
 #'
 #' @details
 #'
 #' Labels are useful to provide more detailed information about
 #' variables or dataset. Many functions in \code{mStats} package
 #' extract label information and display them as footnote.
-#'
-#' \strong{Label single or multiple variables}
-#'
 #' Single or multiple variables can be labelled.
 #'
-#' Example: single variable
+#' \strong{Label single variables}
 #'
-#' \preformatted{labelVar(data, var, lbl)}
 #'
-#' Example: multiple variable
+#' \preformatted{labelVar(data, var = "lbl")}
+#'
+#' \strong{Label multiple variables}
 #'
 #' \preformatted{labelVar(data,
-#'       c(var1, var2, var3),
-#'       c(lbl1, lbl2, lbl3))}
+#'       var1 = "lbl1", var2 = "lbl2", var3 = "lbl3", etc)}
 #'
 #' \strong{Label Dataset}
 #'
@@ -40,8 +37,6 @@
 #'
 #' @author
 #'
-#' For any feedback, please contact \code{Myo Minn Oo} via:
-#'
 #' Email: \email{dr.myominnoo@@gmail.com}
 #'
 #' Website: \url{https://myominnoo.github.io/}
@@ -50,86 +45,64 @@
 #'
 #' ## use infert data
 #' data(infert)
-#'
-#' ## label education
-#' infert.new <- labelVar(infert, education, "patient's education")
-#' codebook(infert.new)
-#'
-#' ## label multiple variables
-#' infert.new <- labelVar(infert, c(education, age, case),
-#'                        c("patient's education", "age in years", "case status"))
-#' codebook(infert.new)
+#' codebook(infert)
 #'
 #'
-#' ## label dataset
+#' ## add labels
+#' infert.new <- labelVar(infert,
+#'                        education = "EDUCATION",
+#'                        age = "AGE IN YEARS",
+#'                        parity = "count",
+#'                        case = "case status",
+#'                        induced = "# of prior induced abortions",
+#'                        spontaneous = "# of prior spon. abortions",
+#'                        stratum = "Matched set number",
+#'                        pooled.stratum = "Stratum number")
+#'
 #' infert.new <- labelData(infert.new,
-#'                         "Infertility after Spontaneous and Induced Abortion")
+#'     "Infertility after Spontaneous and Induced Abortion")
 #' codebook(infert.new)
+#'
 #'
 #' @export
-labelVar <- function(data, var, lbl = NULL)
+labelVar <- function(data, ... )
 {
-
-    ## if data is not data.frame, stop
-    if (!is.data.frame(data))
-        stop(paste0(" ... '", deparse(substitute(data)), "' is not data.frame ... "))
-
+    ## match call arguments
     .args <- as.list(match.call())
 
-    ## assign data into .data for further evaluation
+    ## copy data to .data
     .data <- data
 
+    ## get names of dataset and headings
+    .data_name <- deparse(substitute(data))
+    .vars_names <- names(.data)
 
-    ## numbers of vars and lbls
-    .var <- as.character(.args$var)
-    .var.len <- length(.var)
-    if (.var.len > 1) {
-        .var <- .var[-1]
-        .var.len <- length(.var)
-    }
-    ## Check if colon is there.
-    ## if present, retrieve variables between the two variables
-    if (any(grepl(":", .var))) {
-        .var <- do.call(
-            c,
-            lapply(.var, function(z) {
-                .colon <- grepl(":", z)
-                if (.colon) {
-                    splitByColon(data, z, .colon)
-                } else {
-                    z
-                }
-            })
-        )
-        .var.len <- length(.var)
+    ## if input is not a data.frame, stop
+    if (!is.data.frame(.data)) {
+        stop("`.data` must be a data.frame", call. = FALSE)
     }
 
+    ## get the names within three dots
+    .vars <- .args[-c(1:2)]
 
-    ## check labels
-    .lbl <- lbl
-    .lbl.len <- ifelse(is.null(lbl), 1, length(lbl))
-
-    if (.var.len != .lbl.len) {
-        if (is.null(lbl)) {
-            .lbl <- rep(NULL, .var.len)
-        } else {
-            stop(" ... Variable and its label specify different length! ... ")
+    ## check if variables are valid
+    sapply(1:length(.vars), function(z) {
+        .var_name <- names(.vars[z])
+        ## check if all variables are in the dataset
+        if (!(.var_name %in% .vars_names)) {
+            stop(paste0("Variable '", .var_name, "' not found in the dataset"),
+                 call. = FALSE)
         }
-    }
 
-
-    ## loop and assign each variable to corresponding labels
-    for (i in 1:.var.len) {
-        .txt <- paste0(".data[, '", .var[i], "']")
-        attr(.data[[.var[i]]], "label") <- .lbl[i]
-        printMsg(paste0("Variable '", .var[i],
-                        "' labelled as '",
-                        ifelse(is.null(.lbl[i]), "<NA>", .lbl[i]), "'"))
-    }
+        .lbl <- as.character(.vars[z])
+        attr(.data[[.var_name]], "label") <<- .lbl
+        printText(
+            paste0("'", .var_name, "' labelled as '",
+                   .lbl, "'"))
+    })
 
     return(.data)
 }
-
 
 
 
@@ -137,16 +110,25 @@ labelVar <- function(data, var, lbl = NULL)
 #' @export
 labelData <- function(data, lbl = NULL)
 {
-
-    ## if data is not data.frame, stop
-    if (!is.data.frame(data))
-        stop(paste0(" ... '", deparse(substitute(data)), "' is not data.frame ... "))
-
+    ## match call arguments
     .args <- as.list(match.call())
 
-    attr(data, "label") <- lbl
-    printMsg(paste0("Dataset '", .args$data,
-                    "' labelled as '",
-                    ifelse(is.null(lbl), "<NA>", lbl), "'"))
-    return(data)
+    ## copy data to .data
+    .data <- data
+
+    ## if input is not a data.frame, stop
+    if (!is.data.frame(.data)) {
+        stop("`.data` must be a data.frame", call. = FALSE)
+    }
+
+    ## get label
+    attr(.data, "label") <- lbl
+    if (is.null(lbl)) {
+        printText(paste0("Dataset '", .args$data, "': label removed"))
+    } else {
+        printText(paste0("Dataset '", .args$data, "': labelled as '",
+                         lbl, "'"))
+    }
+
+    return(.data)
 }

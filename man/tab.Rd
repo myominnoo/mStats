@@ -39,8 +39,8 @@ If \code{by} is not specified, \code{tab} generates one-way tabulation of
 a variable or multiple variables. \code{...} accepts multiple variables and
 produces corresponding tabulations.
 
-Tabulation is displayed in \code{Freq.} (frequency), \code{Percent.}
-(Relative Frequency) and \code{Cum.Percent.} (Cumulative Relative frequency).
+Tabulation is displayed in \code{Freq} (frequency), \code{Percent}
+(Relative Frequency) and \code{Cum.} (Cumulative Relative frequency).
 
 \preformatted{tab(data, var1)}
 
@@ -96,8 +96,6 @@ tab(infert, age, parity:spontaneous, education, by = case)
 Betty R. Kirkwood, Jonathan A.C. Sterne (2006, ISBN:978–0–86542–871–3)
 }
 \author{
-For any feedback, please contact \code{Myo Minn Oo} via:
-
 Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}

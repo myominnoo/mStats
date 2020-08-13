@@ -4,14 +4,14 @@
 \alias{generate}
 \title{Create a new variable}
 \usage{
-generate(data, var, .expr = NULL)
+generate(data, new_var, expr = NULL)
 }
 \arguments{
 \item{data}{Dataset}
 
-\item{var}{New variable}
+\item{new_var}{Name of new variable without double quote}
 
-\item{.expr}{value or Expression for simple arithmetic or logical operations:
+\item{expr}{value or Expression for simple arithmetic or logical operations:
 See examples.}
 }
 \description{
@@ -26,7 +26,6 @@ The value of the variable are specified by \code{expr} argument.
 
 ## use infert data
 data(infert)
-codebook(infert)
 
 ## create a new variable induced2 with 0 and 1+2
 infert.new <- generate(infert, induced2, as.numeric(induced == 0))
@@ -38,8 +37,6 @@ tab(infert.new, edu)
 
 }
 \author{
-For any feedback, please contact \code{Myo Minn Oo} via:
-
 Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}

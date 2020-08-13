@@ -5,32 +5,17 @@
 #'
 #' @param data dataset
 #' @param var name of a new variable
-#' @param old_values vector
-#' @param new_values vector (length of 1 or same with values_old)
+#' @param ... recode like this: "old value"-"new value" or 1-2 or NA-"Missing"
+#' or "Missing"-NA.
 #' @details
 #'
 #' \code{recode}
 #' changes the values of variables including categorical variables
 #' according to the rules specified below.
 #'
-#' In case of factor, \code{recode} first converts the vector into character,
-#' recodes and then revert back to factor.
 #'
-#' If data is specified, it returns the whole dataframe with recoded variables.
-#'
-#' \strong{Sample Inputs for conversion}:
-#'
-#' Old.value    to    New.value
-#'
-#'    #        >>>>       #
-#'
-#' c(#, #)     >>>>    c(#, #)
-#'
-#' c(#, #)     >>>>       #
-#'
-#'    #:#      >>>>       #
-#'
-#'
+#' \preformatted{labelVar(data, "old value"-"new value", 1-0, NA-"Missing",
+#'                        "Missing"-NA)}
 #'
 #' @author
 #'
@@ -48,80 +33,100 @@
 #' ## tabulate induced to check values
 #' tab(infert, induced)
 #'
-#' ## recode induced: 1 and 2 into 1
-#' infert.new <- recode(infert, induced, c(1, 2), 1)
+#' ## recode induced: 2 into 1
+#' infert.new <- recode(infert, induced, 2-1)
 #'
 #' ## tabulate to check
 #' tab(infert.new, induced)
 #'
+#'
+#' ## recode induced: 0 to 3, 1 to 7, 2 to 10
+#' infert.new <- recode(infert, induced, 0-3, 1-7, 2-10)
+#'
+#' ## tabulate to check
+#' tab(infert.new, induced)
+#'
+#'
 #' @export
-recode <- function(data, var, old_values, new_values)
+recode <- function(data, var, ... )
 {
-    ## if data is not data.frame, stop
-    if (!is.data.frame(data))
-        stop(paste0(" ... '", deparse(substitute(data)), "' is not data.frame ... "))
-
+    ## match call arguments
     .args <- as.list(match.call())
-    ## get var's name
-    .var.name <- as.character(.args$var)
 
+    ## copy data to .data
+    .data <- data
 
-    if (!is.null(data)) {
-        var <- eval(substitute(var), data)
+    ## get names of dataset and headings
+    .data_name <- deparse(substitute(data))
+    .vars_names <- names(.data)
+
+    ## if input is not a data.frame, stop
+    if (!is.data.frame(.data)) {
+        stop("`.data` must be a data.frame", call. = FALSE)
     }
 
 
-    ## if var is factor, say YES to .is.var.factor and convert to character.
-    if (is.factor(var)) {
-        .is.var.factor <- TRUE
-        var <- as.character(var)
-    } else {
-        .is.var.factor <- FALSE
+    ## get variable name and data
+    .var_name <- .args$var
+
+    ## check if variable is in the dataset
+    if (!(as.character(.var_name) %in% .vars_names)) {
+        stop(paste0("Variable '", .var_name, "' not found in the dataset"),
+             call. = FALSE)
     }
 
-    .old.values.len <- length(old_values)
-    .new.values.len <- length(new_values)
+    ## get variable data
+    .var <- .data[[.var_name]]
 
-    # if old value == 1, new value should be 1
-    # if old value > 1, then new value can be 1 or same as old value
-    if (.old.values.len != .new.values.len) {
-        if (.new.values.len == 1) {
-            new_values <- rep(new_values, .old.values.len)
+    ## get the names within three dots
+    .values <- .args[-c(1:3)]
+
+    ## change old values to new values
+    lapply(1:length(.values), function(z) {
+        .v <- as.character(.values[[z]])
+
+        ## assign old and new values: check missing
+        .old <- .v[2]
+        .old <- ifelse(.old == "NA", NA, .old)
+
+        .new <- .v[3]
+        .new <- ifelse(.new == "NA", NA, ifelse(.new == "NULL", NULL, .new))
+
+        ## check if values are valid
+        if (is.na(.old)) {
+            .check <- is.na(.var)
         } else {
-            stop(" ... Inconsistent old and new values ... ")
+            .check <- .var == .old
         }
-    }
 
-
-
-    ## if var is labelled num, removed labels
-    attr(var, "names") <- NULL
-    attr(var, "labels") <- NULL
-
-    ## log how many values are being recoded by categories
-    changed.values.count <- NULL
-    for (i in 1:.old.values.len) {
-        if (is.na(old_values[i])) {
-            changed.values.count <- c(changed.values.count, length(var[is.na(var)]))
-            var[is.na(var)] <- new_values[i]
+        ## change the values
+        if (is.na(.old)) {
+            .var[is.na(.var)] <<- .new
         } else {
-            changed.values.count <- c(changed.values.count,
-                                      length(var[var == old_values[i]]))
-            var[var == old_values[i]] <- new_values[i]
+            .var[.var == .old] <<- .new
         }
-        printMsg(paste0(changed.values.count[i], " values of '", .var.name,
-                        "' recoded from '",
-                        old_values[i], "' into '",
-                        new_values[i], "'"))
-    }
 
-    ## change back to factor
-    if (.is.var.factor) {
-        var <- factor(var)
-    }
 
-    ## asign back to dataset
-    data[, .var.name] <- var
+        ## fix labels
+        tryCatch({
+            attr(.var, "labels") -> .attr
+            if (is.na(.old)) {
+                attr(.var, "labels") <<- c(attr(.var, "labels"), "NA" = .new)
+            } else {
+                attr(.var, "labels")[.attr == .old] <<- .new
+            }
 
-    return(data)
+        }, error = function(cnd) {
+            # return(NULL)
+        })
+
+        ## print text notification
+        printText(paste0(sum(.check, na.rm = TRUE), " values of '", .var_name,
+                         "' recoded from '", .old, "' into '", .new, "'"))
+    })
+
+    ## reassign back to dataset
+    .data[[.var_name]] <- .var
+
+    return(.data)
 }

@@ -1,7 +1,7 @@
 Package: mStats
 Type: Package
 Title: Epidemiological Data Analysis
-Version: 3.2.3
+Version: 3.3.0
 Authors@R: 
     c(person(given = "Myo Minn",
              family = "Oo",
@@ -11,19 +11,20 @@ Authors@R:
 Maintainer: Myo Minn Oo <dr.myominnoo@gmail.com>
 Description: This is a tool for epidemiologist, medical data analyst, 
     medical or public health professionals. It contains three domains of functions:
-    functions for 1) data management, 2) statistical analysis and 3) calculating 
-    epidemiological measures. The calculations are mainly based on three books, 
+    1) data management, 2) statistical analysis and 3) calculating 
+    epidemiological measures. The calculations for statistical analysis 
+    and epidemiological measures are mainly based on three books, 
     1) Betty R. K, (2006, ISBN:978–0–86542–871–3), 
     2) B. Burt Gerstman (2013, ISBN:978-1-4443-3608-5) and 
     3) Douglas G Altman (2005, ISBN:0 7279 1375 1).
 License: GPL-2 | GPL-3
 URL: https://myominnoo.github.io/
 BugReports: https://github.com/myominnoo/mStats/issues
-Depends: R (>= 3.0.0)
+Depends: R (>= 4.0.0)
 Imports: 
     stats, 
     utils
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1

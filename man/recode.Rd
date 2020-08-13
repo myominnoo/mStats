@@ -4,16 +4,15 @@
 \alias{recode}
 \title{Recode contents of a variable}
 \usage{
-recode(data, var, old_values, new_values)
+recode(data, var, ...)
 }
 \arguments{
 \item{data}{dataset}
 
 \item{var}{name of a new variable}
 
-\item{old_values}{vector}
-
-\item{new_values}{vector (length of 1 or same with values_old)}
+\item{...}{recode like this: "old value"-"new value" or 1-2 or NA-"Missing"
+or "Missing"-NA.}
 }
 \description{
 \code{recode} easily manipulates contents of a new variable
@@ -24,23 +23,9 @@ of a data.frame
 changes the values of variables including categorical variables
 according to the rules specified below.
 
-In case of factor, \code{recode} first converts the vector into character,
-recodes and then revert back to factor.
-
-If data is specified, it returns the whole dataframe with recoded variables.
-
-\strong{Sample Inputs for conversion}:
-
-Old.value    to    New.value
+\preformatted{labelVar(data, "old value"-"new value", 1-0, NA-"Missing",
+                       "Missing"-NA)}
 }
-\section{>>>>}{
-c(#, #)     >>>>    c(#, #)
-
-c(#, #)     >>>>       #
-
-#:#      >>>>       #
-}
-
 \examples{
 
 ## use infert data
@@ -49,11 +34,19 @@ data(infert)
 ## tabulate induced to check values
 tab(infert, induced)
 
-## recode induced: 1 and 2 into 1
-infert.new <- recode(infert, induced, c(1, 2), 1)
+## recode induced: 2 into 1
+infert.new <- recode(infert, induced, 2-1)
 
 ## tabulate to check
 tab(infert.new, induced)
+
+
+## recode induced: 0 to 3, 1 to 7, 2 to 10
+infert.new <- recode(infert, induced, 0-3, 1-7, 2-10)
+
+## tabulate to check
+tab(infert.new, induced)
+
 
 }
 \author{

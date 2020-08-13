@@ -11,10 +11,6 @@
 #' @param case_name Name of \code{Case} variable
 #' @param case_lvl names of two categories in the order of
 #' @param strata_name Name of stratified variable
-#' @param stringsAsFactors \code{TRUE} or \code{FALSE}
-#'
-#' If \code{TRUE}, character vector is converted to a factor when
-#' \code{data.frame} is constructed.
 #'
 #' @details
 #'
@@ -26,9 +22,9 @@
 #'
 #' \strong{Strata}
 #'
-#' Strata can be included using multiple named vectors. The
-#' generated tables can be used for further calculation such as
-#' Mantel Haenszel methods.
+#' Multiple tables can be used to construct a dataset by specifying
+#' \code{strata_name} as follow. Strata can be included
+#' using multiple named vectors.
 #'
 #' \preformatted{
 #' expandTables(
@@ -43,7 +39,7 @@
 #' )
 #' }
 #'
-#' \strong{Labels}
+#' \strong{Variables' Labels}
 #'
 #' If variables' names or levels are not specified, the followings are
 #' applied.
@@ -65,8 +61,6 @@
 #'
 #' @author
 #'
-#' For any feedback, please contact \code{Myo Minn Oo} via:
-#'
 #' Email: \email{dr.myominnoo@@gmail.com}
 #'
 #' Website: \url{https://myominnoo.github.io/}
@@ -85,7 +79,8 @@
 #'
 #' ## label variable and dataset
 #' asthma <- labelData(asthma, "Hypothetical Data of Asthma Prevalence")
-#' asthma <- labelVar(asthma, c(sex, asthma), c("Man or Woman", "Asthma or No Asthma"))
+#' asthma <- labelVar(asthma, sex = "Man or Woman",
+#'                            asthma = "Asthma or No Asthma")
 #'
 #' ## Checking codebook
 #' codebook(asthma)
@@ -104,16 +99,15 @@ expandTables <- function( ... ,
                           exp_lvl = c("exposed", "unexposed"),
                           case_name = "outcome",
                           case_lvl = c("disease", "healthy"),
-                          strata_name = "strata",
-                          stringsAsFactors = FALSE)
+                          strata_name = "strata")
 {
     # get vectors within three dots
     .vec <- list(...)
-    .vec.len <- length(.vec)
+    .vec_len <- length(.vec)
 
     ## calculate strata
-    .strata.names <- sapply(1:length(.vec), function(z) names(.vec[z]))
-    .strata.times <- sapply(.vec, function(z) sum(z))
+    .strata_names <- sapply(1:length(.vec), function(z) names(.vec[z]))
+    .strata_times <- sapply(.vec, function(z) sum(z))
 
     ## create data.frame
 
@@ -121,30 +115,33 @@ expandTables <- function( ... ,
     .case <- rep(case_lvl, times = 2)
 
     ## create data frame
-    .data <- do.call(
-        rbind,
-        lapply(1:length(.vec), function(z) {
-            .times <- unlist(.vec[z])
-            .vec.exp <- rep(.exp, .times)
-            .vec.case <- rep(.case, .times)
-            .vec.strata <- rep(names(.vec[z]), sum(.times))
+    tryCatch({
+        .df <- do.call(
+            rbind,
+            lapply(1:.vec_len, function(z) {
+                .times <- unlist(.vec[z])
+                .vec.exp <- rep(.exp, .times)
+                .vec.case <- rep(.case, .times)
+                .vec_strata <- rep(names(.vec[z]), sum(.times))
 
-            if (is.null(.vec.strata)) {
-                .df <- data.frame(.vec.exp, .vec.case,
-                                  stringsAsFactors = stringsAsFactors)
-                names(.df) <- c(exp_name, case_name)
-            } else {
-                .df <- data.frame(.vec.exp, .vec.case, .vec.strata,
-                                  stringsAsFactors = stringsAsFactors)
-                names(.df) <- c(exp_name, case_name, strata_name)
-            }
-            .df
-        })
-    )
+                if (is.null(.vec_strata)) {
+                    .df <- data.frame(.vec.exp, .vec.case)
+                    names(.df) <- c(exp_name, case_name)
+                } else {
+                    .df <- data.frame(.vec.exp, .vec.case, .vec_strata)
+                    names(.df) <- c(exp_name, case_name, strata_name)
+                }
+                .df
+            })
+        )
 
-    ## print
-    printMsg("Converted to Dataset")
-    # codebook(.data)
+        ## print message
+        printText(paste0("Expanded into a dataset"))
 
-    return(.data)
+    }, error = function(cnd) {
+        stop(cnd, call. = FALSE)
+    })
+
+
+    return(.df)
 }

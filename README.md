@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# mStats <a href='https://myominnoo.github.io/'><img src='man/figures/logo.png' align="right" height="120" /></a>
+# mStats <a href='https://myominnoo.github.io'><img src='man/figures/logo.png' align="right" height="120" /></a>
 
 <!-- badges: start -->
 
@@ -27,24 +27,42 @@ procedures of data analysis flow.
     other three domains and streamline transfering results outside R
     environment.
 
+## Installation
 
-Please visit [https://myominnoo.github.io/pages/R/r_intro.html](https://myominnoo.github.io/pages/R/r_intro.html) to install stable version. It's advisable to use stable version for routine works and beta version to test. 
+``` r
+# The easiest way to get mStats is from CRAN:
+install.packages("mStats")
+```
 
-## 1) To install stable version 
+### Development version
 
-> install.packages("https://myominnoo.github.io/pages/R/r_archive/mStats_3.2.0.tar.gz", repos = NULL, type = "source")
+To get a bug fix or to use a feature from the development version, you
+can install the development version of mStats from GitHub.
 
-## 2) Install latest version 
+``` r
+# install.packages("devtools")
+devtools::install_github("myominnoo/mStats")
+```
 
-First, install `devtools` package 
+## Usage
 
-> install.packages("devtools")
+``` r
+## to update usage here
+```
 
+## Getting help
 
-use `install_github` function from devtools 
+If you encounter a clear bug, please file an issue with a minimal
+reproducible example on
+[GitHub](https://github.com/myominnoo/mStats/issues). For questions and
+other discussion, please email me view
+[dr.myominnoo@gmail.com](mailto::dr.myominnoo@gmail.com).
 
-> devtools::install_github("myominnoo/mStats")
+-----
 
-
-## Contact me!
-For any comments or feedback, contact me via [dr.myominnoo@gmail.com](mailto:dr.myominnoo@gmail.com) or please create an issue on this github repository. 
+Please note that this project is looking for contributors. By
+participating in this project, you agree to abide by its terms with
+[Contributor Code of
+Conduct](https://www.contributor-covenant.org/version/1/0/0/code-of-conduct/),
+version 1.0.0, available at
+<https://www.contributor-covenant.org/version/1/0/0/code-of-conduct/>.

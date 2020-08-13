@@ -3,42 +3,38 @@
 \name{labelVar}
 \alias{labelVar}
 \alias{labelData}
-\title{Add or replace labels of variables and dataset}
+\title{ADD, REPLACE or REMOVE labels of variables and dataset}
 \usage{
-labelVar(data, var, lbl = NULL)
+labelVar(data, ...)
 
 labelData(data, lbl = NULL)
 }
 \arguments{
 \item{data}{dataset}
 
-\item{var}{one variable or variables}
+\item{...}{variable = "label"}
 
-\item{lbl}{to specify labels. If not specified, label is removed}
+\item{lbl}{label for dataset}
 }
 \description{
-\code{labelVar} labels \code{variables}.
+\code{labelVar()} labels \code{variables}.
 
-\code{labelData} labels \code{Dataset}.
+\code{labelData()} labels \code{Dataset}.
 }
 \details{
 Labels are useful to provide more detailed information about
 variables or dataset. Many functions in \code{mStats} package
 extract label information and display them as footnote.
-
-\strong{Label single or multiple variables}
-
 Single or multiple variables can be labelled.
 
-Example: single variable
+\strong{Label single variables}
 
-\preformatted{labelVar(data, var, lbl)}
+\preformatted{labelVar(data, var = "lbl")}
 
-Example: multiple variable
+\strong{Label multiple variables}
 
 \preformatted{labelVar(data,
-      c(var1, var2, var3),
-      c(lbl1, lbl2, lbl3))}
+      var1 = "lbl1", var2 = "lbl2", var3 = "lbl3", etc)}
 
 \strong{Label Dataset}
 
@@ -50,26 +46,27 @@ Dataset can also be labelled and displayed in \code{codebook}.
 
 ## use infert data
 data(infert)
-
-## label education
-infert.new <- labelVar(infert, education, "patient's education")
-codebook(infert.new)
-
-## label multiple variables
-infert.new <- labelVar(infert, c(education, age, case),
-                       c("patient's education", "age in years", "case status"))
-codebook(infert.new)
+codebook(infert)
 
 
-## label dataset
+## add labels
+infert.new <- labelVar(infert,
+                       education = "EDUCATION",
+                       age = "AGE IN YEARS",
+                       parity = "count",
+                       case = "case status",
+                       induced = "# of prior induced abortions",
+                       spontaneous = "# of prior spon. abortions",
+                       stratum = "Matched set number",
+                       pooled.stratum = "Stratum number")
+
 infert.new <- labelData(infert.new,
-                        "Infertility after Spontaneous and Induced Abortion")
+    "Infertility after Spontaneous and Induced Abortion")
 codebook(infert.new)
+
 
 }
 \author{
-For any feedback, please contact \code{Myo Minn Oo} via:
-
 Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}

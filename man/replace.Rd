@@ -22,10 +22,13 @@ Modified Dataset
 \code{replace()} alters the values of a variable when specified
 conditions are met.
 
-\preformatted{replace(data, var, value,
-     var < somevalue | var > somevalue, is.na(var))}
+\code{AND} conditions
+\preformatted{replace(data, var, value, condition1, condition2, etc)}
 
-If conditions are not specified, \code{replac()} changes the whole
+\code{OR} conditions
+\preformatted{replace(data, var, value, condition1 | condition2, etc)}
+
+If conditions are not specified, \code{replace()} changes the whole
 variable with specified value.
 
 \preformatted{replace(data, var, value)}
@@ -42,20 +45,15 @@ with the conditions.
 data(infert)
 
 ## replace parity == NA if parity > 4
-tab(infert, parity)
-
 infert.new <- replace(infert, parity, NA, parity > 4)
 tab(infert.new, parity)
 
 ## replace education as character
 infert.new <- replace(infert, education, as.character(education))
 codebook(infert.new)
-tab(infert.new, education)
 
 }
 \author{
-For any feedback, please contact \code{Myo Minn Oo} via:
-
 Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}

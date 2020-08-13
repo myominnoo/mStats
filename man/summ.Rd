@@ -4,7 +4,7 @@
 \alias{summ}
 \title{Number Summary for numerical data}
 \usage{
-summ(data, ..., by = NULL, na.rm = FALSE, rnd = 1)
+summ(data, ..., by = NULL, na.rm = FALSE, rnd = 1, test = TRUE)
 }
 \arguments{
 \item{data}{Dataset}
@@ -17,6 +17,10 @@ Colon separator \code{:} can be used to specify multiple variables.}
 \item{na.rm}{A logical value to specify missing values,}
 
 \item{rnd}{specify rounding of numbers. See \code{\link{round}}.}
+
+\item{test}{\code{TRUE} calculates p-values from relevant
+statistical tests. \code{FALSE} displays minimum and maximum
+instead of p-values.}
 }
 \value{
 summary measures as \code{data.frame}
@@ -95,13 +99,12 @@ summ(iris, Sepal.Length:Petal.Width)
 
 summ(iris)
 
+summ(iris, by = Species)
 }
 \references{
 Betty R. Kirkwood, Jonathan A.C. Sterne (2006, ISBN:978–0–86542–871–3)
 }
 \author{
-For any feedback, please contact \code{Myo Minn Oo} via:
-
 Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}

@@ -2,24 +2,25 @@
 % Please edit documentation in R/codebook.R
 \name{codebook}
 \alias{codebook}
-\title{Codebook: Detailed information about variables}
+\title{Detailed information of a dataset
+and its variables}
 \usage{
 codebook(data)
 }
 \arguments{
-\item{data}{dataframe}
+\item{data}{name of a dataset}
 }
 \value{
-Codebook in data.frame format
+\code{data.frame}
 }
 \description{
-\code{codebook()} provides detailed information about each variable
-within the dataset.
+\code{codebook()} provides detailed information about the dataset
+itself and its variables.
 }
 \details{
-\code{codebook} generates the report of data structure with names,
-data lables, types,
-number of observations, number of observations with missing values and
+It reports data structure of the dataset specified with names of
+variables, their labels, data types, number of observations,
+number of observations with missing values and
 percentage of observations with missing values.
 
 \strong{ANNOTATIONS}:
@@ -30,11 +31,11 @@ Label     - Labels of variables
 
 Type     - Types of variables
 
-_Obs - Counts of valid observations
+Obs_Num - Counts of valid observations
 
-_NA  - Counts of observations with missing value
+NA  - Counts of observations with missing value
 
-_NA(\%)    - Percentage of observations with missing value
+NA(\%)    - Percentage of observations with missing value
 }
 \examples{
 
@@ -42,23 +43,25 @@ _NA(\%)    - Percentage of observations with missing value
 data(infert)
 codebook(infert)
 
+
 ## add labels
 infert.new <- labelVar(infert,
-                       c(education, age, parity, induced, case, spontaneous,
-                         stratum, pooled.stratum),
-                       c("Education", "Age in years of case", "Count",
-                         "# of prior induced abortions", "case status",
-                         "# of prior spon. abortions",
-                         "Matched set number", "Stratum Number"))
+                       education = "EDUCATION",
+                       age = "AGE IN YEARS",
+                       parity = "count",
+                       case = "case status",
+                       induced = "# of prior induced abortions",
+                       spontaneous = "# of prior spon. abortions",
+                       stratum = "Matched set number",
+                       pooled.stratum = "Stratum number")
+
 infert.new <- labelData(infert.new,
-                        "Infertility after Spontaneous and Induced Abortion")
+    "Infertility after Spontaneous and Induced Abortion")
 codebook(infert.new)
 
 
 }
 \author{
-For any feedback, please contact \code{Myo Minn Oo} via:
-
 Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}

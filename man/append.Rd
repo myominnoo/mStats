@@ -2,7 +2,7 @@
 % Please edit documentation in R/append.R
 \name{append}
 \alias{append}
-\title{Append multiple datasets}
+\title{APPEND datasets}
 \usage{
 append(data, ...)
 }
@@ -12,16 +12,21 @@ append(data, ...)
 \item{...}{Datasets to be appended}
 }
 \value{
-Modified Dataset
+Modified dataset
 }
 \description{
-\code{append()} joins multiple datasets of the same column names.
+\code{append()} row-combines multiple datasets of the same column names.
 }
 \details{
-Multiple datasets can be appended only if they have the same variables in the
-same order.
+Single or multiple datasets can be appended.
+At least one matching variable must be in the appending datasets.
+If arrangement or order of variables are not the same, they are
+automatically rematched to the MASTER dataset and appended.
 
 \preformatted{append(data, data1, data2, data3, etc)}
+
+\code{data} = MASTER DATASET
+Remaining datasets: data1, data2, data3, etc = APPENDING DATASETS
 }
 \examples{
 
@@ -29,14 +34,14 @@ same order.
 data(infert)
 codebook(infert)
 
-infert.new <- append(infert, infert)
-codebook(infert.new)
+infert1 <- infert[-c(10:20), -2]
+infert2 <- infert[-c(40:60), -4]
 
+infert.new <- append(infert, infert1, infert2)
+codebook(infert.new)
 
 }
 \author{
-For any feedback, please contact \code{Myo Minn Oo} via:
-
 Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}

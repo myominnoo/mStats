@@ -38,20 +38,18 @@ codebook(infert.new)
 
 
 ## check duplicates report and rmeove dup
-infert.dupremove <- duplicates(infert.new, drop = TRUE)
+infert.dupremove <- duplicates(infert.new, make_unique = TRUE)
 codebook(infert.dupremove)
 
-## remove only 3 copies
+## remove only copy no. 3
 infert.3copies <- duplicates(infert.new)
-tab(infert.3copies, dup)
+tab(infert.3copies, .dup_id)
 
-infert.3copies <- filter(infert.3copies, dup < 2)
+infert.3copies <- infert.3copies[infert.3copies$.dup_id != 2, ]
 codebook(infert.3copies)
 
 }
 \author{
-For any feedback, please contact \code{Myo Minn Oo} via:
-
 Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}

@@ -4,7 +4,7 @@
 \alias{lagRows}
 \title{Create lagged variables}
 \usage{
-lagRows(data, var, by = NULL, lag_var = NULL)
+lagRows(data, var, by = NULL, new_var = NULL, last_obs = FALSE)
 }
 \arguments{
 \item{data}{Dataset}
@@ -14,7 +14,9 @@ lagRows(data, var, by = NULL, lag_var = NULL)
 \item{by}{If specified, lagged variable is created grouped by this variable.
 If not specified, it is created taking the whole variable.}
 
-\item{lag_var}{name for lagged variable}
+\item{new_var}{name for lagged variable}
+
+\item{last_obs}{\code{TRUE}, retrieve the last observation per group.}
 }
 \value{
 Modified Dataset
@@ -33,28 +35,29 @@ or similar variable.
 }
 \examples{
 
-
+set.seed(100)
 ## create a dataset with dates
-df <- data.frame(
+df1 <- data.frame(
     hospid = 1:100,
     docid = round(runif(100, 1, 10)),
     dis_date = formatDate(runif(100, 42700, 42800))
 )
 
 ## lagged dis_date, not specifed "by"
-lagRows(df, dis_date)
+lagRows(df1, dis_date)
 
 ## lagged dis_date by docid
 ## first we need to sort
-df1 <- arrange(df, docid)
-df1
-lagRows(df1, dis_date, by = docid, lag_var = "lag_date")
+df2 <- df1[order(df1$docid), ]
+df2
+
+## lag dates within groups
+lagRows(df2, dis_date, by = docid, new_var = lag_date)
+lagRows(df2, dis_date, by = docid, lag_date, TRUE)
 
 
 }
 \author{
-For any feedback, please contact \code{Myo Minn Oo} via:
-
 Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}

@@ -1,15 +1,18 @@
-#' @title Codebook: Detailed information about variables
+
+#' @title Detailed information of a dataset
+#' and its variables
 #'
 #' @description
-#' \code{codebook()} provides detailed information about each variable
-#' within the dataset.
 #'
-#' @param data dataframe
+#' \code{codebook()} provides detailed information about the dataset
+#' itself and its variables.
+#'
+#' @param data name of a dataset
 #'
 #' @details
-#' \code{codebook} generates the report of data structure with names,
-#' data lables, types,
-#' number of observations, number of observations with missing values and
+#' It reports data structure of the dataset specified with names of
+#' variables, their labels, data types, number of observations,
+#' number of observations with missing values and
 #' percentage of observations with missing values.
 #'
 #' \strong{ANNOTATIONS}:
@@ -20,20 +23,19 @@
 #'
 #' Type     - Types of variables
 #'
-#' _Obs - Counts of valid observations
+#' Obs_Num - Counts of valid observations
 #'
-#' _NA  - Counts of observations with missing value
+#' NA  - Counts of observations with missing value
 #'
-#' _NA(%)    - Percentage of observations with missing value
+#' NA(%)    - Percentage of observations with missing value
 #'
 #'
 #' @return
-#' Codebook in data.frame format
+#'
+#' `data.frame`
 #'
 #'
 #' @author
-#'
-#' For any feedback, please contact \code{Myo Minn Oo} via:
 #'
 #' Email: \email{dr.myominnoo@@gmail.com}
 #'
@@ -45,83 +47,93 @@
 #' data(infert)
 #' codebook(infert)
 #'
+#'
 #' ## add labels
 #' infert.new <- labelVar(infert,
-#'                        c(education, age, parity, induced, case, spontaneous,
-#'                          stratum, pooled.stratum),
-#'                        c("Education", "Age in years of case", "Count",
-#'                          "# of prior induced abortions", "case status",
-#'                          "# of prior spon. abortions",
-#'                          "Matched set number", "Stratum Number"))
+#'                        education = "EDUCATION",
+#'                        age = "AGE IN YEARS",
+#'                        parity = "count",
+#'                        case = "case status",
+#'                        induced = "# of prior induced abortions",
+#'                        spontaneous = "# of prior spon. abortions",
+#'                        stratum = "Matched set number",
+#'                        pooled.stratum = "Stratum number")
+#'
 #' infert.new <- labelData(infert.new,
-#'                         "Infertility after Spontaneous and Induced Abortion")
+#'     "Infertility after Spontaneous and Induced Abortion")
 #' codebook(infert.new)
 #'
 #'
 #' @export
 codebook <- function(data)
 {
-    .data.name <- deparse(substitute(data))
-    .vars.names <- names(data)
-    .vars.numeric <- c("integer", "double", "numeric")
-    .vars.factor <- c("factor", "character")
-    .vars.logical <- c("logical")
-    .vars.date <- c("Date")
+    ## copy data to .data
+    .data <- data
 
-    ## if data is not data.frame, stop
-    if (!is.data.frame(data))
-        stop(paste0(" ... '", .data.name, "' is not data.frame ... "))
+    ## get names of dataset and headings
+    .data_name <- deparse(substitute(data))
+    .vars_names <- names(.data)
 
-    ## get the types of variables
-    .vars.type <- unlist(lapply(data, function(z) {
+    ## if input is not a data.frame, stop
+    if (!is.data.frame(.data)) {
+        stop("`.data` must be a data.frame", call. = FALSE)
+    }
+
+    ## check each variable's type
+    .vars_type <- sapply(.data, function(z) {
         .class <- class(unlist(z))[1]
         if (.class == "haven_labelled") {
             .class <- typeof(unlist(z))[1]
         }
         .class
-    }))
+    })
 
-    ## get the labels
-    .vars.lbl <- paste(sapply(.vars.names, function(z) {
-        .lbl <- attr(data[[z]], "label")
-        .lbl <- ifelse(is.null(.lbl), "<NA>",
-                       ifelse(nchar(.lbl) > 32,
-                              paste0(strtrim(paste0(.lbl, collapse = ""), 32), "..."),
-                              paste0(.lbl, collapse = "")))
-    }))
+    ## get label of each variable
+    ## paste each label if not a single vector
+    .vars_lbl <- sapply(.vars_names, function(z) attr(.data[[z]], "label"))
+    .vars_lbl <- sapply(1:length(.vars_names), function(z) {
+        if (.vars_lbl[z] == "NULL") {
+            .lbl <- "<NA>"
+        } else {
+            .lbl <- paste0(.vars_lbl[z])
+        }
+        .lbl <- ifelse(nchar(.lbl) > 30,
+                       paste0(strtrim(.lbl, 30), "..."),
+                       .lbl)
+        .lbl
+    })
 
     ## get count numbers for all observations, obs. without NA and NAs
-    .obs.counts <- sapply(.vars.names, function(z)
-        sum(as.numeric(!is.na(data[, z])), na.rm = TRUE))
-    .na.counts <- sapply(.vars.names, function(z)
-        sum(as.numeric(is.na(data[, z])), na.rm = TRUE))
+    .obs_num <- sapply(.vars_names, function(z) sum(!is.na(.data[[z]])))
+    .na_num <- sapply(.vars_names, function(z) sum(is.na(.data[[z]])))
 
-    .df <- data.frame(1:length(.vars.names),
-                      .vars.names, "|",
-                      .vars.lbl,
-                      .vars.type,
-                      .obs.counts,
-                      .na.counts,
-                      round(.na.counts / nrow(data) * 100, 1),
-        stringsAsFactors = FALSE,
-        row.names = NULL
-    )
+    ## create data.frame to put all information together
+    .df <- data.frame(1:length(.vars_names),
+                      .vars_names,
+                      .vars_lbl,
+                      .vars_type,
+                      .obs_num,
+                      .na_num,
+                      round(.na_num / nrow(.data) * 100, 1))
+    names(.df) <- c("No", "Variable", "Label", "Type", "Obs_Num",
+                    "<NA>", "<NA>(%)")
 
-    names(.df) <- c("No", "Variable", "|", "Label", "Type", "_Obs", "_NA", "_NA(%)")
+    ## add dash lines to data.frame
+    ## remove row names
+    .df <- addDashLines(.df, .vline = 3)
+    row.names(.df) <- NULL
 
-    ## add dash lines
-    .df <- addDashLines(.df, .vLine = 3)
+    ## print outputs
+    ## create texts for output display
+    .txt <- paste0("Codebook: '", .data_name, "'")
 
-    ## display output
-    .txt <- paste0("Codebook: '", .data.name, "'")
+    ## print data.frame
+    printDF(.df, .txt)
 
-    printText2(.df, .txt, .printDF = TRUE)
+    ## print label of the dataset
+    printLabel(.data)
 
-    ## display dataset label
-    .data.lbl <- attr(data, "label")
-    if (!is.null(.data.lbl)) {
-        printMsg(paste0("Dataset label: ", .data.lbl))
-    }
 
+    ## return
     invisible(.df)
 }

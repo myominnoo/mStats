@@ -22,11 +22,11 @@
 #'
 #' \enumerate{
 #'     \item \code{dmy} + \code{-} >>> \code{dd-mm-yyyy}
-#'     \item \code{mdy} + \code{-} >>> \code{mm-dd-yyyy}
-#'     \item \code{ymd} + \code{-} >>> \code{yyyy-mm-dd}
 #'     \item \code{dmy} + \code{/} >>> \code{dd/mm/yyyy}
 #'     \item \code{mdy} + \code{/} >>> \code{mm/dd/yyyy}
 #'     \item \code{ymd} + \code{/} >>> \code{yyyy/mm/dd}
+#'     \item \code{dby} + \code{-} >>> \code{dd-JAN-yy}
+#'     \item \code{dby} + \code{/} >>> \code{dd/JAN/yy}
 #' }
 #'
 #' \strong{Numeric conversions}
@@ -37,8 +37,6 @@
 #'
 #'
 #' @author
-#'
-#' For any feedback, please contact \code{Myo Minn Oo} via:
 #'
 #' Email: \email{dr.myominnoo@@gmail.com}
 #'
@@ -59,6 +57,12 @@
 #' is.Date(y)
 #' y
 #'
+#'
+#' ## another format
+#' x <- c("22-JAN-19", "24-MAR-20")
+#' y <- formatDate(x, "dby", "-")
+#' is.Date(y)
+#' y
 #'
 #'
 #' ## convert numbers to dates

@@ -4,15 +4,16 @@
 \alias{duplicates}
 \title{Report and tag duplicated observations}
 \usage{
-duplicates(data, ..., drop = FALSE)
+duplicates(data, ..., make_unique = NULL)
 }
 \arguments{
 \item{data}{Dataset}
 
-\item{...}{Variables to find duplications.}
-
-\item{drop}{if \code{TRUE}, delete all duplicated records, keeping all unique.
+\item{...}{Variables to find duplications.
 If not specified, all variables are used.}
+
+\item{make_unique}{if \code{TRUE}, delete all duplicated records,
+keeping all unique.}
 }
 \value{
 Modified dataset with additional variable \code{dup}
@@ -38,13 +39,15 @@ for further use.
 
 \code{Surplus}  - Number of surplus observations
 
-\code{dup} - indicates copies within the dataset:
+\code{.dup_id} - indicates copies within the dataset:
 
 0 = unique observations
 
 2 = duplicated two times
 
 3 = duplicated three times and so on ...
+
+It is labelled as \verb{<Sys.Gen: # of DUPLICATED OBS>}.
 }
 \examples{
 
@@ -59,7 +62,7 @@ duplicates(infert, pooled.stratum)
 duplicates(infert, stratum, pooled.stratum)
 
 ## find and remove duplicates by pooled.stratum
-duplicates(infert, pooled.stratum, drop = TRUE)
+duplicates(infert, pooled.stratum, make_unique = TRUE)
 
 }
 \author{

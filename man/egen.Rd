@@ -13,7 +13,7 @@ egen(data, var, cut = NULL, new_var = NULL, lbl = NULL)
 
 \item{cut}{either a single number or a numeric vector.}
 
-\item{new_var}{name of new variable to be generated}
+\item{new_var}{Name of new variable without double quote}
 
 \item{lbl}{labels to specify}
 }
@@ -30,6 +30,11 @@ If the interval is not specified, it is cut at an interval of 10,
 starting from the minimum value. Otherwise,
 it is divided into corresponding intervals by specified cut-off points.
 
+\strong{Automatic naming new variable}
+
+If \code{new_var} is not specified, new names will be automatically
+created in this format: \code{VAR_cat}
+
 \strong{Automatic Labelling}
 
 If \code{lbl} is not specified, labels are constructed in
@@ -40,23 +45,19 @@ this format: \code{lbl[##-##]}
 ## use infert data
 
 data(infert)
-codebook(infert)
-summ(infert, age)
-
 
 ## transform continuous to category
 infert.new <- egen(infert, age, c(20, 30, 40, 50))
-tab(infert.new, age.cat)
+tab(infert.new, age_cat)
 
 ## specifiy labels and name
-infert.new <- egen(infert, age, c(20, 30, 40), "age_cat", c("<30", "30-39", "40+"))
-tab(infert.new, age_cat)
+infert.new <- egen(infert, age, c(20, 30, 40),
+    age_grp, c("<30", "30-39", "40+"))
+tab(infert.new, age_grp)
 
 
 }
 \author{
-For any feedback, please contact \code{Myo Minn Oo} via:
-
 Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}

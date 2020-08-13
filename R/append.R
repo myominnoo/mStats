@@ -1,29 +1,32 @@
-#' @title Append multiple datasets
+#' @title APPEND datasets
 #'
 #' @description
 #'
-#' \code{append()} joins multiple datasets of the same column names.
+#' \code{append()} row-combines multiple datasets of the same column names.
 #'
 #' @param data Base dataset
 #' @param ... Datasets to be appended
 #'
 #' @details
 #'
-#' Multiple datasets can be appended only if they have the same variables in the
-#' same order.
+#' Single or multiple datasets can be appended.
+#' At least one matching variable must be in the appending datasets.
+#' If arrangement or order of variables are not the same, they are
+#' automatically rematched to the MASTER dataset and appended.
 #'
 #'
 #' \preformatted{append(data, data1, data2, data3, etc)}
 #'
+#' `data` = MASTER DATASET
+#' Remaining datasets: data1, data2, data3, etc = APPENDING DATASETS
+#'
 #'
 #'
 #' @return
-#' Modified Dataset
+#' Modified dataset
 #'
 #'
 #' @author
-#'
-#' For any feedback, please contact \code{Myo Minn Oo} via:
 #'
 #' Email: \email{dr.myominnoo@@gmail.com}
 #'
@@ -35,46 +38,62 @@
 #' data(infert)
 #' codebook(infert)
 #'
-#' infert.new <- append(infert, infert)
-#' codebook(infert.new)
+#' infert1 <- infert[-c(10:20), -2]
+#' infert2 <- infert[-c(40:60), -4]
 #'
+#' infert.new <- append(infert, infert1, infert2)
+#' codebook(infert.new)
 #'
 #' @export
 append <- function(data, ... )
 {
-    ## if data is not data.frame, stop
-    if (!is.data.frame(data))
-        stop(paste0(" ... '", deparse(substitute(data)), "' is not data.frame ... "))
-
+    ## match call arguments
     .args <- as.list(match.call())
 
-    ## get column names from data
-    .vars.names <- names(data)
+    ## copy data to .data
+    .data <- data
+
+    ## get names of dataset and headings
+    .data_name <- .args$data
+    .ds_names <- enquotes(.args, "data")
+    .vars_names <- names(.data)
 
 
     ## get dataset names within three dots
-    .data.names <- as.character(enquos(.args, "data"))
+    .ds_list <- list(...)
 
-    ## check if column names are identicals
-    .vars.names.equal <- sapply(.data.names, function(z) {
-        .data <- eval(parse(text = z))
-        identical(.vars.names, names(.data))
+    ## get logical vectors to indicate
+    ## variables names that are not in the appending datasets
+    .vars_miss <- lapply(.ds_list, function(z) {
+        .ds_names <- names(z)
+        .contain <- .vars_names %in% names(z)
+
+        ## if none match with the master dataset, stop
+        if (!any(.contain)) {
+            stop("At least one variable must match to append.",
+                 call. = FALSE)
+        }
+        ## retun logical vectors
+        .contain
     })
 
-    if (any(!.vars.names.equal)) {
-        stop(" ... variables are not consistent! ... ")
+    ## process final datasets to be appended
+    ## 1) match the variables' names
+    ## 2) if some variables are not there in the datasets,
+    ##      create them on the fly.
+    .ds_list <- lapply(1:length(.ds_list), function(z) {
+        .ds <- .ds_list[[z]]
+        .ds[, .vars_names[!.vars_miss[[z]]]] <- NA
+        .ds[, .vars_names]
+    })
+
+    ## append to the master dataset
+    for (i in 1:length(.ds_list)) {
+        .data <- rbind(.data, .ds_list[[i]])
+        printText(paste0("[", i, "] Appended '", .ds_names[[i]], "' to '",
+                         .data_name, "'"))
     }
 
-    ## global declaration of .data
-    .data <- data
-    for (i in 1:length(.data.names)) {
-        .data <- rbind(.data, eval(parse(text = .data.names[i])))
-    }
-
-    ## Display message to nofity changes
-    printMsg(paste0(length(.data.names), " datasets appended to '",
-                    .args$data, "': ",
-                    paste0(.data.names, collapse = ", ")))
-
+    ## return
     return(.data)
 }

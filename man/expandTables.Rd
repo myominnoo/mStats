@@ -10,8 +10,7 @@ expandTables(
   exp_lvl = c("exposed", "unexposed"),
   case_name = "outcome",
   case_lvl = c("disease", "healthy"),
-  strata_name = "strata",
-  stringsAsFactors = FALSE
+  strata_name = "strata"
 )
 }
 \arguments{
@@ -27,11 +26,6 @@ Exposed and non-exposed}
 \item{case_lvl}{names of two categories in the order of}
 
 \item{strata_name}{Name of stratified variable}
-
-\item{stringsAsFactors}{\code{TRUE} or \code{FALSE}
-
-If \code{TRUE}, character vector is converted to a factor when
-\code{data.frame} is constructed.}
 }
 \value{
 \code{data.frame}
@@ -48,9 +42,9 @@ Exposure and Outcome.
 
 \strong{Strata}
 
-Strata can be included using multiple named vectors. The
-generated tables can be used for further calculation such as
-Mantel Haenszel methods.
+Multiple tables can be used to construct a dataset by specifying
+\code{strata_name} as follow. Strata can be included
+using multiple named vectors.
 
 \preformatted{
 expandTables(
@@ -65,7 +59,7 @@ expandTables(
 )
 }
 
-\strong{Labels}
+\strong{Variables' Labels}
 
 If variables' names or levels are not specified, the followings are
 applied.
@@ -94,7 +88,8 @@ asthma <- expandTables(c(81, 995, 57, 867),
 
 ## label variable and dataset
 asthma <- labelData(asthma, "Hypothetical Data of Asthma Prevalence")
-asthma <- labelVar(asthma, c(sex, asthma), c("Man or Woman", "Asthma or No Asthma"))
+asthma <- labelVar(asthma, sex = "Man or Woman",
+                           asthma = "Asthma or No Asthma")
 
 ## Checking codebook
 codebook(asthma)
@@ -109,8 +104,6 @@ tab(asthma, sex, by = asthma)
 
 }
 \author{
-For any feedback, please contact \code{Myo Minn Oo} via:
-
 Email: \email{dr.myominnoo@gmail.com}
 
 Website: \url{https://myominnoo.github.io/}

@@ -11,6 +11,9 @@
 #' @param by Varaiable for cross-tabulation
 #' @param na.rm A logical value to specify missing values,
 #' @param rnd specify rounding of numbers. See \code{\link{round}}.
+#' @param test `TRUE` calculates p-values from relevant
+#' statistical tests. `FALSE` displays minimum and maximum
+#' instead of p-values.
 #'
 #'
 #' @details
@@ -95,8 +98,6 @@
 #'
 #' @author
 #'
-#' For any feedback, please contact \code{Myo Minn Oo} via:
-#'
 #' Email: \email{dr.myominnoo@@gmail.com}
 #'
 #' Website: \url{https://myominnoo.github.io/}
@@ -111,66 +112,39 @@
 #'
 #' summ(iris)
 #'
+#' summ(iris, by = Species)
 #' @export
-summ <- function(data, ... , by = NULL, na.rm = FALSE, rnd = 1)
+summ <- function(data, ... , by = NULL, na.rm = FALSE, rnd = 1, test = TRUE)
 {
-    ## if data is not data.frame, stop
-    if (!is.data.frame(data))
-        stop(paste0(" ... '", deparse(substitute(data)), "' is not data.frame ... "))
-
+    ## match call arguments
     .args <- as.list(match.call())
 
-    ## assign data into .data for further evaluation
+    ## copy data to .data
     .data <- data
-    .vars.names <- names(.data)
+
+    ## get names of dataset and headings
+    .data_name <- deparse(substitute(data))
+    .vars_names <- names(.data)
+
+    ## if input is not a data.frame, stop
+    if (!is.data.frame(.data)) {
+        stop("`.data` must be a data.frame", call. = FALSE)
+    }
 
 
     ## get variable names within three dots to search for duplicates
-    .vars <- as.character(enquos(.args, c("data", "by", "row.pct", "na.rm", "rnd")))
+    .vars <- enquotes(.args, c("data", "by", "row.pct",
+                               "na.rm", "rnd", "test"))
 
 
-    ## Check if colon is there.
-    ## if present, retrieve variables between the two variables
-    if (any(grepl(":", .vars))) {
-        .vars <- do.call(
-            c,
-            lapply(.vars, function(z) {
-                .colon <- grepl(":", z)
-                if (.colon) {
-                    splitByColon(data, z, .colon)
-                } else {
-                    z
-                }
-            })
-        )
-    }
-
-
-
-    ## if .vars is length zero, then .vars is all variables
-    if (length(.vars) == 0) {
-        .vars <- .vars.names
-        .summ.type <- c("numeric", "double", "integer", "logical")
-
-        ## get the types of variables
-        .vars.type <- unlist(lapply(data, function(z) {
-            .class <- class(unlist(z))[1]
-            if (.class == "haven_labelled") {
-                .class <- typeof(unlist(z))[1]
-            }
-            .class
-        }))
-
-        ## get only those whose type are in .summ.type
-        .vars <- .vars[.vars.type %in% .summ.type]
-    }
-
+    ## check colon, and check data types if the whole dataset
+    .vars <- checkEnquos(.data, .vars, "summ")
 
     ## if no variable is available, stop
     if (length(.vars) == 0) {
-        stop(" ... No variable found for tabulation ... ")
+        stop("No numerical variables are found for tabulation.",
+             call. = FALSE)
     }
-
 
     ## summary statistics
     by <- as.character(.args$by)
@@ -182,87 +156,55 @@ summ <- function(data, ... , by = NULL, na.rm = FALSE, rnd = 1)
                 summ1(.data, z, na.rm, rnd)
             })
         )
-
-        ## formulate title
-        .sum.txt <- "Summary"
+        .txt <- "Summary"
     } else {
         .df <- do.call(
             rbind,
             lapply(.vars, function(z) {
-                summ2(.data, z, by, na.rm, rnd)
+                summ2(.data, z, by, na.rm, rnd, test)
             })
         )
-        .sum.txt <- paste0("Summary grouped by '", .args$by, "'")
+        .df <- .df[-1, ]
+        .txt <- paste0("Summary grouped by '", .args$by, "'")
     }
-
 
     ## add Dash lines
-    .df <- addDashLines(.df, .vLine = 2)
+    .df <- addDashLines(.df, .vline = 2)
 
 
-    ## add total summary for group summary
-    if (by != "NULL") {
-        .df.total <- do.call(
-            rbind,
-            lapply(.vars, function(z) {
-                summ1(.data, z, na.rm, rnd)
-            })
-        )
-
-        ## subset output show only Obs. to Q3
-        .display <- c("Variable", "|",
-                      "Obs.", "NA.", "Mean", "Std.Dev", "Median", "Q1", "Q3",
-                      "Normality")
-
-        .df.total <- .df.total[, .display]
-        ## add pvalue back to .df
-        .df.total$p1 <- .df.total$p2 <- rep("", nrow(.df.total))
-        names(.df.total)[(ncol(.df.total)-1):ncol(.df.total)] <- names(.df)[11:12]
-        .df <- rbind(.df, .df.total)
-    }
-
-
+    ## add label for further processing
+    attr(.df, "label") <- "summary"
 
     ## constructs labels
     ## add label for by: cross-tabulation
     .lbl <- sapply(.vars, function(z) attr(.data[[z]], "label"))
 
-    ## Print tabulation
-    printText2(.df, .sum.txt, .printDF = TRUE)
-
-    ## print labels
-    if (any(.lbl != "NULL")) {
-        printMsg("Labels")
-    }
+    ## Print tabulation and labels
+    printDF(.df, .txt)
     sapply(1:length(.vars), function(z) {
-        if (.lbl[z] != "NULL") {
-            printMsg(paste0(.vars[z], ": ", .lbl[z]))
-        }
+        # printDF(.df[[z]], .txt)
+        printLabel(.data, .vars[z])
     })
 
+    ## print label for by variable
+    printLabel(.data, .args$by)
 
-    ## print by label
-    getnPrintLabel(.data, .args$by)
-
-    invisible(list(.df))
+    invisible(.df)
 }
 
 
 
 # Helpers -----------------------------------------------------------------
 
-
 summ1 <- function(data, x, na.rm = FALSE, rnd = 1)
 {
-    ## assign as .data and .x for further evaluation
+    ## copy data to .data
     .data <- data
-    .x.name <- x
-    .x <- data[[x]]
-
+    ## create single vector .x
+    .x <- .data[[x]]
 
     ## get number of missing values
-    .len <- ifelse(na.rm, length(.x[!is.na(x)]), length(.x))
-
+    .len <- ifelse(na.rm, length(.x[!is.na(.x)]), length(.x))
     .na <- length(.x[is.na(.x)])
 
     ## assign na.rm as TRUE for all future calculation
@@ -271,10 +213,13 @@ summ1 <- function(data, x, na.rm = FALSE, rnd = 1)
 
     ## construct 7 number summary statistics
     .mu <- mean(.x, na.rm = na.rm)
+    # sprintf(, fmt = paste0("%#.", rnd, "f"))
     .std <- sd(.x, na.rm = na.rm)
-    # .cv <- std / mu * 100
     .q <- round(quantile(.x, probs = c(0, .25, .5, .75, 1), na.rm = na.rm), rnd)
     .v <- round(c(.mu, .std, .q), rnd)
+    .v <- sprintf(.v, fmt = paste0("%#.", rnd, "f"))
+
+
 
     ## get p value from normality test
     pvalue <- tryCatch({
@@ -285,87 +230,86 @@ summ1 <- function(data, x, na.rm = FALSE, rnd = 1)
 
     pvalue <- sprintf(pvalue, fmt = '%#.3f')
 
-
     ## final .df for return
-    .df <- data.frame(Variable = .x.name, "|" = "|",
-                      Obs. = .len, NA. = .na, Mean = .v[1], Std.Dev = .v[2],
+    .df <- data.frame(Variable = x,
+                      Obs. = .len, NA. = .na,
+                      Mean = .v[1], Std.Dev = .v[2],
                       Median = .v[5], Q1 = .v[4], Q3 = .v[6],
                       Min = .v[3], Max = .v[7],
-                      Normality = pvalue,
-                      stringsAsFactors = FALSE)
-
-    names(.df)[2] <- "|"
+                      Normality = pvalue)
     row.names(.df) <- NULL
-
     return(.df)
 }
 
-
-summ2 <- function(data, x, by, na.rm = FALSE, rnd = 1)
+summ2 <- function(data, x, by, na.rm = FALSE, rnd = 1, test = TRUE)
 {
-    ## assign as .data and .x for further evaluation
+    ## copy data to .data
     .data <- data
-    .x.name <- x
-    .x <- data[[x]]
-    .by.name <- by
-    .by <- data[[by]]
-
+    ## create single vector .x
+    .x <- .data[[x]]
+    .by <- .data[[by]]
 
     ## check NA
     .useNA <- ifelse(na.rm, "no", "ifany")
 
-
     ## get levels of character and process NA value if any
-    .tbl <- table(.by, useNA = .useNA)
-    .lvl <- names(.tbl)
+    .lvl <- names(table(.by, useNA = .useNA))
     .lvl[is.na(.lvl)] <- "<NA>"
 
-
+    ## get summary measures
     .df <- do.call(
         rbind,
         lapply(.lvl, function(z) {
             if (z == "<NA>") {
-                .d <- .data[is.na(.by), ]
+                .data <- .data[is.na(.by), c(x, by)]
             } else {
-                .d <- .data[.by == z, ]
+                .data <- .data[.by == z, c(x, by)]
             }
-            .d <- summ1(.d, .x.name, rnd = rnd)
-            .d[1, "Variable"] <- paste0("[", z, "]", .x.name)
-            .d
+
+            .df <- summ1(.data, x, rnd = rnd)
+            .df[1, "Variable"] <- paste0("[", z, "]", x)
+            .df
         })
     )
+    .df <- .df_noTest <- rbind(.df, summ1(.data, x, rnd = rnd))
+
 
 
     ## subset output show only Obs. to Q3
-    .display <- c("Variable", "|",
-                  "Obs.", "NA.", "Mean", "Std.Dev", "Median", "Q1", "Q3",
-                  "Normality")
-
+    .display <- c("Variable", "Obs.", "NA.", "Mean", "Std.Dev",
+                  "Median", "Q1", "Q3", "Normality")
     .df <- .df[, .display]
-
 
 
     ## get pvalue  from ANOVA and Kruskal Wallis or t.test / Wilcox
 
     ## calculate p-values from ANOVA and Kruskal Wallis or t.test / Wilcox
     if (length(.lvl) > 2) {
-        pvalue <- tryCatch({suppressWarnings(summary(aov(.x ~ .by))[[1]][1,5])},
-                           error = function(cnd) {return(NA)})
+        pvalue <- tryCatch(
+            {suppressWarnings(summary(aov(.x ~ .by))[[1]][1,5])},
+            error = function(cnd) {return(NA)}
+        )
 
         pvalue <- c(
             pvalue,
-            tryCatch({suppressWarnings(kruskal.test(.x ~ .by)$p.value)},
-                     error = function(cnd) {return(NA)}))
+            tryCatch(
+                {suppressWarnings(kruskal.test(.x ~ .by)$p.value)},
+                error = function(cnd) {return(NA)})
+        )
 
         .pvalue.name <- c("ANOVA", "K-Wallis")
     } else {
-        pvalue <- tryCatch({suppressWarnings(t.test(.x ~ .by)$p.value)},
-                           error = function(cnd) {return(NA)})
+        pvalue <- tryCatch(
+            {suppressWarnings(t.test(.x ~ .by)$p.value)},
+            error = function(cnd) {return(NA)}
+        )
 
         pvalue <- c(
             pvalue,
-            tryCatch({suppressWarnings(suppressWarnings(wilcox.test(.x ~ .by)$p.value))},
-                     error = function(cnd) {return(NA)}))
+            tryCatch(
+                {suppressWarnings(suppressWarnings(wilcox.test(.x ~ .by)$p.value))},
+                error = function(cnd) {return(NA)})
+        )
 
         .pvalue.name <- c("t-test", "Wilcoxon")
     }
@@ -377,6 +321,14 @@ summ2 <- function(data, x, by, na.rm = FALSE, rnd = 1)
     .df$p2 <- c(pvalue[2], rep("", nrow(.df) - 1))
     names(.df)[(ncol(.df)-1):ncol(.df)] <- .pvalue.name
 
+    if (!test) {
+        .df <- .df_noTest
+    }
+
+    ## add dash lines and overall summary measures
+    .df <- addDashLines(.df)
+    .df <- rbind(.df[-(nrow(.df)-1), ], .df[nrow(.df)-1, ])
 
     return(.df)
 }
+

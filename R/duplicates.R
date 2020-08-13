@@ -5,8 +5,10 @@
 #'
 #' @param data Dataset
 #' @param ... Variables to find duplications.
-#' @param drop if `TRUE`, delete all duplicated records, keeping all unique.
 #' If not specified, all variables are used.
+#' @param make_unique if `TRUE`, delete all duplicated records,
+#' keeping all unique.
+#'
 #'
 #'
 #' @details
@@ -30,7 +32,7 @@
 #'
 #' \code{Surplus}  - Number of surplus observations
 #'
-#' \code{dup} - indicates copies within the dataset:
+#' \code{.dup_id} - indicates copies within the dataset:
 #'
 #' 0 = unique observations
 #'
@@ -38,6 +40,7 @@
 #'
 #' 3 = duplicated three times and so on ...
 #'
+#' It is labelled as `<Sys.Gen: # of DUPLICATED OBS>`.
 #'
 #' @return
 #'
@@ -68,98 +71,101 @@
 #' duplicates(infert, stratum, pooled.stratum)
 #'
 #' ## find and remove duplicates by pooled.stratum
-#' duplicates(infert, pooled.stratum, drop = TRUE)
+#' duplicates(infert, pooled.stratum, make_unique = TRUE)
 #'
 #' @export
-duplicates <- function(data, ... , drop = FALSE)
+duplicates <- function(data, ... , make_unique = NULL)
 {
-
-    ## if data is not data.frame, stop
-    if (!is.data.frame(data))
-        stop(paste0(" ... '", deparse(substitute(data)), "' is not data.frame ... "))
-
+    ## match call arguments
     .args <- as.list(match.call())
 
-    ## assign data into .data for further evaluation
+    ## copy data to .data
     .data <- data
-    .vars.names <- names(data)
-    .data.nrow <- nrow(.data)
 
+    ## get names of dataset and headings
+    ## get number of observations
+    .data_name <- .args$data
+    .vars_names <- names(.data)
 
     ## get variable names within three dots to search for duplicates
-    .dup.vars <- as.character(enquos(.args, c("data", "drop")))
+    .vars_dup <- enquotes(.args, c("data", "make_unique"))
     # If length is 0, then this is equal to all variables
-    .dup.vars.len <- length(.dup.vars)
+    .vars_dup_len <- length(.vars_dup)
 
     ## check vars to find duplicates. If none, use all variables.
-    if (.dup.vars.len == 0) {
-        .dup.vars <- .vars.names
+    if (.vars_dup_len == 0) {
+        .vars_dup <- .vars_names
     }
 
-
     ## create expression to order data
-    .expr.txt <- paste0(".data[with(.data, order(",
-                        paste0(.dup.vars, collapse = ", "),
-                        ")), ]")
-    .data <- eval(parse(text = .expr.txt))
+    .data <- eval(parse(
+        text = paste0(".data[with(.data, order(",
+                      paste0(.vars_dup, collapse = ", "),
+                      ")), ]")
+    ))
 
-    ## create unique id. if variables not specified, then all variables are
-    # used.
-    .dup.id <- sapply(1:.data.nrow, function(z) {
-        if (.dup.vars.len == 0) {
-            paste(.data[z, ], collapse = "")
-        } else {
-            paste(.data[z, .dup.vars], collapse = "")
-        }
-    })
 
-    # Create serial id for ave function
-    ## this is later to create another function like _n or _N
-    .dup.ave <- as.numeric(ave(.dup.id, .dup.id, FUN = seq_along))
+    ## Process for creation of duplication report
+    ## create identifiers to check duplications
+    .id <- apply(.data[.vars_dup], 1, paste, collapse = " ")
+
+    ## create seiral id with ave function
+    .id_num <- ave(.id, .id, FUN = seq_along)
     ## get the last number of serial number
-    .dup.obs <- sapply(.dup.id, function(z) {
-        .dup <- .dup.ave[.dup.id == z]
-        .dup[length(.dup)]
+    .dup_obs <- sapply(.id, function(z) {
+        .dup_id <- .id_num[.id == z]
+        .dup_id[length(.dup_id)]
     })
-
 
     ## create table and use the categories to calculate surplus number
-    .dup.obs.tbl <- table(.dup.obs)
-    .dup.obs.tbl.names <- as.numeric(names(.dup.obs.tbl))
-    .non.dup <- sapply(.dup.obs.tbl.names, function(z) {
-        .id <- .dup.id[.dup.obs == z]
-        length(.id[!duplicated(.id)])
+    .dup_obs_tbl <- table(.dup_obs)
+    .dup_obs_tbl_names <- as.numeric(names(.dup_obs_tbl))
+    .non_dup <- sapply(.dup_obs_tbl_names, function(z) {
+        .dup_id <- .id[.dup_obs == z]
+        length(.dup_id[!duplicated(.dup_id)])
     })
 
 
-    ## create final table for report
+    ## create final table for duplication report
     .tbl <- data.frame(
-        cbind("|", .dup.obs.tbl.names, "|",
-              .dup.obs.tbl, "|",
-              .dup.obs.tbl - .non.dup, "|")
+        cbind("|", .dup_obs_tbl_names,
+              .dup_obs_tbl, "|",
+              .dup_obs_tbl - .non_dup, "|")
     )
-    names(.tbl) <- c("+", "Copies", "+", "Observations", "+",
-                     "Surplus", "+")
+    names(.tbl) <- c("|", "Copies", "Observations", "|", "Surplus", "|")
 
-    ## display report
-    printText(.tbl,
-              paste0("Duplicates in terms of ",
-                     ifelse(.dup.vars.len == 0, "all variables",
-                            paste0(.dup.vars, collapse = " + "))),
-              .printDF = TRUE)
-    printMsg(paste0("Number of Observation: ", nrow(.data)))
+    ## add dash lines to report table
+    .tbl <- addDashLines(.tbl, .vline = 3)
+
+    ## generate report
+    printDF(.tbl,  paste0("Duplicates in terms of ",
+                          ifelse(.vars_dup_len == 0,
+                                 "all variables",
+                                 paste0(.vars_dup, collapse = " + "))
+    ))
+    printText(paste0("Number of Observations: ", nrow(.data)))
 
 
+    ## Make changes to the dataset
     ## create a dup variable for indication
-    .data$dup <- .dup.obs - 1
-
-
+    .data$.dup_id <- as.numeric(.dup_obs) - 1
+    attr(.data$.dup_id, "label") <- "<Sys.Gen: # of DUPLICATED OBS>"
 
     ## if drop is TRUE, then drop all duplications and keep all unique.
-    if (drop) {
-        .dup.drop <- .dup.ave == 1
-        .data <- .data[.dup.drop, ]
-        printMsg(paste0(sum(!.dup.drop * 1), " observations deleted"))
+    if (!is.null(make_unique)) {
+        if (make_unique) {
+            .dup_drop <- .id_num == 1
+            .data <- .data[.dup_drop, ]
+            printText(paste0(
+                sum(!.dup_drop), " duplicated observations REMOVED"
+            ))
+        } else {
+            .dup_keep <- .id_num != 1
+            .data <- .data[.dup_keep, ]
+            printText(paste0(
+                sum(!.dup_keep), " unique observations REMOVED"
+            ))
+        }
     }
 
     return(.data)
