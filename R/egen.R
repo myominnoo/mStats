@@ -75,11 +75,12 @@ egen <- function(data, var, cut = NULL, new_var = NULL, lbl = NULL)
     }
 
 
-    ## create new var's name
+    ## create old and new var's name
     .vars_names <- names(.data)
+    .var_name <- .args$var
     new_var <- .args$new_var
     new_var <- ifelse(is.null(new_var),
-                      paste0(.args$var, "_cat"),
+                      paste0(.var_name, "_cat"),
                       paste(new_var))
 
     ## If variable is already in the dataset, stop
@@ -89,7 +90,9 @@ egen <- function(data, var, cut = NULL, new_var = NULL, lbl = NULL)
     }
 
     ## assign var to data
-    var <- eval(substitute(var), data)
+    var <- .data[[.var_name]]
+
+
     ## if cut is not specified, cut <- 10
     if (is.null(cut)) {
         cut <- 10L
@@ -151,8 +154,9 @@ egen <- function(data, var, cut = NULL, new_var = NULL, lbl = NULL)
 
     ## assign .var back to data, add label and change the names
     .data$new_var <- .var
-    attr(.data$new_var, "label") <- paste0(.args$var, " categories")
+    attr(.data$new_var, "label") <- paste0(.var_name, " categories")
     names(.data)[ncol(.data)] <- new_var
+
 
 
     ## Display message to nofity changes

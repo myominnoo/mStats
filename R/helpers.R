@@ -402,3 +402,69 @@ printDF <- function(.data, .txt, .split = NULL)
     print.data.frame(.data, row.names = FALSE, max = 1e9)
     printLines(.x = "_", .width = .line_width)
 }
+
+
+
+
+
+
+# Epi Calculations --------------------------------------------------------
+
+
+#' @describeIn helpers
+#'
+#' This reorders table format by exposure and case values.
+#'
+#' @param .tbl table format
+#' @param .exp.value exposure values
+#' @param .case.value case values
+#'
+#' @export
+rowColOrder <- function (.tbl, .exp.value = NULL, .case.value = NULL)
+{
+    .tbl.row <- rownames(.tbl)
+    .tbl.col <- colnames(.tbl)
+    .tbl.dim <- names(dimnames(.tbl))
+    if (!is.null(.exp.value)) {
+        .tbl <- rbind(.tbl[.tbl.row == .exp.value, ], .tbl[.tbl.row !=
+                                                               .exp.value, ])
+        row.names(.tbl) <- c(.tbl.row[.tbl.row == .exp.value],
+                             .tbl.row[.tbl.row != .exp.value])
+    }
+    if (!is.null(.case.value)) {
+        .tbl <- cbind(.tbl[, .tbl.col == .case.value], .tbl[,
+                                                            .tbl.col != .case.value])
+        colnames(.tbl) <- c(.tbl.col[.tbl.col == .case.value],
+                            .tbl.col[.tbl.col != .case.value])
+    }
+    names(dimnames(.tbl)) <- .tbl.dim
+    return(.tbl)
+}
+
+
+#' @describeIn helpers
+#'
+#' This separates one tables into several by a reference value.
+#'
+#' @param .tbl table
+#' @param .exp.value exposure values
+#' modifided \code{data.frame}
+#'
+#' @export
+splitTables <- function (.tbl, .exp.value = NULL)
+{
+    .row.names <- rownames(.tbl)
+    .exp.value <- ifelse(is.null(.exp.value), .row.names[1],
+                         .exp.value)
+    .tbl <- lapply(.row.names, function(z) {
+        if (z != .exp.value) {
+            .tbl.new <- rbind(.tbl[.exp.value, ], .tbl[z, ])
+            rownames(.tbl.new) <-
+                c(.row.names[.row.names == .exp.value],
+                  .row.names[.row.names == z])
+            .tbl.new
+        }
+    })
+    .tbl <- .tbl[lapply(.tbl, length) > 0]
+    return(.tbl)
+}

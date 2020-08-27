@@ -149,6 +149,7 @@ tab <- function(data, ... , by = NULL, row.pct = TRUE, na.rm = FALSE, rnd = 1)
         .txt <- "One-way Tabulation"
     } else {
         .df <- lapply(.vars, function(z) {
+            checkVarName(.data, z)
             tab2(.data, z, by, row.pct, na.rm, rnd)
         })
         .txt <- paste0("   Cross-Tabulation : '", .args$by, "'")

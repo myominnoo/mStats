@@ -77,6 +77,11 @@ recode <- function(data, var, ... )
 
     ## get variable data
     .var <- .data[[.var_name]]
+    .lbl <- attr(.var, "label")
+    ## change double to numeric
+    if (is.double(.var)) {
+        .var <- as.numeric(.var)
+    }
 
     ## get the names within three dots
     .values <- .args[-c(1:3)]
@@ -126,6 +131,7 @@ recode <- function(data, var, ... )
     })
 
     ## reassign back to dataset
+    attr(.var, "label") <- .lbl
     .data[[.var_name]] <- .var
 
     return(.data)

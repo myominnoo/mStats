@@ -17,7 +17,7 @@ mStats is a tool for epidemiological data analysis, providing four
 consistent domains of functions that help you perform the most common
 procedures of data analysis flow.
 
-  - `data manipulation` - helps you manipulate, process and manage your
+  - `data management` - helps you manipulate, process and manage your
     dataset.
   - `statistical analysis` - lets you create well-formated outputs of
     common statistical procedures.

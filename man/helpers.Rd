@@ -14,6 +14,8 @@
 \alias{printText}
 \alias{printLabel}
 \alias{printDF}
+\alias{rowColOrder}
+\alias{splitTables}
 \title{Helper functions for \code{mStats}}
 \usage{
 helpers(...)
@@ -41,6 +43,10 @@ printText(.txt = NULL)
 printLabel(.data, .var_name = NULL)
 
 printDF(.data, .txt, .split = NULL)
+
+rowColOrder(.tbl, .exp.value = NULL, .case.value = NULL)
+
+splitTables(.tbl, .exp.value = NULL)
 }
 \arguments{
 \item{...}{
@@ -83,6 +89,13 @@ vertical lines}
 \item{.var_name}{character vector indicating names of variables}
 
 \item{.split}{a text that separate between two lines}
+
+\item{.tbl}{table}
+
+\item{.exp.value}{exposure values
+modifided \code{data.frame}}
+
+\item{.case.value}{case values}
 }
 \value{
 modifided \code{data.frame}
@@ -125,5 +138,9 @@ Otherwise, it prints variable or variables' labels.
 
 \item \code{printDF}: This prints \code{data.frame} in a well-formatted style.
 It also adds \code{printLines} for better visualization.
+
+\item \code{rowColOrder}: This reorders table format by exposure and case values.
+
+\item \code{splitTables}: This separates one tables into several by a reference value.
 }}
 

@@ -1,9 +1,9 @@
 {
-    "path": "C:/MEGA/GitHub/mStats4/R",
+    "path": "C:/MEGA/GitHub/mStats_Dev/mStats/R",
     "sortOrder": [
         {
-            "ascending": true,
-            "columnIndex": 2
+            "columnIndex": 2,
+            "ascending": true
         }
     ]
 }

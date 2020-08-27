@@ -68,7 +68,7 @@ overlaid over the histogram.}
     \code{\link[graphics]{axis}} (if \code{plot = TRUE}).}
 }
 \description{
-\code{summ()} draws a histogram with formatted texts and
+\code{histogram()} draws a histogram with formatted texts and
 adds a normal curve over the histogram.
 }
 \details{

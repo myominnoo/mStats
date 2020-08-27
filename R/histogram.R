@@ -2,7 +2,7 @@
 #'
 #' @description
 #'
-#' \code{summ()} draws a histogram with formatted texts and
+#' \code{histogram()} draws a histogram with formatted texts and
 #' adds a normal curve over the histogram.
 #'
 #' @param data Dataset
