@@ -34,13 +34,11 @@ mhor(
 95\% CI.
 }
 \details{
-Value can be set as baseline by specifying \code{exp_value}. This is used
+Rows and Columns can be rearranged by specifying
+\code{exp_value} and \code{case_value}. This is used
 when the exposed and case values are not at the right place in 2x2 tables.
 
-It produces a table with Odds Ratio,95\% CI as well as
-p-value. If \code{strata} is specified, \code{Mantel-Haenzsel} Pooled
-estimates of \verb{Odds Ratio} is generated along with Chi-squared test for
-homogeneity.
+Reference row value can be specified in \code{exp_value}.
 
 Attributable fractions, \code{Attr. Frac. Exp} and  \code{Attr. Frac. Pop}
 among exposed and population are calculated when OR is greated than or
@@ -48,7 +46,10 @@ equal to 1.
 If OR is less than 1, preventable fractions,  \code{Prev. Frac. Exp}
 and  \code{Attr. Frac. Pop} are calculated.
 
-\code{Prop.exp} is proportion among exposed.
+It produces a table with Odds Ratio, 95\% CI as well as
+p-value. If \code{strata} is specified, \code{Mantel-Haenzsel} Pooled
+estimates of \verb{Odds Ratio} is generated along with Chi-squared test for
+homogeneity.
 
 \strong{Odds Ratio, OR}
 
@@ -99,25 +100,6 @@ and  \code{Attr. Frac. Pop} are calculated.
 \examples{
 
 ### Example from Essential Medical Statistics
-# Page 160, table 16.5 Hypothetical data from a survey to examine
-# the prevalence of asthma among patients at a particular general practice.
-
-gp <- expandTables(c(81, 995, 57, 867),
-                   exp_name = "sex",
-                   exp_lvl = c("women", "men"),
-                   case_name = "asthma",
-                   case_lvl = c("yes", "no"))
-gp <- labelData(gp, "Hypothetical data: prevalence of asthma")
-gp <- labelVar(gp, sex="Patient's sex", asthma="Having asthma")
-
-## check dataset
-codebook(gp)
-
-## calculate OR
-mhor(gp, sex, asthma)
-
-
-### Example from Essential Medical Statistics
 # Page 178, Chapter 18: Controlling for confounding: Stratification
 lepto <- expandTables(
     male = c(36, 14, 50, 50), female = c(24, 126, 10, 90),
@@ -141,7 +123,6 @@ mhor(lepto, area, ab, exp_value = "Rural", case_value = "Yes")
 
 ## Calculate MHOR
 mhor(lepto, area, ab, gender, "Rural", "Yes")
-
 
 
 }

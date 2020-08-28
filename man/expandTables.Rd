@@ -6,17 +6,17 @@
 \usage{
 expandTables(
   ...,
-  exp_name = "exposure",
+  exp_name = "exp",
   exp_lvl = c("exposed", "unexposed"),
-  case_name = "outcome",
-  case_lvl = c("disease", "healthy"),
+  case_name = "case",
+  case_lvl = c("cases", "controls"),
   strata_name = "strata"
 )
 }
 \arguments{
 \item{...}{vectors of 2x2 tables}
 
-\item{exp_name}{Name of \code{Exposure} Variable}
+\item{exp_name}{Name of \code{exp} Variable}
 
 \item{exp_lvl}{Names of two categories in the order of
 Exposed and non-exposed}
@@ -36,7 +36,7 @@ Exposed and non-exposed}
 \details{
 \code{expandTables} uses the vectors of \code{2x2} tables and
 generates a data frame of at least two columns:
-Exposure and Outcome.
+exp and case.
 
 \preformatted{expandTables(c(100, 200, 100, 200))}
 
@@ -51,9 +51,9 @@ expandTables(
              strata1 = c(100, 200, 100, 200),
              strata2 = c(100, 200, 100, 200),
              strata3 = c(100, 200, 100, 200),
-             exp_name = "Exposure",
+             exp_name = "exp",
              exp_lvl = c("exposed", "unexposed"),
-             case_name = "Outcome",
+             case_name = "case",
              case_lvl = c("case", "control"),
              strata_name = "Strata"
 )
@@ -65,10 +65,10 @@ If variables' names or levels are not specified, the followings are
 applied.
 
 \enumerate{
-\item Exposure Name: \code{exposure}
-\item Exposure levels: \code{exposed} and \code{unexposed}
-\item Outcome Name: \code{outcome}
-\item Outcome levels: \code{disease} and \code{healthy}
+\item exp Name: \code{exp}
+\item exp levels: \code{exposed} and \code{unexposed}
+\item case Name: \code{case}
+\item case levels: \code{cases} and \code{controls}
 \item Strata Name: \code{strata}
 \item Note: Strata levels are not considered as vectors must
 be named.

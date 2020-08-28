@@ -2,12 +2,13 @@
 output: github_document
 ---
 
-## Updates in version 3.3.0
+## Changes in `mStats` version 3.3.0
 
 * `tab` 
     - can generate a publication-ready table.
     - fixed row and column percentage error.
     - run time is 2x times faster now.
+    - Chi-squared test does not implement Yates' continuity correction.
 
 * `summ`
     - can generate a publication-ready table.
@@ -35,7 +36,14 @@ output: github_document
 
 * `pyramid` - draws population pyramid graph by age and sex. This simplified function is based on the work of Minato Nakazawa who is the author of `pyramid` [package](https://cran.r-project.org/web/packages/pyramid/index.html). 
 
-* The following functions were removed because same functions in `tidyverse`
+* `mhor` & `mhrr`
+    - the format of output is changed. 
+    - added some statistics such as attributable or prevented fractions. 
+    - for calculating unstratified risk ratio using `mhrr`, odds ratio is also reported for conveniences.
+
+
+
+* The following functions were removed because better versions of such functions can be used from the package `tidyverse`. 
 - `arrange`
 - `filter`
 - `keep`
