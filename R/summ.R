@@ -174,6 +174,8 @@ summ <- function(data, ... , by = NULL, na.rm = FALSE, rnd = 1, test = TRUE)
 
     ## add label for further processing
     attr(.df, "label") <- "summary"
+    attr(.df, "grouped") <- ifelse(by == "NULL", FALSE, TRUE)
+    attr(.df, "test") <- test
 
     ## constructs labels
     ## add label for by: cross-tabulation
@@ -231,7 +233,7 @@ summ1 <- function(data, x, na.rm = FALSE, rnd = 1)
     pvalue <- sprintf(pvalue, fmt = '%#.3f')
 
     ## final .df for return
-    .df <- data.frame(Variable = x,
+    .df <- data.frame(Variables = x,
                       Obs. = .len, NA. = .na,
                       Mean = .v[1], Std.Dev = .v[2],
                       Median = .v[5], Q1 = .v[4], Q3 = .v[6],
@@ -267,7 +269,7 @@ summ2 <- function(data, x, by, na.rm = FALSE, rnd = 1, test = TRUE)
             }
 
             .df <- summ1(.data, x, rnd = rnd)
-            .df[1, "Variable"] <- paste0("[", z, "]", x)
+            .df[1, "Variables"] <- paste0("[", z, "]", x)
             .df
         })
     )
@@ -276,7 +278,7 @@ summ2 <- function(data, x, by, na.rm = FALSE, rnd = 1, test = TRUE)
 
 
     ## subset output show only Obs. to Q3
-    .display <- c("Variable", "Obs.", "NA.", "Mean", "Std.Dev",
+    .display <- c("Variables", "Obs.", "NA.", "Mean", "Std.Dev",
                   "Median", "Q1", "Q3", "Normality")
     .df <- .df[, .display]
 

@@ -468,3 +468,19 @@ splitTables <- function (.tbl, .exp.value = NULL)
     .tbl <- .tbl[lapply(.tbl, length) > 0]
     return(.tbl)
 }
+
+
+
+# clear -------------------------------------------------------------------
+
+#' @describeIn helpers
+#'
+#' This clears R workspace (Environment, console and Plots)
+#'
+#' @importFrom grDevices dev.list dev.off
+#' @export
+clear <- function() {
+    while (!is.null(dev.list()))  dev.off()
+    rm(list = ls(envir = .GlobalEnv), pos = 1)
+    cat("\014")
+}

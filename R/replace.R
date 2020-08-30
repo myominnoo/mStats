@@ -53,6 +53,7 @@
 #' codebook(infert.new)
 #'
 #' @export
+
 replace <- function(data, var, value, ... )
 {
     ## match call arguments
@@ -65,6 +66,9 @@ replace <- function(data, var, value, ... )
     .data_name <- deparse(substitute(data))
     var <- deparse(substitute(var))
     value <- deparse(substitute(value))
+
+    ## get var label
+    .var.lbl <- attr(.data[[var]], "label")
 
     ## if input is not a data.frame, stop
     if (!is.data.frame(.data)) {
@@ -104,6 +108,9 @@ replace <- function(data, var, value, ... )
     if (is.factor(.data[[var]])) {
         .df[[var]] <- as.factor(.df[[var]])
     }
+
+    ## assign label back to the var
+    attr(.df[[var]], "label") <- .var.lbl
 
     ## record number of rows changed that will be made
     if (length(.expr) > 0) {

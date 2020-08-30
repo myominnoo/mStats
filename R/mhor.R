@@ -242,10 +242,10 @@ calcOR <- function(.tbl, exp, rnd)
     )
 
     ## calculate odds ratio, 95% CI, and p-value
-    .a <- .tbl[1, 1]
-    .b <- .tbl[1, 2]
-    .c <- .tbl[2, 1]
-    .d <- .tbl[2, 2]
+    .a <- as.numeric(.tbl[1, 1])
+    .b <- as.numeric(.tbl[1, 2])
+    .c <- as.numeric(.tbl[2, 1])
+    .d <- as.numeric(.tbl[2, 2])
     .or <- (.a * .d) / (.b * .c)
     .fisher <- tryCatch({
         suppressWarnings(fisher.test(.tbl))
@@ -315,7 +315,13 @@ calcMHOR <- function(.exp, .case, .strata, exp_value, case_value, rnd)
     .lvl_len <- dim(.tbl)[3]
 
     ## calculate MHOR
-    .t <- mantelhaen.test(.tbl, correct = FALSE)
+    .t <- tryCatch({
+        mantelhaen.test(.tbl, correct = FALSE)
+    }, warning = function(w) {
+        mantelhaen.test(.tbl, correct = FALSE, exact = TRUE)
+    }, error = function(cnd) {
+        return(NA)
+    })
     .mhor <- c("M-H Combined",
                sprintf(c(.t$estimate, .t$conf.int, .t$p.value),
                        fmt = paste0("%#.", rnd, "f")))
@@ -328,19 +334,19 @@ calcMHOR <- function(.exp, .case, .strata, exp_value, case_value, rnd)
             ## change row and col orders
             .t <- rowColOrder(.tbl[,,z], exp_value, case_value)
             .strata_name <- dimnames(.tbl)$.strata[z]
-            a <- .t[1, 1]
-            b <- .t[1, 2]
-            c <- .t[2, 1]
-            d <- .t[2, 2]
+            a <- as.numeric(.t[1, 1])
+            b <- as.numeric(.t[1, 2])
+            c <- as.numeric(.t[2, 1])
+            d <- as.numeric(.t[2, 2])
 
             or <- log(((a + 0.5) * (d + 0.5)) /
                           ((b + 0.5) * (c + 0.5)))
             var <- (1 / (a + 0.5)) +
                 (1 / (b + 0.5)) + (1 / (c + 0.5)) + (1 / (d + 0.5))
-            w <- 1 / var
+            w <- 1 / as.numeric(var)
             wor <- w * or
 
-            ## cacluate OR
+            ## calculate OR
             res <- calcOR(.t, "tocombine", rnd)[7, -2]
             res[1, 1] <- .strata_name
 

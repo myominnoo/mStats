@@ -2,7 +2,25 @@
 output: github_document
 ---
 
-## Changes in `mStats` version 3.3.0
+## Changes in `mStats` beta version 3.3.0
+
+### Updated on August 30, 2020
+
+* `regress`, `logit` and `esttab`
+    - Display format is now similar to STATA's output.
+    - function name `logistic` is replaced with `logit` because of its length.
+    - `esttab` is a wrapper function for regression models. It supports `regress` and `logit`. 
+    
+    
+### Updated on August 29, 2020
+
+* `mhor` & `mhrr`
+    - the format of output is changed. 
+    - added some statistics such as attributable or prevented fractions. 
+    - for calculating unstratified risk ratio using `mhrr`, odds ratio is also reported for conveniences.
+
+
+### Updated on August 15, 2020
 
 * `tab` 
     - can generate a publication-ready table.
@@ -36,12 +54,7 @@ output: github_document
 
 * `pyramid` - draws population pyramid graph by age and sex. This simplified function is based on the work of Minato Nakazawa who is the author of `pyramid` [package](https://cran.r-project.org/web/packages/pyramid/index.html). 
 
-* `mhor` & `mhrr`
-    - the format of output is changed. 
-    - added some statistics such as attributable or prevented fractions. 
-    - for calculating unstratified risk ratio using `mhrr`, odds ratio is also reported for conveniences.
-
-
+### Retired functions
 
 * The following functions were removed because better versions of such functions can be used from the package `tidyverse`. 
 - `arrange`

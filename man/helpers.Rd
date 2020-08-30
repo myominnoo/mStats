@@ -16,6 +16,7 @@
 \alias{printDF}
 \alias{rowColOrder}
 \alias{splitTables}
+\alias{clear}
 \title{Helper functions for \code{mStats}}
 \usage{
 helpers(...)
@@ -47,6 +48,8 @@ printDF(.data, .txt, .split = NULL)
 rowColOrder(.tbl, .exp.value = NULL, .case.value = NULL)
 
 splitTables(.tbl, .exp.value = NULL)
+
+clear()
 }
 \arguments{
 \item{...}{
@@ -142,5 +145,7 @@ It also adds \code{printLines} for better visualization.
 \item \code{rowColOrder}: This reorders table format by exposure and case values.
 
 \item \code{splitTables}: This separates one tables into several by a reference value.
+
+\item \code{clear}: This clears R workspace (Environment, console and Plots)
 }}
 

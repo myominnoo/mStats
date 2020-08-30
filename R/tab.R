@@ -215,6 +215,8 @@ tab <- function(data, ... , by = NULL, row.pct = TRUE, na.rm = FALSE, rnd = 1)
 
     ## add label for further processing
     attr(.df, "label") <- "tabulation"
+    attr(.df, "percentage") <-
+        ifelse(by == "NULL", "one", as.character(row.pct))
 
     ## constructs labels
     ## add label for by: cross-tabulation
