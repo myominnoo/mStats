@@ -1,31 +1,32 @@
 ---
-output: github_document
+output:
+  html_document:
+    df_print: paged
 ---
-
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/figures/",
+  fig.path = "man/figures/README-",
   out.width = "100%"
 )
 options(tibble.print_min = 5, tibble.print_max = 5)
 ```
-
-
 
 # mStats <a href='https://myominnoo.github.io'><img src='man/figures/logo.png' align="right" height="120" /></a>
 
 <!-- badges: start -->
 
 [![CRAN](https://www.r-pkg.org/badges/version-ago/mStats)](https://cran.r-project.org/package=mStats)
-[![R build
-status](https://github.com/myominnoo/mStats/workflows/R-CMD-check/badge.svg)](https://github.com/tidyverse/dplyr/actions?workflow=R-CMD-check)
+[![R build status](https://github.com/myominnoo/mStats/workflows/R-CMD-check/badge.svg)](https://github.com/tidyverse/dplyr/actions?workflow=R-CMD-check)
 [![Downloads](https://cranlogs.r-pkg.org/badges/mStats)](https://cran.r-project.org/package=mStats)
+[![Codecov test coverage](https://codecov.io/gh/myominnoo/mStats/branch/master/graph/badge.svg)](https://codecov.io/gh/myominnoo/mStats?branch=master)
 <!-- badges: end -->
 
 ## Overview
