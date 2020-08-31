@@ -119,7 +119,8 @@ tab <- function(data, ... , by = NULL, row.pct = TRUE, na.rm = FALSE, rnd = 1)
 
     ## if input is not a data.frame, stop
     if (!is.data.frame(.data)) {
-        stop("`.data` must be a data.frame", call. = FALSE)
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
     }
 
 
@@ -136,6 +137,14 @@ tab <- function(data, ... , by = NULL, row.pct = TRUE, na.rm = FALSE, rnd = 1)
              call. = FALSE)
     }
 
+    ## if vars not found in the dataset, stop
+    sapply(.vars, function(z) {
+        if (!any(z %in% .vars_names)) {
+            stop(paste0("'", z, "' not found."),
+                 call. = FALSE)
+        }
+    })
+
 
     ## if by variable is empty, do one-way tabulation
     ## if not, do two-way tabulation
@@ -148,6 +157,12 @@ tab <- function(data, ... , by = NULL, row.pct = TRUE, na.rm = FALSE, rnd = 1)
         })
         .txt <- "One-way Tabulation"
     } else {
+        ## check by variable in the dataset
+        if (!any(by %in% .vars_names)) {
+            stop(paste0("'", by, "' not found."),
+                 call. = FALSE)
+        }
+
         .df <- lapply(.vars, function(z) {
             checkVarName(.data, z)
             tab2(.data, z, by, row.pct, na.rm, rnd)

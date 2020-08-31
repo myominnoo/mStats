@@ -70,7 +70,8 @@ lagRows <- function(data, var, by = NULL, new_var = NULL, last_obs = FALSE)
 
     ## if input is not a data.frame, stop
     if (!is.data.frame(.data)) {
-        stop("`.data` must be a data.frame", call. = FALSE)
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
     }
 
     ## assign var and by

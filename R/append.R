@@ -59,6 +59,12 @@ append <- function(data, ... )
     .vars_names <- names(.data)
 
 
+    ## if input is not a data.frame, stop
+    if (!is.data.frame(.data)) {
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
+    }
+
     ## get dataset names within three dots
     .ds_list <- list(...)
 

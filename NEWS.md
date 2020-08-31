@@ -4,6 +4,13 @@ output: github_document
 
 ## Changes in `mStats` beta version 3.3.0
 
+### Updated on August 31, 2020
+
+* `expandFreq` - can be used to expand frequency-weighted table with multiple variables allowed. 
+
+* `strate` - allows multiple variables for stratification. It needs individual-level data. 
+
+
 ### Updated on August 30, 2020
 
 * `regress`, `logit` and `esttab`
@@ -19,6 +26,7 @@ output: github_document
     - added some statistics such as attributable or prevented fractions. 
     - for calculating unstratified risk ratio using `mhrr`, odds ratio is also reported for conveniences.
 
+* `finalize` - gathers statistics in a publication-ready format. It can be exported to a CSV file, or copy to a Word document.
 
 ### Updated on August 15, 2020
 

@@ -143,7 +143,8 @@ mhor <- function(data, exp , case, strata = NULL, exp_value = NULL,
 
     ## if input is not a data.frame, stop
     if (!is.data.frame(.data)) {
-        stop(paste0("`", ".data_name", "` must be a data.frame"), call. = FALSE)
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
     }
 
     ## get exp and case name

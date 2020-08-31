@@ -110,9 +110,9 @@ regress <- function(data, y, ... , vce = FALSE, rnd = 4)
 
     ## if input is not a data.frame, stop
     if (!is.data.frame(.data)) {
-        stop("`.data` must be a data.frame", call. = FALSE)
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
     }
-
 
     ## get variable names within three dots to search for duplicates
     .vars <- enquotes(.args, c("data", "y", "vce", "rnd"))

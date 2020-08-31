@@ -14,13 +14,15 @@
 #'
 #' @details
 #'
-#' \code{expandTables} uses the vectors of \code{2x2} tables and
+#' \strong{expandTables}
+#'
+#' uses the vectors of \code{2x2} tables and
 #' generates a data frame of at least two columns:
 #' exp and case.
 #'
 #' \preformatted{expandTables(c(100, 200, 100, 200))}
 #'
-#' \strong{Strata}
+#' \code{Strata}
 #'
 #' Multiple tables can be used to construct a dataset by specifying
 #' \code{strata_name} as follow. Strata can be included
@@ -39,9 +41,9 @@
 #' )
 #' }
 #'
-#' \strong{Variables' Labels}
+#' \code{Labels for variables}
 #'
-#' If variables' names or levels are not specified, the followings are
+#' If names or lavels of variables are not specified, the followings are
 #' applied.
 #'
 #' \enumerate{
@@ -142,6 +144,88 @@ expandTables <- function( ... ,
         stop(cnd, call. = FALSE)
     })
 
+
+    return(.df)
+}
+
+
+#' @describeIn expandTables
+#'
+#' \code{expandFreq()} expands a frequency-weighted table into a dataset.
+#' The table must be in dataset format.
+#' It preserves the original dataset format.
+#'
+#' @param data frequency table in dataset format
+#' @param freq variable for weighted frequency
+#'
+#' @details
+#'
+#' \strong{expandFreq()} uses the data.frame and construct the dataset
+#' based on the
+#' frequency weight. The frequency weight must be specified by
+#'  \code{freq} argument.
+#'
+#'
+#' \preformatted{
+#' expandFreq(data = "data_name", freq = "freq")
+#' }
+#'
+#' @examples
+#'
+#' ## Example for expandFreq  <<<<<--------->>>>>
+#'
+#' ## Example from UCLA website
+#' ## you can download the dataset here:
+#' ## https://stats.idre.ucla.edu/stat/stata/examples/icda/afterlife.dta
+#'
+#' al <- data.frame(gender = c(1, 1, 0, 0),
+#'                  aftlife = c(1, 0, 1, 0),
+#'                  freq = c(435, 147, 375, 134))
+#' al.exp <- expandFreq(al, freq)
+#'
+#' ## check the numbers by tabulation
+#' ## tab(al.exp, gender, by = aftlife)
+#'
+#' @export
+expandFreq <- function(data, freq)
+{
+    ## match call arguments
+    .args <- as.list(match.call())
+
+    ## copy data to .data
+    .data <- data
+
+    ## if input is not a data.frame, stop
+    if (!is.data.frame(.data)) {
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
+    }
+
+    ## get names of dataset and headings
+    .data_name <- deparse(substitute(data))
+    .vars_names <- names(.data)
+    freq <- .args$freq
+
+    ## get where the frequency column is and get the freq
+    .freqi <-.vars_names %in% as.character(freq)
+    .freq <- .data[[freq]]
+
+    ## if freq is not numbers, stop
+    if (!is.numeric(.freq)) {
+        stop(paste0("`", .freq, "` must be a number."),
+             call. = FALSE)
+    }
+
+    ## repeat other columns per freq
+    .t <- apply(.data[, !.freqi], 2, function(z) rep(z, .freq))
+
+    ## put the dataset back to the original data frame
+    ## this preserves the data structure of original data
+    .df <- .data[0, !.freqi]
+    .df[1:nrow(.t), ] <- .t
+
+    ## print message
+    printText(paste0("'", .data_name, "' expanded into dataset."))
 
     return(.df)
 }

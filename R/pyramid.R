@@ -50,13 +50,17 @@ pyramid <- function(data, age, sex, cut = NULL, main = NULL,
     ## copy data to .data
     .data <- data
 
+    ## get names of dataset and headings
+    .data_name <- deparse(substitute(data))
+    .vars_names <- names(.data)
+
     ## if input is not a data.frame, stop
     if (!is.data.frame(.data)) {
-        stop("`.data` must be a data.frame", call. = FALSE)
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
     }
 
     ## get x and y names
-    .data_name <- deparse(substitute(data))
     .x_name <- .args$age
     .y_name <- .args$sex
 

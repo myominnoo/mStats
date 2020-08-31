@@ -87,6 +87,12 @@ duplicates <- function(data, ... , make_unique = NULL)
     .data_name <- .args$data
     .vars_names <- names(.data)
 
+    ## if input is not a data.frame, stop
+    if (!is.data.frame(.data)) {
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
+    }
+
     ## get variable names within three dots to search for duplicates
     .vars_dup <- enquotes(.args, c("data", "make_unique"))
     # If length is 0, then this is equal to all variables

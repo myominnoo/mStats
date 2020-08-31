@@ -2,6 +2,7 @@
 % Please edit documentation in R/expandTables.R
 \name{expandTables}
 \alias{expandTables}
+\alias{expandFreq}
 \title{Convert \code{2x2 tables} to \code{data.frame}}
 \usage{
 expandTables(
@@ -12,6 +13,8 @@ expandTables(
   case_lvl = c("cases", "controls"),
   strata_name = "strata"
 )
+
+expandFreq(data, freq)
 }
 \arguments{
 \item{...}{vectors of 2x2 tables}
@@ -26,6 +29,10 @@ Exposed and non-exposed}
 \item{case_lvl}{names of two categories in the order of}
 
 \item{strata_name}{Name of stratified variable}
+
+\item{data}{frequency table in dataset format}
+
+\item{freq}{variable for weighted frequency}
 }
 \value{
 \code{data.frame}
@@ -34,13 +41,15 @@ Exposed and non-exposed}
 \code{expandTables()} generates a data frame and supports two levels.
 }
 \details{
-\code{expandTables} uses the vectors of \code{2x2} tables and
+\strong{expandTables}
+
+uses the vectors of \code{2x2} tables and
 generates a data frame of at least two columns:
 exp and case.
 
 \preformatted{expandTables(c(100, 200, 100, 200))}
 
-\strong{Strata}
+\code{Strata}
 
 Multiple tables can be used to construct a dataset by specifying
 \code{strata_name} as follow. Strata can be included
@@ -59,9 +68,9 @@ expandTables(
 )
 }
 
-\strong{Variables' Labels}
+\code{Labels for variables}
 
-If variables' names or levels are not specified, the followings are
+If names or lavels of variables are not specified, the followings are
 applied.
 
 \enumerate{
@@ -73,7 +82,23 @@ applied.
 \item Note: Strata levels are not considered as vectors must
 be named.
 }
+
+\strong{expandFreq()} uses the data.frame and construct the dataset
+based on the
+frequency weight. The frequency weight must be specified by
+\code{freq} argument.
+
+\preformatted{
+expandFreq(data = "data_name", freq = "freq")
 }
+}
+\section{Functions}{
+\itemize{
+\item \code{expandFreq}: \code{expandFreq()} expands a frequency-weighted table into a dataset.
+The table must be in dataset format.
+It preserves the original dataset format.
+}}
+
 \examples{
 
 
@@ -101,6 +126,21 @@ tab(asthma)
 ## cross-tabulation
 tab(asthma, sex, by = asthma)
 
+
+
+## Example for expandFreq  <<<<<--------->>>>>
+
+## Example from UCLA website
+## you can download the dataset here:
+## https://stats.idre.ucla.edu/stat/stata/examples/icda/afterlife.dta
+
+al <- data.frame(gender = c(1, 1, 0, 0),
+                 aftlife = c(1, 0, 1, 0),
+                 freq = c(435, 147, 375, 134))
+al.exp <- expandFreq(al, freq)
+
+## check the numbers by tabulation
+## tab(al.exp, gender, by = aftlife)
 
 }
 \author{

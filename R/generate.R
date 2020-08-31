@@ -49,7 +49,8 @@ generate <- function(data, new_var, expr = NULL )
 
     ## if input is not a data.frame, stop
     if (!is.data.frame(.data)) {
-        stop("`.data` must be a data.frame", call. = FALSE)
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
     }
 
     ## get variable name
@@ -74,7 +75,7 @@ generate <- function(data, new_var, expr = NULL )
     }, error = function(cnd) {
         stop(cnd)
     })
-    attr(.data$new_var, "label") <- paste0(new_var, ": ", expr)
+    attr(.data$new_var, "label") <- expr
 
     ## get missing value and total number
     ## and print

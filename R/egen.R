@@ -71,9 +71,9 @@ egen <- function(data, var, cut = NULL, new_var = NULL, lbl = NULL)
 
     ## if input is not a data.frame, stop
     if (!is.data.frame(.data)) {
-        stop("`.data` must be a data.frame", call. = FALSE)
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
     }
-
 
     ## create old and new var's name
     .vars_names <- names(.data)

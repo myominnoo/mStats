@@ -67,13 +67,14 @@ replace <- function(data, var, value, ... )
     var <- deparse(substitute(var))
     value <- deparse(substitute(value))
 
-    ## get var label
-    .var.lbl <- attr(.data[[var]], "label")
-
     ## if input is not a data.frame, stop
     if (!is.data.frame(.data)) {
-        stop("`.data` must be a data.frame", call. = FALSE)
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
     }
+
+    ## get var label
+    .var.lbl <- attr(.data[[var]], "label")
 
     ## get expression from three dots
     .expr <- enquotes(.args, c("data", "var", "value"))

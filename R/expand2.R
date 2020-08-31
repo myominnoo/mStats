@@ -51,6 +51,22 @@
 #' @export
 expand2 <- function(data, n_n = NULL, copies = 2, original = TRUE)
 {
+    ## match call arguments
+    .args <- as.list(match.call())
+
+    ## copy data to .data
+    .data <- data
+
+    ## get names of dataset and headings
+    .data_name <- deparse(substitute(data))
+    .vars_names <- names(.data)
+
+    ## if input is not a data.frame, stop
+    if (!is.data.frame(.data)) {
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
+    }
+
     data.lbl <- attr(data, "label")
     data <- data.frame(data)
     vars.lbl <- sapply(data, function(z) {

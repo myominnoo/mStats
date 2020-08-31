@@ -62,9 +62,9 @@ recode <- function(data, var, ... )
 
     ## if input is not a data.frame, stop
     if (!is.data.frame(.data)) {
-        stop("`.data` must be a data.frame", call. = FALSE)
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
     }
-
 
     ## get variable name and data
     .var_name <- .args$var

@@ -78,7 +78,8 @@ countBy <- function(data, ... , var_name = NULL, N = FALSE)
 
     ## if input is not a data.frame, stop
     if (!is.data.frame(.data)) {
-        stop("`.data` must be a data.frame", call. = FALSE)
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
     }
 
     ## get variable names within three dots to search for duplicates

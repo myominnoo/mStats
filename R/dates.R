@@ -81,13 +81,24 @@
 formatDate <- function(x, format = "dmY", sep = "/", century = NULL)
 {
     if (is.character(x)) {
-        f <- paste(paste0("%", unlist(strsplit(format, split = NULL, useBytes = T))),
-                   collapse = sep)
+        f <- paste(
+            paste0(
+                "%",
+                unlist(strsplit(format, split = NULL, useBytes = T))
+            ),
+            collapse = sep
+        )
         x <- as.Date(x, format = f)
         if (!is.null(century)) {
-            y <- do.call(rbind, strsplit(as.character(x), split = "-", fixed = TRUE))[,1]
-            m <- do.call(rbind, strsplit(as.character(x), split = "-", fixed = TRUE))[,2]
-            d <- do.call(rbind, strsplit(as.character(x), split = "-", fixed = TRUE))[,3]
+            y <- do.call(
+                rbind, strsplit(as.character(x), split = "-", fixed = TRUE)
+            )[,1]
+            m <- do.call(
+                rbind, strsplit(as.character(x), split = "-", fixed = TRUE)
+            )[,2]
+            d <- do.call(
+                rbind, strsplit(as.character(x), split = "-", fixed = TRUE)
+            )[,3]
             if (century) {
                 y <- (as.numeric(y) %% 100) + 2000
             } else {

@@ -55,7 +55,8 @@ histogram <- function(data, var, breaks = NULL, xlab = NULL, main = NULL,
 
     ## if input is not a data.frame, stop
     if (!is.data.frame(.data)) {
-        stop("`.data` must be a data.frame", call. = FALSE)
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
     }
 
     ## if var is not specified, stop
