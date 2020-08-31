@@ -1,0 +1,40 @@
+---
+output: github_document
+---
+
+# mStats: Usages
+
+
+
+## Usage 
+
+```{r, message = FALSE}
+library(mStats)
+
+## data management 
+## check data structure and labels
+codebook(infert)
+
+## label data and variable
+infert1 <- labelVar(infert, 
+                    education="Education in years", 
+                    age="Age in years")
+infert1 <- labelData(infert1, "Infertility after Abortion")
+codebook(infert1)
+
+## alternatively use piping operation %>% from magrittr
+library(magrittr)
+infert %>% 
+  labelVar(education="Education in years",
+           age="Age in years",
+           parity="count",
+           induced="Number of prior induced abortions",
+           case="case status",
+           spontaneous="Number of prior spon. abortions",
+           stratum="matched set number", 
+           pooled.stratum="stratum number") %>% 
+  labelData("Infertility after Abortion") %>% 
+  codebook
+
+```
+

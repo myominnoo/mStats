@@ -75,8 +75,7 @@ characters and symbols.
 
 All functions in `mStats` are straight-forward. Each function works one
 task with only a handful of optional arguments to change its nature of
-the output.  
-<br><br><br><br>
+the output.
 
 As an instance, the function `tab` simplifies the process of frequency
 tabulation for a single variable, and cross-tabulation if `by` input is
@@ -136,7 +135,9 @@ function from `mStats`. To avoid this:
     or `mStats::append()`.
   - remove `mStats` from the session using `detach(package:mStats)`.
 
-## Usage
+## Usages
+
+See detail examples of usages [here](%22USAGES.md%22).
 
 ## Getting help
 

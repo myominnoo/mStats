@@ -45,7 +45,6 @@ During analysis, it is common to use a dataset, either imported from an external
 2) Keep `functions` short and simple. 
 
 All functions in `mStats` are straight-forward. Each function works one task with only a handful of optional arguments to change its nature of the output.  
-<br><br><br><br>
     
 As an instance, the function `tab` simplifies the process of frequency tabulation for a single variable, and cross-tabulation if `by` input is specified. It provides only three additional inputs, `row.pct`, `na.rm` and `rnd`, to change the nature of percentages, missing values, and decimal points. However, even these three input options are used scarcely.
 
@@ -86,10 +85,9 @@ The `mStats`package contains two functions (`append`, `replace`) that have the s
 * remove `mStats` from the session using `detach(package:mStats)`.
 
 
-## Usage 
+## Usages 
 
-
-
+See detail examples of usages [here]("USAGES.md").
 
 ## Getting help
 
