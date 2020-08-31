@@ -137,7 +137,7 @@ function from `mStats`. To avoid this:
 
 ## Usages
 
-See detail examples of usages [here](%22USAGES.md%22).
+See detail examples of usages [here](./USAGES.md).
 
 ## Getting help
 

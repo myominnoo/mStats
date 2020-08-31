@@ -87,7 +87,7 @@ The `mStats`package contains two functions (`append`, `replace`) that have the s
 
 ## Usages 
 
-See detail examples of usages [here]("USAGES.md").
+See detail examples of usages [here](./USAGES.md).
 
 ## Getting help
 
