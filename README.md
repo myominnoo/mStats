@@ -1,5 +1,22 @@
+---
+output: github_document
+---
+
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/",
+  out.width = "100%"
+)
+options(tibble.print_min = 5, tibble.print_max = 5)
+```
+
+
 
 # mStats <a href='https://myominnoo.github.io'><img src='man/figures/logo.png' align="right" height="120" /></a>
 
