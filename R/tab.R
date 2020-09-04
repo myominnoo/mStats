@@ -192,8 +192,10 @@ tab <- function(data, ... , by = NULL, row.pct = TRUE, na.rm = FALSE, rnd = 1)
             )
             ## change into consistent headings to combine them
             names(.df)[1:2] <- c(
-                paste0("V", paste0(rep("1", .nchar_var_max - 1), collapse = "")),
-                paste0("V", paste0(rep("1", .nchar_sub_max - 1), collapse = ""))
+                paste0("V",
+                       paste0(rep("1", .nchar_var_max - 1), collapse = "")),
+                paste0("V",
+                       paste0(rep("1", .nchar_sub_max - 1), collapse = ""))
             )
 
             ## add dash lines
@@ -244,10 +246,27 @@ tab <- function(data, ... , by = NULL, row.pct = TRUE, na.rm = FALSE, rnd = 1)
     })
 
     ## print label for by variable
-    printLabel(.data, .args$by)
+    .lbl_by <- printLabel(.data, .args$by)
 
-    invisible(.df)
+    ## construct label dataset
+    .lbl_var <- data.frame(cbind(var = names(.lbl), lbl = .lbl))
+    .lbl <- rbind(.lbl_var, c(as.character(.args$by), .lbl_by))
+
+    ## create list with class tabulation
+    .list <- list(tab = .df,
+                  lbl = .lbl)
+    if (by == "NULL") {
+        class(.list) <- "tab1"
+    } else if (is.null(row.pct)) {
+        class(.list) <- "tab2"
+    } else {
+        class(.list) <- "tab2p"
+    }
+
+    invisible(.list)
 }
+
+
 
 # Helpers functions -------------------------------------------------------
 

@@ -114,7 +114,7 @@
 #'
 #' summ(iris, by = Species)
 #' @export
-summ <- function(data, ... , by = NULL, na.rm = FALSE, rnd = 1, test = TRUE)
+summ <- function(data, ... , by = NULL, na.rm = TRUE, rnd = 1, test = TRUE)
 {
     ## match call arguments
     .args <- as.list(match.call())
@@ -171,7 +171,8 @@ summ <- function(data, ... , by = NULL, na.rm = FALSE, rnd = 1, test = TRUE)
 
     ## add Dash lines
     .df <- addDashLines(.df, .vline = 2)
-
+    ## remove row names
+    row.names(.df) <- NULL
 
     ## add label for further processing
     attr(.df, "label") <- "summary"
@@ -185,14 +186,28 @@ summ <- function(data, ... , by = NULL, na.rm = FALSE, rnd = 1, test = TRUE)
     ## Print tabulation and labels
     printDF(.df, .txt)
     sapply(1:length(.vars), function(z) {
-        # printDF(.df[[z]], .txt)
         printLabel(.data, .vars[z])
     })
 
     ## print label for by variable
-    printLabel(.data, .args$by)
+    .lbl_by <- printLabel(.data, .args$by)
 
-    invisible(.df)
+    ## construct label dataset
+    .lbl_var <- data.frame(cbind(var = names(.lbl), lbl = .lbl))
+    .lbl <- rbind(.lbl_var, c(as.character(.args$by), .lbl_by))
+
+    ## create list with class tabulation
+    .list <- list(summ = .df,
+                  lbl = .lbl)
+    if (by == "NULL") {
+        class(.list) <- "summ1"
+    } else if (test) {
+        class(.list) <- "summ2t"
+    } else {
+        class(.list) <- "summ2"
+    }
+
+    invisible(.list)
 }
 
 

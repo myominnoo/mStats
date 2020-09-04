@@ -4,9 +4,7 @@
 #' \code{regress()} produces summary of the model
 #' with coefficients and 95% Confident Intervals.
 #'
-#' @param data Dataset
-#' @param y Dependent variable
-#' @param ... Independent variable or multiple variables
+#' @param model glm or lm model
 #' @param vce if `TRUE`, robust standard errors are calculated. It is
 #' used when heteroskedasticity is detected in data.
 #' Otherwise, OLS standard errors are estimated.
@@ -81,56 +79,52 @@
 #' ## use airquality dataset
 #' data(airquality)
 #'
+#' ## fit linear model with lm or glm
+#' fit <- lm(Ozone ~ Wind, data = airquality)
 #'
 #' ## linear model for Ozone
-#' regress(airquality, Ozone, Wind)
+#' regress(fit)
 #'
 #' ## run again with robust standard errors and with plots to check
 #' ## assumption
-#' regress(airquality, Ozone, Wind, vce = TRUE)
+#' regress(fit, vce = TRUE)
 #'
+#'
+#' ## Multiple linear model fit
+#' fit.multi <- lm(Ozone ~ Wind + Solar.R + Temp + Month + Day,
+#'                 data = airquality)
 #' ## linear model with multiple predictors
-#' regress(airquality, Ozone, Wind, Solar.R, Temp, Month, Day,
-#'         vce = TRUE)
+#' regress(fit.multi, vce = TRUE)
 #'
 #'
 #' @export
-regress <- function(data, y, ... , vce = FALSE, rnd = 4)
+regress <- function(model, vce = FALSE, rnd = 5)
 {
     ## match call arguments
     .args <- as.list(match.call())
 
-    ## copy data to .data
-    .data <- data
-
-    ## get names of dataset and headings
-    .data_name <- deparse(substitute(data))
-    .vars_names <- names(.data)
-    .y_name <- deparse(substitute(y))
-
-    ## if input is not a data.frame, stop
-    if (!is.data.frame(.data)) {
-        stop(paste0("`", .data_name, "` must be a data.frame"),
+    ## if input is not a lm or glm, stop
+    if (!any(class(model) %in% c("glm", "lm"))) {
+        stop(paste0("`", .args$model, "` must be linear model"),
              call. = FALSE)
     }
 
-    ## get variable names within three dots to search for duplicates
-    .vars <- enquotes(.args, c("data", "y", "vce", "rnd"))
+    ## reconstruct model with lm
+    data <- getCall(model)$data
+    formula <- getCall(model)$formula
+    .model <- eval(parse(
+        text = paste0("lm(", Reduce(paste, deparse(formula)),
+                      ", data = ", data, ")")
+    ))
 
-
-    ## construct texts for model evaluation
-    .formula <- paste0(.y_name, " ~ ", paste(.vars, collapse = " + "))
-    .ftxt <- paste0("lm(", .formula, ", data = .data)")
-
-    ## run model
-    .model <- eval(parse(text = .ftxt))
     ## calculate errors and statistics
     .err <- calcRegress(.model, rnd)
 
+    ## Calculate model coefficients and SE
     if (vce) {
         .coef <- vceRobust(.model)
-        .txt <- paste0("                Linear Regression Output",
-                       " with Robust SE")
+        .txt <- paste0("            Linear Regression Output",
+                       " with Robust Standard Error")
     } else {
         .coef <- data.frame(coef(summary(.model)))
         .txt <- paste0("                Linear Regression Output")
@@ -153,15 +147,31 @@ regress <- function(data, y, ... , vce = FALSE, rnd = 4)
                     fmt = paste0('%#.', rnd, 'f'))
         )
     )
+
+    ## get y name
+    .y_name <- as.character(getCall(model)$formula)[2]
     .t <- rbind(c(.y_name, "Coef.", "Std.Err", "t",
                   "P>|t|", "[95% Conf.", "Interval]"),
                 .t)
 
     ## combine two tables and fix dash lines
-    .df <- fixLinesRegress(.t, .err)
+    names(.t) <- names(.err)
+    .df <- rbind(.err, .t)
 
-    ## add label for further processing
-    attr(.df, "model") <- "lm"
+    ## add dashlines
+    .df <- addDashLines(.df, .vline = 2)
+    .df <- rbind(.df[1:8, ],
+                 .df[c(1, 9, 1), ],
+                 .df[c(10:nrow(.df)), ])
+    .df[1, 4] <- ""
+    .df[4, 6:8] <- .df[1, 6:8]
+    .df[1, 5] <- .df[4, 5]
+    names(.df)[4] <- ""
+    row.names(.df) <- NULL
+
+    ## get data frame
+    .vars <- all.vars(formula(.model)[-2])
+    .data <- eval(data)
 
     ## constructs labels
     ## add label for by: cross-tabulation
@@ -169,20 +179,41 @@ regress <- function(data, y, ... , vce = FALSE, rnd = 4)
 
     ## Print tabulation and labels
     printDF(.df, .txt)
-    printText(paste0("Formula: ",
-                     gsub("\\.data", .data_name, .ftxt)))
+    printText(paste0("Fit: ",
+              Reduce(paste, deparse(getCall(model)))))
     sapply(1:length(.vars), function(z) {
         printLabel(.data, .vars[z])
     })
 
     ## print label for by variable
-    printLabel(.data, .args$y)
+    .lbl_by <- printLabel(.data, .y_name)
 
-    invisible(list(result = .df,
-                   model = .model))
+    ## construct label dataset
+    .lbl_var <- data.frame(cbind(var = names(.lbl), lbl = .lbl))
+    .lbl <- rbind(.lbl_var, c(.y_name, .lbl_by))
+
+    ## create list with class tabulation
+    .list <- list(reg = .df,
+                  model = .model,
+                  lbl = .lbl)
+
+    ## add label for further processing
+    attr(.df, "label") <- ifelse(
+        vce, "Linear Regression with Robust Standard Errors",
+        "Linear Regression"
+    )
+
+    ## create class for S3 method to use in summary()
+    class(.list) <- "regress"
+
+    invisible(.list)
 }
 
-# Helpers -----------------------------------------------------------------
+
+
+# helpers -----------------------------------------------------------------
+
+
 
 calcRegress <- function(.model, rnd)
 {
@@ -196,12 +227,17 @@ calcRegress <- function(.model, rnd)
 
     ## errors with residuals
     .r <- .aov["Residuals", 1:3]
-    .r <- cbind(
-        Source = c("Model", "Residuals"),
-        rbind(c(colSums(.t[, 1:2]),
-                "Mean Sq" = mean(.t[["Mean Sq"]])), .r)
-    )
-    names(.r) <- c("Source", "DF", "SS", "MS")
+    .r <- rbind(c(colSums(.t[, 1:2]),
+                  "Mean Sq" = mean(.t[["Mean Sq"]])), .r)
+
+    ## DSS Princeton linear101 training
+    ## add total row
+    .df <- sum(.r$Df)
+    .ss <- sum(.r$`Sum Sq`)
+    .msq <- .ss / .df
+    .r[3, ] <- c(.df, .ss, .msq)
+    .r <- cbind(c("Model |", "Residual |", "Total |"), .r)
+    names(.r) <- c("Source |", "DF", "SS", "MS")
 
     ## calculate MSE
     .mse <- sqrt(.r["Residuals", "MS"])
@@ -236,25 +272,33 @@ calcRegress <- function(.model, rnd)
     ## calculate r squared, adj r squared
     .r2 <- c("R-Squared",
              sprintf(.s$r.squared, fmt = paste0("%#.", rnd, "f")))
-    .r2_adj <- c("Adj R-Squared",
-                 sprintf(.s$adj.r.squared, fmt = paste0("%#.", rnd, "f")))
+    .r2_adj <- c(
+        "Adj R-Squared",
+        sprintf(.s$adj.r.squared, fmt = paste0("%#.", rnd, "f"))
+    )
 
 
     ## calculate AIC
     .aic <- AIC(.model)
     .aic <- c("AIC", sprintf(.aic, fmt = paste0("%#.", 2, "f")))
 
-    ## gather all statistics
-    .df <- data.frame(rbind(.obs, .pf))
+    ## Process to combine into a table
+    ## error table
+    .r <- addDashLines(.r)[-1, ]
+    .r <- rbind(.r[1:2, ], .r[4:3, ])
+    .r[3, 1] <- paste0(.r[3, 1], " +")
+
+    ## result table
+    .df <- data.frame(rbind(.obs, .f, .pf, .r2))
     names(.df) <- c("Stats", "Value")
     .df <- cbind(.df, dum = "", .r)
-    .df <- rbind(.df, c(.r2, "", .mse, .f, .fv),
-                 c(.r2_adj, "", .aic, "", ""))
+    .df[5:7, ] <- ""
+    .df[5:6, 1:2] <- rbind(.r2_adj, .aic)
+    .df[6, 6:7] <- .mse
     row.names(.df) <- NULL
 
     return(.df)
 }
-
 ## robust standard errors for heteroskedasticity
 ## Heteroskedasticity-robust standard error calculation.
 ## https://thetarzan.wordpress.com/2011/05/28/heteroskedasticity-robust-and-clustered-standard-errors-in-r/
@@ -297,27 +341,102 @@ vceRobust <- function(.model) {
 
     return(.df)
 }
-fixLinesRegress <- function(.t, .err)
+
+
+
+
+##' @rdname regress
+##'
+##' @description
+##'
+##' \code{predict} S3 method to predict linear model
+##' after running \code{regress} function from \code{mStats}.
+##'
+##' @inheritParams stats::predict
+##'
+##' @export
+predict.regress <- function(object, ... )
 {
-    ## add dash lines for outputs
-    .err <- addDashLines(.err)
-    .err <- rbind(.err[2:3, ], .err[c(1, 4:5), ])
-    .err[3, 3] <- ""
+    .model <- object$model
+    .data <- .model$model
+    .hat <- data.frame(lm.influence(.model))
+    .df <- cbind(.data,
+                 fitted = fitted(.model),
+                 resid = resid(.model),
+                 std.resid = rstandard(.model),
+                 hat = .hat$hat,
+                 sigma = .hat$sigma,
+                 cooksd = cooks.distance(.model))
 
-    ## name df colmns
-    names(.t) <- names(.err)
-    .df <- rbind(.err, .t)
-    .df <- addDashLines(.df, .vline = 2)
-
-    ## re-arrange rows
-    .df <- rbind(.df[1:6, ],
-                 .df[1, ], .df[7, ], .df[1, ],
-                 .df[8:nrow(.df), ])
-    .df[1, 4] <- ""
-    names(.df)[4] <- ""
-
-    ## remove row names
-    row.names(.df) <- NULL
+    attr(.df$fitted, "label") <- "Fitted values"
+    attr(.df$resid, "label") <- "Residuals"
+    attr(.df$std.resid, "label") <- "Studentized Residuals"
+    attr(.df$hat, "label") <- "hat"
+    attr(.df$sigma, "label") <- "hat sigma"
+    attr(.df$cooksd, "label") <- "Cook's Distance"
 
     return(.df)
+}
+
+
+
+
+##' @rdname regress
+##'
+##' @description
+##'
+##' \code{ladder} converts a variable into a normally
+##' distributed one.
+##'
+##' @param data dataset
+##' @param var variable name
+##'
+##' @export
+ladder <- function(data, var)
+{
+    ## match call arguments
+    .args <- as.list(match.call())
+    x <- as.character(.args$var)
+    .x <- data[[.args$var]]
+
+    ## get ladder vectors
+    .t <- list(.x^3,
+               .x^2,
+               .x,
+               sqrt(.x),
+               log(.x),
+               1 / sqrt(.x),
+               1 / .x,
+               1 / .x^2,
+               1 / .x^3)
+
+    ## get chi W and p-value
+    .s <- do.call(
+        rbind,
+        lapply(.t, function(z) {
+            .s <- shapiro.test(z)
+            sprintf(c(.s$statistic, .s$p.value),
+                    fmt = paste0("%#.", 5, "f"))
+        })
+    )
+
+    ## combine all
+    .df <- data.frame(c("cube", "squre", "raw", "square-root", "log",
+                        "reciprocal root", "reciprocal", "reciprocal square",
+                        "reciprocal cube"),
+                      c(paste0(x, c("^3", "^2", "")),
+                        paste0("sqrt(", x, ")"),
+                        paste0("log(", x, ")"),
+                        paste0("1 / sqrt(", x, ")"),
+                        paste0("1 / ", x),
+                        paste0("1 / (", x, "^2)"),
+                        paste0("1 / (", x, "^3)")),
+                      .s)
+    names(.df) <- c("Transformation", "formula", "W", "P-Value")
+    .df <- addDashLines(.df, .vline = 2)
+
+    ## print df
+    printDF(.df, "Ladder of Transformation")
+
+    invisible(.df)
 }

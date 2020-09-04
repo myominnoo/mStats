@@ -2,22 +2,32 @@
 % Please edit documentation in R/regress.R
 \name{regress}
 \alias{regress}
+\alias{predict.regress}
+\alias{ladder}
 \title{Linear Regression Model}
 \usage{
-regress(data, y, ..., vce = FALSE, rnd = 4)
+regress(model, vce = FALSE, rnd = 5)
+
+\method{predict}{regress}(object, ...)
+
+ladder(data, var)
 }
 \arguments{
-\item{data}{Dataset}
-
-\item{y}{Dependent variable}
-
-\item{...}{Independent variable or multiple variables}
+\item{model}{glm or lm model}
 
 \item{vce}{if \code{TRUE}, robust standard errors are calculated. It is
 used when heteroskedasticity is detected in data.
 Otherwise, OLS standard errors are estimated.}
 
 \item{rnd}{specify rounding of numbers. See \code{\link{round}}.}
+
+\item{object}{a model object for which prediction is desired.}
+
+\item{...}{additional arguments affecting the predictions produced.}
+
+\item{data}{dataset}
+
+\item{var}{variable name}
 }
 \value{
 A list of three \code{data.frame} and \code{model}
@@ -25,6 +35,12 @@ A list of three \code{data.frame} and \code{model}
 \description{
 \code{regress()} produces summary of the model
 with coefficients and 95\% Confident Intervals.
+
+\code{predict} S3 method to predict linear model
+after running \code{regress} function from \code{mStats}.
+
+\code{ladder} converts a variable into a normally
+distributed one.
 }
 \details{
 \code{regress} is based on \code{\link{lm}}. All statistics presented
@@ -84,17 +100,22 @@ Note: Credits to Kevin Goulding, The Tarzan Blog.
 ## use airquality dataset
 data(airquality)
 
+## fit linear model with lm or glm
+fit <- lm(Ozone ~ Wind, data = airquality)
 
 ## linear model for Ozone
-regress(airquality, Ozone, Wind)
+regress(fit)
 
 ## run again with robust standard errors and with plots to check
 ## assumption
-regress(airquality, Ozone, Wind, vce = TRUE)
+regress(fit, vce = TRUE)
 
+
+## Multiple linear model fit
+fit.multi <- lm(Ozone ~ Wind + Solar.R + Temp + Month + Day,
+                data = airquality)
 ## linear model with multiple predictors
-regress(airquality, Ozone, Wind, Solar.R, Temp, Month, Day,
-        vce = TRUE)
+regress(fit.multi, vce = TRUE)
 
 
 }

@@ -81,6 +81,8 @@ recode <- function(data, var, ... )
     ## change double to numeric
     if (is.double(.var)) {
         .var <- as.numeric(.var)
+    } else if (is.factor(.var)) {
+        .var <- as.character(.var)
     }
 
     ## get the names within three dots
@@ -136,3 +138,10 @@ recode <- function(data, var, ... )
 
     return(.data)
 }
+
+
+
+# Changes -----------------------------------------------------------------
+
+## 04-09-2020 - Myo: #18
+

@@ -1,8 +1,27 @@
 ---
 output: github_document
 ---
+## Changes in `mStats` beta version 3.3.1
+
+## Updated on September 4, 2020
+
+* `scatterPlotMatrix` - creates a scatter plot matrices with 
+    - scatter plots with smooth regression line in lower panel
+    - histograms in diagonal panel 
+    - correlation coefficients in upper panel
+    
+* `predict.regress` - S3 method for predicting `regress` output: returns original data with other regression diagnostic statistics including Cook's distance.
 
 ## Changes in `mStats` beta version 3.3.0
+
+## Updated on September 2, 2020
+
+* `tab` 
+    - returns a list with `tab` for tabulation measures and `lbl` for variable labels
+    - class is changed to `tab1` for one-way tabulation, `tab2` for two-way tab without percentage and tab2p for two-way with percentages. This is implemented in S3 methods for summary. 
+    
+* `printLabel` - returns a label value.
+
 
 ### Updated on August 31, 2020
 

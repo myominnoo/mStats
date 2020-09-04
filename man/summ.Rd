@@ -4,7 +4,7 @@
 \alias{summ}
 \title{Number Summary for numerical data}
 \usage{
-summ(data, ..., by = NULL, na.rm = FALSE, rnd = 1, test = TRUE)
+summ(data, ..., by = NULL, na.rm = TRUE, rnd = 1, test = TRUE)
 }
 \arguments{
 \item{data}{Dataset}

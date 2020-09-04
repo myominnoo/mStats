@@ -361,6 +361,8 @@ printLabel <- function(.data, .var_name = NULL)
             }
         })
     }
+
+    return(.lbl)
 }
 
 
