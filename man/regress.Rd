@@ -3,12 +3,15 @@
 \name{regress}
 \alias{regress}
 \alias{predict.regress}
+\alias{plot.regress}
 \alias{ladder}
 \title{Linear Regression Model}
 \usage{
 regress(model, vce = FALSE, rnd = 5)
 
 \method{predict}{regress}(object, ...)
+
+\method{plot}{regress}(x, ...)
 
 ladder(data, var)
 }
@@ -25,6 +28,10 @@ Otherwise, OLS standard errors are estimated.}
 
 \item{...}{additional arguments affecting the predictions produced.}
 
+\item{x}{the coordinates of points in the plot. Alternatively, a
+      single plotting structure, function or \emph{any \R object with a
+        \code{plot} method} can be provided.}
+
 \item{data}{dataset}
 
 \item{var}{variable name}
@@ -38,6 +45,25 @@ with coefficients and 95\% Confident Intervals.
 
 \code{predict} S3 method to predict linear model
 after running \code{regress} function from \code{mStats}.
+It generates an original data with statistics for model
+diagnostics:
+
+fitted (Fitted values)
+
+resid (Residuals)
+
+std.resid (Studentized Residuals)
+
+hat (leverage)
+
+sigma
+
+cooksd (Cook's Distance)
+
+\code{plot} S3 method to plot linear model
+after running \code{regress} function from \code{mStats}.
+
+This is used to check model diagnostics.
 
 \code{ladder} converts a variable into a normally
 distributed one.
@@ -115,8 +141,19 @@ regress(fit, vce = TRUE)
 fit.multi <- lm(Ozone ~ Wind + Solar.R + Temp + Month + Day,
                 data = airquality)
 ## linear model with multiple predictors
-regress(fit.multi, vce = TRUE)
+reg <- regress(fit.multi, vce = TRUE)
 
+## predict to generate statistics for model diagnostics.
+## Input the output from regress
+predict(reg)
+
+## Plot to get plots for regression diagnostics
+## Input the output from regress
+# plot(reg)
+
+## Ladder to generate transformation formula
+## It seems log transformation would be the most approapriate one
+ladder(airquality, Ozone)
 
 }
 \author{

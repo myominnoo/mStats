@@ -10,6 +10,7 @@
 #'
 #' @param data Dataset
 #' @param ... Arguments to be passed from \code{pairs}.
+#' @inheritParams graphics::title
 #' @param pch point symbol
 #'
 #' @importFrom graphics pairs panel.smooth par
@@ -26,7 +27,7 @@
 #' # scatterPlotMatrix(iris)
 #'
 #' @export
-scatterPlotMatrix <- function(data, pch = 21, ... )
+scatterPlotMatrix <- function(data, main = NULL, pch = 21, ... )
 {
     ## match call arguments
     .args <- as.list(match.call())
@@ -34,9 +35,14 @@ scatterPlotMatrix <- function(data, pch = 21, ... )
     ## get and reset graph parameter on exit
     usr <- par("usr")
     on.exit(par(usr))
+
+    ## labels
+    if (is.null(main)) {
+        main <- paste0("Scatter plot matrix of '",
+                       .args$data, "'")
+    }
     pairs(data, pch = pch,
-          main = paste0("Scatter plot matrix of '",
-                        .args$data, "'"),
+          main = main,
           panel = panel.smooth,
           upper.panel = panel.cor,
           diag.panel = panel.hist,

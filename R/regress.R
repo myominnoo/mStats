@@ -94,8 +94,19 @@
 #' fit.multi <- lm(Ozone ~ Wind + Solar.R + Temp + Month + Day,
 #'                 data = airquality)
 #' ## linear model with multiple predictors
-#' regress(fit.multi, vce = TRUE)
+#' reg <- regress(fit.multi, vce = TRUE)
 #'
+#' ## predict to generate statistics for model diagnostics.
+#' ## Input the output from regress
+#' predict(reg)
+#'
+#' ## Plot to get plots for regression diagnostics
+#' ## Input the output from regress
+#' # plot(reg)
+#'
+#' ## Ladder to generate transformation formula
+#' ## It seems log transformation would be the most approapriate one
+#' ladder(airquality, Ozone)
 #'
 #' @export
 regress <- function(model, vce = FALSE, rnd = 5)
@@ -351,16 +362,36 @@ vceRobust <- function(.model) {
 ##'
 ##' \code{predict} S3 method to predict linear model
 ##' after running \code{regress} function from \code{mStats}.
+##' It generates an original data with statistics for model
+##' diagnostics:
+##'
+##' fitted (Fitted values)
+##'
+##' resid (Residuals)
+##'
+##' std.resid (Studentized Residuals)
+##'
+##' hat (leverage)
+##'
+##' sigma
+##'
+##' cooksd (Cook's Distance)
 ##'
 ##' @inheritParams stats::predict
 ##'
 ##' @export
 predict.regress <- function(object, ... )
 {
+    ## get the model from list object
     .model <- object$model
-    .data <- .model$model
+    ## get the original data
+    .data <- eval(getCall(.model)$data)
+    ## get vars name in the model
+    .vars <- all.vars(formula(.model))
+
+    ## calculate model diagnostic statistics
     .hat <- data.frame(lm.influence(.model))
-    .df <- cbind(.data,
+    .dx <- cbind(.model$model,
                  fitted = fitted(.model),
                  resid = resid(.model),
                  std.resid = rstandard(.model),
@@ -368,10 +399,14 @@ predict.regress <- function(object, ... )
                  sigma = .hat$sigma,
                  cooksd = cooks.distance(.model))
 
+    ## merge the two datasets by left-join
+    .df <- merge.data.frame(.data, .dx,
+                            by = .vars, all.x = TRUE)
+
     attr(.df$fitted, "label") <- "Fitted values"
     attr(.df$resid, "label") <- "Residuals"
     attr(.df$std.resid, "label") <- "Studentized Residuals"
-    attr(.df$hat, "label") <- "hat"
+    attr(.df$hat, "label") <- "Leverage or hat values"
     attr(.df$sigma, "label") <- "hat sigma"
     attr(.df$cooksd, "label") <- "Cook's Distance"
 
@@ -379,6 +414,30 @@ predict.regress <- function(object, ... )
 }
 
 
+##' @rdname regress
+##'
+##' @description
+##'
+##' \code{plot} S3 method to plot linear model
+##' after running \code{regress} function from \code{mStats}.
+##'
+##' This is used to check model diagnostics.
+##'
+##' @inheritParams base::plot
+##'
+##' @export
+plot.regress <- function(x, ... )
+{
+    .model <- x$model
+
+    ## Set graph parameters
+    par(mfrow = c(2, 2))
+
+    plot(.model)
+
+    ## Reset graph parameters
+    par(mfrow = c(1, 1))
+}
 
 
 ##' @rdname regress

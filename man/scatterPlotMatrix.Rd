@@ -5,10 +5,13 @@
 \title{Scatter plot matrices with Histograms and
 Correlation Coefficients}
 \usage{
-scatterPlotMatrix(data, pch = 21, ...)
+scatterPlotMatrix(data, main = NULL, pch = 21, ...)
 }
 \arguments{
 \item{data}{Dataset}
+
+\item{main}{The main title (on top) using font, size (character
+    expansion) and color \code{par(c("font.main", "cex.main", "col.main"))}.}
 
 \item{pch}{point symbol}
 
