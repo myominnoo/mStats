@@ -59,11 +59,15 @@
 #' variances — the ones of interest. Estimated coefficient standard errors
 #' are the square root of these diagonal elements.
 #'
-#' Note: Credits to Kevin Goulding, The Tarzan Blog.
+#'
+#' @note
+#'
+#' Credits to Kevin Goulding, The Tarzan Blog.
 #'
 #' @return
 #'
-#' A list of three `data.frame` and `model`
+#' a data.frame named `regress`, a model named `model`
+#' and another data.frame named `label`
 #'
 #'
 #' @author
@@ -362,20 +366,24 @@ vceRobust <- function(.model) {
 ##'
 ##' \code{predict} S3 method to predict linear model
 ##' after running \code{regress} function from \code{mStats}.
+##'
+##' @details
+##'
+##'
 ##' It generates an original data with statistics for model
 ##' diagnostics:
 ##'
-##' fitted (Fitted values)
+##' 1. `fitted` (Fitted values)
 ##'
-##' resid (Residuals)
+##' 2. `resid` (Residuals)
 ##'
-##' std.resid (Studentized Residuals)
+##' 3. `std.resid` (Studentized Residuals)
 ##'
-##' hat (leverage)
+##' 4. `hat` (leverage)
 ##'
-##' sigma
+##' 5. `sigma`
 ##'
-##' cooksd (Cook's Distance)
+##' 6. `cooksd` (Cook's Distance)
 ##'
 ##' @inheritParams stats::predict
 ##'
@@ -499,3 +507,156 @@ ladder <- function(data, var)
 
     invisible(.df)
 }
+
+
+##' @rdname regress
+##'
+##' @description
+##'
+##' \code{hettest} performs the Breusch-Pagan test
+##' for heteroskedasticity.
+##'
+##' It presents evidence against the
+##' null hypothesis that t=0 in Var(e)=sigma^2 exp(zt).
+##'
+##' The formula are based on the \code{bptest} function
+##' in \code{lmtest} package.
+##'
+##' @param studentize logical.
+##' If set to \code{TRUE} Koenker's studentized version
+##' of the test statistic will be used.
+##'
+##' @details
+##'
+##' The Breusch-Pagan test fits a linear regression model
+##' to the residuals of a linear regression model
+##' (by default the same explanatory variables are taken as
+##' in the main regression model) and rejects if too
+##' much of the variance is explained by the additional
+##' explanatory variables. Under \eqn{H_0} the test statistic
+##' of the Breusch-Pagan test follows a chi-squared distribution
+##' with \code{parameter} (the number of regressors without
+##' the constant in the model) degrees of freedom.
+##'
+##'
+##' @references
+##'
+##' T.S. Breusch & A.R. Pagan (1979),
+##'      A Simple Test for Heteroscedasticity and Random
+##'      Coefficient Variation.
+##'      \emph{Econometrica} \bold{47}, 1287--1294
+##'
+##' R. Koenker (1981), A Note on Studentizing a Test for
+##'       Heteroscedasticity. \emph{Journal of Econometrics}
+##'       \bold{17}, 107--112.
+##'
+##' W. Krämer & H. Sonnberger (1986),
+##'       \emph{The Linear Regression Model under Test}.
+##'       Heidelberg: Physica
+##'
+##'
+##' @export
+hettest <- function(model, studentize = FALSE)
+{
+    .model <- model$model
+
+    ## get residual square
+    .n <- nobs(.model)
+    .r <- resid(.model)
+    .s2 <- sum(.r^2) / .n
+
+    ## get model matrix for lm.fit
+    .Z <- model.matrix(.model)
+
+    if (studentize) {
+        .w <- .r^2 - .s2
+        .aux <- lm.fit(.Z, .w)
+        .bp <- .n * sum(.aux$fitted.values^2) / sum(.w^2)
+        .txt <- "Studentized Breusch-Pagan test for heteroskedasticity"
+        .txt <- paste0("    ", .txt)
+    } else {
+        .w <- .r^2 / .s2 - 1
+        .aux <- lm.fit(.Z, .w)
+        .bp <- 0.5 * sum(.aux$fitted.values^2)
+        .txt <- "Breusch-Pagan test for heteroskedasticity"
+        .txt <- paste0("          ", .txt)
+    }
+
+    .df <- .aux$rank - 1
+    .p <- pchisq(.bp, .df, lower.tail = FALSE)
+
+    ## gather all statistics
+    .df <- cbind(
+        "Constant variance",
+        paste0("Fitted values of ", getCall(.model)$formula[2]),
+        sprintf(.bp, fmt = paste0('%#.', 2, 'f')),
+        sprintf(.p, fmt = paste0('%#.', 5, 'f'))
+    )
+    .df <- data.frame(.df)
+    names(.df) <- c("Null Hypothesis", "Variables",
+                    "Chi2(1)", "Prob > Chi2")
+    .df <- addDashLines(.df, 2)
+
+    ## Print
+    printDF(.df, .txt)
+
+    invisible(.df)
+}
+
+
+
+##' @rdname regress
+##'
+##' @description
+##'
+##' \code{linkTest} determines whether a model in R is
+##' 'well specified' using the `STATA`'s `linkTest`.
+##'
+##' @details
+##'
+##' The code has been modified from Keith Chamberlain's linktext.
+##' www.ChamberlainStatistics.com
+##' https://gist.github.com/KeithChamberlain/8d9da515e73a27393effa3c9fe571c3f
+##'
+##'
+##'
+##'
+##' @export
+linkTest <- function(model, vce = FALSE, rnd = 5)
+{
+    ## get the model from list object
+    .model <- model
+    ## get the original data
+    data <- getCall(.model)$data
+    .data <- eval(data)
+    ## get vars name in the model
+    .vars <- all.vars(formula(.model))
+
+    ## predict hat values
+    .fit <- predict(.model)
+    .fit2 <- .fit^2
+    # Check to see that the predicted and predicted^2 variable actually
+    # vary.
+    if(round(var(.fit), digits=2) == 0){
+        stop("No parameters that vary. Cannot perform test.")
+    }
+
+    .df <- cbind(.model$model,
+                 hat_ = .fit,
+                 hatsq_ = .fit2)
+
+    # ## merge the two datasets by left-join
+    # .df <- merge.data.frame(.data, .dx,
+    #                         by = .vars, all.x = TRUE, all.y = FALSE)
+    .df_name <- paste0(data, "_linkTest")
+    assign(.df_name, .df, envir = environment(formula(model)))
+
+    ## re fit model with hat_ and hatsq_
+    .txt <- paste0("lm(", .vars[1], " ~ hat_ + hatsq_, data = ",
+                   .df_name, ")")
+    .refit <- eval(parse(text = .txt))
+    .list <- regress(.refit, vce = vce, rnd = rnd)
+
+    invisible(.list)
+}
+

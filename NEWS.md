@@ -3,6 +3,14 @@ output: github_document
 ---
 ## Changes in `mStats` beta version 3.3.1
 
+## Updated on September 5, 2020
+
+* `hettest` - perform the Breusch-Pagan test for heteroskedasticity.
+
+* `linkTest` - performs a link test for model specification.
+
+* `plot.regress` - S3 method for plot. It generates four plots for linear model diagnostics
+
 ## Updated on September 4, 2020
 
 * `scatterPlotMatrix` - creates a scatter plot matrices with 

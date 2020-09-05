@@ -5,6 +5,8 @@
 \alias{predict.regress}
 \alias{plot.regress}
 \alias{ladder}
+\alias{hettest}
+\alias{linkTest}
 \title{Linear Regression Model}
 \usage{
 regress(model, vce = FALSE, rnd = 5)
@@ -14,6 +16,10 @@ regress(model, vce = FALSE, rnd = 5)
 \method{plot}{regress}(x, ...)
 
 ladder(data, var)
+
+hettest(model, studentize = FALSE)
+
+linkTest(model, vce = FALSE, rnd = 5)
 }
 \arguments{
 \item{model}{glm or lm model}
@@ -35,9 +41,14 @@ Otherwise, OLS standard errors are estimated.}
 \item{data}{dataset}
 
 \item{var}{variable name}
+
+\item{studentize}{logical.
+If set to \code{TRUE} Koenker's studentized version
+of the test statistic will be used.}
 }
 \value{
-A list of three \code{data.frame} and \code{model}
+a data.frame named \code{regress}, a model named \code{model}
+and another data.frame named \code{label}
 }
 \description{
 \code{regress()} produces summary of the model
@@ -45,20 +56,6 @@ with coefficients and 95\% Confident Intervals.
 
 \code{predict} S3 method to predict linear model
 after running \code{regress} function from \code{mStats}.
-It generates an original data with statistics for model
-diagnostics:
-
-fitted (Fitted values)
-
-resid (Residuals)
-
-std.resid (Studentized Residuals)
-
-hat (leverage)
-
-sigma
-
-cooksd (Cook's Distance)
 
 \code{plot} S3 method to plot linear model
 after running \code{regress} function from \code{mStats}.
@@ -67,6 +64,18 @@ This is used to check model diagnostics.
 
 \code{ladder} converts a variable into a normally
 distributed one.
+
+\code{hettest} performs the Breusch-Pagan test
+for heteroskedasticity.
+
+It presents evidence against the
+null hypothesis that t=0 in Var(e)=sigma^2 exp(zt).
+
+The formula are based on the \code{bptest} function
+in \code{lmtest} package.
+
+\code{linkTest} determines whether a model in R is
+'well specified' using the \code{STATA}'s \code{linkTest}.
 }
 \details{
 \code{regress} is based on \code{\link{lm}}. All statistics presented
@@ -119,7 +128,33 @@ coefficient
 variances — the ones of interest. Estimated coefficient standard errors
 are the square root of these diagonal elements.
 
-Note: Credits to Kevin Goulding, The Tarzan Blog.
+It generates an original data with statistics for model
+diagnostics:
+\enumerate{
+\item \code{fitted} (Fitted values)
+\item \code{resid} (Residuals)
+\item \code{std.resid} (Studentized Residuals)
+\item \code{hat} (leverage)
+\item \code{sigma}
+\item \code{cooksd} (Cook's Distance)
+}
+
+The Breusch-Pagan test fits a linear regression model
+to the residuals of a linear regression model
+(by default the same explanatory variables are taken as
+in the main regression model) and rejects if too
+much of the variance is explained by the additional
+explanatory variables. Under \eqn{H_0} the test statistic
+of the Breusch-Pagan test follows a chi-squared distribution
+with \code{parameter} (the number of regressors without
+the constant in the model) degrees of freedom.
+
+The code has been modified from Keith Chamberlain's linktext.
+www.ChamberlainStatistics.com
+https://gist.github.com/KeithChamberlain/8d9da515e73a27393effa3c9fe571c3f
+}
+\note{
+Credits to Kevin Goulding, The Tarzan Blog.
 }
 \examples{
 
@@ -155,6 +190,20 @@ predict(reg)
 ## It seems log transformation would be the most approapriate one
 ladder(airquality, Ozone)
 
+}
+\references{
+T.S. Breusch & A.R. Pagan (1979),
+A Simple Test for Heteroscedasticity and Random
+Coefficient Variation.
+\emph{Econometrica} \bold{47}, 1287--1294
+
+R. Koenker (1981), A Note on Studentizing a Test for
+Heteroscedasticity. \emph{Journal of Econometrics}
+\bold{17}, 107--112.
+
+W. Krämer & H. Sonnberger (1986),
+\emph{The Linear Regression Model under Test}.
+Heidelberg: Physica
 }
 \author{
 For any feedback, please contact \code{Myo Minn Oo} via:
