@@ -124,13 +124,18 @@ regress <- function(model, vce = FALSE, rnd = 5)
              call. = FALSE)
     }
 
-    ## reconstruct model with lm
-    data <- getCall(model)$data
+    .data <- getCall(model)$data
     formula <- getCall(model)$formula
-    .model <- eval(parse(
-        text = paste0("lm(", Reduce(paste, deparse(formula)),
-                      ", data = ", data, ")")
-    ))
+
+    if (any(class(model) %in% c("glm"))) {
+        ## reconstruct model with lm
+        .model <- eval(parse(
+            text = paste0("lm(", Reduce(paste, deparse(formula)),
+                          ", data = ", .data, ")")
+        ))
+    } else {
+        .model <- model
+    }
 
     ## calculate errors and statistics
     .err <- calcRegress(.model, rnd)
@@ -163,6 +168,7 @@ regress <- function(model, vce = FALSE, rnd = 5)
         )
     )
 
+
     ## get y name
     .y_name <- as.character(getCall(model)$formula)[2]
     .t <- rbind(c(.y_name, "Coef.", "Std.Err", "t",
@@ -184,9 +190,11 @@ regress <- function(model, vce = FALSE, rnd = 5)
     names(.df)[4] <- ""
     row.names(.df) <- NULL
 
-    ## get data frame
+
+    ## get raw data for labelling
     .vars <- all.vars(formula(.model)[-2])
-    .data <- eval(data)
+    .data <- .model$model
+
 
     ## constructs labels
     ## add label for by: cross-tabulation
@@ -195,7 +203,7 @@ regress <- function(model, vce = FALSE, rnd = 5)
     ## Print tabulation and labels
     printDF(.df, .txt)
     printText(paste0("Fit: ",
-              Reduce(paste, deparse(getCall(model)))))
+                     Reduce(paste, deparse(getCall(model)))))
     sapply(1:length(.vars), function(z) {
         printLabel(.data, .vars[z])
     })
@@ -223,6 +231,7 @@ regress <- function(model, vce = FALSE, rnd = 5)
 
     invisible(.list)
 }
+
 
 
 
