@@ -705,6 +705,346 @@ egen <- function(data, var, cut = NULL, lbl = NULL, new_var = NULL)
 
 
 
+#' @title Count from `n_` to `N_`
+#'
+#' @description
+#' \code{n_()} generates the current observation number
+#' per specified group. It is
+#' regarded as grouped serial numbers.
+#'
+#'
+#' \code{N_()} generates total number of observation per group.
+#' It is regarded as grouped total number.
+#'
+#' @param data data.farme
+#' @param ... variables for grouping
+#'
+#' @details
+#' If no variable is set in `...`, all variables in the datset
+#' is used for grouping.
+#'
+#' @return
+#'
+#' data.frame
+#'
+#' @author
+#'
+#' Email: \email{dr.myominnoo@@gmail.com}
+#'
+#' Website: \url{https://myominnoo.github.io/}
+#'
+#' @examples
+#'
+#' x <- n_(iris, Species)
+#' \dontrun{
+#' x
+#' codebook(x)
+#'
+#' x <- N_(iris, Species)
+#' x
+#' codebook(x)
+#' }
+#'
+#' @export
+n_ <- function(data, ... )
+{
+    ## match call arguments
+    .args <- as.list(match.call())
+
+    ## get names of dataset and headings
+    .data_name <- deparse(substitute(data))
+    .vars_name <- names(data)
+
+    ## if input is not a data.frame, stop
+    if (!is.data.frame(data)) {
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
+    }
+
+    .vars <- enquotes(.args, c("data"))
+    if (length(.vars) == 0) {
+        .vars <- names(data)
+    }
+    ## create expression to order data
+    .data <- eval(parse(
+        text = paste0("data[with(data, order(",
+                      paste0(.vars, collapse = ", "),
+                      ")), ]")
+    ))
+
+    ## create identifiers to check duplications
+    .id <- apply(.data[.vars], 1, paste, collapse = " ")
+    ## create seiral id with ave function
+    .id_num <- ave(.id, .id, FUN = seq_along)
+
+    ## assign the id back to the original dataset
+    .data$n_ <- as.numeric(.id_num)
+    attr(.data$n_, "label") <- "<Sys.Gen: Current obs number>"
+
+    return(.data)
+}
+
+
+#' @rdname n_
+#' @export
+N_ <- function(data, ... )
+{
+    ## match call arguments
+    .args <- as.list(match.call())
+
+    ## get names of dataset and headings
+    .data_name <- deparse(substitute(data))
+    .vars_name <- names(data)
+
+    ## if input is not a data.frame, stop
+    if (!is.data.frame(data)) {
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
+    }
+
+    .vars <- enquotes(.args, c("data"))
+    if (length(.vars) == 0) {
+        .vars <- names(data)
+    }
+    ## create expression to order data
+    .data <- eval(parse(
+        text = paste0("data[with(data, order(",
+                      paste0(.vars, collapse = ", "),
+                      ")), ]")
+    ))
+
+    ## create identifiers to check duplications
+    .id <- apply(.data[.vars], 1, paste, collapse = " ")
+    ## create seiral id with ave function
+    .id_num <- ave(.id, .id, FUN = seq_along)
+
+    ## get the last number of serial number
+    .last_obs <- sapply(.id, function(z) {
+        .dup_id <- .id_num[.id == z]
+        .dup_id[length(.dup_id)]
+    })
+
+    ## assign the id back to the original dataset
+    .data$N_ <- as.numeric(.last_obs)
+    attr(.data$N_, "label") <- "<Sys.Gen: total number of obs>"
+
+    return(.data)
+}
+
+
+
+
+#' @title Report, tag or drop the duplicate observations
+#'
+#' @description
+#' \code{duplicates()} generates a table showing the
+#' duplicate `Observations` as one or more copies as well as
+#' their `Surplus` indicating the second, third, `...` copy of
+#' the first of each group of duplicates.
+#'
+#' @param data data.frame
+#' @param ... variables to find the duplicate observations
+#' @param drop `TRUE` deletes all the duplicate observations.
+#'
+#' @details
+#'
+#' If no variable is specified in `...`, all variables are used
+#' to find the duplicate observations.
+#'
+#' If `drop` is set to `TRUE`, all occurrences of each group
+#' of observations except the first are deleted from the
+#' dataset.
+#'
+#' @return
+#'
+#' data.frame with a column `dup_num`, indicating the number of duplicate
+#' observations of each group of observations
+#'
+#' @author
+#'
+#' Email: \email{dr.myominnoo@@gmail.com}
+#'
+#' Website: \url{https://myominnoo.github.io/}
+#'
+#' @examples
+#'
+#' x <- duplicates(iris, Species)
+#' x <- duplicates(iris)
+#'
+#' @export
+duplicates <- function(data, ... , drop = FALSE)
+{
+    ## match call arguments
+    .args <- as.list(match.call())
+
+    ## get names of dataset and headings
+    ## get number of observations
+    .data_name <- .args$data
+    .vars_name <- names(data)
+
+    ## if input is not a data.frame, stop
+    if (!is.data.frame(data)) {
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
+    }
+
+    .vars <- enquotes(.args, c("data", "drop"))
+    if (length(.vars) == 0) {
+        .vars <- names(data)
+        .txt <- "all variables"
+    } else {
+        .txt <- paste(.vars, collapse = " + ")
+    }
+    ## create expression to order data
+    .data <- eval(parse(
+        text = paste0("data[with(data, order(",
+                      paste0(.vars, collapse = ", "),
+                      ")), ]")
+    ))
+
+    ## create identifiers to check duplications
+    .id <- apply(.data[.vars], 1, paste, collapse = " ")
+    ## create seiral id with ave function
+    .id_num <- ave(.id, .id, FUN = seq_along)
+
+    ## get the last number of serial number
+    .last_obs <- sapply(.id, function(z) {
+        .dup_id <- .id_num[.id == z]
+        .dup_id[length(.dup_id)]
+    })
+
+    ## Make changes to the dataset
+    ## create a dup variable for indication
+    .data$dup_num <- as.numeric(.last_obs) - 1
+    attr(.data$dup_num, "label") <- "<Sys.Gen: # of duplicate obs>"
+
+    ## create table and use the categories to calculate surplus number
+    .dup_obs_tbl <- table(.last_obs)
+    .dup_obs_tbl_names <- as.numeric(names(.dup_obs_tbl))
+    .non_dup <- sapply(.dup_obs_tbl_names, function(z) {
+        .dup_id <- .id[.last_obs == z]
+        length(.dup_id[!duplicated(.dup_id)])
+    })
+
+    ## create final table for duplication report
+    .tbl <- data.frame(cbind(.dup_obs_tbl_names, .dup_obs_tbl,
+                             .dup_obs_tbl - .non_dup))
+    names(.tbl) <- c("Copies", "Observations", "Surplus")
+    row.names(.tbl) <- NULL
+    .tbl <- formatdf(.tbl, 2, 2)
+
+    ## Display information
+    cat(paste0("  Duplicates in terms of ", .txt, "\n"))
+    print.data.frame(.tbl, row.names = FALSE, max = 1e9)
+    cat(paste0("  (Total obs: ", nrow(.data), ")\n"))
+
+    ## remove the duplicate observations
+    if (drop) {
+        .dup <- .id_num == 1
+        .data <- .data[.dup, ]
+        cat(paste0("  (", sum(!.dup),
+                   " observations deleted)\n"))
+    }
+
+    return(.data)
+}
+
+
+
+#' @title Duplicate observations within a dataframe
+#'
+#' @description
+#'
+#' \code{expand2} generates duplicated observations within a dataframe.
+#'
+#' @param data a data frame object
+#' @param n_n index or indexes specifying row numbers
+#' @param copies desired number of copies
+#' @param original a logical indicating whether to keep the original dataframe
+#'
+#' @details
+#'
+#' \code{expand2} appends observations from the dataframe
+#' with n copies of the observations with
+#' specified indexes of observations or all data.
+#'
+#' @return
+#'
+#' data.frame
+#'
+#' @author
+#'
+#' Email: \email{dr.myominnoo@@gmail.com}
+#'
+#' Website: \url{https://myominnoo.github.io/}
+#'
+#' @examples
+#'
+#' ## create duplicates
+#' x <- expand2(infert, 1:5, copies = 2)
+#'
+#' ## check duplicates report and rmeove dup
+#' duplicates(x, drop = TRUE)
+#'
+#' @export
+expand2 <- function(data, n_n = NULL, copies = 2, original = TRUE)
+{
+    ## match call arguments
+    .args <- as.list(match.call())
+
+    ## copy data to .data
+    .data <- data
+
+    ## get names of dataset and headings
+    .data_name <- deparse(substitute(data))
+    .vars_names <- names(.data)
+
+    ## if input is not a data.frame, stop
+    if (!is.data.frame(.data)) {
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
+    }
+
+    data.lbl <- attr(data, "label")
+    data <- data.frame(data)
+    vars.lbl <- sapply(data, function(z) {
+        lbl <- attr(z, "label")
+        if (is.null(lbl)) {
+            lbl <- "<NA>"
+        } else {
+            lbl <- paste(attr(z, "label"), collapse = " ")
+        }
+        lbl
+    })
+    #### if n_n is empty, put number of all rows to n_n
+    if (is.null(n_n)) {
+        n_n <- nrow(data)
+    }
+    #### if there are more than one values in n_n, take the last value
+    if (length(n_n) == 1) {
+        n_n <- 1:n_n
+    }
+    t <- data[n_n, ]
+
+    if (original) {
+        f <- data
+    } else {
+        f <- NULL
+    }
+    for (i in 1:(copies)) {
+        f <- rbind(f, t)
+    }
+    attr(f, "label") <- data.lbl
+    for (i in 1:ncol(f)) {
+        attr(f[, i], "label") <- vars.lbl[i]
+    }
+
+    return(f)
+}
+
+
+
+
 
 #' @title Append datasets
 #'
@@ -718,8 +1058,10 @@ egen <- function(data, var, cut = NULL, lbl = NULL, new_var = NULL)
 #' @details
 #'
 #' A single or multiple datasets can be appended.
-#' THe appending datasets must have at least one variable name
+#'
+#' The appending datasets must have at least one variable name
 #' which is there in the master dataset.
+#'
 #' The order of variables of the appending datasets is automatically
 #' set based on the variable arrangement of the master dataset.
 #'
@@ -783,6 +1125,511 @@ append <- function(data, ... )
 
     return(data)
 }
+
+
+
+
+#' @title Format Dates
+#'
+#' @description
+#' \code{formatDate} converts characters or numbers to dates.
+#' \code{is.Date} indicates which elements are Dates.
+#'
+#' @param x a character or numeric object
+#' @param format only for character vectors:
+#' @param sep separator character for date components
+#' @param century specify either 2000 or 1900 for two-digit years
+#'
+#' @details
+#'
+#' \code{dmy} represents \code{dd mm YYYY} format.
+#' In combination with separators from \code{sep}, this can change to
+#' several date formats.
+#' For example, \code{dmy} + \code{-} convert to
+#' \code{dd-mm-yyyy} format.
+#'
+#' \strong{Possible conversions}
+#'
+#' \enumerate{
+#'     \item \code{dmy} + \code{-} >>> \code{dd-mm-yyyy}
+#'     \item \code{dmy} + \code{/} >>> \code{dd/mm/yyyy}
+#'     \item \code{mdy} + \code{/} >>> \code{mm/dd/yyyy}
+#'     \item \code{ymd} + \code{/} >>> \code{yyyy/mm/dd}
+#'     \item \code{dby} + \code{-} >>> \code{dd-JAN-yy}
+#'     \item \code{dby} + \code{/} >>> \code{dd/JAN/yy}
+#' }
+#'
+#' \strong{Numeric conversions}
+#' Origin is set at \code{1899-12-30}.
+#'
+#' @author
+#'
+#' Email: \email{dr.myominnoo@@gmail.com}
+#'
+#' Website: \url{https://myominnoo.github.io/}
+#'
+#' @examples
+#'
+#' ## convert strings to dates
+#' x <- c("2019-01-15", "2019-01-20", "2019-01-21", "2019-01-22")
+#'
+#' # check if it is a Date format
+#' is.Date(x)
+#'
+#' \dontrun{
+#' y <- formatDate(x, "Ymd", "-")
+#'
+#' # check if it is a Date format
+#' is.Date(y)
+#' y
+#'
+#'
+#' ## another format
+#' x <- c("22-JAN-19", "24-MAR-20")
+#' y <- formatDate(x, "dby", "-")
+#' is.Date(y)
+#' y
+#'
+#'
+#' ## convert numbers to dates
+#' x <- 42705:42710
+#' y <- formatDate(x)
+#' is.Date(y)
+#' y
+#'
+#'
+#' ## get day, month or year
+#' day(y)
+#' month(y)
+#' year(y)
+#' }
+#'
+#' @export
+formatDate <- function(x, format = "dmY", sep = "/", century = NULL)
+{
+    if (is.character(x)) {
+        f <- paste(
+            paste0(
+                "%",
+                unlist(strsplit(format, split = NULL, useBytes = T))
+            ),
+            collapse = sep
+        )
+        x <- as.Date(x, format = f)
+        if (!is.null(century)) {
+            y <- do.call(
+                rbind, strsplit(as.character(x), split = "-", fixed = TRUE)
+            )[,1]
+            m <- do.call(
+                rbind, strsplit(as.character(x), split = "-", fixed = TRUE)
+            )[,2]
+            d <- do.call(
+                rbind, strsplit(as.character(x), split = "-", fixed = TRUE)
+            )[,3]
+            if (century) {
+                y <- (as.numeric(y) %% 100) + 2000
+            } else {
+                y <- (as.numeric(y) %% 100) + 1900
+            }
+            x <- as.Date(paste(y, m, d, sep = "-"), format = "%Y-%m-%d")
+        }
+    } else if (is.numeric(x)) {
+        x <- as.Date(x, origin = "1899-12-30")
+    } else {
+        stop("x must be a character or numeric.")
+    }
+    return(x)
+}
+
+#' @rdname formatDate
+#' @export
+is.Date <- function(x)
+{
+    return(class(x) == 'Date')
+}
+
+#' @rdname formatDate
+#' @export
+year <- function(x)
+{
+    if (!is.Date(x)) stop("x must be Date.")
+    as.numeric(format(x, "%Y"))
+}
+
+#' @rdname formatDate
+#' @export
+month <- function(x)
+{
+    if (!is.Date(x)) stop("x must be Date.")
+    as.numeric(format(x, "%m"))
+}
+
+#' @rdname formatDate
+#' @export
+day <- function(x)
+{
+    if (!is.Date(x)) stop("x must be Date.")
+    as.numeric(format(x, "%d"))
+}
+
+
+
+#' @title Expand \code{2x2 table} into \code{data.frame}
+#'
+#' @description
+#'
+#' \code{expandtbl()} generates a data.frame based on vectors.
+#'
+#' @param ... vectors
+#' @param exp_name Name of \code{exp} Variable
+#' @param exp_lvl Names of two categories in the order of
+#' Exposed and non-exposed
+#' @param case_name Name of \code{Case} variable
+#' @param case_lvl names of two categories in the order of
+#' @param strata_name Name of stratified variable
+#'
+#' @details
+#'
+#' \strong{expandtbl}
+#'
+#' uses the vectors of \code{2x2} tables and
+#' generates a data frame of at least two columns:
+#' exp and case.
+#'
+#' \preformatted{expandtbl(c(100, 200, 100, 200))}
+#'
+#' \code{Strata}
+#'
+#' Multiple tables can be used to construct a dataset by specifying
+#' \code{strata_name} as follow. Strata can be included
+#' using multiple named vectors.
+#'
+#' \preformatted{
+#' expandtbl(
+#'              strata1 = c(100, 200, 100, 200),
+#'              strata2 = c(100, 200, 100, 200),
+#'              strata3 = c(100, 200, 100, 200),
+#'              exp_name = "exp",
+#'              exp_lvl = c("exposed", "unexposed"),
+#'              case_name = "case",
+#'              case_lvl = c("case", "control"),
+#'              strata_name = "Strata"
+#' )
+#' }
+#'
+#' \code{Labels for variables}
+#'
+#' If names or lavels of variables are not specified, the followings are
+#' applied.
+#'
+#' \enumerate{
+#'     \item exp Name: \code{exp}
+#'     \item exp levels: \code{exposed} and \code{unexposed}
+#'     \item case Name: \code{case}
+#'     \item case levels: \code{case} and \code{control}
+#'     \item Strata Name: \code{strata}
+#'     \item Note: Strata levels are not considered as vectors must
+#'     be named.
+#' }
+#'
+#' @return
+#'
+#' data.frame
+#'
+#' @author
+#'
+#' Email: \email{dr.myominnoo@@gmail.com}
+#'
+#' Website: \url{https://myominnoo.github.io/}
+#'
+#' @examples
+#'
+#'
+#' ## Asthma Example from Essential Medical Statistics
+#' ## page 160
+#' asthma <- expandtbl(c(81, 995, 57, 867),
+#'               exp_name = "sex",
+#'               exp_lvl = c("woman", "man"),
+#'               case_name = "asthma",
+#'               case_lvl = c("yes", "no"))
+#'
+#' \dontrun{
+#' ## label variable and dataset
+#' asthma <- label(asthma, "Hypothetical Data of Asthma Prevalence")
+#' asthma <- label(asthma, sex = "Man or Woman",
+#'                            asthma = "Asthma or No Asthma")
+#'
+#' ## Checking codebook
+#' codebook(asthma)
+#'
+#'
+#' ## simple tabulation
+#' tab(asthma)
+#'
+#' ## cross-tabulation
+#' tab(asthma, sex, by = asthma)
+#' }
+#'
+#' @export
+expandtbl <- function( ... ,
+                       exp_name = "exp",
+                       exp_lvl = c("exposed", "unexposed"),
+                       case_name = "case",
+                       case_lvl = c("case", "control"),
+                       strata_name = "strata")
+{
+    # get vectors within three dots
+    .vec <- list(...)
+    .vec_len <- length(.vec)
+
+    ## calculate strata
+    .strata_names <- sapply(1:length(.vec), function(z) names(.vec[z]))
+    .strata_times <- sapply(.vec, function(z) sum(z))
+
+    ## create data.frame
+
+    .exp <- rep(exp_lvl, each = 2)
+    .case <- rep(case_lvl, times = 2)
+
+    ## create data frame
+    tryCatch({
+        data <- do.call(
+            rbind,
+            lapply(1:.vec_len, function(z) {
+                .times <- unlist(.vec[z])
+                .vec.exp <- rep(.exp, .times)
+                .vec.case <- rep(.case, .times)
+                .vec_strata <- rep(names(.vec[z]), sum(.times))
+
+                if (is.null(.vec_strata)) {
+                    .df <- data.frame(.vec.exp, .vec.case)
+                    names(.df) <- c(exp_name, case_name)
+                } else {
+                    .df <- data.frame(.vec.exp, .vec.case, .vec_strata)
+                    names(.df) <- c(exp_name, case_name, strata_name)
+                }
+                .df
+            })
+        )
+
+        ## print message
+        cat(paste0("  (expanded into a dataset)\n"))
+
+    }, error = function(cnd) {
+        stop(cnd, call. = FALSE)
+    })
+
+
+    return(data)
+}
+
+
+#' @describeIn expandtbl
+#'
+#' \code{expandfreq()} expands a frequency-weighted table
+#' into a data.frame.
+#'
+#' @param data frequency table in data.frame
+#' @param freq name of variable for the weighted frequency
+#'
+#' @details
+#'
+#' \strong{expandfreq()} uses the weighted frequencies in
+#' data.frame format and construct another data.frame
+#' based on the frequency weight.
+#' The name of the frequency weighted variable can be
+#'  specified by \code{freq} argument.
+#'
+#' @examples
+#'
+#' ## Example for expanding frequency weighted data
+#'
+#' ## Example from UCLA website
+#' ## you can download the dataset here:
+#' ## https://stats.idre.ucla.edu/stat/stata/examples/icda/afterlife.dta
+#'
+#' x <- data.frame(gender = c(1, 1, 0, 0),
+#'                  aftlife = c(1, 0, 1, 0),
+#'                  freq = c(435, 147, 375, 134))
+#' y <- expandfreq(x, freq)
+#'
+#' ## check the numbers by tabulation
+#' ## tab(y, gender, by = aftlife)
+#'
+#' @export
+expandfreq <- function(data, freq)
+{
+    ## match call arguments
+    .args <- as.list(match.call())
+
+    ## if input is not a data.frame, stop
+    if (!is.data.frame(data)) {
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
+    }
+
+    ## get names of dataset and headings
+    .data_name <- deparse(substitute(data))
+    .vars_names <- names(data)
+    freq <- .args$freq
+
+    ## get where the frequency column is and get the freq
+    .freqi <-.vars_names %in% as.character(freq)
+    .freq <- data[[freq]]
+
+    ## if freq is not numbers, stop
+    if (!is.numeric(.freq)) {
+        stop(paste0("`", .freq, "` must be a number."),
+             call. = FALSE)
+    }
+
+    ## repeat other columns per freq
+    .t <- apply(data[, !.freqi], 2, function(z) rep(z, .freq))
+
+    ## put the dataset back to the original data frame
+    ## this preserves the data structure of original data
+    .df <- data[0, !.freqi]
+    .df[1:nrow(.t), ] <- .t
+
+    ## print message
+    cat(paste0("  ('", .data_name, "' expanded into dataset)\n"))
+
+    return(.df)
+}
+
+
+
+#' @title Lag a variable
+#' @description
+#'
+#' creates lagged version of an existing variable.
+#'
+#' @param x data.frame
+#' @param var variable to be lagged
+#' @param by variable for grouped lagged version
+#' @param new_var name of new lagged variable
+#' @param last_obs `TRUE`retrieves the last observation per group.
+#' @param ... further arguments to be passed to or from methods.
+#'
+#' @details
+#'
+#' This is often encountered in time-related analysis.
+#' In a lagged variable, values from earlier points in time are placed in later
+#' rows of dataset.
+#'
+#' @note
+#'
+#' Before using \code{lagRows}, the dataset needs to be sorted by a id variable
+#' or similar variable.
+#'
+#' @return
+#'
+#' data.frame
+#'
+#' @author
+#'
+#' Email: \email{dr.myominnoo@@gmail.com}
+#'
+#' Website: \url{https://myominnoo.github.io/}
+#'
+#' @examples
+#'
+#' set.seed(100)
+#' ## create a dataset with dates
+#' x <- data.frame(
+#'     hospid = 1:100,
+#'     docid = round(runif(100, 1, 10)),
+#'     dis_date = formatDate(runif(100, 42700, 42800))
+#' )
+#'
+#' ## lagged dis_date, not specifed "by"
+#' lag(x, dis_date)
+#'
+#' \dontrun{
+#' ## lagged dis_date by docid
+#' ## first we need to sort
+#' y <- x[order(x$docid), ]
+#' y
+#'
+#' ## lag dates within groups
+#' lag(y, dis_date, by = docid, new_var = lag_date)
+#' lag(y, dis_date, by = docid, lag_date, TRUE)
+#' }
+#'
+#' @rdname lag
+#' @export
+lag.data.frame <- function(x, var, by = NULL, new_var = NULL,
+                           last_obs = FALSE, ... )
+{
+    ## match call arguments
+    .args <- as.list(match.call())
+    data <- x
+    ## get names of dataset and headings
+    .data_name <- deparse(substitute(x))
+    .vars_name <- names(data)
+
+    ## if input is not a data.frame, stop
+    if (!is.data.frame(data)) {
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
+    }
+
+    ## assign var and by
+    var <- data[[.args$var]]
+    by <- .args$by
+
+    ## create lagged variables
+    if (is.null(by)) {
+        .lag <- c(var[1], var[-length(var)])
+        .lag[1] <- NA
+    } else {
+        ## if by is specified, then assign by
+        ## then create levels
+        by <- data[[as.character(by)]]
+        .lvl <- unique(by)
+        .lag <- do.call(
+            c,
+            lapply(.lvl, function(z) {
+                if (is.na(z)) {
+                    .equal <- is.na(by)
+                } else {
+                    .equal <- which(by == z)
+                }
+                .lag <- var[.equal]
+                .lag <- c(.lag[1], .lag[-length(.lag)])
+                .lag[1] <- NA
+                if (last_obs) {
+                    .lag <- var[.equal]
+                    .lag <- rep(.lag[length(.lag)], length(.lag))
+                }
+                .lag
+            })
+        )
+    }
+
+    ## add lagged variable to dataset
+    ## add label and create name
+    tryCatch({
+        data$new_var <- .lag
+    }, error = function(cnd) {
+        stop(cnd, call. = FALSE)
+    })
+    attr(data$new_var, "label") <-
+        paste0("<SYS.GEN: Lagged version of '", .args$var, "'>")
+    new_var <- ifelse(is.null(.args$new_var),
+                      paste0(.args$var, "_lag"),
+                      as.character(.args$new_var))
+
+    names(data)[ncol(data)] <- new_var
+
+    ## print changes
+    cat(paste0("  (lagged into '",
+               new_var, "')\n"))
+
+    return(data)
+}
+
+
 
 
 
@@ -1274,9 +2121,7 @@ summ <- function(data, ... , by = NULL, na.rm = FALSE, digits = 1, detail = FALS
     }
 
     ## Display information
-    # printDFlenLines(.df)
     cat(paste0(.txt, "\n"))
-    # printDFlenLines(.df)
     print.data.frame(.df, row.names = FALSE, max = 1e9)
 
     ## get vars lbl
@@ -1375,6 +2220,222 @@ summ2 <- function(data, .vars, .by, na.rm = FALSE, digits = 1)
 
 
 
+# GRAPHS ------------------------------------------------------------------
+
+#' @title Histograms with overlay normal curve
+#'
+#' @description
+#'
+#' \code{histogram()} draws a histogram with formatted texts and
+#' adds a normal curve over the histogram.
+#'
+#' @param data Dataset
+#' @param var variable
+#' @param breaks \link[graphics]{hist}
+#' @param xlab \link[graphics]{hist}
+#' @param main \link[graphics]{hist}
+#' @param sub \link[graphics]{hist}
+#' @param labels \link[graphics]{hist}
+#' @param freq \link[graphics]{hist}
+#' @param curve logical. If `TRUE` (default), a normal curve is
+#' overlaid over the histogram.
+#' @param ... \link[graphics]{hist}
+#'
+#' @details
+#'
+#' If `freq` is set to `FALSE`, probability densities,
+#' component density, are plotted (so that the histogram has
+#' a total area of one). In this case, normal curve will not be
+#' generated.
+#'
+#' @importFrom graphics hist lines
+#'
+#' @author
+#'
+#' Email: \email{dr.myominnoo@@gmail.com}
+#'
+#' Website: \url{https://myominnoo.github.io/}
+#'
+#' @examples
+#'
+#' # histogram(infert, age)
+#' # histogram(infert, age, labels = FALSE)
+#' # histogram(infert, age, freq = FALSE)
+#'
+#' @export
+histogram <- function(data, var, breaks = NULL, xlab = NULL, main = NULL,
+                      sub = NULL, labels = TRUE, freq = TRUE, curve = TRUE,
+                      ...)
+{
+    ## match call arguments
+    .args <- as.list(match.call())
+
+    ## get names of dataset and headings
+    .data_name <- deparse(substitute(data))
+    .vars_names <- names(data)
+    .var_name <- as.character(.args$var)
+
+    ## if input is not a data.frame, stop
+    if (!is.data.frame(data)) {
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
+    }
+
+    ## if var is not specified, stop
+    if (length(.var_name) == 0) {
+        stop("Specify a variable", call. = TRUE)
+    }
+
+    ## get data into var
+    var <- eval(substitute(var), data)
+
+
+    ## run histogram
+    .hist <- hist(var, plot = FALSE)
+
+    ## get individual data pieces to patch up a histogram
+    .breaks <- .hist$breaks
+    if (!is.null(breaks)) {
+        .breaks <- breaks
+    }
+    .counts <- .hist$counts
+    .density <- .hist$density
+
+    ## get p value from normality test
+    pvalue <- tryCatch({
+        suppressWarnings(shapiro.test(var)$p.value)
+    }, error = function(err) {
+        return(NA)
+    })
+    pvalue <- sprintf(pvalue, fmt = '%#.3f')
+
+
+    ## get labels and other arugment inputs.
+    xlab <- ifelse(is.null(xlab), .var_name, xlab)
+    main <- ifelse(is.null(main),
+                   paste0("Distribution of '", .var_name, "'"),
+                   main)
+    sub <- ifelse(is.null(sub),
+                  paste0("\nShapiro-Wilk Normality Test: ", pvalue),
+                  sub)
+
+    if (freq) {
+        ylim <- c(0, max(.counts, na.rm = TRUE) +
+                      mean(.counts, na.rm = TRUE))
+    } else {
+        ylim <- c(0, max(.density, na.rm = TRUE) +
+                      mean(.density, na.rm = TRUE))
+    }
+
+    tryCatch({
+        ## draw histogram again
+        .df <- hist(var,
+                    breaks = .breaks,
+                    main = main,
+                    sub = sub,
+                    xlab = xlab,
+                    ylim = ylim,
+                    labels = labels,
+                    freq = freq,
+                    ...)
+
+        ## add overlay normal curve
+        if (curve) {
+            ## add overlay normal curve
+            xfit <- seq(min(var, na.rm = TRUE), max(var, na.rm = TRUE),
+                        length = length(var))
+            yfit <- dnorm(xfit, mean = mean(var, na.rm = TRUE),
+                          sd = sd(var, na.rm = TRUE))
+            yfit <- yfit * diff(.hist$mids[1:2]) * length(var)
+
+            lines(xfit, yfit, col = "blue", lwd = 1)
+        }
+
+        ## print log
+        cat(paste0("  (A histogram is drawn for '", .var_name, "'",
+                   ifelse(curve, " with overlay normal curve", ""),
+                   ")\n"))
+    }, error = function(cnd) {
+        stop(cnd, call. = FALSE)
+    })
+
+    invisible(.df)
+}
+
+
+
+#' @title Scatter plot matrices with histogram and
+#' correlation coefficients
+#'
+#' @description
+#'
+#' A matrix of scatter plots is produced with
+#' Scatter plots with smooth regression line in lower panel,
+#' histograms in diagonal panel and Pearson's correlation
+#' coefficients in upper panel.
+#'
+#' @param data data.frame.
+#' @inheritParams graphics::title
+#' @param pch numeric: point symbol
+#' @param ... further arguments to be passed to or from methods
+#'
+#' @importFrom graphics pairs panel.smooth par rect text
+#'
+#' @author
+#'
+#' Email: \email{dr.myominnoo@@gmail.com}
+#'
+#' Website: \url{https://myominnoo.github.io/}
+#'
+#' @examples
+#'
+#' ## iris data
+#' # scatterPlotMatrix(iris)
+#'
+#' @export
+scatterPlotMatrix <- function(data, main = NULL, pch = 21, ... )
+{
+    ## match call arguments
+    .args <- as.list(match.call())
+
+    ## get and reset graph parameter on exit
+    usr <- par("usr")
+    on.exit(par(usr))
+
+    ## labels
+    if (is.null(main)) {
+        main <- paste0("Scatter plot matrix of '",
+                       .args$data, "'")
+    }
+    ## histogram
+    panel.hist <- function(x, ...)
+    {
+        usr <- par("usr")
+        on.exit(par(usr))
+        par(usr = c(usr[1:2], 0, 1.5) )
+        h <- hist(x, plot = FALSE)
+        breaks <- h$breaks; nB <- length(breaks)
+        y <- h$counts; y <- y/max(y)
+        rect(breaks[-nB], 0, breaks[-1], y, col = "cyan", ...)
+    }
+    # Correlation panel
+    panel.cor <- function(x, y, ... )
+    {
+        usr <- par("usr"); on.exit(par(usr))
+        par(usr = c(0, 1, 0, 1))
+        r <- cor(x, y, use = "complete.obs")
+        txt <- paste0("R = ",
+                      sprintf(r, fmt = paste0("%#.", 5, "f")))
+        text(0.5, 0.5, txt)
+    }
+    pairs(data, pch = pch,
+          main = main,
+          panel = panel.smooth,
+          upper.panel = panel.cor,
+          diag.panel = panel.hist,
+          ... )
+
+}
 
 
 
@@ -1508,6 +2569,204 @@ summary.summ <- function(object, ... )
 
 
 # HELPERS -----------------------------------------------------------------
+
+
+#' @title Helper functions
+#'
+#' @description
+#'
+#' These are helper functions for `mStats`.
+#'
+#' @param ... further arguments to be passed to or from methods
+#'
+#' @export
+helpers <- function(...) {}
+
+
+
+
+#' @rdname helpers
+#' @importFrom grDevices dev.list dev.off
+#' @export
+clear <- function() {
+    while (!is.null(dev.list()))  dev.off()
+    rm(list = ls(envir = .GlobalEnv), pos = 1)
+    cat("\014")
+}
+
+
+
+#' @title Create a text file of your output
+#'
+#' @description
+#' \code{ilog()} creates a text copy of your output.
+#' \code{ilog.close()} closes the `ilog()` function.
+#' \code{ilog.clear()} clears for the prompt error caused
+#' when the environment is removed.
+#'
+#' @param logfile Name of desired log file in \code{.txt} format
+#' @param append logical value
+#'
+#' @details
+#' \code{ilog} is a two-step function that allows you a record of your console.
+#' A log is a file containing what you type and console output. If a name is not
+#' specified, then \code{ilog} will use the name \code{<unnamed>.txt}.
+#'
+#' \code{ilog} opens a log file and \code{ilog.close} close the file.
+#'
+#' \strong{Warnings}:
+#'
+#' However, clearing objects from the workspace along with hidden objects
+#' removes \code{ilog}'s \code{.logenv} environment, hence throwing an error
+#' when it's attemptted to be closed. An error message
+#' \code{Error in (function (cmd, res, s, vis)  : object '.logenv' not found}
+#' will be thrown.
+#'
+#' In that case, console prompt is stuck at \code{log> }. If
+#' this error occurs, use \code{ilog.clear()} function to revert back to
+#' normal.
+#'
+#'
+#' @author
+#'
+#' Email: \email{dr.myominnoo@@gmail.com}
+#'
+#' Website: \url{https://myominnoo.github.io/}
+#'
+#' @examples
+#'
+#' \dontrun{
+#' ## my first log
+#' ilog("../myFirstLog.tx")
+#' str(infert)
+#' str(iris)
+#' ilog.close()
+#'
+#' ## in case of error: ".logenv" not found
+#' # ilog.clear()
+#' }
+#' @export
+ilog <- function(logfile = "log.txt", append = FALSE) {
+    # create a global environment which can be accessed outside
+    .logenv <<- new.env()
+    # <-- create a connection file -->
+    if(!append) {
+        # <--- if logfile exists & replace is TRUE, remove logfile --->
+        if(file.exists(logfile)) {
+            unlink(logfile)
+        }
+    }
+    # write log file
+    con <- file(logfile, open ='a')
+    .logenv$logfile <- logfile
+
+    if(isOpen(con)) {
+        .logenv$con.close <- FALSE
+    } else {
+        .logenv$con.close <- TRUE
+        if(append) {
+            open(con, open='a')
+        } else {
+            open(con, open='w')
+        }
+    }
+
+    .logenv$con <- con
+    .logenv$cmd <- TRUE
+    .logenv$res <- TRUE
+    .logenv$first <- TRUE
+
+    .logenv$con.out <- textConnection(NULL, open='a')
+    sink(.logenv$con.out, split=TRUE)
+
+    .logenv$prompt <- unlist(options('prompt'))
+    .logenv$continue <- unlist(options('continue'))
+
+    options(prompt = paste('log', .logenv$prompt, sep = ''),
+            continue = paste('log', .logenv$continue,sep = '') )
+
+    # writing log info
+    sink(logfile, append = TRUE, split = TRUE)
+    cat(paste0('\n      log: ', getwd(), "/", logfile,
+               '\n  open on: ', Sys.time(),'\n'))
+    if(append) {
+        cat(paste0("     note: ", "appended\n"))
+    } else {cat(paste0("     note: ", "replaced\n\n"))}
+    sink()
+
+    addTaskCallback(ilogtxt, name = "ilogtxt")
+    invisible(NULL)
+}
+
+#' @rdname  ilog
+#' @export
+ilog.close <- function() {
+    removeTaskCallback(id = "ilogtxt")
+    .logenv <- as.environment(.logenv)
+    if(!.logenv$con.close) {
+        close(.logenv$con)
+    }
+    options( prompt = .logenv$prompt,
+             continue = .logenv$continue )
+    if(.logenv$res) {
+        sink()
+        close(.logenv$con.out)
+        # closeAllConnections()
+    }
+    # writing log info
+    sink(.logenv$logfile, append = TRUE, split = TRUE)
+    cat(paste0('\n      log: ', getwd(), "/", .logenv$logfile,
+               '\nclosed on: ',
+               Sys.time(),'\n\n'))
+    sink()
+    eval(rm(list= ".logenv", envir = sys.frame(-1)))
+    invisible(NULL)
+}
+
+ilogtxt <- function(cmd, res, s, vis) {
+    if(.logenv$first) {
+        .logenv$first <- FALSE
+        if( .logenv$res ) {
+            sink()
+            close(.logenv$con.out)
+            .logenv$con.out <- textConnection(NULL, open='a')
+            sink(.logenv$con.out, split=TRUE)
+        }
+    } else {
+        if(.logenv$cmd){
+            cmdline <- deparse(cmd)
+            cmdline <- gsub('    ', paste("\n", .logenv$continue, sep =''),
+                            cmdline)
+            cmdline <- gsub('}', paste("\n", .logenv$continue,"}", sep =''),
+                            cmdline)
+            cat(.logenv$prompt, cmdline, "\n", sep = '',
+                file=.logenv$con)
+        }
+        if(.logenv$res) {
+            tmp <- textConnectionValue(.logenv$con.out)
+            if(length(tmp)) {
+                cat(tmp, sep='\n', file = .logenv$con)
+                sink()
+                close(.logenv$con.out)
+                .logenv$con.out <- textConnection(NULL, open='a')
+                sink(.logenv$con.out, split=TRUE)
+            }
+        }
+    }
+    TRUE
+}
+
+
+#' @rdname  ilog
+#' @export
+ilog.clear <- function()
+{
+    options(prompt = "> ", continue = "+ ")
+}
+
+
+
+
 
 
 ## Print lines based on the width of the dataset returned.

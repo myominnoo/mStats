@@ -19,8 +19,10 @@ data.frame
 }
 \details{
 A single or multiple datasets can be appended.
-THe appending datasets must have at least one variable name
+
+The appending datasets must have at least one variable name
 which is there in the master dataset.
+
 The order of variables of the appending datasets is automatically
 set based on the variable arrangement of the master dataset.
 }

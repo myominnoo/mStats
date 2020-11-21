@@ -1,0 +1,16 @@
+
+source("../beta/datasets.R")
+
+library(tidyverse)
+library(mStats)
+# source("./R/mStats.R")
+
+
+
+ilog("../beta/test/log.txt")
+codebook(iris)
+tab(iris)
+codebook(infert)
+tab(infert)
+tab(infert, by = case)
+ilog.close()
