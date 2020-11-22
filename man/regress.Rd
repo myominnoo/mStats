@@ -91,16 +91,16 @@ It uses \code{lm()} function to run the model.
 
 Outputs can be divided into three parts.
 \enumerate{
-\item Info of the model
+\item \verb{Info of the model}:
 Here provides number of observations (Obs.), F value, p-value
 from F test,
 R Squared value, Adjusted R Squared value, square root of mean square
 error
 (Root MSE) and AIC value.
-\item Errors
+\item \code{Errors}:
 Outputs from \code{anova(model)} is tabulated here. SS, DF and MS indicate
 sum of square of errors, degree of freedom and mean of square of errors.
-\item Regression Output
+\item \verb{Regression Output}:
 Coefficients from summary of model are tabulated here along with 95\\%
 confidence interval.
 }

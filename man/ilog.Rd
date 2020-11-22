@@ -4,7 +4,7 @@
 \alias{ilog}
 \alias{ilog.close}
 \alias{ilog.clear}
-\title{Create a text file of your output}
+\title{Create a copy of your output in a text format}
 \usage{
 ilog(logfile = "log.txt", append = FALSE)
 

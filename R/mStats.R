@@ -516,7 +516,9 @@ replace <- function(data, var, value, ... )
 
     ## Display message to nofity changes
     cat(
-        paste0("  (", sum(!.num, na.rm = TRUE) + sum(is.na(.num)),
+        paste0("  (",
+               ifelse(is.null(.expr_txt), nrow(data),
+                      sum(!.num, na.rm = TRUE) + sum(is.na(.num))),
                " values replaced)\n")
     )
 
@@ -525,7 +527,7 @@ replace <- function(data, var, value, ... )
 
 
 
-#' @title Categorizing a numerical variable
+#' @title Categorize a numerical variable
 #'
 #' @description
 #' \code{egen()} transforms a numeric vector to a factor vector.
@@ -2249,18 +2251,18 @@ summ2 <- function(data, .vars, .by, na.rm = FALSE, digits = 1)
 #'
 #' Outputs can be divided into three parts.
 #'
-#' 1) Info of the model
+#' 1) `Info of the model`:
 #' Here provides number of observations (Obs.), F value, p-value
 #' from F test,
 #' R Squared value, Adjusted R Squared value, square root of mean square
 #' error
 #' (Root MSE) and AIC value.
 #'
-#' 2) Errors
+#' 2) `Errors`:
 #' Outputs from `anova(model)` is tabulated here. SS, DF and MS indicate
 #' sum of square of errors, degree of freedom and mean of square of errors.
 #'
-#' 3) Regression Output
+#' 3) `Regression Output`:
 #' Coefficients from summary of model are tabulated here along with 95\%
 #' confidence interval.
 #'
@@ -2881,6 +2883,1232 @@ linkTest <- function(model, vce = FALSE, digits = 5)
 
 
 
+# LOGITISTIC REGRESSION ---------------------------------------------------
+
+#' @title Logistic Regression Model
+#'
+#' @description
+#' \code{logit()} produces summary of the model with
+#' coefficients or odds ratios (`OR`) and 95% Confident Intervals.
+#'
+#' @param model glm or lm model
+#' @param or `TRUE`reports odds ratios instead of coefficients
+#' @param digits specify rounding of numbers. See \code{\link{round}}.
+#'
+#' @details
+#'
+#' \code{logit()} is based on \code{\link{glm}} with `binomial` family.
+#' All statistics presented in the function's output are derivates of
+#' \code{\link{glm}},
+#' except AIC value which is obtained from \code{\link{AIC}}.
+#'
+#' \strong{Outputs}
+#'
+#' Outputs can be divided into three parts.
+#'
+#' 1) `Info of the model`:
+#' Here provides number of observations (Obs.), chi value from Likelihood Ratio
+#' test (LR chi2) and its degree of freedom, p-value from LR test,
+#' Pseudo R Squared, log likelihood and AIC values.
+#'
+#' 2) `Regression Output`:
+#' Coefficients from summary of model are tabulated here along with 95\%
+#' confidence interval.
+#'
+#' @return
+#'
+#' a list containing
+#'
+#' 1. `info` - info and error tables
+#' 2. `reg` - regression table
+#' 3. `model` - raw model output from `lm()`
+#' 4. `fit` - formula for fitting the model
+#' 5. `lbl` - variable labels for further processing in `summary`.
+#'
+#' @author
+#'
+#' Email: \email{dr.myominnoo@@gmail.com}
+#'
+#' Website: \url{https://myominnoo.github.io/}
+#'
+#' @examples
+#'
+#' mylogit <- glm(case ~ education + age + parity, family = binomial,
+#'            data = infert)
+#' logit(mylogit)
+#'
+#' \dontrun{
+#' ## Example from UCLA website:
+#' ## LOGIT REGRESSION | R DATA ANALYSIS EXAMPLES
+#' ## https://stats.idre.ucla.edu/r/dae/logit-regression/
+#'
+#' mydata <- read.csv("https://stats.idre.ucla.edu/stat/data/binary.csv")
+#' mydata <- replace(mydata, rank, factor(rank))
+#' mydata <- label(mydata, gre = "GRE", gpa = "GPA score", rank = "Ranking")
+#' mylogit <- glm(admit ~ gre + gpa + rank, data = mydata, family = "binomial")
+#'
+#' ## Showing Odds Ratios
+#' logit(mylogit)
+#'
+#' ## Showing coefficients
+#' logit(mylogit, or = FALSE)
+#' }
+#'
+#' @export
+logit <- function(model, or = TRUE, digits = 5)
+{
+    ## match call arguments
+    .args <- as.list(match.call())
+
+    ## refitting model for glm and lm
+    .getcall <- getCall(model)
+    .data_name <- .getcall$data
+    data <- eval(.data_name)
+    .formula <- .getcall$formula
+
+    ## if input is not a lm or glm, stop
+    if (!any(class(model) %in% c("glm", "lm"))) {
+        stop(paste0("`", .args$model, "` must be glm model"),
+             call. = FALSE)
+    }
+    ## Calculate model info
+    .err <- calcLogit(model, digits)
+
+    ## get coefficients
+    .s <- summary(model)
+    .coef <- data.frame(coef(.s)[, 1:3],
+                        confint.default(model),
+                        coef(.s)[, 4])
+    ## put intercept to last and names
+    .coef <- rbind(.coef[-1, ], .coef[1, ])
+    names(.coef) <- c("e", "se", "z", "ll", "ul", "p")
+
+    ## calculate OR
+    if (or) {
+        .coef$se <- sqrt(exp(coef(model))^2 * diag(vcov(model)))
+        .coef$e <- exp(.coef$e)
+        .coef$ll <- exp(.coef$ll)
+        .coef$ul <- exp(.coef$ul)
+    }
+
+    ## gather all statistics
+    .t <- data.frame(
+        cbind(
+            row.names(.coef),
+            sprintf(.coef$e, fmt = paste0('%#.', digits, 'f')),
+            sprintf(.coef$se, fmt = paste0('%#.', digits, 'f')),
+            sprintf(.coef$z, fmt = paste0('%#.', 2, 'f')),
+            sprintf(.coef$p, fmt = paste0('%#.', digits, 'f')),
+            sprintf(.coef$ll, fmt = paste0('%#.', digits, 'f')),
+            sprintf(.coef$ul,
+                    fmt = paste0('%#.', digits, 'f'))
+        )
+    )
+    ## get y name
+    .y_name <- as.character(.formula)[2]
+    names(.t) <- c(.y_name, ifelse(or, "Odds Ratio", "Coef."),
+                   "Std.Err", "z", "P>|z|", "[95% Conf.", "Interval]")
+    .t <- formatdf(.t, 2, 2)
+
+    ## Print tabulation and labels
+    # printDFlenLines(.t)
+    cat(paste0("\t\t\tLogistic Regression Output\n"))
+    # printDFlenLines(.t)
+    print.data.frame(.err, row.names = FALSE, max = 1e9)
+    print.data.frame(.t, row.names = FALSE, max = 1e9)
+    cat(paste0("  Model fit: ",
+               Reduce(paste, deparse(getCall(model))), "\n"))
+
+    ## get raw data for labelling
+    .vars <- all.vars(formula(model)[-2])
+    ## get vars lbl
+    .vars_lbl <- sapply(c(.y_name, .vars), getLabel, data)
+    .vars_lbl <- data.frame(vars = c(as.character(.y_name), .vars),
+                            lbl = .vars_lbl)
+    .vars_lbl$lbl[is.na(.vars_lbl$lbl)] <- .vars_lbl$vars[is.na(.vars_lbl$lbl)]
+
+    ## create list with class
+    .list <- list(info = .err,
+                  reg = .t,
+                  model = model,
+                  fit = .formula,
+                  data = data,
+                  lbl = .vars_lbl)
+
+    ## add label for further processing
+    attr(.t, "label") <- "Logistic Regression"
+    ## create class for S3 method to use in summary()
+    class(.list) <- "logit"
+
+    invisible(.list)
+}
+
+
+calcLogit <- function(model, digits)
+{
+    ## model summary and F test
+    .s <- summary(model)
+    ## number of observations, f statistics, pvalue
+    .obs <- c("Number of Obs", length(resid(model)))
+
+    ## LR Chi Square Test
+    .chi <- with(model, null.deviance - deviance)
+    .chi.df <- with(model, df.null - df.residual)
+    .chi.p <- pchisq(.chi, .chi.df, lower.tail = FALSE)
+    .chi <- c(paste0("LR chi2(", .chi.df, ")"),
+              sprintf(.chi, fmt = paste0("%#.", 2, "f")))
+    .chi.p <- c("Prob > chi2",
+                sprintf(.chi.p, fmt = paste0("%#.", digits, "f")))
+
+    ## calculate pseudo R-squared
+    ## https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-what-are-pseudo-r-squareds/
+    ## https://thestatsgeek.com/2014/02/08/r-squared-in-logistic-regression/
+    ## https://stats.stackexchange.com/questions/8511/how-to-calculate-pseudo-r2-from-rs-logistic-regression
+    # McFadden's R squared
+    .pr2 <- 1 - model$deviance / model$null.deviance
+    .pr2 <- c("Pseudo R-Squared",
+              sprintf(.pr2, fmt = paste0("%#.", digits, "f")))
+
+    .ll <- c("Log likelihood",
+             sprintf(logLik(model), fmt = paste0("%#.", 2, "f")))
+
+    ## get AIC value
+    .aic <- c("AIC",
+              sprintf(.s$aic, fmt = paste0("%#.", 2, "f")))
+
+    ## Combine tables
+    .df1 <- data.frame(rbind(.obs, .chi, .chi.p))
+    names(.df1) <- c("Stats", "Value")
+    .df1 <- formatdf(.df1, 2, 2)
+    .df2 <- data.frame(rbind(.aic, .pr2, .ll))
+    .df <- cbind(.df1, "        ", rbind("", "", .df2, ""))
+    names(.df) <- .df[2, ]
+    row.names(.df) <- NULL
+
+    return(.df)
+}
+
+
+
+
+# MHOR --------------------------------------------------------------------
+
+#' @title Calculating Odds Ratios
+#'
+#' @description
+#' \code{mhor()} calculates odds ratios, Mantel Haenszel pooled estimates and
+#' 95% CI.
+#'
+#' @param data data.frame
+#' @param exp exposure or independent variables
+#' @param case case or dependent variables (outcomes)
+#' @param strata if specified, MH OR is calculated.
+#' @param exp_value value for exposure as reference
+#' @param case_value value for outcome as reference
+#' @param digits specify rounding of numbers. See \code{\link{round}}.
+#'
+#' @details
+#'
+#' Rows and Columns can be rearranged by specifying
+#' `exp_value` and `case_value`. This is used
+#' when the exposed and case values are not at the right place in 2x2 tables.
+#'
+#' Reference row value can be specified in `exp_value`.
+#'
+#'
+#' Attributable fractions, \code{Attr. Frac. Exp} and  \code{Attr. Frac. Pop}
+#' among exposed and population are calculated when OR is greated than or
+#' equal to 1.
+#' If OR is less than 1, preventable fractions,  \code{Prev. Frac. Exp}
+#' and  \code{Attr. Frac. Pop} are calculated.
+#'
+#' It produces a table with Odds Ratio, 95% CI as well as
+#' p-value. If \code{strata} is specified, `Mantel-Haenzsel` Pooled
+#' estimates of `Odds Ratio` is generated along with Chi-squared test for
+#' homogeneity.
+#'
+#'
+#' \strong{Odds Ratio, OR}
+#'
+#' \deqn{OR = (D1 x H0) / (D0 x H1)}
+#'
+#' \strong{Error Factor, EF using Woolf's formula}
+#'
+#' \deqn{95\% CI = OR / EF or OR x EF}
+#'
+#' \deqn{EF = exp(1.96 x SE(log(OR)))}
+#'
+#' \deqn{SE(log(OR)) = \sqrt{1/D1 + 1/H1 + 1/D0 + 1/H0}}
+#'
+#' \strong{Calculating p-value from Wald's z test}
+#'
+#' \deqn{z = log OR / SE (log OR)}
+#'
+#'
+#'
+#' \strong{Mantel-Haenszel's OR}
+#'
+#' \deqn{ORMH = Q / R}
+#'
+#' \deqn{Q = \sum{(D1i x H0i) / ni}}
+#'
+#' \deqn{R = \sum{(D0i x H1i) / ni}}
+#'
+#' \strong{Calculating CI for MH-OR}
+#'
+#' \deqn{95\% CI = OR / EF or OR x EF}
+#'
+#' \deqn{SE(ORMH) = \sqrt{V / (Q x R)}}
+#'
+#' \deqn{V = \sum{(Di x Hi x n0i x n1i) / ( (ni)^2 x (ni - 1))}}
+#'
+#' \strong{Chi-square test for MHOR, df = 1}
+#'
+#' \deqn{X^2 (MH), Chi-square value = U^2 / V}
+#'
+#' \deqn{U = O - E}
+#'
+#' \deqn{O = \sum{D1i}}
+#'
+#' \deqn{E = \sum{Di x n1i / ni}}
+#'
+#'
+#' \strong{Chi-square test for Heterogeneity}
+#'
+#' \deqn{X^2 = \sum{(D1i x H0i - ORMH x D0i x H1i)^2 / ORMH x Vi x ni^2}}
+#'
+#' @return
+#'
+#' data.frame
+#'
+#' @references
+#'
+#' \enumerate{
+#'     \item Betty R. Kirkwood, Jonathan A.C. Sterne (2006, ISBN:978–0–86542–871–3)
+#'     \item B. Burt Gerstman (2013, ISBN:978-1-4443-3608-5)
+#'     \item Douglas G Altman (2005, ISBN:0 7279 1375 1)
+#' }
+#'
+#'
+#' @author
+#'
+#' Email: \email{dr.myominnoo@@gmail.com}
+#'
+#' Website: \url{https://myominnoo.github.io/}
+#'
+#' @examples
+#'
+#'
+#' ### Example from Essential Medical Statistics
+#' # Page 178, Chapter 18: Controlling for confounding: Stratification
+#' lepto <- expandtbl(
+#'     male = c(36, 14, 50, 50), female = c(24, 126, 10, 90),
+#'     exp_name = "area", exp_lvl = c("Rural", "Urban"),
+#'     case_name = "ab", case_lvl = c("Yes", "No"),
+#'     strata_name = "gender"
+#' )
+#'
+#' ## label variables and data
+#' lepto <- label(lepto, "Prevalence survey of leptospirosis in West Indies")
+#' lepto <- label(lepto, area="Type of area", ab = "Leptospirosis Antibodies",
+#'                   gender="Gener: Male or Female")
+#'
+#' ## Calculate OR
+#' mhor(lepto, area, ab)
+#'
+#' ## Calculate MHOR
+#' mhor(lepto, area, ab, gender)
+#'
+#'
+#' @export
+mhor <- function(data, exp , case, strata = NULL, exp_value = NULL,
+                 case_value = NULL, digits = 4)
+{
+    ## match call arguments
+    .args <- as.list(match.call())
+    ## get names of dataset and headings
+    .data_name <- deparse(substitute(data))
+    .vars_names <- names(data)
+
+    ## if input is not a data.frame, stop
+    if (!is.data.frame(data)) {
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
+    }
+
+    ## get exp and case name
+    exp <- as.character(.args$exp)
+    case <- as.character(.args$case)
+    strata <- as.character(.args$strata)
+    ## check if these variables are in the dataset
+    lapply(c(exp, case, strata) , function(z) {
+        if (!(z %in% .vars_names)) {
+            stop(paste0("'", z, "' not found."), call. = FALSE)
+        }
+    })
+
+    ## create single vectors for exp and case
+    .exp <- data[[exp]]
+    .case <- data[[case]]
+    ## create table
+    .tbl <- table(.exp, .case, useNA = "no")
+    ## case var must be binary.
+    if (ncol(.tbl) > 2) {
+        stop(paste0("'", case, "' must be binary."), call. = FALSE)
+    }
+    ## if strata is not specified, calculate OR. Otherwise, calculate MHOR
+    if (length(strata) == 0) {
+        ## change row and col orders
+        .tbl <- rowColOrder(.tbl, exp_value, case_value)
+        ## split tables if nrow > 2
+        .tbl <- splitTables(.tbl, .exp.value = exp_value)
+        .df <- lapply(.tbl, calcOR, exp, digits)
+        .df <- do.call(rbind,
+                       lapply(1:length(.df), function(z) {
+                           if (z > 1) {
+                               .df[[z]][-1, ]
+                           } else {
+                               .df[[z]]
+                           }
+                       })
+        )
+
+        ## create label
+        .txt <- paste0(" Measure of Association : Odds Ratio of '", case, "'")
+    } else {
+        ## exp var must be binary for MHOR.
+        if (nrow(.tbl) > 2) {
+            stop(paste0("'", exp, "' must be binary."), call. = FALSE)
+        }
+        ## create single vector for strata
+        .strata <- data[[strata]]
+        .df <- calcMHOR(.exp, .case, .strata, exp_value, case_value, digits)
+        .t <- do.call(rbind,
+                      lapply(split(data, .strata), function(z) {
+                          x <- z[[exp]]
+                          y <- z[[case]]
+                          calcOR(table(x, y, useNA = "no"), exp, digits)[9, -c(1, 3, 8)]
+                      }))
+        .t[, 1] <- row.names(.t)
+        .oa <- calcOR(table(.exp, .case, useNA = "no"), exp, digits)[9, -c(1, 3, 8)]
+        .oa[, 1] <- "Crude"
+        names(.t) <- names(.oa) <- names(.df)
+
+        .df <- rbind(.t, .oa, .df)
+        .df <- formatdf(.df, 2, 2)
+        .nrow <- nrow(.df)
+        .df <- rbind(.df[1:(.nrow - 4),], .df[2, ], .df[(.nrow - 3):(.nrow - 2), ],
+                     .df[2, ], .df[.nrow - 1, ], .df[2, ])
+
+        ## create label
+        .txt <- paste0("\t\t\t Mantel-Haenszel (M-H) Odds Ratios")
+    }
+
+    ## Print tabulation and labels
+    # printDFlenLines(.t)
+    cat(paste0("       ", .txt, "\n"))
+    # printDFlenLines(.t)
+    print.data.frame(.df, row.names = FALSE, max = 1e9)
+
+    ## get vars lbl
+    sapply(c(exp, case, strata), getLabel, data)
+
+    invisible(.df)
+}
+
+calcMHOR <- function(.exp, .case, .strata, exp_value, case_value, digits)
+{
+
+    ## make three tables
+    .tbl <- table(.exp, .case, .strata, useNA = "no")
+    .lvl_len <- dim(.tbl)[3]
+
+    ## calculate MHOR
+    .t <- tryCatch({
+        mantelhaen.test(.tbl, correct = FALSE)
+    }, warning = function(w) {
+        mantelhaen.test(.tbl, correct = FALSE, exact = TRUE)
+    }, error = function(cnd) {
+        return(NA)
+    })
+    .mhor <- c("M-H Combined",
+               sprintf(c(.t$estimate, .t$conf.int, .t$p.value),
+                       fmt = paste0("%#.", digits, "f")))
+
+    # calculate chi-square and p-value for homogeneity test
+    # Woolf test of homogeneity of odds ratios (Jewell 2004, page 154).
+    .t <- do.call(
+        rbind,
+        lapply(1:.lvl_len, function(z) {
+            ## change row and col orders
+            .t <- rowColOrder(.tbl[,,z], exp_value, case_value)
+            .strata_name <- dimnames(.tbl)$.strata[z]
+            a <- as.numeric(.t[1, 1])
+            b <- as.numeric(.t[1, 2])
+            c <- as.numeric(.t[2, 1])
+            d <- as.numeric(.t[2, 2])
+
+            or <- log(((a + 0.5) * (d + 0.5)) /
+                          ((b + 0.5) * (c + 0.5)))
+            var <- (1 / (a + 0.5)) +
+                (1 / (b + 0.5)) + (1 / (c + 0.5)) + (1 / (d + 0.5))
+            w <- 1 / as.numeric(var)
+            wor <- w * or
+
+            ## calculate OR
+            res <- calcOR(.t, "tocombine", digits)[7, -2]
+            res[1, 1] <- .strata_name
+
+            ## return result
+            .df <- data.frame(res, or, w, wor)
+            names(.df)[1:5] <- c("Level", "Estimate",
+                                 "[95% Conf.", "Interval]", "Pr>chi2")
+            .df
+        })
+    )
+    lnOR <- sum(.t$wor) / sum(.t$w)
+    # Equation 10.3 from Jewell (2004):
+    .chi <- sum(.t$w * (.t$or - lnOR)^2)
+    .pvalue <- tryCatch({
+        suppressWarnings(pchisq(.chi, df = .lvl_len - 1, lower.tail = FALSE))
+    }, error = function(err) {
+        return(NA)
+    })
+
+
+    ## combine estimates
+    .t <- .t[, 1:5]
+    .df <- data.frame(
+        rbind(
+            .mhor,
+            c("M-H Homogeneity Test", paste0("chi(", .lvl_len - 1, ")"),
+              sprintf(.chi, fmt = paste0('%#.', 2, 'f')), "Pr>chi2",
+              sprintf(.pvalue, fmt = paste0('%#.', digits, 'f')))
+        )
+    )
+    names(.df) <- names(.t)
+    return(.df)
+}
+
+calcOR <- function(.tbl, exp, rnd)
+{
+    ## create row and column totals and odds.
+    .tblr <- cbind(.tbl, Total = rowSums(.tbl))
+    .tblc <- rbind(.tblr, Total = colSums(.tblr))
+    .tblf <- cbind(
+        .tblc,
+        Odds = sprintf(.tblc[, 1] / .tblc[, 2], fmt = paste0("%#.", rnd, "f"))
+    )
+
+    ## calculate odds ratio, 95% CI, and p-value
+    .a <- as.numeric(.tbl[1, 1])
+    .b <- as.numeric(.tbl[1, 2])
+    .c <- as.numeric(.tbl[2, 1])
+    .d <- as.numeric(.tbl[2, 2])
+    .or <- (.a * .d) / (.b * .c)
+    .fisher <- tryCatch({
+        suppressWarnings(fisher.test(.tbl))
+    }, error = function(cnd) {
+        return(NA)
+    })
+    .confint <- .fisher$conf.int
+    ## get p-value chi-square
+    .chi <- tryCatch({
+        suppressWarnings(chisq.test(.tbl, correct = FALSE))
+    }, error = function(cnd) {
+        return(NA)
+    })
+
+    ## calculate attributable or prevent
+    .m1 <- .a + .b
+    if (.or >= 1) {
+        .afe <- (.or - 1) / .or
+        .afe_confint <- (.confint - 1) / .confint
+        .afp <- .afe * .a / .m1
+        .lbl <- c("Odds Ratio", "Attr. Frac. Exp", "Attr. Frac. Pop")
+    } else {
+        .afe <- 1 - .or
+        .afe_confint <- c(1 - .confint[2], 1- .confint[1])
+        .afp <- (.a / .m1 * .afe) / ((.a / .m1 * .afe) + .or)
+        .lbl <- c("Odds Ratio", "Prev. Frac. Exp", "Prev. Frac. Pop")
+    }
+
+    ## combine all in one dataframe
+    .df <- data.frame(row.names(.tblf), .tblf)
+
+    ## get other estimates
+    .est <- data.frame(
+        .lbl,
+        sprintf(c(.or, .afe, .afp),
+                fmt = paste0("%#.", rnd, "f")),
+        c(sprintf(c(.confint[1], .afe_confint[1]),
+                  fmt = paste0("%#.", rnd, "f")), ""),
+        c(sprintf(c(.confint[2], .afe_confint[2]),
+                  fmt = paste0("%#.", rnd, "f")), ""),
+        c(sprintf(.chi$p.value,
+                  fmt = paste0("%#.", rnd, "f")), "", "")
+    )
+    names(.est) <- names(.df) <- c(exp, colnames(.tblf))
+
+    ## combine into final dataframe
+    .df <- rbind(.df,
+                 c("Measure", "Estimate", "[95% Conf.", "Interval]", "Pr>chi2"),
+                 .est)
+    .df <- formatdf(.df, 2, 2)
+    .df <- rbind(.df[1:5, ], .df[10, ], .df[6, ], .df[10, ], .df[7:9, ], .df[10, ])
+    row.names(.df) <- NULL
+
+    return(.df)
+}
+
+
+
+
+# MHRR --------------------------------------------------------------------
+
+#' @title Calculating Risk Ratios
+#'
+#' @description
+#' \code{mhrr()} calculates different measures of risk including risk
+#' ratios (RR) as well as
+#' Mantel-Haenszel pooled estimates.
+#'
+#' @param data data.frame
+#' @param exp exposure or independent variables
+#' @param case case or dependent variables (outcomes)
+#' @param strata if specified, MH OR is calculated.
+#' @param exp_value value for exposure as reference
+#' @param case_value value for outcome as reference
+#' @param digits specify rounding of numbers. See \code{\link{round}}.
+#'
+#'
+#' @details
+#'
+#' Rows and Columns can be rearranged by specifying
+#' `exp_value` and `case_value`. This is used
+#' when the exposed and case values are not at the right place in 2x2 tables.
+#'
+#' Reference row value can be specified in `exp_value`.
+#'
+#'
+#' Attributable fractions, \code{Attr. Frac. Exp} and  \code{Attr. Frac. Pop}
+#' among exposed and population are calculated when RR is greated than or
+#' equal to 1.
+#' If RR is less than 1, preventable fractions,  \code{Prev. Frac. Exp}
+#' and  \code{Attr. Frac. Pop} are calculated.
+#'
+#' It produces a table with Risk Ratio, 95% CI as well as
+#' p-value. If \code{strata} is specified, `Mantel-Haenzsel` Pooled
+#' estimates of `Risk Ratio` is generated along with Chi-squared test for
+#' homogeneity.
+#'
+#' @references
+#'
+#'
+#' \enumerate{
+#'     \item  Betty R. Kirkwood, Jonathan A.C. Sterne (2006, ISBN:978–0–86542–871–3)
+#'     \item B. Burt Gerstman (2013, ISBN:978-1-4443-3608-5)
+#'     \item Douglas G Altman (2005, ISBN:0 7279 1375 1)
+#' }
+#'
+#'
+#' @author
+#'
+#' Email: \email{dr.myominnoo@@gmail.com}
+#'
+#' Website: \url{https://myominnoo.github.io/}
+#'
+#' @examples
+#'
+#'
+#' ### Example from Essential Medical Statistics
+#' # Page 178, Chapter 18: Controlling for confounding: Stratification
+#' lepto <- expandtbl(
+#'     male = c(36, 14, 50, 50), female = c(24, 126, 10, 90),
+#'     exp_name = "area", exp_lvl = c("Rural", "Urban"),
+#'     case_name = "ab", case_lvl = c("Yes", "No"),
+#'     strata_name = "gender"
+#' )
+#'
+#' ## label variables and data
+#' lepto <- label(lepto, "Prevalence survey of leptospirosis in West Indies")
+#' lepto <- label(lepto, area="Type of area", ab = "Leptospirosis Antibodies",
+#'                   gender="Gener: Male or Female")
+#'
+#' ## Calculate RR
+#' mhrr(lepto, area, ab)
+#'
+#' ## Calculate MHRR
+#' mhrr(lepto, area, ab, gender)
+#'
+#'
+#' \dontrun{
+#' ### Demonstration: Calculating Risk Ratios
+#'
+#' ## Essential Medical Statistics, Betty R. Kirkwood, Second Edition
+#' ## Chapter 16, Table 16.4, Page 154
+#' ## For Risk Ratio
+#' lung <- expandtbl(
+#'     c(39, 29961, 6, 59994),
+#'     exp_name = "smoking",
+#'     exp_lvl = c("Smokers", "Non-smokers"),
+#'     case_name = "cancer",
+#'     case_lvl = c("Yes", "No")
+#' )
+#'
+#' ## label variable and dataset
+#' lung <- labelVar(lung, smoking="Yes or No", cancer="Yes or no")
+#' lung <- labelData(lung, "Follow up lung cancer study")
+#'
+#' ## check dataset
+#' codebook(lung)
+#'
+#' ## calculate RR
+#' mhrr(lung, smoking, cancer, exp_value = "Smokers", case_value = "Yes")
+#'
+#'
+#'
+#' ## Simpson's paradox
+#' ## Burt Gerstman's Epidemiology, page 326, table 14.1
+#' simpson <- expandtbl("1" = c(1000, 9000, 50, 950),
+#'                         "2" = c(95, 5, 5000, 5000),
+#'                         exp_name = "trt",
+#'                         exp_lvl = c("new", "standard"),
+#'                         case_name = "case",
+#'                         case_lvl = c("alive", "dead"),
+#'                         strata_name = "clinic")
+#'
+#' ## calculate RR
+#' mhrr(simpson, trt, case, exp_value = "new", case_value = "alive")
+#'
+#' ## calculate MH RR
+#' mhrr(simpson, trt, case, clinic)
+#'
+#' }
+#'
+#' @export
+mhrr <- function(data, exp , case, strata = NULL, exp_value = NULL,
+                 case_value = NULL, digits = 4)
+{
+    ## match call arguments
+    .args <- as.list(match.call())
+    ## get names of dataset and headings
+    .data_name <- deparse(substitute(data))
+    .vars_names <- names(data)
+
+    ## if input is not a data.frame, stop
+    if (!is.data.frame(data)) {
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
+    }
+
+    ## get exp and case name
+    exp <- as.character(.args$exp)
+    case <- as.character(.args$case)
+    strata <- as.character(.args$strata)
+    ## check if these variables are in the dataset
+    lapply(c(exp, case, strata) , function(z) {
+        if (!(z %in% .vars_names)) {
+            stop(paste0("'", z, "' not found."), call. = FALSE)
+        }
+    })
+
+    ## create single vectors for exp and case
+    .exp <- data[[exp]]
+    .case <- data[[case]]
+    ## create table
+    .tbl <- table(.exp, .case, useNA = "no")
+    ## case var must be binary.
+    if (ncol(.tbl) > 2) {
+        stop(paste0("'", case, "' must be binary."), call. = FALSE)
+    }
+    ## if strata is not specified, calculate OR. Otherwise, calculate MHOR
+    if (length(strata) == 0) {
+        ## change row and col orders
+        .tbl <- rowColOrder(.tbl, exp_value, case_value)
+        ## split tables if nrow > 2
+        .tbl <- splitTables(.tbl, .exp.value = exp_value)
+        .df <- lapply(.tbl, calcRR, exp, digits)
+        .df <- do.call(rbind,
+                       lapply(1:length(.df), function(z) {
+                           if (z > 1) {
+                               .df[[z]][-1, ]
+                           } else {
+                               .df[[z]]
+                           }
+                       })
+        )
+
+        ## create label
+        .txt <- paste0(" Measure of Association : Risk Ratio of '", case, "'")
+    } else {
+        ## exp var must be binary for MHOR.
+        if (nrow(.tbl) > 2) {
+            stop(paste0("'", exp, "' must be binary."), call. = FALSE)
+        }
+        ## create single vector for strata
+        .strata <- data[[strata]]
+        .df <- calcMHRR(.exp, .case, .strata, exp_value, case_value, digits)
+        .t <- do.call(rbind,
+                      lapply(split(data, .strata), function(z) {
+                          x <- z[[exp]]
+                          y <- z[[case]]
+                          calcRR(table(x, y, useNA = "no"), exp, digits)[9, -c(1, 3, 8)]
+                      }))
+        .t[, 1] <- row.names(.t)
+        .oa <- calcRR(table(.exp, .case, useNA = "no"), exp, digits)[9, -c(1, 3, 8)]
+        .oa[, 1] <- "Crude"
+        names(.t) <- names(.oa) <- names(.df)
+
+        .df <- rbind(.t, .oa, .df)
+        .df <- formatdf(.df, 2, 2)
+        .nrow <- nrow(.df)
+        .df <- rbind(.df[1:(.nrow - 4),], .df[2, ], .df[(.nrow - 3):(.nrow - 2), ],
+                     .df[2, ], .df[.nrow - 1, ], .df[2, ])
+
+        ## create label
+        .txt <- paste0("\t\t\t Mantel-Haenszel (M-H) Risk Ratios")
+    }
+
+    ## Print tabulation and labels
+    # printDFlenLines(.t)
+    cat(paste0("       ", .txt, "\n"))
+    # printDFlenLines(.t)
+    print.data.frame(.df, row.names = FALSE, max = 1e9)
+
+    ## get vars lbl
+    sapply(c(exp, case, strata), getLabel, data)
+
+    invisible(.df)
+}
+
+calcMHRR <- function(.exp, .case, .strata, exp_value, case_value, rnd)
+{
+
+    ## make three tables
+    .tbl <- table(.exp, .case, .strata, useNA = "no")
+    .lvl_len <- dim(.tbl)[3]
+
+    ## calculate MHRR and homogeneity test
+    .t <- do.call(
+        rbind,
+        lapply(1:.lvl_len, function(z) {
+            ## change row and col orders
+            .t <- rowColOrder(.tbl[,,z], exp_value, case_value)
+            .strata_name <- dimnames(.tbl)$.strata[z]
+            a <- as.numeric(.t[1, 1])
+            b <- as.numeric(.t[1, 2])
+            c <- as.numeric(.t[2, 1])
+            d <- as.numeric(.t[2, 2])
+
+            n <- sum(.t)
+            n1 <- a + b
+            n0 <- c + d
+            m1 <- a + c
+            m0 <- b + d
+
+            ## MHRR ==> (Rothman 2002 p 148 and 152, equation 8-2):
+            q <- a * n0 / n
+            r <- c * n1 / n
+
+            ## MHRR confidence interval
+            u <- ((m1 * n1 * n0) / n^2) - ((a * c) / n)
+            v <- (a * n0) / n
+            x <- (c * n1) / n
+
+            ##
+            ## Woolf test of homogeneity of risk ratios (Jewell 2004, page 154).
+            # First work out the Woolf estimate of the adjusted risk ratio
+            ## based on Jewell (2004, page 134):
+            rr <- log((a / (a + b)) / (c / (c + d)))
+            var <- (b / (a * (a + b))) + (d / (c * (c + d)))
+            w <- 1 / var
+            wrr <- w * rr
+
+            ## calculate stratum-specific RR
+            ## cacluate OR
+            res <- calcRR(.t, "tocombine", rnd)[7, -2]
+            res[1, 1] <- .strata_name
+
+            ## return result
+            .df <- data.frame(res, q, r, u, v, x, rr, w, wrr)
+            names(.df)[1:5] <- c("Level", "Estimate",
+                                 "[95% Conf.", "Interval]", "Pr>chi2")
+            .df
+        })
+    )
+
+    .mhrr <- sum(.t$q) / sum(.t$r)
+    .mhrr.se <- sqrt(sum(.t$u) / (sum(.t$v) * sum(.t$x)))
+    .mhrr.confint <- exp(c(log(.mhrr) - (1.96 * .mhrr.se),
+                           log(.mhrr) + (1.96 * .mhrr.se)))
+
+    ## calculate chisquare test for MHRR
+    .mhrr.p <- tryCatch({
+        suppressWarnings(mantelhaen.test(.tbl, correct = FALSE)$p.value)
+    }, error = function(err) {
+        return(NA)
+    })
+
+    .mhrr <- c("M-H Combined",
+               sprintf(c(.mhrr, .mhrr.confint, .mhrr.p),
+                       fmt = paste0("%#.", rnd, "f")))
+
+
+    ## test of homogeneity
+    lnRR <- sum(.t$wrr) / sum(.t$w)
+    # Equation 10.3 from Jewell (2004):
+    .chi <- sum(.t$w * (.t$rr - lnRR)^2)
+    .pvalue <- tryCatch({
+        suppressWarnings(pchisq(.chi, df = .lvl_len - 1, lower.tail = FALSE))
+    }, error = function(err) {
+        return(NA)
+    })
+
+    ## combine estimates
+    .t <- .t[, 1:5]
+    .df <- data.frame(
+        rbind(
+            .mhrr,
+            c("M-H Homogeneity Test", paste0("chi(", .lvl_len - 1, ")"),
+              sprintf(.chi, fmt = paste0('%#.', 2, 'f')), "Pr>chi2",
+              sprintf(.pvalue, fmt = paste0('%#.', rnd, 'f')))
+        )
+    )
+    names(.df) <- names(.t)
+    return(.df)
+}
+
+
+calcRR <- function(.tbl, exp, rnd)
+{
+    ## create row and column totals and odds.
+    .tblr <- cbind(.tbl, Total = rowSums(.tbl))
+    .tblc <- rbind(.tblr, Total = colSums(.tblr))
+    .tblf <- cbind(
+        .tblc,
+        Risks = sprintf(.tblc[, 1] / .tblc[, 3], fmt = paste0("%#.", rnd, "f"))
+    )
+
+    ## calculate odds ratio, 95% CI, and p-value
+    .a <- as.numeric(.tbl[1, 1])
+    .b <- as.numeric(.tbl[1, 2])
+    .c <- as.numeric(.tbl[2, 1])
+    .d <- as.numeric(.tbl[2, 2])
+
+    .n <- sum(.tbl)
+
+
+    ## calculate OR
+    .or <- (.a * .d) / (.b * .c)
+    .fisher <- tryCatch({
+        suppressWarnings(fisher.test(.tbl))
+    }, error = function(cnd) {
+        return(NA)
+    })
+    .confint <- .fisher$conf.int
+    ## get p-value chi-square
+    .chi <- tryCatch({
+        suppressWarnings(chisq.test(.tbl, correct = FALSE))
+    }, error = function(cnd) {
+        return(NA)
+    })
+    .or <- c("Odds Ratio", sprintf(c(.or, .confint, .chi$p.value),
+                                   fmt = paste0("%#.", rnd, "f")))
+
+    ## calculate Risk Ratio
+    .n1 <- .a + .b
+    .n0 <- .c + .d
+    .p1 <- .a / .n1
+    .p0 <- .c / .n0
+    .rr <- .p1 / .p0
+    .rr.se <- sqrt((1 / .a) - (1 / .n1) + (1 / .c) - (1 / .n0))
+    .rr.confint <- exp(c(log(.rr) - (1.96 * .rr.se),
+                         log(.rr) + (1.96 * .rr.se)))
+    .rr_ <- c("Risk Ratio", sprintf(c(.rr, .rr.confint, .chi$p.value),
+                                    fmt = paste0("%#.", rnd, "f")))
+
+
+    ## calculate Risk difference
+    .rd <- .p1 - .p0
+    .rd.se <- sqrt((.p1 * (1 - .p1) / .n1) +  (.p0 * (1 - .p0) / .n0))
+    .rd.confint <- c(.rd - (1.96 * .rd.se), .rd + (1.96 * .rd.se))
+    .p <- (.a + .c) / .n
+    .rd.z <- .rd / sqrt(.p * (1 - .p) * (1/.n1 + 1/.n0))
+    .rd.p <- pnorm(.rd.z, lower.tail = FALSE)
+    .rd <- c("Risk Difference", sprintf(c(.rd, .rd.confint, .rd.p),
+                                        fmt = paste0("%#.", rnd, "f")))
+
+
+
+    ## calculate attributable or prevented fraction
+    ## STATA 14 MANUAL, page 554
+    ## Unstratified cumulative incidence data (cs and csi)
+    if (.rr >= 1) {
+        .afe <- (.rr - 1) / .rr
+        .afe_confint <- (.rr.confint - 1) / .rr.confint
+        .afp <- .afe * .a / .n1
+        # .afp <- ((.a + .c) / .n) - (.c / .n0)
+
+        .afe <- c("Attr. Frac. Exp",
+                  sprintf(c(.afe, .afe_confint), fmt = paste0('%#.', rnd, 'f')),
+                  "")
+        .afp <- c("Attr. Frac. Pop",
+                  sprintf(.afp, fmt = paste0('%#.', rnd, 'f')),
+                  "", "", "")
+    } else {
+        .afe <- 1 - .rr
+        .afe_confint <- 1 - .rr.confint
+        .afp <- .afe * ( (.a + .c) / .n)
+        .afe <- c("Prev. Frac. Exp",
+                  sprintf(c(.afe, .afe_confint[2], .afe_confint[1]),
+                          fmt = paste0('%#.', rnd, 'f')),
+                  "")
+        .afp <- c("Prev. Frac. Pop",
+                  sprintf(.afp, fmt = paste0('%#.', rnd, 'f')),
+                  "", "", "")
+    }
+
+    ## combine all in one dataframe
+    .df <- data.frame(row.names(.tblf), .tblf)
+    ## get other estimates
+    .est <- data.frame(rbind(.rr_, .or, .rd, .afe, .afp))
+    names(.est) <- names(.df) <- c(exp, colnames(.tblf))
+
+    ## combine into final dataframe
+    .df <- rbind(.df,
+                 c("Measure", "Estimate", "[95% Conf.", "Interval]", "Pr>chi2"),
+                 .est)
+    .df <- formatdf(.df, 2, 2)
+    .df <- rbind(.df[1:5, ], .df[2, ], .df[6, ], .df[2, ],
+                 .df[7:11, ], .df[2, ])
+    row.names(.df) <- NULL
+
+    return(.df)
+}
+
+
+
+
+# INCIDENCE RATES ---------------------------------------------------------
+
+#' @title Calculate Incidence Rates from time-to-event data
+#'
+#' @description
+#' \code{strate()} calculates incidence rates and Corresponding 95\% CI.
+#'
+#' @param data Dataset
+#' @param time person-time variable
+#' @param var outcome variable: preferably 1 for event, 0 for censored
+#' @param ... variables for stratified analysis
+#' @param fail a value or values to specify failure event
+#' @param per units to be used in reported rates
+#' @param digits Rounding of numbers
+#'
+#' @details
+#' Rates of event occurrences, known as incidence rates are outcome measures in
+#' longitudinal studies. In most longitudinal studies, follow-up times vary due
+#' to logistic reasons, different periods of recruitment, delay enrollment into
+#' the study, lost-to-follow-up, immigration or emigration and death.
+#'
+#' \strong{Follow-up time in longitudinal studies}
+#'
+#' Period of observation (called as follow-up time) starts when individuals join
+#' the study and ends when they either have an outcome of interest, are lost-to-
+#' follow-up or the follow-up period ends, whichever happens first. This period is
+#' called \strong{person-year-at-risk}. This is denoted by \emph{PY} in \code{strate}
+#' function's output and numer of event by \emph{D}.
+#'
+#' \strong{Rate}
+#'
+#' is calcluated using the following formula:
+#' \deqn{\lambda = D / PY}
+#'
+#' \strong{Confidence interval of rate}
+#'
+#' is derived using the following formula:
+#'
+#' \deqn{95\% CI (rate) = rate x Error Factor}
+#' \deqn{Error Factor (rate) = exp(1.96 / \sqrt{D})}
+#'
+#'
+#' \code{plot}, if \code{TRUE}, produces a graph of the rates against
+#' the numerical code used for categories of \code{by}.
+#'
+#'
+#' @references
+#'
+#' Betty R. Kirkwood, Jonathan A.C. Sterne (2006, ISBN:978–0–86542–871–3)
+#'
+#' @import stats
+#'
+#' @author
+#'
+#' Email: \email{dr.myominnoo@@gmail.com}
+#'
+#' Website: \url{https://myominnoo.github.io/}
+#'
+#' @examples
+#'
+#' \dontrun{
+#'
+#' ## Using the diet data (Clayton and Hills 1993) described in STATA manual
+#' import diet data: require haven package to read dta format.
+#' magrittr package for piping operation
+#' diet <- haven::read_dta("https://www.stata-press.com/data/r16/diet.dta")
+#'
+#' diet <- generate(diet, time, (dox - doe) / 365.25)
+#' diet <- replace(diet, time, as.numeric(time))
+#' diet <- generate(diet, age, as.numeric(doe - dob) / 365.25)
+#' diet <- egen(diet, age, c(41, 51, 61, 71), new_var = ageband)
+#' diet <- egen(diet, month, c(3, 6, 8), new_var = monthgrp)
+#'
+#' ## calculate overall rates and 95% Confidence intervals
+#' strate(diet, time, fail, fail = c(1, 3, 13))
+#'
+#' ## per 100 unit
+#' strate(diet, time, fail, fail = c(1, 3, 13), per = 100)
+#'
+#' ## calculate Stratified rates and 95% Confidence Intervals
+#' strate(diet, time, fail, job, fail = c(1, 3, 13))
+#' strate(diet, time, fail, job, ageband, monthgrp, fail = c(1, 3, 13))
+#'
+#' ## per 100 unit
+#' strate(diet, time, fail, job, ageband, monthgrp, fail = c(1, 3, 13), per = 100)
+#' }
+#'
+#' @export
+strate <- function(data, time, var, ... , fail = NULL, per = 1, digits = 5)
+{
+    ## match call arguments
+    .args <- as.list(match.call())
+    ## get names of dataset and headings
+    .data_name <- deparse(substitute(data))
+    .vars_name <- names(data)
+    time <- .args$time
+    var <- .args$var
+
+    ## if input is not a data.frame, stop
+    if (!is.data.frame(data)) {
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
+    }
+
+    ## get variable names within three dots to search for duplicates
+    .vars <- enquotes(.args, c("data", "time", "var", "fail",
+                               "per", "digits"))
+    ## check colon, and check data types if the whole dataset
+    .vars <- checkEnquotes(data, .vars)
+    ## check variables in the dataset
+    sapply(c(time, var, .vars), function(z) {
+        if (!any(as.character(z) %in% .vars_name)) {
+            stop(paste0("`", z, "` not found."),
+                 call. = FALSE)
+        }
+    })
+
+    ## get individual data
+    .time <- data[[time]]
+    .var <- data[[var]]
+    ## check failure value
+    .fail_lvl <- unique(.var)
+    ## if failure value is not specified, the first value is used
+    if (is.null(fail)) {
+        fail <- .fail_lvl[1]
+    }
+    ## check failure values are correct
+    sapply(fail, function(z) {
+        if (!any(z %in% .fail_lvl)) {
+            stop(paste0("Failure value `", z, "` not found"),
+                 call. = FALSE)
+        }
+    })
+
+    ## if no variable, then overall strate is calculated
+    if (length(.vars) == 0) {
+        .t <- calcRate(.time, .var, fail, per, digits)
+        .df <- cbind(var = as.character(var), .t)
+        ## change headings and add dash lines
+        names(.df) <- c("Variable", "Failure", "Person-Years", "Inc. Rate",
+                        "[95% Conf.", "Interval]")
+        .df <- formatdf(.df, 2, 2)
+    } else {
+        ## calculate stratified rates
+        .df <- do.call(rbind,
+                       lapply(.vars, function(z) {
+                           .by <- data[[z]]
+                           .t <- calcSRate(.time, .var, .by, fail, per, digits)
+                           cbind(var = c(z, rep("", nrow(.t) - 1)), .t)
+                       }))
+
+        ## change headings and add dash lines
+        names(.df) <- c("Variable", "Category", "Failure",
+                        "Person-Years", "Inc. Rate",
+                        "[95% Conf.", "Interval]")
+        .df_raw <- .df
+        ## Add horizontal and vertical lines for visual appealing
+        hpos <- as.numeric(row.names(.df)[!(.df$Variable == "")])[-1]
+        hpos <- hpos + 0:(length(hpos) - 1)
+        sapply(hpos, function(z) {
+            .df <<- addHLines(.df, z)
+        })
+        .df <- formatdf(.df, 2, 3)
+    }
+
+
+    ## Display information
+    cat(paste0("  Estimated Incidence Rates",
+               " and 95% Confidence Intervals\n"))
+    cat(paste0("  (", length(.var), " records included in the analysis)\n"))
+    print.data.frame(.df, row.names = FALSE, max = 1e9)
+    sapply(c(var, time, .vars), getLabel, data)
+
+    invisible(.df)
+}
+
+calcSRate <- function(time, var, by, fail, per, rnd)
+{
+    ## get levels of var, if NA, remove
+    .lvl <- unique(by)
+    .lvl <- .lvl[!is.na(.lvl)]
+
+    ## calculate rates and statistics
+    .df <- do.call(
+        rbind,
+        lapply(.lvl, function(z) {
+            time <- time[by == z]
+            var <- var[by == z]
+            calcRate(time, var, fail, per, rnd)
+        })
+    )
+
+    ## add levels to df
+    .df <- cbind(lvl = .lvl, .df)
+    .df <- data.frame(.df)
+
+    return(.df)
+}
+calcRate <- function(time, var, fail, per, rnd)
+{
+    ## calculate statistics
+    .d <- sum(var %in% fail, na.rm = TRUE)
+    .py <- sum(time, na.rm = TRUE)
+    .ir <- .d / .py
+    .ef <- exp(1.96 * (1/ sqrt(.d)))
+    .ir.confint <- c(.ir / .ef, .ir * .ef)
+    .df <- sprintf(c(.py / per, c(.ir, .ir.confint) * per),
+                   fmt = paste0("%#.", rnd, "f" ))
+
+    .df <- data.frame(rbind(c(.d, .df)))
+    names(.df) <- c("D", "Y", "R", "LL", "UL")
+
+    return(.df)
+}
+
+
+
+
+
 # GRAPHS ------------------------------------------------------------------
 
 #' @title Histograms with overlay normal curve
@@ -3257,7 +4485,7 @@ clear <- function() {
 
 
 
-#' @title Create a text file of your output
+#' @title Create a copy of your output in a text format
 #'
 #' @description
 #' \code{ilog()} creates a text copy of your output.
@@ -3549,3 +4777,44 @@ checkEnquotes <- function(.data, .vars)
     .vars <- unique(.vars)
     return(.vars)
 }
+
+## helpers for 2x2 tables
+rowColOrder <- function (.tbl, .exp.value = NULL, .case.value = NULL)
+{
+    .tbl.row <- rownames(.tbl)
+    .tbl.col <- colnames(.tbl)
+    .tbl.dim <- names(dimnames(.tbl))
+    if (!is.null(.exp.value)) {
+        .tbl <- rbind(.tbl[.tbl.row == .exp.value, ], .tbl[.tbl.row !=
+                                                               .exp.value, ])
+        row.names(.tbl) <- c(.tbl.row[.tbl.row == .exp.value],
+                             .tbl.row[.tbl.row != .exp.value])
+    }
+    if (!is.null(.case.value)) {
+        .tbl <- cbind(.tbl[, .tbl.col == .case.value], .tbl[,
+                                                            .tbl.col != .case.value])
+        colnames(.tbl) <- c(.tbl.col[.tbl.col == .case.value],
+                            .tbl.col[.tbl.col != .case.value])
+    }
+    names(dimnames(.tbl)) <- .tbl.dim
+    return(.tbl)
+}
+
+splitTables <- function (.tbl, .exp.value = NULL)
+{
+    .row.names <- rownames(.tbl)
+    .exp.value <- ifelse(is.null(.exp.value), .row.names[1],
+                         .exp.value)
+    .tbl <- lapply(.row.names, function(z) {
+        if (z != .exp.value) {
+            .tbl.new <- rbind(.tbl[.exp.value, ], .tbl[z, ])
+            rownames(.tbl.new) <-
+                c(.row.names[.row.names == .exp.value],
+                  .row.names[.row.names == z])
+            .tbl.new
+        }
+    })
+    .tbl <- .tbl[lapply(.tbl, length) > 0]
+    return(.tbl)
+}
+

@@ -2,7 +2,7 @@
 % Please edit documentation in R/mStats.R
 \name{egen}
 \alias{egen}
-\title{Categorizing a numerical variable}
+\title{Categorize a numerical variable}
 \usage{
 egen(data, var, cut = NULL, lbl = NULL, new_var = NULL)
 }
