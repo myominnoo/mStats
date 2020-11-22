@@ -1796,6 +1796,7 @@ tab <- function(data, ... , by = NULL, row.pct = TRUE, na.rm = FALSE, digits = 1
     .vars_lbl <- sapply(c(by, .vars), getLabel, data)
     .vars_lbl <- data.frame(vars = c(as.character(by), .vars),
                             lbl = .vars_lbl)
+    .vars_lbl$lbl[is.na(.vars_lbl$lbl)] <- .vars_lbl$vars[is.na(.vars_lbl$lbl)]
 
     ## create list with class for tabulation
     .list <- list(tab = .df,
