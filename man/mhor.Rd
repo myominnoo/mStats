@@ -44,7 +44,7 @@ when the exposed and case values are not at the right place in 2x2 tables.
 Reference row value can be specified in \code{exp_value}.
 
 Attributable fractions, \code{Attr. Frac. Exp} and  \code{Attr. Frac. Pop}
-among exposed and population are calculated when OR is greated than or
+among exposed and population are calculated when OR is greater than or
 equal to 1.
 If OR is less than 1, preventable fractions,  \code{Prev. Frac. Exp}
 and  \code{Attr. Frac. Pop} are calculated.

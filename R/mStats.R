@@ -1321,7 +1321,7 @@ day <- function(x)
 #'
 #' \code{Labels for variables}
 #'
-#' If names or lavels of variables are not specified, the followings are
+#' If names or levels of variables are not specified, the followings are
 #' applied.
 #'
 #' \enumerate{
@@ -1671,7 +1671,7 @@ lag.data.frame <- function(x, var, by = NULL, new_var = NULL,
 #' `Chi-squared` and Fisher's `Exact` tests are also shown, regardless
 #' of displaying percentages.
 #'
-#' \strong{Tabulatng the whole dataset}
+#' \strong{Tabulating the whole dataset}
 #'
 #' This is helpful when the dataset has been processed and finalized.
 #' The final dataset can be fed into the function without
@@ -1983,7 +1983,7 @@ tab2 <- function(x, data, by, row.pct = TRUE, na.rm = FALSE, digits = 1)
 #' and Wilcoxon, ANOVA and Kruskal-Wallis tests are calculated and their
 #' associated p-values are displayed.
 #'
-#' \strong{Tabulatng the whole dataset}
+#' \strong{Tabulating the whole dataset}
 #'
 #' This is helpful when the dataset has been processed and finalized.
 #' The final dataset can be fed into the function without
@@ -2243,7 +2243,7 @@ summ2 <- function(data, .vars, .by, na.rm = FALSE, digits = 1)
 #' @details
 #'
 #' \code{regress} is based on \code{\link{lm}}. All statistics presented
-#' in the function's output are derivates of \code{\link{lm}},
+#' in the function's output are derivatives of \code{\link{lm}},
 #' except AIC value which is obtained from \code{\link{AIC}}.
 #' It uses `lm()` function to run the model.
 #'
@@ -2273,7 +2273,7 @@ summ2 <- function(data, .vars, .by, na.rm = FALSE, digits = 1)
 #' and consistent,
 #' but not efficient. The estimated OLS standard errors
 #' will be biased and cannot be solved with a larger sample size.
-#' To remedy this, robust standard erros can be used to adjusted
+#' To remedy this, robust standard errors can be used to adjusted
 #' standard errors.
 #'
 #' The `regress` uses sandwich estimator to estimate Huber-White's standard
@@ -2763,7 +2763,7 @@ ladder <- function(data, var)
 ##'
 ##' W. Krämer & H. Sonnberger (1986),
 ##'       \emph{The Linear Regression Model under Test}.
-##'       Heidelberg: Physica
+##'       Heidelberg: Physics
 ##'
 ##'
 ##' @examples
@@ -2898,7 +2898,7 @@ linkTest <- function(model, vce = FALSE, digits = 5)
 #' @details
 #'
 #' \code{logit()} is based on \code{\link{glm}} with `binomial` family.
-#' All statistics presented in the function's output are derivates of
+#' All statistics presented in the function's output are derivatives of
 #' \code{\link{glm}},
 #' except AIC value which is obtained from \code{\link{AIC}}.
 #'
@@ -3117,7 +3117,7 @@ calcLogit <- function(model, digits)
 #'
 #'
 #' Attributable fractions, \code{Attr. Frac. Exp} and  \code{Attr. Frac. Pop}
-#' among exposed and population are calculated when OR is greated than or
+#' among exposed and population are calculated when OR is greater than or
 #' equal to 1.
 #' If OR is less than 1, preventable fractions,  \code{Prev. Frac. Exp}
 #' and  \code{Attr. Frac. Pop} are calculated.
@@ -3917,11 +3917,11 @@ calcRR <- function(.tbl, exp, rnd)
 #' the study and ends when they either have an outcome of interest, are lost-to-
 #' follow-up or the follow-up period ends, whichever happens first. This period is
 #' called \strong{person-year-at-risk}. This is denoted by \emph{PY} in \code{strate}
-#' function's output and numer of event by \emph{D}.
+#' function's output and number of event by \emph{D}.
 #'
 #' \strong{Rate}
 #'
-#' is calcluated using the following formula:
+#' is calculated using the following formula:
 #' \deqn{\lambda = D / PY}
 #'
 #' \strong{Confidence interval of rate}
@@ -4507,7 +4507,7 @@ clear <- function() {
 #'
 #' However, clearing objects from the workspace along with hidden objects
 #' removes \code{ilog}'s \code{.logenv} environment, hence throwing an error
-#' when it's attemptted to be closed. An error message
+#' when it's attempted to be closed. An error message
 #' \code{Error in (function (cmd, res, s, vis)  : object '.logenv' not found}
 #' will be thrown.
 #'

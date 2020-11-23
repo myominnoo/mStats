@@ -36,11 +36,11 @@ Period of observation (called as follow-up time) starts when individuals join
 the study and ends when they either have an outcome of interest, are lost-to-
 follow-up or the follow-up period ends, whichever happens first. This period is
 called \strong{person-year-at-risk}. This is denoted by \emph{PY} in \code{strate}
-function's output and numer of event by \emph{D}.
+function's output and number of event by \emph{D}.
 
 \strong{Rate}
 
-is calcluated using the following formula:
+is calculated using the following formula:
 \deqn{\lambda = D / PY}
 
 \strong{Confidence interval of rate}
