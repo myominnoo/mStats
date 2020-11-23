@@ -68,7 +68,7 @@ relevant statistical tests of association such as Student's t-test
 and Wilcoxon, ANOVA and Kruskal-Wallis tests are calculated and their
 associated p-values are displayed.
 
-\strong{Tabulatng the whole dataset}
+\strong{Tabulating the whole dataset}
 
 This is helpful when the dataset has been processed and finalized.
 The final dataset can be fed into the function without

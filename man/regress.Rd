@@ -83,7 +83,7 @@ in \code{lmtest} package.
 }
 \details{
 \code{regress} is based on \code{\link{lm}}. All statistics presented
-in the function's output are derivates of \code{\link{lm}},
+in the function's output are derivatives of \code{\link{lm}},
 except AIC value which is obtained from \code{\link{AIC}}.
 It uses \code{lm()} function to run the model.
 
@@ -112,7 +112,7 @@ the ordinary least square (OLS) estimator will remain unbiased
 and consistent,
 but not efficient. The estimated OLS standard errors
 will be biased and cannot be solved with a larger sample size.
-To remedy this, robust standard erros can be used to adjusted
+To remedy this, robust standard errors can be used to adjusted
 standard errors.
 
 The \code{regress} uses sandwich estimator to estimate Huber-White's standard
@@ -206,7 +206,7 @@ Heteroscedasticity. \emph{Journal of Econometrics}
 
 W. Krämer & H. Sonnberger (1986),
 \emph{The Linear Regression Model under Test}.
-Heidelberg: Physica
+Heidelberg: Physics
 }
 \author{
 Email: \email{dr.myominnoo@gmail.com}

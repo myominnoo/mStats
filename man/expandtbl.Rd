@@ -70,7 +70,7 @@ expandtbl(
 
 \code{Labels for variables}
 
-If names or lavels of variables are not specified, the followings are
+If names or levels of variables are not specified, the followings are
 applied.
 
 \enumerate{

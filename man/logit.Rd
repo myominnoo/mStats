@@ -29,7 +29,7 @@ coefficients or odds ratios (\code{OR}) and 95\% Confident Intervals.
 }
 \details{
 \code{logit()} is based on \code{\link{glm}} with \code{binomial} family.
-All statistics presented in the function's output are derivates of
+All statistics presented in the function's output are derivatives of
 \code{\link{glm}},
 except AIC value which is obtained from \code{\link{AIC}}.
 

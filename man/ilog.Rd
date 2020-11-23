@@ -34,7 +34,7 @@ specified, then \code{ilog} will use the name \code{<unnamed>.txt}.
 
 However, clearing objects from the workspace along with hidden objects
 removes \code{ilog}'s \code{.logenv} environment, hence throwing an error
-when it's attemptted to be closed. An error message
+when it's attempted to be closed. An error message
 \code{Error in (function (cmd, res, s, vis)  : object '.logenv' not found}
 will be thrown.
 

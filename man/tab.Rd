@@ -49,7 +49,7 @@ is set to \code{NULL}, it shows a count table without percentages. If set to
 \code{Chi-squared} and Fisher's \code{Exact} tests are also shown, regardless
 of displaying percentages.
 
-\strong{Tabulatng the whole dataset}
+\strong{Tabulating the whole dataset}
 
 This is helpful when the dataset has been processed and finalized.
 The final dataset can be fed into the function without
