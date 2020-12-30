@@ -4,22 +4,38 @@
 \alias{summary}
 \alias{summary.tab}
 \alias{summary.summ}
+\alias{summary.logit}
+\alias{summary.regress}
 \title{Table Format for Publication}
 \usage{
 \method{summary}{tab}(object, ...)
 
 \method{summary}{summ}(object, ...)
+
+\method{summary}{logit}(object, ...)
+
+\method{summary}{regress}(object, ..., get = c("ci", "se"))
 }
 \arguments{
 \item{object}{an object for which a summary is desired.}
 
 \item{...}{additional arguments affecting the summary produced.}
+
+\item{get}{Get 95\% CI (\code{ci}) or Standard Error (\code{se})}
 }
 \description{
 \code{summary()} organizes the output and print
 a favorable format
 to the console, which is used with rmarkdown package
 to produce publication-ready tables.
+}
+\details{
+\code{summary()} supports the following functions of \code{mStats}.
+
+\code{tab()}
+\code{summ()}
+\code{logit()}
+\code{regress()}
 }
 \examples{
 

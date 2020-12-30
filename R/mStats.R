@@ -1939,6 +1939,7 @@ tab2 <- function(x, data, by, row.pct = TRUE, na.rm = FALSE, digits = 1)
 #' for all the variables in the dataset.
 #'
 #' @param data data.frame
+#' @param x continuous variable
 #' @param ... variable name or names of multiple variables
 #' @param by variable name for bivariate analysis
 #' @param na.rm logical: if `TRUE`, it removes observations with missing values.
@@ -2032,6 +2033,9 @@ tab2 <- function(x, data, by, row.pct = TRUE, na.rm = FALSE, digits = 1)
 #' ## Detailed summary statistics
 #' summ(iris, detail = TRUE)
 #' summ(iris, by = Species, detail = TRUE)
+#'
+#' ## grouped summary of age by education, parity and induced
+#' group_summ(infert, age, education, parity, induced)
 #' }
 #'
 #' @export
@@ -2088,6 +2092,7 @@ summ <- function(data, ... , by = NULL, na.rm = FALSE, digits = 1, detail = FALS
             .df[.seq, ] <- .df[2, ]
         }
         .txt <- paste0("  Summary")
+        .type <- ifelse(detail, "summ1d", "summ1")
     } else {
         if (!(as.character(by) %in% names(data))) {
             stop(paste0("`", by, "` not found."),
@@ -2121,6 +2126,7 @@ summ <- function(data, ... , by = NULL, na.rm = FALSE, digits = 1, detail = FALS
         })
         .df <- formatdf(.df, 2, 3)
         .txt <- paste0("  Summary by '", by, "'")
+        .type <- ifelse(detail, "summ2d", "summ2")
     }
 
     ## Display information
@@ -2136,9 +2142,7 @@ summ <- function(data, ... , by = NULL, na.rm = FALSE, digits = 1, detail = FALS
     .list <- list(summ = .df,
                   summ_raw = .df_raw,
                   lbl = .vars_lbl,
-                  type = ifelse(detail, "summ2d",
-                                ifelse(length(by) == 0, "summ1",
-                                       "summ2")))
+                  type = .type)
     class(.list) <- "summ"
     invisible(.list)
 }
@@ -2218,6 +2222,87 @@ summ2 <- function(data, .vars, .by, na.rm = FALSE, digits = 1)
                       .sub[, 2:(ncol(.sub) - 1)])
         .sub
     })
+}
+
+
+
+##' @rdname summ
+##'
+##' @import utils
+##'
+##' @export
+group_summ <- function(data, x, ... , na.rm = FALSE, digits = 1, detail = FALSE)
+{
+
+    ## if data is not a data.frame, stop
+    .data_name <- deparse(substitute(data))
+    if (!is.data.frame(data)) {
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
+    }
+
+    ## match call arguments
+    .args <- as.list(match.call())
+    x <- .args$x
+
+    ## get variable names
+    .vars <- enquotes(.args, c("data", "x", "na.rm", "digits", "detail"))
+    .vars <- checkEnquotes(data, .vars)
+    if (length(.vars) == 0) {
+        stop(paste0("Strata variables must be specified in '...'"),
+             call. = FALSE)
+    }
+
+    df <- data
+    df$x <- data[[x]]
+    df <- do.call(
+        rbind,
+        lapply(.vars, function(z) {
+            if (!(z %in% names(data))) {
+                stop(paste0("'", z, "' not found."),
+                     call. = FALSE)
+            }
+            df$z <- data[[z]]
+            t <- capture.output(
+                d <- summ(df, x, by = z)$summ_raw
+            )
+            d$Variable[1] <- z
+            d[-nrow(d), ]
+            d[2, 13:14] <- d[1, 13:14]
+            d[1, 13:14] <- names(d)[13:14]
+            names(d)[13:14] <- c("p-value*", "p-value**")
+            names(d)[1] <- "Strata"
+            d
+        })
+    )
+
+    if (!detail) {
+        .df <- df[, -c(7:11)]
+    } else {
+        .df <- df
+    }
+    .df <- formatdf(.df, 2, 3)
+    names(df)[1] <- "Variable"
+
+    ## Display information
+    cat(paste0("  Grouped Summary : '", x, "'", "\n"))
+    print.data.frame(.df, row.names = FALSE, max = 1e9)
+    cat("* parametric test: t-test or ANOVA",
+        "\n** non-parametric test: Wilcoxon or Kruskal Wallis\n")
+
+    ## get vars lbl
+    .vars_lbl <- sapply(c(x, .vars), getLabel, data)
+    .vars_lbl <- data.frame(vars = c(as.character(x), .vars),
+                            lbl = .vars_lbl)
+
+    ## create list with class for summary
+    .list <- list(summ = .df,
+                  summ_raw = df,
+                  lbl = .vars_lbl,
+                  type = ifelse(detail, "summ2d", "summ2"))
+
+    class(.list) <- "summ"
+    invisible(.list)
 }
 
 
@@ -2369,7 +2454,7 @@ regress <- function(model, vce = FALSE, digits = 5)
             sprintf(.coef$e, fmt = paste0('%#.', digits, 'f')),
             sprintf(.coef$se, fmt = paste0('%#.', digits, 'f')),
             sprintf(.coef$t, fmt = paste0('%#.', 2, 'f')),
-            sprintf(.coef$p, fmt = paste0('%#.', digits, 'f')),
+            sprintf(.coef$p, fmt = paste0('%#.', 4, 'f')),
             sprintf(.coef$e - (1.96 * .coef$se),
                     fmt = paste0('%#.', digits, 'f')),
             sprintf(.coef$e + (1.96 * .coef$se),
@@ -2998,7 +3083,7 @@ logit <- function(model, or = TRUE, digits = 5)
             sprintf(.coef$e, fmt = paste0('%#.', digits, 'f')),
             sprintf(.coef$se, fmt = paste0('%#.', digits, 'f')),
             sprintf(.coef$z, fmt = paste0('%#.', 2, 'f')),
-            sprintf(.coef$p, fmt = paste0('%#.', digits, 'f')),
+            sprintf(.coef$p, fmt = paste0('%#.', 4, 'f')),
             sprintf(.coef$ll, fmt = paste0('%#.', digits, 'f')),
             sprintf(.coef$ul,
                     fmt = paste0('%#.', digits, 'f'))
@@ -4343,6 +4428,15 @@ scatterPlotMatrix <- function(data, main = NULL, pch = 21, ... )
 ##' to the console, which is used with rmarkdown package
 ##' to produce publication-ready tables.
 ##'
+##' @details
+##'
+##' \code{summary()} supports the following functions of `mStats`.
+##'
+##' \code{tab()}
+##' \code{summ()}
+##' \code{logit()}
+##' \code{regress()}
+##'
 ##'
 ##' @param object an object for which a summary is desired.
 ##' @param ... additional arguments affecting the summary produced.
@@ -4384,31 +4478,42 @@ NULL
 summary.tab <- function(object, ... )
 {
     x <- object$tab_raw
+    lbl <- object$lbl
+    lbl$lbl[is.na(lbl$lbl)] <- lbl$var[is.na(lbl$lbl)]
+
     if (object$type == "tab1") {
         x$Freq. <- paste0(x$Freq., " (", x$Percent, ")")
         names(x)[3] <- "n (%)"
         x <- x[, 1:3]
 
         ## adding labels
-        lbl <- object$lbl
-        lbl$lbl[is.na(lbl$lbl)] <- lbl$var[is.na(lbl$lbl)]
         x[x$Variable != "", "Variable"] <- lbl$lbl
     } else if (object$type == "tab2p") {
-        y <- x[, 3:(ncol(x) - 2)]
-        r <- seq(1, ncol(y), 2)
-        p <- seq(2, ncol(y), 2)
+        y <- x[, 3:(ncol(x)) - 2]
+        r <- seq(3, ncol(y), 2)
+        p <- seq(4, ncol(y), 2)
         z <- do.call(
             data.frame,
             lapply(1:length(r), function(z) {
                 paste0(y[, r[z]], " (", y[, p[z]], ")")
             })
         )
-        names(z) <- paste0(names(x[, 3:(ncol(x) - 2)])[r], " (%)")
+        z <- rbind(z[0, ], cbind(z[, ncol(z)], z[, -ncol(z)]))
+        names(z) <- paste0(names(x)[c(r[length(r)], r[-length(r)])],
+                           "\n n (%)")
         x <- cbind(x[, 1:2], z, x[, (ncol(x) - 1):ncol(x)])
+        ## adding labels
+        x[x$Variable != "", "Variable"] <- lbl$lbl[-1]
     }
 
+    x_total <- x[grepl("Total", x$Category), ]
+    x_total[1, 1:2] <- c("Total", "")
+    x <- x[!grepl("Total", x$Category), ]
+    x <- rbind(x[0, ], x_total[1, ], x)
+    row.names(x) <- NULL
     return(x)
 }
+
 
 ##' @rdname summary
 ##'
@@ -4416,7 +4521,7 @@ summary.tab <- function(object, ... )
 summary.summ <- function(object, ... )
 {
     x <- object$summ_raw
-    if (object$type == "summ1") {
+    if (object$type %in% c("summ1d", "summ1")) {
         x <- data.frame(
             x$Variable,
             paste0(x$Obs, " (", x$`<NA>`, ")"),
@@ -4454,6 +4559,119 @@ summary.summ <- function(object, ... )
     }
     return(x)
 }
+
+
+##' @rdname summary
+##'
+##' @export
+summary.logit <- function(object, ... )
+{
+    ## get regression model
+    reg <- object$reg
+    reg <- reg[, c(2, 4, 8, 9, 7)]
+    names(reg) <- reg[1, ]
+    reg <- reg[-c(1, 2, nrow(reg), nrow(reg)-1), ]
+    ## process coefficients and 95% CI
+    reg <- data.frame(reg[, 1], reg[, 1],
+                      paste0(reg[, 2], " (", reg[, 3], " - ",
+                             reg[, 4], ")"), reg[, 5])
+    names(reg) <- c("Variable", "Category", "aOR (95% CI)", "p-value")
+
+    ## get variable types and add reference rows to the results
+    data <- object$data
+    vars <- getVarsByDataType(data)
+    vars <- vars[vars %in% all.vars(formula(object$model))]
+
+    lapply(vars, function(z) {
+        var <- data[[z]]
+        if (is.logical(var)) var <- as.character(var)
+        lbl <- as.character(unique(var))
+        lbl <- lbl[!is.na(lbl)]
+        lbl <- sort(lbl)
+        lvl <- paste0(z, lbl)
+        df <- data.frame(Variable = c(z, rep("", length(lvl)-1)),
+                         lvl = lvl,
+                         Category = lbl)
+        chk <- reg$Category %in% lvl
+        df <- merge.data.frame(df, reg[, -1], by.x = "lvl", by.y ="Category",
+                               all.x = TRUE)[, -1]
+        df[1, 3:4] <- c("Reference", "")
+        reg[which(chk), ] <<- df[lvl %in% reg$Category, ]
+
+        ## add reference row
+        sn <- 1:length(chk)
+        sn <- sn[chk][1]
+        reg <<- rbind(reg[1:sn-1, ], df[1, ], reg[sn:nrow(reg), ])
+    })
+
+    ## replace variable names with labels
+    reg$Variable[reg$Variable != ""] <- object$lbl[-1, 2]
+    row.names(reg) <- NULL
+    return(reg)
+}
+
+
+##' @rdname summary
+##'
+##' @param get Get 95% CI (`ci`) or Standard Error (`se`)
+##'
+##' @export
+summary.regress <- function(object, ... , get = c("ci", "se"))
+{
+    ## get regression model
+    reg <- object$reg
+    reg <- reg[, c(2, 4, 5, 8, 9, 7)]
+    names(reg) <- reg[1, ]
+    reg <- reg[-c(1, 2, nrow(reg), nrow(reg)-1), ]
+    ## process coefficients and 95% CI
+    reg <- data.frame(
+        reg[, 1], reg[, 1],
+        paste0(
+            reg[, 2], " (",
+            ## get ci or se
+            ifelse(get[1] == "ci",
+                   paste0(reg[, 4], " - ", reg[, 5]),
+                   reg[, 3]),
+            ")"
+        ), reg[, 6]
+    )
+    names(reg) <- c("Variable", "Category",
+                    ifelse(get[1] == "ci", "Coef. (95% CI)", "Coef. (SE)"),
+                    "p-value")
+
+    ## get variable types and add reference rows to the results
+    data <- object$data
+    vars <- getVarsByDataType(data)
+    vars <- vars[vars %in% all.vars(formula(object$model))]
+
+    lapply(vars, function(z) {
+        var <- data[[z]]
+        if (is.logical(var)) var <- as.character(var)
+        lbl <- as.character(unique(var))
+        lbl <- lbl[!is.na(lbl)]
+        lbl <- sort(lbl)
+        lvl <- paste0(z, lbl)
+        df <- data.frame(Variable = c(z, rep("", length(lvl)-1)),
+                         lvl = lvl,
+                         Category = lbl)
+        chk <- reg$Category %in% lvl
+        df <- merge.data.frame(df, reg[, -1], by.x = "lvl", by.y ="Category",
+                               all.x = TRUE)[, -1]
+        df[1, 3:4] <- c("Reference", "")
+        reg[which(chk), ] <<- df[lvl %in% reg$Category, ]
+
+        ## add reference row
+        sn <- 1:length(chk)
+        sn <- sn[chk][1]
+        reg <<- rbind(reg[1:sn-1, ], df[1, ], reg[sn:nrow(reg), ])
+    })
+
+    ## replace variable names with labels
+    reg$Variable[reg$Variable != ""] <- object$lbl[-1, 2]
+    row.names(reg) <- NULL
+    return(reg)
+}
+
 
 
 
@@ -4816,5 +5034,22 @@ splitTables <- function (.tbl, .exp.value = NULL)
     })
     .tbl <- .tbl[lapply(.tbl, length) > 0]
     return(.tbl)
+}
+
+
+getVarsByDataType <- function(data, type = "categorical")
+{
+    .vars_type <- sapply(data, function(z) {
+        .class <- class(unlist(z))[1]
+        if (.class == "haven_labelled") {
+            .class <- typeof(unlist(z))[1]
+        }
+        .class
+    })
+    if (type %in% c("cat", "categorical")) {
+        .types <- c("factor", "character", "orderedfactor", "logical")
+    }
+    .vars <- names(data)[.vars_type %in% .types]
+    .vars
 }
 

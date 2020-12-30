@@ -2,9 +2,12 @@
 % Please edit documentation in R/mStats.R
 \name{summ}
 \alias{summ}
+\alias{group_summ}
 \title{Summary statistics}
 \usage{
 summ(data, ..., by = NULL, na.rm = FALSE, digits = 1, detail = FALSE)
+
+group_summ(data, x, ..., na.rm = FALSE, digits = 1, detail = FALSE)
 }
 \arguments{
 \item{data}{data.frame}
@@ -20,6 +23,8 @@ summ(data, ..., by = NULL, na.rm = FALSE, digits = 1, detail = FALSE)
 \item{detail}{logical: if \code{TRUE}, it displays a full spectrum of
 summary statistics such as inter-quartile range, and p-value from normality
 test.}
+
+\item{x}{continuous variable}
 }
 \value{
 A list with \code{summ} class containing three sets of data.frame type:
@@ -102,6 +107,9 @@ summ(iris, by = Species)
 ## Detailed summary statistics
 summ(iris, detail = TRUE)
 summ(iris, by = Species, detail = TRUE)
+
+## grouped summary of age by education, parity and induced
+group_summ(infert, age, education, parity, induced)
 }
 
 }
