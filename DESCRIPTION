@@ -1,7 +1,7 @@
 Package: mStats
 Type: Package
 Title: Epidemiological Data Analysis
-Version: 3.4.0
+Version: 3.4.1
 Authors@R: 
     c(person(given = "Myo Minn",
              family = "Oo",

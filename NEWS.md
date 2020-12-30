@@ -1,6 +1,18 @@
 ---
 output: github_document
 ---
+## Changes in `mStats` version 3.4.1
+
+* `summary.summ`
+    - UPDATED: fixed the error thrown when simple `summ` without `by` is used with `detail` set to `TRUE`.
+
+* `summary.tab`
+    - UPDATED: removed `Total` row for each variable and put one `Total` row at the first row of the table under headings.
+    - UPDATED: `Total` column in cross-tabulation now comes first before stratification.
+
+* `summary.logit`
+    - NEW FUNCTION: generates ready-made tables from logistic regression model outputs. 
+
 
 ## Changes in `mStats` version 3.4.0
 
