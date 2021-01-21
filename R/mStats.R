@@ -660,7 +660,8 @@ egen <- function(data, var, cut = NULL, lbl = NULL, new_var = NULL)
         ## check if there are any decimal values
         .decimal <- grepl("\\.", x)
         if (any(.decimal)) {
-            .decimal <- strsplit(as.character(x[.decimal][1]), "\\.")[[1]][2]
+            .decimal <- strsplit(as.character(x[.decimal][1]),
+                                 "\\.")[[1]][2]
             .decimal <- nchar(.decimal)
         } else {
             .decimal <- 0
@@ -699,12 +700,74 @@ egen <- function(data, var, cut = NULL, lbl = NULL, new_var = NULL)
     ## Print notification
     .na <- is.na(.var)
     cat(paste0("  (", sum(!.na), " valid ",
-               ifelse(any(.na), paste0("& ", sum(.na), " missing "), ""),
+               ifelse(any(.na), paste0("& ", sum(.na),
+                                       " missing "), ""),
                "values generated)\n"))
 
     return(data)
 }
 
+
+
+
+#' @title Converting R data types
+#'
+#' @description
+#' \code{recast()} converts variables into specified data type
+#' \code{\link{typeof}}.
+#'
+#' @param data data.farme
+#' @param mode allows R data types from \code{\link{typeof}}
+#' @param ... variables
+#'
+#'
+#' @return
+#'
+#' data.frame
+#'
+#' @author
+#'
+#' Email: \email{dr.myominnoo@@gmail.com}
+#'
+#' Website: \url{https://myominnoo.github.io/}
+#'
+#' @examples
+#'
+#' recast(airquality, "character")
+#' recast(airquality, "character", Ozone, Solar.R, Wind)
+#'
+#' @export
+recast <- function(data, mode, ... )
+{
+    if (!is.data.frame(data)) {
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
+    }
+    ## match call arguments
+    .args <- as.list(match.call())
+    ## get variable names
+    vars <- enquotes(.args, c("data", "mode"))
+    vars <- checkEnquotes(data, vars)
+
+    if (length(vars) == 0) {
+        vars <- names(data)
+        txt <- paste0("  (converting all variables into ",
+                      mode, " type)\n")
+    } else {
+        txt <- paste0("  (converting ",
+                      paste0("'", vars, "'", collapse = ", "),
+                      " into ", mode, " type)\n")
+    }
+
+    lapply(vars, function(z) {
+        lbl <- attr(data[[z]], "label")
+        data[[z]] <<- as.vector(data[[z]], mode)
+        attr(data[[z]], "label") <<- lbl
+    })
+
+    cat(txt)
+    return(data)
+}
 
 
 #' @title Count from `n_` to `N_`

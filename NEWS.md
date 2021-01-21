@@ -13,6 +13,9 @@ output: github_document
 * `summary.logit`
     - NEW FUNCTION: generates ready-made tables from logistic regression model outputs. 
 
+* `recast`
+    - NEW FUNCTION: convert variables into different R data types based on `typeof`.
+
 
 ## Changes in `mStats` version 3.4.0
 
