@@ -32,6 +32,8 @@ It reports a description of the data with the following information.
 \code{Obs} = number of valid observations
 
 \code{NA} = number of observations with missing value \code{NA}
+
+\verb{NA\%} = percentage of observations with missing value \code{NA}
 }
 \note{
 For \code{haven_labelled} data.frame, data types are generated

@@ -16,6 +16,17 @@ output: github_document
 * `recast`
     - NEW FUNCTION: convert variables into different R data types based on `typeof`.
 
+* `recode` 
+    - UPDATED: now supports encoding multiple variables with several values.
+    
+* `group_summ` 
+    - UPDATED: formatted the output to be consistent with other summary functions
+    
+* `summary.summ` 
+    - UPDATED: added labels in the place of variable names
+    
+* `checkEnquotes` 
+    - UPDATED: stops the function and prints error message if variables are not found.
 
 ## Changes in `mStats` version 3.4.0
 

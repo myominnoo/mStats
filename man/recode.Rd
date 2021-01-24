@@ -4,12 +4,13 @@
 \alias{recode}
 \title{Recode a variable}
 \usage{
-recode(data, var, ...)
+recode(data, vars = list(), ...)
 }
 \arguments{
 \item{data}{data.frame}
 
-\item{var}{variable name}
+\item{vars}{one or more variables: if more than one,
+specify in a list.}
 
 \item{...}{specify in pattern: \verb{old value} / \verb{new value}.}
 }
@@ -47,7 +48,11 @@ tab(x, age)
 ## recode NA
 infert[4:20, "case"] <- NA
 x <- recode(infert, case, NA/"Missing value")
-tab(infert, case)
+tab(x, case)
+
+## recode multiple variables with multiple values
+x <- recode(infert, list(induced, case, spontaneous), 0/NA, 1/0)
+tab(x, induced, case, spontaneous)
 }
 
 }
