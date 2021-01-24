@@ -28,6 +28,8 @@
 #'
 #' `NA` = number of observations with missing value `NA`
 #'
+#' `NA%` = percentage of observations with missing value `NA`
+#'
 #' @note
 #'
 #' For `haven_labelled` data.frame, data types are generated
@@ -84,6 +86,8 @@ codebook <- function(data)
     })
     .obs <- sapply(data, function(z) length(z[!is.na(z)]))
     .na <- sapply(data, function(z) length(z[is.na(z)]))
+    .na_pct <- sprintf(.na / .obs_no * 100,
+                       fmt = paste0("%#.1f"))
 
     ## combine them into a data.frame
     .df <- data.frame(1:.vars_no,
@@ -91,10 +95,10 @@ codebook <- function(data)
                       .vars_label,
                       .vars_type,
                       .obs,
-                      .na)
+                      .na, .na_pct)
     ## change column names and reset row names
     names(.df) <- c("No", "Variable", "Label", "Type",
-                    "Obs", "<NA>")
+                    "Obs", "<NA>", "<NA>%")
     row.names(.df) <- NULL
     ## add horizontal and vertical lines
     .df <- formatdf(.df, 2, 3)
@@ -207,7 +211,8 @@ label <- function(data, ... )
 #' \code{recode()} changes the values of a variable.
 #'
 #' @param data data.frame
-#' @param var variable name
+#' @param vars one or more variables: if more than one,
+#' specify in a list.
 #' @param ... specify in pattern: `old value` / `new value`.
 #'
 #' @details
@@ -248,57 +253,75 @@ label <- function(data, ... )
 #' ## recode NA
 #' infert[4:20, "case"] <- NA
 #' x <- recode(infert, case, NA/"Missing value")
-#' tab(infert, case)
+#' tab(x, case)
+#'
+#' ## recode multiple variables with multiple values
+#' x <- recode(infert, list(induced, case, spontaneous), 0/NA, 1/0)
+#' tab(x, induced, case, spontaneous)
 #' }
 #'
 #' @export
-recode <- function(data, var, ... )
+recode <- function(data, vars = list(), ... )
 {
     ## match call arguments
     .args <- as.list(match.call())
-
-    var <- .args$var
-    .var <- data[[var]]
-    .lbl <- attr(.var, "label")
-    ## change double to numeric
-    if (is.double(.var)) {
-        .var <- as.numeric(.var)
-    } else if (is.factor(.var)) {
-        .var <- as.character(.var)
+    vars <- as.character(.args$vars)
+    if (length(vars) > 1) {
+        vars <- vars[-1]
+    } else if (length(vars) < 1) {
+        stop(paste0("At least one variable must be specified"),
+             call. = FALSE)
     }
-    vals <- .args[-c(1:3)]
-    lapply(vals, function(z) {
-        .val <- as.character(z)
-        .old <- ifelse(.val[2] == "NA", NA, .val[2])
-        .new <- ifelse(.val[3] == "NA", NA,
-                       ifelse(.val[3] == "NULL", NULL, .val[3]))
 
-        .chk <- .var == .old
-        if (grepl(":", .old)) {
-            .old <- eval(parse(text = .old))
-            .chk <- .var >= .old[1] & .var <= .old[length(.old)]
-        } else if (is.na(.old)) {
-            .chk <- is.na(.var)
+    lapply(vars, function(var_name) {
+        var <- .var <- data[[var_name]]
+        lbl <- attr(var, "label")
+
+        ## change double to numeric
+        if (is.double(var)) {
+            var <- as.numeric(var)
+        } else if (is.factor(var)) {
+            var <- as.character(var)
         }
-        if (any(.chk)) {
-            if (any(is.na(.old))) {
-                .var[is.na(.var)] <<- .new
-            } else {
-                .var[.chk] <<- .new
+        vals <- .args[-c(1:3)]
+        lapply(vals, function(z) {
+            val <- as.character(z)
+            old <- ifelse(val[2] == "NA", NA, val[2])
+            new <- ifelse(val[3] == "NA", NA,
+                          ifelse(val[3] == "NULL", NULL, val[3]))
+
+            chk <- .var == old
+            if (grepl(":", old)) {
+                old <- eval(parse(text = old))
+                chk <- .var >= old[1] & .var <= old[length(old)]
+            } else if (is.na(old)) {
+                chk <- is.na(.var)
             }
-        } else {
-            stop(paste0("`", .old, "` not found in '", var, "'"),
-                 call. = FALSE)
+
+            if (any(chk)) {
+                if (any(is.na(old))) {
+                    var[is.na(var)] <<- new
+                } else {
+                    var[chk] <<- new
+                }
+            } else {
+                stop(paste0("`", old, "` not found in '",
+                            var_name, "'"),
+                     call. = FALSE)
+            }
+
+            ## Print notification message
+            cat(paste0("  (", var_name, ": ", length(which(chk)),
+                       " values recoded as '",
+                       new, "')\n"))
+        })
+
+        if (is.factor(data[[var_name]])) {
+            var <- factor(var)
         }
-
-        ## Print notification message
-        cat(paste0("  ( ", length(which(.chk)), " values recoded as '",
-                   .new, "')\n"))
+        attr(var, "label") <- lbl
+        data[[var_name]] <<- var
     })
-
-    if (is.factor(data[[var]])) .var <- factor(.var)
-    attr(.var, "label") <- .lbl
-    data[[var]] <- .var
 
     return(data)
 }
@@ -594,8 +617,6 @@ egen <- function(data, var, cut = NULL, lbl = NULL, new_var = NULL)
 
     ## get names of dataset and headings
     .data_name <- deparse(substitute(data))
-    .vars_names <- names(data)
-
     ## if input is not a data.frame, stop
     if (!is.data.frame(data)) {
         stop(paste0("`", .data_name, "` must be a data.frame"),
@@ -606,6 +627,11 @@ egen <- function(data, var, cut = NULL, lbl = NULL, new_var = NULL)
     ## create old and new var's name
     .vars_names <- names(data)
     .var_name <- .args$var
+    ## if var not found, stop
+    if (!(as.character(.var_name) %in% .vars_names)) {
+        stop(paste0("`", .var_name, "` not found"),
+             call. = FALSE)
+    }
     new_var <- .args$new_var
     new_var <- ifelse(is.null(new_var),
                       paste0(.var_name, "_cat"),
@@ -739,12 +765,12 @@ egen <- function(data, var, cut = NULL, lbl = NULL, new_var = NULL)
 #' @export
 recast <- function(data, mode, ... )
 {
-    if (!is.data.frame(data)) {
-        stop(paste0("`", .data_name, "` must be a data.frame"),
-             call. = FALSE)
-    }
     ## match call arguments
     .args <- as.list(match.call())
+    if (!is.data.frame(data)) {
+        stop(paste0("`", .args$data, "` must be a data.frame"),
+             call. = FALSE)
+    }
     ## get variable names
     vars <- enquotes(.args, c("data", "mode"))
     vars <- checkEnquotes(data, vars)
@@ -1992,6 +2018,110 @@ tab2 <- function(x, data, by, row.pct = TRUE, na.rm = FALSE, digits = 1)
 
 
 
+#' @title Tabulation for several binary variables
+#'
+#' @description
+#'
+#' \code{svytab()} generates a summary of several variables of a
+#' survey dataset.
+#'
+#' @param data data.frame
+#' @param ... variable name or names of multiple variables
+#' @param value character indicating the level of the variables
+#'
+#'
+#' @import stats
+#'
+#' @author
+#'
+#' Email: \email{dr.myominnoo@@gmail.com}
+#'
+#' Website: \url{https://myominnoo.github.io/}
+#'
+#' @examples
+#'
+#' svytab(infert, case, induced, spontaneous)
+#' svytab(infert, case, induced, spontaneous, value = 1)
+#'
+#' @export
+svytab <- function(data, ... , value = NULL)
+{
+    ## if data is not a data.frame, stop
+    .data_name <- deparse(substitute(data))
+    if (!is.data.frame(data)) {
+        stop(paste0("`", .data_name, "` must be a data.frame"),
+             call. = FALSE)
+    }
+
+    ## match call arguments
+    .args <- as.list(match.call())
+
+    ## get variable names
+    vars <- enquotes(.args, c("data", "value"))
+    vars <- checkEnquotes(data, vars)
+    df <- do.call(
+        rbind,
+        lapply(vars, function(z) {
+            data$x <- data[[z]]
+            co <- capture.output(t <- tab(data, x))
+            t <- t$tab_raw
+            obs <- t[which(t$Category == "Total"), "Freq."]
+            na <- t[is.na(t$Category), "Freq."]
+            if (length(na) == 0) na <- 0
+            t$Category[is.na(t$Category)] <- "NA"
+            if (is.null(value)) {
+                value <<- t$Category[1]
+            } else if (is.na(value)) {
+                value <<- "NA"
+            }
+
+            if (!any(t$Category == value)) {
+                freq <- "-"
+            } else {
+                freq <- paste0(t[which(t$Category == value), "Freq."], " (",
+                               t[which(t$Category == value), "Percent"], ")")
+            }
+
+            data$x[is.na(data$x)] <- "NA"
+            x <- data$x == value
+            c(z, obs, na, freq,
+              sprintf(c(mean(x, na.rm = TRUE), sd(x, na.rm = TRUE)),
+                      fmt = paste0("%#.1f")))
+        })
+    )
+    df <- data.frame(df)
+    names(df) <- c("Variables", "Obs", "<NA>", paste0(value, " (%)"),
+                   "Mean", "SD")
+
+    .df <- formatdf(df, 2, 2)
+
+    ## add horizontal lines if nrow > 5
+    nr <- nrow(.df)
+    seq <- seq(3, nr, 5)[-1]
+    seq <- seq + (0:(length(seq) - 1))
+    sapply(seq, function(z) .df <<- addHLines(.df, z))
+    .df[seq, ] <- .df[2, ]
+
+    ## print text
+    cat(paste0("\tPercentages of being '", value, "'\n"))
+    print.data.frame(.df, row.names = FALSE, max = 1e9)
+
+    ## get vars lbl
+    vars_lbl <- sapply(vars, getLabel, data)
+    vars_lbl <- data.frame(vars = vars,
+                           lbl = vars_lbl)
+
+    ## create list with class for summary
+    .list <- list(svytab = .df,
+                  svytab_raw = df,
+                  lbl = vars_lbl)
+    class(.list) <- "svytab"
+    invisible(.list)
+}
+
+
+
+
 
 #' @title Summary statistics
 #'
@@ -2115,7 +2245,8 @@ summ <- function(data, ... , by = NULL, na.rm = FALSE, digits = 1, detail = FALS
     .args <- as.list(match.call())
 
     ## get variable names
-    .vars <- enquotes(.args, c("data", "by", "na.rm", "digits", "detail"))
+    .vars <- enquotes(.args, c("data", "by", "na.rm", "digits",
+                               "detail"))
     .vars <- checkEnquotes(data, .vars)
     if (length(.vars) == 0) {
         .vars_type <- sapply(data, function(z) {
@@ -2145,15 +2276,14 @@ summ <- function(data, ... , by = NULL, na.rm = FALSE, digits = 1, detail = FALS
         .df_raw <- .df
         if (!detail) .df <- .df[, -c(6:8)]
         .df <- formatdf(.df, 2, 2)
-        if (length(.vars) > 5) {
-            .seq <- seq(3, nrow(.df), 5)
-            .seq <- .seq[-c(1, length(.seq))]
-            .seq <- .seq + 0:(length(.seq) - 1)
-            sapply(.seq, function(z) {
-                .df <<- addHLines(.df, z)
-            })
-            .df[.seq, ] <- .df[2, ]
-        }
+
+        ## add horizontal lines if nrow > 5
+        nr <- nrow(.df)
+        seq <- seq(3, nr, 5)[-1]
+        seq <- seq + (0:(length(seq) - 1))
+        sapply(seq, function(z) .df <<- addHLines(.df, z))
+        .df[seq, ] <- .df[2, ]
+
         .txt <- paste0("  Summary")
         .type <- ifelse(detail, "summ1d", "summ1")
     } else {
@@ -2309,7 +2439,8 @@ group_summ <- function(data, x, ... , na.rm = FALSE, digits = 1, detail = FALSE)
     x <- .args$x
 
     ## get variable names
-    .vars <- enquotes(.args, c("data", "x", "na.rm", "digits", "detail"))
+    .vars <- enquotes(.args, c("data", "x", "na.rm", "digits",
+                               "detail"))
     .vars <- checkEnquotes(data, .vars)
     if (length(.vars) == 0) {
         stop(paste0("Strata variables must be specified in '...'"),
@@ -2344,14 +2475,26 @@ group_summ <- function(data, x, ... , na.rm = FALSE, digits = 1, detail = FALSE)
     } else {
         .df <- df
     }
+
+    ## Add horizontal and vertical lines for visaul appealing
+    hpos <- as.numeric(row.names(.df)[!(.df$Strata == "")])[-1]
+    hpos <- hpos + 0:(length(hpos) - 1)
+    sapply(hpos, function(z) {
+        .df <<- addHLines(.df, z)
+    })
+    hpos <- (c(hpos, nrow(.df) + 1) - 1) + 0:(length(hpos))
+    sapply(hpos, function(z) {
+        .df <<- addHLines(.df, z)
+        .df[z, 1] <<- ""
+    })
     .df <- formatdf(.df, 2, 3)
     names(df)[1] <- "Variable"
 
     ## Display information
     cat(paste0("  Grouped Summary : '", x, "'", "\n"))
     print.data.frame(.df, row.names = FALSE, max = 1e9)
-    cat("* parametric test: t-test or ANOVA",
-        "\n** non-parametric test: Wilcoxon or Kruskal Wallis\n")
+    cat(" (* parametric test: t-test or ANOVA)",
+        "\n (** non-parametric test: Wilcoxon or Kruskal Wallis)\n")
 
     ## get vars lbl
     .vars_lbl <- sapply(c(x, .vars), getLabel, data)
@@ -4584,6 +4727,9 @@ summary.tab <- function(object, ... )
 summary.summ <- function(object, ... )
 {
     x <- object$summ_raw
+    lbl <- object$lbl
+    lbl$lbl[is.na(lbl$lbl)] <- lbl$var[is.na(lbl$lbl)]
+
     if (object$type %in% c("summ1d", "summ1")) {
         x <- data.frame(
             x$Variable,
@@ -4595,6 +4741,9 @@ summary.summ <- function(object, ... )
         )
         names(x) <- c("Variable", "Obs (<NA>)", "Mean (SD)",
                       "Median (IQR)", "Range", "Normal.")
+
+        ## adding labels
+        x[x$Variable != "", "Variable"] <- lbl$lbl
     } else if (object$type == "summ2") {
         y <- data.frame(
             x$Variable, x$Level,
@@ -4604,8 +4753,12 @@ summary.summ <- function(object, ... )
         )
         names(y) <- c("Variable", "Level", "Obs (<NA>)", "Mean (SD)",
                       "Normal.")
-        names(y)[c(ncol(y) - 1, ncol(y))] <- names(x)[c(ncol(x) - 1, ncol(x))]
+        names(y)[c(ncol(y) - 1, ncol(y))] <- names(x)[c(ncol(x) - 1,
+                                                        ncol(x))]
         x <- y
+
+        ## adding labels
+        x[x$Variable != "", "Variable"] <- lbl$lbl[-1]
     } else {
         y <- data.frame(
             x$Variable, x$Level,
@@ -4617,9 +4770,14 @@ summary.summ <- function(object, ... )
         )
         names(y) <- c("Variable", "Level", "Obs (<NA>)", "Mean (SD)",
                       "Median (IQR)", "Range", "Normal.")
-        names(y)[c(ncol(y) - 1, ncol(y))] <- names(x)[c(ncol(x) - 1, ncol(x))]
+        names(y)[c(ncol(y) - 1, ncol(y))] <- names(x)[c(ncol(x) - 1,
+                                                        ncol(x))]
         x <- y
+
+        ## adding labels
+        x[x$Variable != "", "Variable"] <- lbl$lbl[-1]
     }
+
     return(x)
 }
 
@@ -4943,9 +5101,14 @@ ilog.clear <- function()
 printDFlenLines <- function(data)
 {
     .cols_width <- sum(sapply(names(data), nchar))
-    .cols_lines <- paste0(rep("-", .cols_width + ncol(data)), collapse = "")
+    .cols_lines <- paste0(
+        " ", paste0(rep("-", .cols_width + ncol(data) - 1),
+               collapse = "")
+    )
     cat(.cols_lines, "\n")
 }
+
+
 
 
 
@@ -5012,7 +5175,7 @@ getLabel <- function(vars, data, print = TRUE)
     if (length(.lbl) > 1) .lbl <- NULL
     .lbl <- ifelse(is.null(.lbl), NA, .lbl)
     if (print & !is.na(.lbl)) {
-        cat(paste0("  (", vars, " : ", .lbl, ")\n"))
+        cat(paste0("  (", vars, ": '", .lbl, "')\n"))
     }
     return(.lbl)
 }
@@ -5044,6 +5207,14 @@ checkEnquotes <- function(.data, .vars)
             .colon <- grepl(":", z)
             if (.colon) {
                 .split <- unlist(strsplit(z, split = ":"))
+                if (!(.split[1] %in% .vars_name)) {
+                    stop(paste0("`", .split[1], "` not found"),
+                         call. = FALSE)
+                }
+                if (!(.split[2] %in% .vars_name)) {
+                    stop(paste0("`", .split[2], "` not found"),
+                         call. = FALSE)
+                }
                 .split <- paste0("^", .split, "$")
                 .split <- grep(.split[1],
                                names(.data)):grep(.split[2],
