@@ -290,6 +290,9 @@ recode <- function(data, vars = list(), ... )
             new <- ifelse(val[3] == "NA", NA,
                           ifelse(val[3] == "NULL", NULL, val[3]))
 
+            if (is.double(.var)) {
+                .var <- as.numeric(.var)
+            }
             chk <- .var == old
             if (grepl(":", old)) {
                 old <- eval(parse(text = old))
@@ -298,7 +301,7 @@ recode <- function(data, vars = list(), ... )
                 chk <- is.na(.var)
             }
 
-            if (any(chk)) {
+            if (any(which(chk))) {
                 if (any(is.na(old))) {
                     var[is.na(var)] <<- new
                 } else {
