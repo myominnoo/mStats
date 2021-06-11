@@ -1,6 +1,9 @@
 #' Describe dataset
 #'
 #' @description
+#'
+#' \Sexpr[results=rd]{lifecycle::badge("stable")}
+#'
 #' `codebook()` displays a compact overview of the data frame.
 #' It will have important characteristics of the data frame including
 #' type, label, observation number, and missing values as well as
@@ -13,7 +16,7 @@
 #'
 #' Here we show the usage using the dataset `iris`.
 #'
-#' ```{r, comment = "#>", collapse = FALSE}
+#' ```{r, comment = "#>", collapse = TRUE}
 #' codebook(iris)
 #' ```
 #'

@@ -1,6 +1,9 @@
 #' Label variables and dataset
 #'
 #' @description
+#'
+#' \Sexpr[results=rd]{lifecycle::badge("stable")}
+#'
 #' `label()` attaches a text label to each variable specified.
 #' If a label is provided without a variable being specified, it will be
 #' attached to the dataset.

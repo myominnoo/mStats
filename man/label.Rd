@@ -12,6 +12,8 @@ label(data, ...)
 \item{...}{One or more expressions separated by equal sign \code{=}}
 }
 \description{
+\Sexpr[results=rd]{lifecycle::badge("stable")}
+
 \code{label()} attaches a text label to each variable specified.
 If a label is provided without a variable being specified, it will be
 attached to the dataset.

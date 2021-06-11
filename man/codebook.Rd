@@ -10,6 +10,8 @@ codebook(data)
 \item{data}{A data.frame}
 }
 \description{
+\Sexpr[results=rd]{lifecycle::badge("stable")}
+
 \code{codebook()} displays a compact overview of the data frame.
 It will have important characteristics of the data frame including
 type, label, observation number, and missing values as well as
@@ -19,12 +21,12 @@ percentage of missing values.
 
 
 Here we show the usage using the dataset \code{iris}.\if{html}{\out{<div class="r">}}\preformatted{codebook(iris)
-}\if{html}{\out{</div>}}\preformatted{#> 	      Codebook
+#> 	      Codebook
 #>    Dataset's Name : `iris`
 #>   Dataset's Label : 
 #> 	     Vars : 5
 #> 	      Obs : 150
-}\preformatted{#>  + -- ------------ + ----- ------- --- -- ----- +
+#>  + -- ------------ + ----- ------- --- -- ----- +
 #>  | No     Variable | Label    Type Obs NA NA(\%) |
 #>  + -- ------------ + ----- ------- --- -- ----- +
 #>  |  1 Sepal.Length |       numeric 150  0   0.0 |
@@ -33,6 +35,6 @@ Here we show the usage using the dataset \code{iris}.\if{html}{\out{<div class="
 #>  |  4  Petal.Width |       numeric 150  0   0.0 |
 #>  |  5      Species |        factor 150  0   0.0 |
 #>  + -- ------------ + ----- ------- --- -- ----- +
-}
+}\if{html}{\out{</div>}}
 }
 

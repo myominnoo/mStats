@@ -1,0 +1,23 @@
+---
+title: "Overview"
+output: rmarkdown::html_vignette
+description: >
+  Start here if this is your first time using mStats. You'll learn the basic   
+  concept, the most common data manipulation functions, and facilitating the 
+  data analysis workflow with tidyverse package and the pipe, `%>%`.
+vignette: >
+  %\VignetteIndexEntry{Overview}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]
+---
+
+```{r, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# mStats <a href='https://github.com/myominnoo/mStats'><img src='../man/figures/logo.png' align="right" height="120" /></a>
+***
+

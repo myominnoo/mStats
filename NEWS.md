@@ -1,18 +1,17 @@
----
-output: github_document
----
 
-## Changes in `mStats` version 3.5.0
+# mStats (development version)
 
-* Coding style follows the tidyverse style guide: https://style.tidyverse.org/
+* [to add news release with url links to my website]
+
+* `pkgdown` is used to create website for the package.
+
+* `mStats` follows the tidyverse coding style guide: https://style.tidyverse.org/
+
+* `print` helper functions such as `printDfLines` are deprecated.
 
 * `message` is used to display information for respecitve outputs.  
 
-
-
-
-
-## Changes in `mStats` version 3.4.1
+# mStats 3.4.1
 
 * `summary.summ`
     - UPDATED: fixed the error thrown when simple `summ` without `by` is used with `detail` set to `TRUE`.
@@ -39,7 +38,7 @@ output: github_document
 * `checkEnquotes` 
     - UPDATED: stops the function and prints error message if variables are not found.
 
-## Changes in `mStats` version 3.4.0
+# mStats 3.4.0
 
 * all functions has been re-written for consistency and performance.
 
@@ -47,9 +46,7 @@ output: github_document
 
 * S3 functions for tabulation and summary of the R base's `summary` is now updated and work consistently.
 
-
-
-## Changes in `mStats` beta version 3.3.1
+# mStats 3.3.1
 
 ## Updated on September 5, 2020
 
@@ -68,7 +65,7 @@ output: github_document
     
 * `predict.regress` - S3 method for predicting `regress` output: returns original data with other regression diagnostic statistics including Cook's distance.
 
-## Changes in `mStats` beta version 3.3.0
+# mStats 3.3.0
 
 ## Updated on September 2, 2020
 
@@ -78,15 +75,13 @@ output: github_document
     
 * `printLabel` - returns a label value.
 
-
-### Updated on August 31, 2020
+## Updated on August 31, 2020
 
 * `expandFreq` - can be used to expand frequency-weighted table with multiple variables allowed. 
 
 * `strate` - allows multiple variables for stratification. It needs individual-level data. 
 
-
-### Updated on August 30, 2020
+## Updated on August 30, 2020
 
 * `regress`, `logit` and `esttab`
     - Display format is now similar to STATA's output.
@@ -94,7 +89,7 @@ output: github_document
     - `esttab` is a wrapper function for regression models. It supports `regress` and `logit`. 
     
     
-### Updated on August 29, 2020
+## Updated on August 29, 2020
 
 * `mhor` & `mhrr`
     - the format of output is changed. 
@@ -103,7 +98,7 @@ output: github_document
 
 * `finalize` - gathers statistics in a publication-ready format. It can be exported to a CSV file, or copy to a Word document.
 
-### Updated on August 15, 2020
+## Updated on August 15, 2020
 
 * `tab` 
     - can generate a publication-ready table.
@@ -137,7 +132,7 @@ output: github_document
 
 * `pyramid` - draws population pyramid graph by age and sex. This simplified function is based on the work of Minato Nakazawa who is the author of `pyramid` [package](https://cran.r-project.org/web/packages/pyramid/index.html). 
 
-### Retired functions
+# mStats 1.1.0
 
 * The following functions were removed because better versions of such functions can be used from the package `tidyverse`. 
 - `arrange`
