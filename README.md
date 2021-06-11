@@ -23,7 +23,7 @@ well-formatted output and transferring final outputs to process further.
 
 In a nutshell, mStats is designed to make data analysis quick and easy
 to create the final report for health research project. You can see it
-in action to [Get Started](./docs/articles/mStats.html).
+in action to [Get Started](https://myominnoo.github.io/mStats/).
 
 ## Installation
 
@@ -63,8 +63,8 @@ function from `mStats`. To avoid this:
 ## Usage
 
 The easiest way to get started with mStats is to follow the guide
-[here](./docs/articles/mStats.html). Below is a quick demonstration of
-what mStats can do.
+[here](https://myominnoo.github.io/mStats/). Below is a quick
+demonstration of what mStats can do.
 
 ``` r
 library(mStats)

@@ -31,7 +31,7 @@ These functions are in turn supported by another set of helper functions on the 
 which allows statistical calculation, displaying well-formatted output and transferring 
 final outputs to process further.
   
-In a nutshell, mStats is designed to make data analysis quick and easy to create the final report for health research project. You can see it in action to [Get Started](./docs/articles/mStats.html).
+In a nutshell, mStats is designed to make data analysis quick and easy to create the final report for health research project. You can see it in action to [Get Started](https://myominnoo.github.io/mStats/).
 
 ## Installation
 
@@ -63,7 +63,7 @@ The `mStats`package contains two functions (`append`, `replace`) that have the s
 
 ## Usage
 
-The easiest way to get started with mStats is to follow the guide [here](./docs/articles/mStats.html). Below is a quick demonstration of what mStats can do. 
+The easiest way to get started with mStats is to follow the guide [here](https://myominnoo.github.io/mStats/). Below is a quick demonstration of what mStats can do. 
 
 ```{r mStats example}
 library(mStats)
