@@ -10,22 +10,20 @@ maturing](man/figures/lifecycle-maturing.svg)](https://www.tidyverse.org/lifecyc
 
 <!-- badges: end -->
 
-mStats is a R package that provides a consistent set of functions that
-help epidemiologists, and public health professionals solve common data
-management and anlaysis challenges in health research. It comprises of
-three major sets of functions:
+mStats is a open-source R package to facilitate data analysis with R in
+health research. It comprises of three major sets of functions:
 
 -   `data management`
 -   `statistical analysis`
 -   `calculation of epidemiological measures`
 
 These functions are in turn supported by another set of helper functions
-which allows statistical calculation, displaying well-formatted output
-and transferring final outputs to process further.
+on the backend, which allows statistical calculation, displaying
+well-formatted output and transferring final outputs to process further.
 
-In a nutshell, mStats is designed to make epidemiological data analysis
-quick and easy to create the final report for your project. You can see
-it in action to [Get Started](./docs/articles/mStats.html).
+In a nutshell, mStats is designed to make data analysis quick and easy
+to create the final report for health research project. You can see it
+in action to [Get Started](./docs/articles/mStats.html).
 
 ## Installation
 
@@ -38,13 +36,12 @@ install.packages("mStats")
 
 ### Development version
 
-To get a bug fix or to use a feature from the development version, you
-can install the development version of mStats from
-[GitHub](https://github.com/).
+If you want to use the development version of the bookdown package, you
+can install the package from GitHub via the {remotes
+package}(<https://remotes.r-lib.org/>):
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("myominnoo/mStats")
+remotes::install_github("myominnoo/mStats")
 ```
 
 ## Cheat Sheet
@@ -65,7 +62,9 @@ function from `mStats`. To avoid this:
 
 ## Usage
 
-This is a basic example which shows you how to solve a common problem:
+The easiest way to get started with mStats is to follow the guide
+[here](./docs/articles/mStats.html). Below is a quick demonstration of
+what mStats can do.
 
 ``` r
 library(mStats)

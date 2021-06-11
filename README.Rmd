@@ -63,8 +63,7 @@ The `mStats`package contains two functions (`append`, `replace`) that have the s
 
 ## Usage
 
-The easiest way to get started with mStats is to follow the guide [here](./docs/articles/mStats.html). 
-Below is a quick demonstration of what mStats can do. 
+The easiest way to get started with mStats is to follow the guide [here](./docs/articles/mStats.html). Below is a quick demonstration of what mStats can do. 
 
 ```{r mStats example}
 library(mStats)
