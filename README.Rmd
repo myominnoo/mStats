@@ -73,19 +73,32 @@ library(magrittr)
 
 library(mStats)
 
-## Describe dataset 
+## Describe dataset
+codebook(iris)
+```
+
+Below, `iris` dataset is passed to the function `codebook` via piping `%>%`. 
+Note that dataset passed through piping is assigned as object `.` in this 
+operation.
+
+```{r demo2}
+
 iris %>% 
   codebook
+```
 
+Here we demonstrate two sets of operations: labeling dataset and variables.  
+
+```{r demo3}
 ## Label variables and dataset
 ## new object is assigned to make the changes permanent
-iris_re <- iris %>% 
+iris_demo <- iris %>% 
   label("Edgar Anderson's Iris Data") %>% 
   label(Sepal.Length = "Length of Sepal",
         Petal.Length = "Length of Petal",
-        Species = "Type of species") %>% 
-  codebook 
+        Species = "Type of species") 
 
+codebook(iris_demo)
 ```
 
 
