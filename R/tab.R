@@ -54,12 +54,11 @@
 #' Tabulate variables with a stratification variable `by`:
 #'
 #' ```{r, comment = "#>", collapse = TRUE}
-#' tab(infert, parity:case, by = education)
+#' tab(infert, education, parity:spontaneous, by = case)
 #' ```
 #'
 #'
 #' @family statistical analysis
-#' ```
 #' @importFrom stats addmargins chisq.test fisher.test na.omit
 #' @export
 tab <- function(data, ... , by = NULL, row.pct = TRUE, na.rm = FALSE, digits = 1) {
@@ -89,17 +88,21 @@ tab <- function(data, ... , by = NULL, row.pct = TRUE, na.rm = FALSE, digits = 1
   if (length(y_name) == 0) {
     out_raw <- do.call(rbind, lapply(vars_name, tab1, data, na.rm, digits))
     out     <- .formatOutput(out_raw)
+
+    message(" One-way tabulation")
   } else {
     .check_vars(data, y_name)
     out_raw <- do.call(rbind, lapply(vars_name, tab2, data, y_name, row.pct, na.rm, digits))
     out     <- .formatOutput(out_raw)
+
+    message(" Two-way tabulation")
     .print_header(out, y_name)
   }
 
   print.data.frame(out, row.names = FALSE, max = 1e9)
   .print_vars_label(data, c(vars_name, y_name))
 
-  output <- list(data = data, output  = out_raw, display = out)
+  output <- list(data = data, output = out_raw)
   class(output) <- "tab"
 
   invisible(output)
@@ -129,10 +132,6 @@ tab1 <- function(x, data, na.rm = FALSE, digits = 1) {
   out <- rbind(out[0, ], c(rep("", 4)), out)
   out <- cbind(Variable = c(x_name, rep("", nrow(out) - 1)), out)
   attr(out, "type") <- "tab1"
-
-  # ## Experimental codes for output
-  # attr(out, "var name")  <- x_name
-  # attr(out, "var label") <- .get_vars_label(data, x_name)
 
   return(out)
 }
@@ -173,6 +172,8 @@ tab2 <- function(x, data, by, row.pct = TRUE, na.rm = FALSE, digits = 1) {
 
   row.names(tbl_count)   <- row_name
   colnames(tbl_count)    <- col_name
+  row_name[is.na(row_name)] <- "<NA>"
+
   row.names(tbl_pct_row) <- row_name
   row.names(tbl_pct_col) <- row_name
 

@@ -3,11 +3,13 @@
 
 * [to add news release with url links to my website]
 
+* `compact` can combine outputs from `tab()`. 
+
 * `pkgdown` is used to create website for the package.
 
 * `mStats` follows the tidyverse coding style guide: https://style.tidyverse.org/
 
-* `print` helper functions such as `printDfLines` are deprecated.
+* `print` helper functions such as `printDfLines` are no longer available.
 
 * `message` is used to display information for respecitve outputs.  
 

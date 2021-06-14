@@ -172,7 +172,7 @@
 #### get names of variables within three dots                    ----------
 #' @export
 .enquote <- function(args, args_name) {
-  data      <- eval(args$data)
+  data      <- args
   args      <- args[-1]
   boo       <- names(args) %in% args_name # name is in the args_name
   vars_name <- args[!boo]
@@ -209,6 +209,8 @@
 
 
 #### Printing functions                                      ----------
+
+#' @export
 .print_header <- function(out, y_name) {
   outline  <- paste(names(out), collapse = " ")
   textarea <- paste(
@@ -220,5 +222,6 @@
     collapse = ""
   )
 
-  message("\n", textarea, y_name)
+  message(textarea, y_name)
 }
+

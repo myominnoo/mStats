@@ -35,6 +35,25 @@ Here we show the usage using the dataset \code{iris}.\if{html}{\out{<div class="
 #>  |  4  Petal.Width |       numeric 150  0   0.0 |
 #>  |  5      Species |        factor 150  0   0.0 |
 #>  + -- ------------ + ----- ------- --- -- ----- +
+
+codebook(infert)
+#>   Codebook
+#>            Name  : infert
+#>            Label : 
+#>            Vars  : 8
+#>            Obs   : 248
+#>  + -- -------------- + ----- ------- --- -- ----- +
+#>  | No       Variable | Label    Type Obs NA NA(\%) |
+#>  + -- -------------- + ----- ------- --- -- ----- +
+#>  |  1      education |        factor 248  0   0.0 |
+#>  |  2            age |       numeric 248  0   0.0 |
+#>  |  3         parity |       numeric 248  0   0.0 |
+#>  |  4        induced |       numeric 248  0   0.0 |
+#>  |  5           case |       numeric 248  0   0.0 |
+#>  |  6    spontaneous |       numeric 248  0   0.0 |
+#>  |  7        stratum |       integer 248  0   0.0 |
+#>  |  8 pooled.stratum |       numeric 248  0   0.0 |
+#>  + -- -------------- + ----- ------- --- -- ----- +
 }\if{html}{\out{</div>}}
 }
 

@@ -19,6 +19,8 @@
 #'
 #' ```{r, comment = "#>", collapse = TRUE}
 #' codebook(iris)
+#'
+#' codebook(infert)
 #' ```
 #'
 codebook <- function(data) {
