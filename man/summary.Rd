@@ -56,11 +56,11 @@ Create summary table for frequency measure:\if{html}{\out{<div class="r">}}\pref
 
 summary(table1)
 #>     Variable   Level Total\\n n (\%)
-#> 5      Total           248 (100.0)
-#> 1  education                      
-#> 2             0-5yrs      12 (4.8)
-#> 3            6-11yrs    120 (48.4)
-#> 4            12+ yrs    116 (46.8)
+#> 1      Total           248 (100.0)
+#> 2  education                      
+#> 3             0-5yrs      12 (4.8)
+#> 4            6-11yrs    120 (48.4)
+#> 5            12+ yrs    116 (46.8)
 #> 6     parity                      
 #> 7                  1     99 (39.9)
 #> 8                  2     81 (32.7)
@@ -68,9 +68,9 @@ summary(table1)
 #> 10                 4      18 (7.3)
 #> 11                 5       6 (2.4)
 #> 12                 6       8 (3.2)
-#> 14      case                      
-#> 15                 0    165 (66.5)
-#> 16                 1     83 (33.5)
+#> 13      case                      
+#> 14                 0    165 (66.5)
+#> 15                 1     83 (33.5)
 }\if{html}{\out{</div>}}
 
 Create summary table stratified by a stratification variable \code{by}:\if{html}{\out{<div class="r">}}\preformatted{table2 <- tab(infert, education, parity, by = case)
@@ -99,11 +99,11 @@ Create summary table stratified by a stratification variable \code{by}:\if{html}
 
 summary(table2)
 #>     Variable   Level Total\\n n (\%)  0\\n n (\%) 1\\n n (\%) p-value\\n (Chi2)
-#> 5      Total           248 (100.0) 165 (66.5) 83 (33.5)                 
-#> 1  education                                                       0.999
-#> 2             0-5yrs    12 (100.0)   8 (66.7)  4 (33.3)                 
-#> 3            6-11yrs   120 (100.0)  80 (66.7) 40 (33.3)                 
-#> 4            12+ yrs   116 (100.0)  77 (66.4) 39 (33.6)                 
+#> 1      Total           248 (100.0) 165 (66.5) 83 (33.5)                 
+#> 2  education                                                       0.999
+#> 3             0-5yrs    12 (100.0)   8 (66.7)  4 (33.3)                 
+#> 4            6-11yrs   120 (100.0)  80 (66.7) 40 (33.3)                 
+#> 5            12+ yrs   116 (100.0)  77 (66.4) 39 (33.6)                 
 #> 6     parity                                                       1.000
 #> 7                  1    99 (100.0)  66 (66.7) 33 (33.3)                 
 #> 8                  2    81 (100.0)  54 (66.7) 27 (33.3)                 
@@ -112,11 +112,11 @@ summary(table2)
 #> 11                 5     6 (100.0)   4 (66.7)  2 (33.3)                 
 #> 12                 6     8 (100.0)   5 (62.5)  3 (37.5)                 
 #>    p-value\\n (Exact)
-#> 5                   
-#> 1              1.000
-#> 2                   
+#> 1                   
+#> 2              1.000
 #> 3                   
 #> 4                   
+#> 5                   
 #> 6              1.000
 #> 7                   
 #> 8                   

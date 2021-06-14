@@ -98,5 +98,6 @@ summary.tab <- function(object, ... ) {
     }
   )
 
+  row.names(output) <- NULL
   return(output)
 }

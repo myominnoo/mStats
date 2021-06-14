@@ -10,8 +10,7 @@ knitr::opts_chunk$set(
   warning = FALSE,
   comment = "#>",
   fig.path = "man/figures/README-",
-  out.width = "150%", 
-  results = "asis"
+  out.width = "150%"
 )
 ```
 
@@ -130,14 +129,12 @@ summary(table2)
 We can combine `table1` and `table2` into a more compact table.
 Note that we use flextable package to make it more presentable.
 
-```{r demo6, echo=FALSE, message=FALSE, warning=FALSE} 
-knitr::opts_chunk$set(comment = "")
+```{r demo6} 
 ## save two summaries 
 sum1 <- summary(table1) 
 sum2 <- summary(table2)
 
-compact(sum1, sum2) %>% 
-  kableExtra::kable(format = "markdown") 
+compact(sum1, sum2)
 ```
 
 ## Getting help
