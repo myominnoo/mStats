@@ -6,34 +6,23 @@
 <!-- badges: start -->
 
 [![CRAN](https://www.r-pkg.org/badges/version-ago/mStats)](https://cran.r-project.org/package=mStats)
-
-[![R build
-status](https://github.com/myominnoo/mStats/workflows/R-CMD-check/badge.svg)](https://github.com/tidyverse/dplyr/actions?workflow=R-CMD-check)
-
-[![Codecov test
-coverage](https://codecov.io/gh/myominnoo/mStats/branch/master/graph/badge.svg)](https://codecov.io/gh/myominnoo/mStats?branch=master)
-
 [![Downloads](https://cranlogs.r-pkg.org/badges/mStats)](https://cran.r-project.org/package=mStats)
-
 [![Lifecycle:
 maturing](man/figures/lifecycle-maturing.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 
 <!-- badges: end -->
 
-mStats is a open-source R package to facilitate data analysis with R in
-health research. It comprises of three major sets of functions:
+mStats is a open-source R package to facilitate data management,
+analysis and report writing with a focus on health research. It allows
+to manipulate data, run statistical analysis, and calculate common
+epidemiological measures. Their outputs, in turn, can be further
+processed by highly sensible functions to produce publication-ready
+tables.
 
--   `data management`
--   `statistical analysis`
--   `calculation of epidemiological measures`
-
-These functions are in turn supported by another set of helper functions
-on the backend, which allows statistical calculation, displaying
-well-formatted output and transferring final outputs to process further.
-
-In a nutshell, mStats is designed to make data analysis quick and easy
-to create the final report for health research project. You can see it
-in action to [Get Started](https://myominnoo.github.io/mStats/).
+In a nutshell, mStats is designed to make data analysis practical, quick
+and easy for health researchers to create the final report in time. You
+can see it in action to [Get
+Started](https://mmoo.netlify.app/r/mStats/).
 
 ## Installation
 
@@ -77,13 +66,17 @@ The easiest way to get started with mStats is to follow the guide
 demonstration of what mStats can do.
 
 ``` r
+## to use pipe %>% for expression of sequential operations 
+## Hence, no need to provide `data` argument in subsequent operations
+library(magrittr) 
+
 library(mStats)
 
-
-## Describe dataset after data import
-codebook(iris)
+## Describe dataset 
+iris %>% 
+  codebook
 #>   Codebook
-#>            Name  : iris
+#>            Name  : .
 #>            Label : 
 #>            Vars  : 5
 #>            Obs   : 150
@@ -97,19 +90,20 @@ codebook(iris)
 #>  |  5      Species |        factor 150  0   0.0 |
 #>  + -- ------------ + ----- ------- --- -- ----- +
 
-
 ## Label variables and dataset
-iris <- label(iris, "Edgar Anderson's Iris Data")
-#>   (`iris` labeled as `Edgar Anderson's Iris Data`)
-iris <- label(iris, Sepal.Length = "Length of Sepal",
-              Petal.Length = "Length of Petal",
-              Species = "Type of species")
+## new object is assigned to make the changes permanent
+iris_re <- iris %>% 
+  label("Edgar Anderson's Iris Data") %>% 
+  label(Sepal.Length = "Length of Sepal",
+        Petal.Length = "Length of Petal",
+        Species = "Type of species") %>% 
+  codebook 
+#>   (`.` labeled as `Edgar Anderson's Iris Data`)
 #>   (`Sepal.Length` labeled as `Length of Sepal`)
 #>   (`Petal.Length` labeled as `Length of Petal`)
 #>   (`Species` labeled as `Type of species`)
-codebook(iris)
 #>   Codebook
-#>            Name  : iris
+#>            Name  : .
 #>            Label : Edgar Anderson's Iris Data
 #>            Vars  : 5
 #>            Obs   : 150

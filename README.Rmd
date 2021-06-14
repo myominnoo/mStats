@@ -24,17 +24,15 @@ knitr::opts_chunk$set(
 
 <!-- badges: end -->
 
-mStats is a open-source R package to facilitate data analysis with R in health research. It comprises of three major sets of functions:
-
-  * `data management` 
-  * `statistical analysis` 
-  * `calculation of epidemiological measures`   
-
-These functions are in turn supported by another set of helper functions on the backend, 
-which allows statistical calculation, displaying well-formatted output and transferring 
-final outputs to process further.
+mStats is a open-source R package to facilitate data management, analysis 
+and report writing with a focus on health research. It allows to manipulate
+data, run statistical analysis, and calculate common epidemiological measures. 
+Their outputs, in turn, can be further processed by highly sensible functions
+to produce publication-ready tables. 
   
-In a nutshell, mStats is designed to make data analysis quick and easy to create the final report for health research project. You can see it in action to [Get Started](https://myominnoo.github.io/mStats/).
+In a nutshell, mStats is designed to make data analysis practical, quick and 
+easy for health researchers to create the final report in time. 
+You can see it in action to [Get Started](https://mmoo.netlify.app/r/mStats/).
 
 ## Installation
 
@@ -68,20 +66,26 @@ The `mStats`package contains two functions (`append`, `replace`) that have the s
 
 The easiest way to get started with mStats is to follow the guide [here](https://myominnoo.github.io/mStats/). Below is a quick demonstration of what mStats can do. 
 
-```{r mStats example}
+```{r demo1}
+## to use pipe %>% for expression of sequential operations 
+## Hence, no need to provide `data` argument in subsequent operations
+library(magrittr) 
+
 library(mStats)
 
-
-## Describe dataset after data import
-codebook(iris)
-
+## Describe dataset 
+iris %>% 
+  codebook
 
 ## Label variables and dataset
-iris <- label(iris, "Edgar Anderson's Iris Data")
-iris <- label(iris, Sepal.Length = "Length of Sepal",
-              Petal.Length = "Length of Petal",
-              Species = "Type of species")
-codebook(iris)
+## new object is assigned to make the changes permanent
+iris_re <- iris %>% 
+  label("Edgar Anderson's Iris Data") %>% 
+  label(Sepal.Length = "Length of Sepal",
+        Petal.Length = "Length of Petal",
+        Species = "Type of species") %>% 
+  codebook 
+
 ```
 
 

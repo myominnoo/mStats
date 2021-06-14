@@ -9,9 +9,10 @@ Authors@R:
              email = "dr.myominnoo@gmail.com",
              comment = c(ORCID = "0000-0003-4089-016X")))
 Maintainer: Myo Minn Oo <dr.myominnoo@gmail.com>
-Description: This is a tool for data management, statistical analysis and common 
-    epidemiological measures. The outputs can be further processed for 
-    presentation-ready tables for summary measures, regression models and more. 
+Description: This is a tool for data management, statistical analysis and 
+    calculating common epidemiological measures. Outputs from 
+    summary measures, regression models and more can be further processed to
+    produce presentation-ready tables. 
 License: MIT + file LICENSE
 URL: 
     https://myominnoo.github.io/, 
