@@ -10,7 +10,8 @@ knitr::opts_chunk$set(
   warning = FALSE,
   comment = "#>",
   fig.path = "man/figures/README-",
-  out.width = "100%"
+  out.width = "150%", 
+  results = "asis"
 )
 ```
 
@@ -76,16 +77,16 @@ library(magrittr)
 library(mStats)
 
 ## Describe dataset
-codebook(iris)
+codebook(infert)
 ```
 
-Below, `iris` dataset is passed to the function `codebook` via piping `%>%`. 
+Below, `infert` dataset is passed to the function `codebook` via piping `%>%`. 
 Note that dataset passed through piping is assigned as object `.` in this 
 operation.
 
 ```{r demo2}
 
-iris %>% 
+infert %>% 
   codebook
 ```
 
@@ -94,15 +95,50 @@ Here we demonstrate two sets of operations: labeling dataset and variables.
 ```{r demo3}
 ## Label variables and dataset
 ## new object is assigned to make the changes permanent
-iris_demo <- iris %>% 
-  label("Edgar Anderson's Iris Data") %>% 
-  label(Sepal.Length = "Length of Sepal",
-        Petal.Length = "Length of Petal",
-        Species = "Type of species") 
+infert_demo <- infert %>% 
+  label("Infertility after Spontaneous and Induced Abortion") %>% 
+  label(education = "Mother's education",
+        parity = "No of pregnant",
+        induced = "No of prior induced abortions", 
+        case = "case status") 
 
-codebook(iris_demo)
+codebook(infert_demo)
 ```
 
+Next, we tabulate the `infert_demo` using the variables we processed above and 
+put it into `table1`. We do the same process but use `case` as stratification 
+variable to produce cross-tabulation. 
+
+```{r demo4} 
+## Tabulate variables by name as well as `:` operator:
+table1 <- tab(infert_demo, education, parity:induced) 
+
+## Tabulate variables stratified by a stratification variable: 
+table2 <- tab(infert_demo, education, parity:induced, by = case) 
+```
+
+We can make a summary table that produces publication-ready tables. 
+
+```{r demo5}
+## Summary table for simple tabulation
+summary(table1)
+
+## Summary table for cross-tabulation
+summary(table2)
+```
+
+We can combine `table1` and `table2` into a more compact table.
+Note that we use flextable package to make it more presentable.
+
+```{r demo6, echo=FALSE, message=FALSE, warning=FALSE} 
+knitr::opts_chunk$set(comment = "")
+## save two summaries 
+sum1 <- summary(table1) 
+sum2 <- summary(table2)
+
+compact(sum1, sum2) %>% 
+  kableExtra::kable(format = "markdown") 
+```
 
 ## Getting help
 
