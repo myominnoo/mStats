@@ -7,6 +7,7 @@ output: github_document
 ```{r, include = TRUE, echo = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
+  warning = FALSE,
   comment = "#>",
   fig.path = "man/figures/README-",
   out.width = "100%"
@@ -16,6 +17,14 @@ knitr::opts_chunk$set(
 # mStats <img src="man/figures/logo.png" align="right" alt="" width="120" />
 
 <!-- badges: start -->
+
+[![CRAN](https://www.r-pkg.org/badges/version-ago/mStats)](https://cran.r-project.org/package=mStats)
+
+[![R build status](https://github.com/myominnoo/mStats/workflows/R-CMD-check/badge.svg)](https://github.com/tidyverse/dplyr/actions?workflow=R-CMD-check)
+
+[![Codecov test coverage](https://codecov.io/gh/myominnoo/mStats/branch/master/graph/badge.svg)](https://codecov.io/gh/myominnoo/mStats?branch=master)
+
+[![Downloads](https://cranlogs.r-pkg.org/badges/mStats)](https://cran.r-project.org/package=mStats)
 
 [![Lifecycle: maturing](man/figures/lifecycle-maturing.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 

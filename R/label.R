@@ -4,20 +4,22 @@
 #'
 #' \Sexpr[results=rd]{lifecycle::badge("stable")}
 #'
-#' `label()` attaches a text label to each variable specified.
-#' If a label is provided without a variable being specified, it will be
-#' attached to the dataset.
+#' `label()` generates one-way or two-way tabulation of variables.
+#' If no variables are specified, all the variables will be tabulated
+#' if they are of `character`, `factor`, `order factor`, and `logical`.
 #'
 #' @inheritParams codebook
-#' @param ... One or more expressions separated by equal sign `=`
+#' @param ... One or more unquoted expressions separated by equal sign `=`
 #'
+#' @family data management
 #' @export
 #' @section Examples:
 #'
 #' Here we show the usage for labeling dataset.
 #'
-#' ```{r, comment = "#>", collapse = FALSE}
+#' ```{r, comment = "#>", collapse = TRUE}
 #' iris <- label(iris, "Edgar Anderson's Iris Data")
+#'
 #' codebook(iris)
 #' ```
 #'
@@ -27,6 +29,7 @@
 #' iris <- label(iris, Sepal.Length = "Length of Sepal",
 #'               Petal.Length = "Length of Petal",
 #'               Species = "Type of species")
+#'
 #' codebook(iris)
 #' ```
 label <- function(data, ... ) {

@@ -1,6 +1,6 @@
 Package: mStats
 Type: Package
-Title: Epidemiological Data Analysis
+Title: Data Management & Analysis
 Version: 3.5.0
 Authors@R: 
     c(person(given = "Myo Minn",
@@ -9,21 +9,17 @@ Authors@R:
              email = "dr.myominnoo@gmail.com",
              comment = c(ORCID = "0000-0003-4089-016X")))
 Maintainer: Myo Minn Oo <dr.myominnoo@gmail.com>
-Description: This is a tool for epidemiologists, health analysts, and
-    public health professionals. It contains three domains of functions:
-    1) data management, 2) statistical analysis and 3) calculation of 
-    epidemiological measures.
+Description: This is a tool for data management, statistical analysis and common 
+    epidemiological measures. The outputs can be further processed for 
+    presentation-ready tables for summary measures, regression models and more. 
 License: MIT + file LICENSE
 URL: 
     https://myominnoo.github.io/, 
+    https://mmoo.netlify.app/r/mStats,
     https://github.com/myominnoo/mStats
 BugReports: https://github.com/myominnoo/mStats/issues
 Depends: 
     R (>= 4.1.0)
-Imports: 
-    lifecycle (>= 1.0.0),
-    stats,
-    utils
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
@@ -31,6 +27,7 @@ RoxygenNote: 7.1.1
 Suggests: 
     knitr,
     rmarkdown, 
+    lifecycle,
     qpdf
 VignetteBuilder: 
     knitr

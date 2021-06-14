@@ -9,27 +9,28 @@ label(data, ...)
 \arguments{
 \item{data}{A data.frame}
 
-\item{...}{One or more expressions separated by equal sign \code{=}}
+\item{...}{One or more unquoted expressions separated by equal sign \code{=}}
 }
 \description{
 \Sexpr[results=rd]{lifecycle::badge("stable")}
 
-\code{label()} attaches a text label to each variable specified.
-If a label is provided without a variable being specified, it will be
-attached to the dataset.
+\code{label()} generates one-way or two-way tabulation of variables.
+If no variables are specified, all the variables will be tabulated
+if they are of \code{character}, \code{factor}, \verb{order factor}, and \code{logical}.
 }
 \section{Examples}{
 
 
 Here we show the usage for labeling dataset.\if{html}{\out{<div class="r">}}\preformatted{iris <- label(iris, "Edgar Anderson's Iris Data")
-}\if{html}{\out{</div>}}\preformatted{#>   (`iris` labeled as `Edgar Anderson's Iris Data`)
-}\if{html}{\out{<div class="r">}}\preformatted{codebook(iris)
-}\if{html}{\out{</div>}}\preformatted{#> 	      Codebook
-#>    Dataset's Name : `iris`
-#>   Dataset's Label : Edgar Anderson's Iris Data
-#> 	     Vars : 5
-#> 	      Obs : 150
-}\preformatted{#>  + -- ------------ + ----- ------- --- -- ----- +
+#>   (`iris` labeled as `Edgar Anderson's Iris Data`)
+
+codebook(iris)
+#>   Codebook
+#>            Name  : iris
+#>            Label : Edgar Anderson's Iris Data
+#>            Vars  : 5
+#>            Obs   : 150
+#>  + -- ------------ + ----- ------- --- -- ----- +
 #>  | No     Variable | Label    Type Obs NA NA(\%) |
 #>  + -- ------------ + ----- ------- --- -- ----- +
 #>  |  1 Sepal.Length |       numeric 150  0   0.0 |
@@ -38,7 +39,7 @@ Here we show the usage for labeling dataset.\if{html}{\out{<div class="r">}}\pre
 #>  |  4  Petal.Width |       numeric 150  0   0.0 |
 #>  |  5      Species |        factor 150  0   0.0 |
 #>  + -- ------------ + ----- ------- --- -- ----- +
-}
+}\if{html}{\out{</div>}}
 
 Here is how to label multiple variables.\if{html}{\out{<div class="r">}}\preformatted{iris <- label(iris, Sepal.Length = "Length of Sepal",
               Petal.Length = "Length of Petal",
@@ -46,12 +47,13 @@ Here is how to label multiple variables.\if{html}{\out{<div class="r">}}\preform
 #>   (`Sepal.Length` labeled as `Length of Sepal`)
 #>   (`Petal.Length` labeled as `Length of Petal`)
 #>   (`Species` labeled as `Type of species`)
+
 codebook(iris)
-#> 	      Codebook
-#>    Dataset's Name : `iris`
-#>   Dataset's Label : Edgar Anderson's Iris Data
-#> 	     Vars : 5
-#> 	      Obs : 150
+#>   Codebook
+#>            Name  : iris
+#>            Label : Edgar Anderson's Iris Data
+#>            Vars  : 5
+#>            Obs   : 150
 #>  + -- ------------ + --------------- ------- --- -- ----- +
 #>  | No     Variable |           Label    Type Obs NA NA(\%) |
 #>  + -- ------------ + --------------- ------- --- -- ----- +
@@ -64,3 +66,8 @@ codebook(iris)
 }\if{html}{\out{</div>}}
 }
 
+\seealso{
+Other data management: 
+\code{\link{codebook}()}
+}
+\concept{data management}

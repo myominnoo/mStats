@@ -12,6 +12,7 @@
 #' @export
 #' @param data A data.frame
 #'
+#' @family data management
 #' @section Examples:
 #'
 #' Here we show the usage using the dataset `iris`.
@@ -42,11 +43,11 @@ codebook <- function(data) {
   names(out) <- c("No", "Variable", "Label", "Type", "Obs", "NA", "NA(%)")
   out <- .add_hv_lines(out, 1, 3, "|")
 
-  message("\t      Codebook", "\n",
-          "   Dataset's Name : `", data_name, "`", "\n",
-          "  Dataset's Label : ", data_label, "\n",
-          "\t     Vars : ", vars_num, "\n",
-          "\t      Obs : ", obs_all)
+  message("  Codebook", "\n",
+          "           Name  : ", data_name, "\n",
+          "           Label : ", data_label, "\n",
+          "           Vars  : ", vars_num, "\n",
+          "           Obs   : ", obs_all)
   print.data.frame(out, row.names = FALSE, max = 1e9)
 
   invisible(out)

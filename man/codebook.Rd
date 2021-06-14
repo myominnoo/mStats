@@ -21,11 +21,11 @@ percentage of missing values.
 
 
 Here we show the usage using the dataset \code{iris}.\if{html}{\out{<div class="r">}}\preformatted{codebook(iris)
-#> 	      Codebook
-#>    Dataset's Name : `iris`
-#>   Dataset's Label : 
-#> 	     Vars : 5
-#> 	      Obs : 150
+#>   Codebook
+#>            Name  : iris
+#>            Label : 
+#>            Vars  : 5
+#>            Obs   : 150
 #>  + -- ------------ + ----- ------- --- -- ----- +
 #>  | No     Variable | Label    Type Obs NA NA(\%) |
 #>  + -- ------------ + ----- ------- --- -- ----- +
@@ -38,3 +38,8 @@ Here we show the usage using the dataset \code{iris}.\if{html}{\out{<div class="
 }\if{html}{\out{</div>}}
 }
 
+\seealso{
+Other data management: 
+\code{\link{label}()}
+}
+\concept{data management}
