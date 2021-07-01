@@ -7,3 +7,5 @@
 ^pkgdown$
 ^README\.Rmd$
 ^LICENSE\.md$
+^\.travis\.yml$
+^\.github$

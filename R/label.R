@@ -4,34 +4,39 @@
 #'
 #' \Sexpr[results=rd]{lifecycle::badge("stable")}
 #'
-#' `label()` generates one-way or two-way tabulation of variables.
-#' If no variables are specified, all the variables will be tabulated
-#' if they are of `character`, `factor`, `order factor`, and `logical`.
+#' `label()` manipulates labels for variables and dataset.
+#' If no label is specified, any existing variable label is removed.
 #'
 #' @inheritParams codebook
-#' @param ... One or more unquoted expressions separated by equal sign `=`
+#' @param ... One or more expressions:
+#' for labeling dataset, one quoted expression.
+#'
+#' For labeling variables, one or more unquoted expressions for variables
+#' and corresponding quoted labels separated by equal sign `=`.
+#'
+#' `var1` = `"label1"`, `var2` = `"label2"`, etc.
+#'
+#' @section Examples:
+#'
+#'
+#' ```
+#' ## label dataset
+#' iris <- label(iris, "Edgar Anderson's Iris Data")
+#'
+#' ## label variables
+#' iris <- label(iris,
+#'               Sepal.Length = "Length of Sepal",
+#'               Sepal.Width = "Width of Sepal",
+#'               Petal.Length = "Length of Petal",
+#'               Petal.Width = "Width of Petal",
+#'               Species = "Species of flower")
+#'
+#' codebook(iris)
+#' ```
 #'
 #' @family data management
 #' @export
-#' @section Examples:
 #'
-#' Here we show the usage for labeling dataset.
-#'
-#' ```{r, comment = "#>", collapse = TRUE}
-#' iris <- label(iris, "Edgar Anderson's Iris Data")
-#'
-#' codebook(iris)
-#' ```
-#'
-#'
-#' Here is how to label multiple variables.
-#' ```{r, comment = "#>", collapse = TRUE}
-#' iris <- label(iris, Sepal.Length = "Length of Sepal",
-#'               Petal.Length = "Length of Petal",
-#'               Species = "Type of species")
-#'
-#' codebook(iris)
-#' ```
 label <- function(data, ... ) {
   data_name <- deparse(substitute(data))
   .check_dataframe(data, data_name)
@@ -41,7 +46,9 @@ label <- function(data, ... ) {
   vars_labels <- unlist(vars_labels)
   vars_name   <- names(vars_labels)
 
-  if (length(vars_name) == 1 & vars_name[1] == "") {
+  if (length(vars_name) == 0) {
+    stop("`variables & corresponding labels` must be specified", call. = FALSE)
+  } else if (length(vars_name) == 1 & vars_name[1] == "") {
     names(vars_labels)  <- data_name
     attr(data, "label") <- vars_labels
 
@@ -49,7 +56,7 @@ label <- function(data, ... ) {
   } else {
     .check_vars(data, vars_name)
     lapply(vars_name, function(z) {
-      attr(data[, z], "label") <<- vars_labels[[z]]
+      attr(data[[z]], "label") <<- vars_labels[[z]]
 
       message("  (`", z, "` labeled as `", vars_labels[[z]], "`)")
     })

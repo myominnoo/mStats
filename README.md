@@ -71,6 +71,11 @@ demonstration of what mStats can do.
 library(magrittr) 
 
 library(mStats)
+#> 
+#> Attaching package: 'mStats'
+#> The following objects are masked from 'package:base':
+#> 
+#>     append, replace
 
 ## Describe dataset
 codebook(infert)
@@ -143,18 +148,18 @@ codebook(infert_demo)
 #>            Label : Infertility after Spontaneous and Induced Abortion
 #>            Vars  : 8
 #>            Obs   : 248
-#>  + -- -------------- + ----------------------------- ------- --- -- ----- +
-#>  | No       Variable |                         Label    Type Obs NA NA(%) |
-#>  + -- -------------- + ----------------------------- ------- --- -- ----- +
-#>  |  1      education |            Mother's education  factor 248  0   0.0 |
-#>  |  2            age |                               numeric 248  0   0.0 |
-#>  |  3         parity |                No of pregnant numeric 248  0   0.0 |
-#>  |  4        induced | No of prior induced abortions numeric 248  0   0.0 |
-#>  |  5           case |                   case status numeric 248  0   0.0 |
-#>  |  6    spontaneous |                               numeric 248  0   0.0 |
-#>  |  7        stratum |                               integer 248  0   0.0 |
-#>  |  8 pooled.stratum |                               numeric 248  0   0.0 |
-#>  + -- -------------- + ----------------------------- ------- --- -- ----- +
+#>  + -- -------------- + ---------------------------- ------- --- -- ----- +
+#>  | No       Variable |                        Label    Type Obs NA NA(%) |
+#>  + -- -------------- + ---------------------------- ------- --- -- ----- +
+#>  |  1      education |           Mother's education  factor 248  0   0.0 |
+#>  |  2            age |                              numeric 248  0   0.0 |
+#>  |  3         parity |               No of pregnant numeric 248  0   0.0 |
+#>  |  4        induced | No of prior induced abort... numeric 248  0   0.0 |
+#>  |  5           case |                  case status numeric 248  0   0.0 |
+#>  |  6    spontaneous |                              numeric 248  0   0.0 |
+#>  |  7        stratum |                              integer 248  0   0.0 |
+#>  |  8 pooled.stratum |                              numeric 248  0   0.0 |
+#>  + -- -------------- + ---------------------------- ------- --- -- ----- +
 ```
 
 Next, we tabulate the `infert_demo` using the variables we processed
@@ -164,7 +169,7 @@ stratification variable to produce cross-tabulation.
 ``` r
 ## Tabulate variables by name as well as `:` operator:
 table1 <- tab(infert_demo, education, parity:induced) 
-#>  One-way tabulation
+#>   One-way tabulation
 #>  + --------- ------- + ----- ------- ----- +
 #>  |  Variable   Level | Freq. Percent  Cum. |
 #>  + --------- ------- + ----- ------- ----- +
@@ -198,7 +203,7 @@ table1 <- tab(infert_demo, education, parity:induced)
 
 ## Tabulate variables stratified by a stratification variable: 
 table2 <- tab(infert_demo, education, parity:induced, by = case) 
-#>  Two-way tabulation
+#>   Two-way tabulation
 #>                               case
 #>  + --------- ------- + --- ---- -- ---- ----- ----- ----- ----- +
 #>  |  Variable   Level |   0 r(%)  1 r(%) Total  r(%)  chi2 exact |
@@ -221,7 +226,7 @@ table2 <- tab(infert_demo, education, parity:induced, by = case)
 #>  |             Total | 165 66.5 83 33.5   248 100.0             |
 #>  + --------- ------- + --- ---- -- ---- ----- ----- ----- ----- +
 #>  |   induced         |                                          |
-#>  |                 0 |  96 67.1 47 32.9   143 100.0 0.964 0.969 |
+#>  |                 0 |  96 67.1 47 32.9   143 100.0 0.964 0.965 |
 #>  |                 1 |  45 66.2 23 33.8    68 100.0             |
 #>  |                 2 |  24 64.9 13 35.1    37 100.0             |
 #>  +           ------- + --- ---- -- ---- ----- ----- ----- ----- +
@@ -288,7 +293,7 @@ summary(table2)
 #> 10                                   
 #> 11                                   
 #> 12                                   
-#> 13            0.964             0.969
+#> 13            0.964             0.965
 #> 14                                   
 #> 15                                   
 #> 16
@@ -302,7 +307,7 @@ that we use flextable package to make it more presentable.
 sum1 <- summary(table1) 
 sum2 <- summary(table2)
 
-compact(sum1, sum2)
+combine(sum1, sum2)
 #>                         Variable   Level Total\n n (%)  0\n n (%) 1\n n (%)
 #> 1                          Total           248 (100.0) 165 (66.5) 83 (33.5)
 #> 2             Mother's education                                           
@@ -333,7 +338,7 @@ compact(sum1, sum2)
 #> 10                                   
 #> 11                                   
 #> 12                                   
-#> 13            0.964             0.969
+#> 13            0.964             0.965
 #> 14                                   
 #> 15                                   
 #> 16

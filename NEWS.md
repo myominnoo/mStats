@@ -3,15 +3,15 @@
 
 * [to add news release with url links to my website]
 
-* `compact` can combine outputs from `tab()`. 
-
-* `pkgdown` is used to create website for the package.
-
 * `mStats` follows the tidyverse coding style guide: https://style.tidyverse.org/
+
+* `combine` can combine outputs from summary functions `tab()`. 
 
 * `print` helper functions such as `printDfLines` are no longer available.
 
 * `message` is used to display information for respecitve outputs.  
+
+* `lag.data.frame` is deprecated. 
 
 # mStats 3.4.1
 

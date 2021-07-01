@@ -9,65 +9,50 @@ label(data, ...)
 \arguments{
 \item{data}{A data.frame}
 
-\item{...}{One or more unquoted expressions separated by equal sign \code{=}}
+\item{...}{One or more expressions:
+for labeling dataset, one quoted expression.
+
+For labeling variables, one or more unquoted expressions for variables
+and corresponding quoted labels separated by equal sign \code{=}.
+
+\code{var1} = \code{"label1"}, \code{var2} = \code{"label2"}, etc.}
 }
 \description{
 \Sexpr[results=rd]{lifecycle::badge("stable")}
 
-\code{label()} generates one-way or two-way tabulation of variables.
-If no variables are specified, all the variables will be tabulated
-if they are of \code{character}, \code{factor}, \verb{order factor}, and \code{logical}.
+\code{label()} manipulates labels for variables and dataset.
+If no label is specified, any existing variable label is removed.
 }
 \section{Examples}{
+\preformatted{## label dataset
+iris <- label(iris, "Edgar Anderson's Iris Data")
 
-
-Here we show the usage for labeling dataset.\if{html}{\out{<div class="r">}}\preformatted{iris <- label(iris, "Edgar Anderson's Iris Data")
-#>   (`iris` labeled as `Edgar Anderson's Iris Data`)
-
-codebook(iris)
-#>   Codebook
-#>            Name  : iris
-#>            Label : Edgar Anderson's Iris Data
-#>            Vars  : 5
-#>            Obs   : 150
-#>  + -- ------------ + ----- ------- --- -- ----- +
-#>  | No     Variable | Label    Type Obs NA NA(\%) |
-#>  + -- ------------ + ----- ------- --- -- ----- +
-#>  |  1 Sepal.Length |       numeric 150  0   0.0 |
-#>  |  2  Sepal.Width |       numeric 150  0   0.0 |
-#>  |  3 Petal.Length |       numeric 150  0   0.0 |
-#>  |  4  Petal.Width |       numeric 150  0   0.0 |
-#>  |  5      Species |        factor 150  0   0.0 |
-#>  + -- ------------ + ----- ------- --- -- ----- +
-}\if{html}{\out{</div>}}
-
-Here is how to label multiple variables.\if{html}{\out{<div class="r">}}\preformatted{iris <- label(iris, Sepal.Length = "Length of Sepal",
+## label variables
+iris <- label(iris,
+              Sepal.Length = "Length of Sepal",
+              Sepal.Width = "Width of Sepal",
               Petal.Length = "Length of Petal",
-              Species = "Type of species")
-#>   (`Sepal.Length` labeled as `Length of Sepal`)
-#>   (`Petal.Length` labeled as `Length of Petal`)
-#>   (`Species` labeled as `Type of species`)
+              Petal.Width = "Width of Petal",
+              Species = "Species of flower")
 
 codebook(iris)
-#>   Codebook
-#>            Name  : iris
-#>            Label : Edgar Anderson's Iris Data
-#>            Vars  : 5
-#>            Obs   : 150
-#>  + -- ------------ + --------------- ------- --- -- ----- +
-#>  | No     Variable |           Label    Type Obs NA NA(\%) |
-#>  + -- ------------ + --------------- ------- --- -- ----- +
-#>  |  1 Sepal.Length | Length of Sepal numeric 150  0   0.0 |
-#>  |  2  Sepal.Width |                 numeric 150  0   0.0 |
-#>  |  3 Petal.Length | Length of Petal numeric 150  0   0.0 |
-#>  |  4  Petal.Width |                 numeric 150  0   0.0 |
-#>  |  5      Species | Type of species  factor 150  0   0.0 |
-#>  + -- ------------ + --------------- ------- --- -- ----- +
-}\if{html}{\out{</div>}}
+}
 }
 
 \seealso{
 Other data management: 
-\code{\link{codebook}()}
+\code{\link{append}()},
+\code{\link{codebook}()},
+\code{\link{describe}()},
+\code{\link{duplicates}()},
+\code{\link{egen}()},
+\code{\link{encode}()},
+\code{\link{expand2}()},
+\code{\link{formatDate}()},
+\code{\link{generate}()},
+\code{\link{n_}()},
+\code{\link{recode}()},
+\code{\link{replace}()},
+\code{\link{rowmiss}()}
 }
 \concept{data management}
