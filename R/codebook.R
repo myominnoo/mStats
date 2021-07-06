@@ -52,6 +52,14 @@ codebook <- function(data) {
 }
 
 
+
+#' @rdname codebook
+#' @export
+cb <- function(data) {
+  codebook(data)
+}
+
+
 #' Describe a summary of data contents
 #'
 #' @description

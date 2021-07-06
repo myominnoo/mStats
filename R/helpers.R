@@ -71,7 +71,6 @@
                         var_label)
   })
 
-
   attr(vars_label, "names") <- NULL
   return(vars_label)
 }
@@ -122,11 +121,11 @@
   vline   <- rep("|", row_num)
   if (pos == 1) {
     output <- cbind(vline, out[, (pos:ncol(out))])
+    names(output)[pos] <- vsymbol
   } else {
     output <- cbind(out[, 1:(pos-1)], vline, out[, (pos:ncol(out))])
-    names(output)[1:(pos-1)] <- names(out)[1:(pos-1)]
+    names(output) <- base::append(names(out), vsymbol, pos-1)
   }
-  names(output)[pos] <- "|"
 
   return(output)
 }
@@ -142,3 +141,76 @@
 
   return(out)
 }
+
+
+#' @export
+.format_tab <- function(out) {
+  vars <- out[[1]]
+  pos  <- c((1:nrow(out))[!(vars == "")], nrow(out) + 1) + 1
+  end_pos <- diff(pos)
+  pos <- pos[-length(pos)]
+  end_pos <- end_pos + pos - 1
+  seq_num <- mapply(`:`, pos, end_pos)
+  if (is.matrix(seq_num)) {
+    seq_num <- lapply(1:ncol(seq_num), function(z) seq_num[, z])
+  }
+
+  out <- .add_hv_lines(out, 1, 3)
+  out <- do.call(
+    rbind,
+    lapply(seq_num, function(z) {
+      dash  <- out[1, ]
+      out   <- out[z, ]
+      row_n <- nrow(out)
+      out   <- rbind(dash, out[-row_n, ], dash, out[row_n, ])
+      out[nrow(out)-1, 1] <- ""
+      row.names(out) <- NULL
+      out
+    })
+  )
+  out[nrow(out)+1, ] <- out[1, ]
+
+  return(out)
+}
+
+
+
+#' @export
+.add_header <- function(out, prefix, y_name, suffix) {
+  col <- sapply(names(out), function(x)
+    grepl(paste(c(prefix, suffix), collapse = "|"), x))
+  d <- out[, !col]
+  d <- rbind(out[0, ],  d[1, ],names(out)[!col], d)
+  y_pos <- floor(ncol(d) / 2)
+  names(d)[y_pos] <- y_name
+  names(d)[-y_pos] <- ""
+
+  if (nchar(d[1, y_pos]) < nchar(y_name)) {
+    d[grepl("-", d[[y_pos]]), y_pos] <- paste(rep("-", nchar(y_name)), collapse = "")
+  }
+
+  pre <- sapply(names(out), function(x) grepl(paste(prefix, collapse = "|"), x))
+  pre <- out[, pre]
+  pre <- rbind(pre[0, ], "", names(pre), pre)
+
+  suf <- sapply(names(out), function(x) grepl(paste(suffix, collapse = "|"), x))
+  suf <- c("", names(out)[suf], out[, suf])
+
+  out <- cbind(pre, d, suf)
+  names(out)[grep(y_name, names(out), invert = TRUE)] <- ""
+
+  return(out)
+}
+
+
+
+#' @export
+.print_vars_label <- function(data, vars_name) {
+  lapply(vars_name, function(z) {
+    vars_label <- .get_vars_label(data, z)
+    if (vars_label != "") {
+      message(" (", z, ": ", vars_label, ")")
+    }
+  })
+}
+

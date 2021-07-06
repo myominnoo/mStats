@@ -153,7 +153,7 @@ recode <- function(data, vars = list(), ... ) {
       new <- vals[2]
       var[chk] <<- new
       message("  (`", var_name, "`: ", length(var[chk]),
-              " values recoded - `", old, "` >>> `", new, "`)")
+              " values recoded | `", old, "` >>> `", new, "`)")
     })
 
     if (is.factor(data[[var_name]])) {

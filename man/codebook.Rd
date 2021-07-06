@@ -2,9 +2,12 @@
 % Please edit documentation in R/codebook.R
 \name{codebook}
 \alias{codebook}
+\alias{cb}
 \title{Describe data contents}
 \usage{
 codebook(data)
+
+cb(data)
 }
 \arguments{
 \item{data}{A data.frame}
