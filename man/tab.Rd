@@ -8,9 +8,9 @@ tab(
   data,
   ...,
   by = NULL,
-  row.pct = TRUE,
+  pct = c("row", "col", "none"),
   na.rm = FALSE,
-  chi2 = TRUE,
+  test = c("chi", "exact", "none"),
   digits = 1
 )
 }
@@ -24,21 +24,21 @@ variables.}
 
 \item{by}{Stratification Variable}
 
-\item{row.pct}{This allows you to control how relative frequency are
+\item{pct}{This allows you to control how relative frequency are
 calculated or none at all. The value can be:
 \itemize{
-\item \code{TRUE} reports relative frequency within its row.
-\item \code{FALSE} reports relative frequency within its column.
-\item \code{NULL} hides relative frequency.
+\item \code{row} reports relative frequency within its row.
+\item \code{col} reports relative frequency within its column.
+\item \code{none} hides relative frequency.
 }}
 
 \item{na.rm}{logical value: if \code{TRUE}, it removes observations with missing values.}
 
-\item{chi2}{logical value
+\item{test}{name of test
 \itemize{
-\item \code{TRUE} calcuates p-value from chi-square test of association.
-\item \code{FALSE} calculates p-value from Fisher's exact test.
-\item \code{NULL} hides p-value from either tests.
+\item \code{chi} calcuates p-value from chi-square test of association.
+\item \code{exact} calculates p-value from Fisher's exact test.
+\item \code{none} hides p-value from either tests.
 }}
 
 \item{digits}{specify rounding of numbers.}
@@ -62,11 +62,11 @@ If \code{by} is not specified, one-way table of frequencies is generated.
 Specifying \code{by} generates two-way or n-way table of summary statistics
 By default, row percentages are presented with count data.
 
-Value of \code{row.pct}:
+Value of \code{pct}:
 \itemize{
-\item \code{TRUE}  - relative frequency within its row of each cell
-\item \code{FALSE} - report relative frequency within its column of each cell
-\item \code{NULL}  - cumulative relative frequency
+\item \code{row}  - relative frequency within its row of each cell
+\item \code{col} - report relative frequency within its column of each cell
+\item \code{none}  - cumulative relative frequency
 }
 }
 
@@ -83,7 +83,7 @@ for variables that are of type \code{character}, \code{factor}, \verb{order fact
 
 Tabulate variable by name:\if{html}{\out{<div class="r">}}\preformatted{tab(infert, education)
 #>   One-way tabulation
-#>   Variable   Level | Freq. Percent  Cum.
+#>   variable   level | Freq. Percent  Cum.
 #>  --------- ------- + ----- ------- -----
 #>  education         |                    
 #>             0-5yrs |    12     4.8   4.8
@@ -96,7 +96,7 @@ Tabulate variable by name:\if{html}{\out{<div class="r">}}\preformatted{tab(infe
 
 Tabulate multiple variables by separating them with commas:\if{html}{\out{<div class="r">}}\preformatted{tab(infert, education, parity, induced)
 #>   One-way tabulation
-#>   Variable   Level | Freq. Percent  Cum.
+#>   variable   level | Freq. Percent  Cum.
 #>  --------- ------- + ----- ------- -----
 #>  education         |                    
 #>             0-5yrs |    12     4.8   4.8
@@ -126,7 +126,7 @@ Tabulate multiple variables by separating them with commas:\if{html}{\out{<div c
 
 The \code{:} operator selects a range of consecutive variables:\if{html}{\out{<div class="r">}}\preformatted{tab(infert, education, parity:spontaneous)
 #>   One-way tabulation
-#>     Variable   Level | Freq. Percent  Cum.
+#>     variable   level | Freq. Percent  Cum.
 #>  ----------- ------- + ----- ------- -----
 #>    education         |                    
 #>               0-5yrs |    12     4.8   4.8
@@ -169,52 +169,52 @@ The \code{:} operator selects a range of consecutive variables:\if{html}{\out{<d
 
 Tabulate variables with a stratification variable \code{by}:\if{html}{\out{<div class="r">}}\preformatted{tab(infert, education, parity:spontaneous, by = case)
 #>   Two-way tabulation
-#>                                   case                             
-#>                        --- ------ ---- ------ ----- ------         
-#>     Variable   Level |   0 row(\%)    1 row(\%) Total row(\%) Pr(chi2)
-#>  ----------- ------- + --- ------ ---- ------ ----- ------ --------
-#>    education         |                                             
-#>               0-5yrs |   8   66.7    4   33.3    12  100.0    0.999
-#>              6-11yrs |  80   66.7   40   33.3   120  100.0         
-#>              12+ yrs |  77   66.4   39   33.6   116  100.0         
-#>              ------- + --- ------ ---- ------ ----- ------ --------
-#>                Total | 165   66.5   83   33.5   248  100.0         
-#>  ----------- ------- + --- ------ ---- ------ ----- ------ --------
-#>       parity         |                                             
-#>                    1 |  66   66.7   33   33.3    99  100.0    1.000
-#>                    2 |  54   66.7   27   33.3    81  100.0         
-#>                    3 |  24   66.7   12   33.3    36  100.0         
-#>                    4 |  12   66.7    6   33.3    18  100.0         
-#>                    5 |   4   66.7    2   33.3     6  100.0         
-#>                    6 |   5   62.5    3   37.5     8  100.0         
-#>              ------- + --- ------ ---- ------ ----- ------ --------
-#>                Total | 165   66.5   83   33.5   248  100.0         
-#>  ----------- ------- + --- ------ ---- ------ ----- ------ --------
-#>      induced         |                                             
-#>                    0 |  96   67.1   47   32.9   143  100.0    0.964
-#>                    1 |  45   66.2   23   33.8    68  100.0         
-#>                    2 |  24   64.9   13   35.1    37  100.0         
-#>              ------- + --- ------ ---- ------ ----- ------ --------
-#>                Total | 165   66.5   83   33.5   248  100.0         
-#>  ----------- ------- + --- ------ ---- ------ ----- ------ --------
-#>         case         |                                             
-#>                    0 | 165  100.0    0    0.0   165  100.0    0.000
-#>                    1 |   0    0.0   83  100.0    83  100.0         
-#>              ------- + --- ------ ---- ------ ----- ------ --------
-#>                Total | 165   66.5   83   33.5   248  100.0         
-#>  ----------- ------- + --- ------ ---- ------ ----- ------ --------
-#>  spontaneous         |                                             
-#>                    0 | 113   80.1   28   19.9   141  100.0    0.000
-#>                    1 |  40   56.3   31   43.7    71  100.0         
-#>                    2 |  12   33.3   24   66.7    36  100.0         
-#>              ------- + --- ------ ---- ------ ----- ------ --------
-#>                Total | 165   66.5   83   33.5   248  100.0         
-#>  ----------- ------- + --- ------ ---- ------ ----- ------ --------
+#>                            case 
+#>  ----------- ------- + --- ------ -- ------ ----- ------ -------- 
+#>     variable   level |   0 row(\%)  1 row(\%) Total row(\%) Pr[chi2]
+#>  ----------- ------- + --- ------ -- ------ ----- ------ --------
+#>    education         |                                           
+#>               0-5yrs |   8   66.7  4   33.3    12  100.0    0.999
+#>              6-11yrs |  80   66.7 40   33.3   120  100.0         
+#>              12+ yrs |  77   66.4 39   33.6   116  100.0         
+#>              ------- + --- ------ -- ------ ----- ------ --------
+#>                Total | 165   66.5 83   33.5   248  100.0         
+#>  ----------- ------- + --- ------ -- ------ ----- ------ --------
+#>       parity         |                                           
+#>                    1 |  66   66.7 33   33.3    99  100.0    1.000
+#>                    2 |  54   66.7 27   33.3    81  100.0         
+#>                    3 |  24   66.7 12   33.3    36  100.0         
+#>                    4 |  12   66.7  6   33.3    18  100.0         
+#>                    5 |   4   66.7  2   33.3     6  100.0         
+#>                    6 |   5   62.5  3   37.5     8  100.0         
+#>              ------- + --- ------ -- ------ ----- ------ --------
+#>                Total | 165   66.5 83   33.5   248  100.0         
+#>  ----------- ------- + --- ------ -- ------ ----- ------ --------
+#>      induced         |                                           
+#>                    0 |  96   67.1 47   32.9   143  100.0    0.964
+#>                    1 |  45   66.2 23   33.8    68  100.0         
+#>                    2 |  24   64.9 13   35.1    37  100.0         
+#>              ------- + --- ------ -- ------ ----- ------ --------
+#>                Total | 165   66.5 83   33.5   248  100.0         
+#>  ----------- ------- + --- ------ -- ------ ----- ------ --------
+#>         case         |                                           
+#>                    0 | 165  100.0  0    0.0   165  100.0    0.000
+#>                    1 |   0    0.0 83  100.0    83  100.0         
+#>              ------- + --- ------ -- ------ ----- ------ --------
+#>                Total | 165   66.5 83   33.5   248  100.0         
+#>  ----------- ------- + --- ------ -- ------ ----- ------ --------
+#>  spontaneous         |                                           
+#>                    0 | 113   80.1 28   19.9   141  100.0    0.000
+#>                    1 |  40   56.3 31   43.7    71  100.0         
+#>                    2 |  12   33.3 24   66.7    36  100.0         
+#>              ------- + --- ------ -- ------ ----- ------ --------
+#>                Total | 165   66.5 83   33.5   248  100.0         
+#>  ----------- ------- + --- ------ -- ------ ----- ------ --------
 }\if{html}{\out{</div>}}
 
 Tabulate all categorical variables without specifying any variables:\if{html}{\out{<div class="r">}}\preformatted{tab(infert)
 #>   One-way tabulation
-#>   Variable   Level | Freq. Percent  Cum.
+#>   variable   level | Freq. Percent  Cum.
 #>  --------- ------- + ----- ------- -----
 #>  education         |                    
 #>             0-5yrs |    12     4.8   4.8
@@ -226,4 +226,8 @@ Tabulate all categorical variables without specifying any variables:\if{html}{\o
 }\if{html}{\out{</div>}}
 }
 
+\seealso{
+Other statistical analysis: 
+\code{\link{summ}()}
+}
 \concept{statistical analysis}

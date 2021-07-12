@@ -43,7 +43,7 @@ encode <- function(data, ...) {
     var_label <- attr(var, "label")
     data[[var_name]] <<- as.numeric(var)
     attr(data[[var_name]], "label") <<- var_label
-    message(paste0("  ('", var_name, "' replaced as `numeric`)"))
+    message(paste0("  (`", var_name, "` replaced as `numeric`)"))
   })
 
   return(data)
@@ -70,7 +70,7 @@ decode <- function(data, ...) {
     var_label <- attr(var, "label")
     data[[var_name]] <<- as.character(var)
     attr(data[[var_name]], "label") <<- var_label
-    message(paste0("  ('", var_name, "' replaced as `character`)"))
+    message(paste0("  (`", var_name, "` replaced as `character`)"))
   })
 
   return(data)

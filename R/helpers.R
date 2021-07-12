@@ -176,30 +176,22 @@
 
 
 #' @export
-.add_header <- function(out, prefix, y_name, suffix) {
-  col <- sapply(names(out), function(x)
-    grepl(paste(c(prefix, suffix), collapse = "|"), x))
-  d <- out[, !col]
-  d <- rbind(out[0, ],  d[1, ],names(out)[!col], d)
-  y_pos <- floor(ncol(d) / 2)
-  names(d)[y_pos] <- y_name
-  names(d)[-y_pos] <- ""
+.print_header <- function(out, y_name) {
+  out_name <- names(out)
+  col <- grepl("variable|Level|\\|", out_name)
+  p1 <- paste(c(" ", paste(out[1, col], collapse = " "), " "), collapse = "")
 
-  if (nchar(d[1, y_pos]) < nchar(y_name)) {
-    d[grepl("-", d[[y_pos]]), y_pos] <- paste(rep("-", nchar(y_name)), collapse = "")
+  col <- grepl("variable|Level|\\||Pr", out_name)
+  if (any(grepl("row\\(\\%\\)|col\\(\\%\\)", out_name))) {
+    col_n <- length(col)
+    col[(col_n-2):(col_n-1)] <- TRUE
   }
 
-  pre <- sapply(names(out), function(x) grepl(paste(prefix, collapse = "|"), x))
-  pre <- out[, pre]
-  pre <- rbind(pre[0, ], "", names(pre), pre)
+  r_char <- nchar(paste(out[1, !col], collapse = " "))
+  y_char <- nchar(y_name)
 
-  suf <- sapply(names(out), function(x) grepl(paste(suffix, collapse = "|"), x))
-  suf <- c("", names(out)[suf], out[, suf])
-
-  out <- cbind(pre, d, suf)
-  names(out)[grep(y_name, names(out), invert = TRUE)] <- ""
-
-  return(out)
+  cat(rep("", nchar(p1) + ((r_char/2) - (y_char/2))), y_name, "\n")
+  cat("", paste(out[1, ], collapse = " "), "\n")
 }
 
 

@@ -24,8 +24,12 @@ codebook <- function(data) {
   data_label <- attr(data, "label")
   data_notes <- attr(data, "notes")
   if (!is.null(data_notes)) {
-    data_notes <- paste0("\t", data_notes[2]:1, ". ", data_notes[-2],
-                         collapse = "\n")
+    if (grepl("EpiData", data_notes[2])) {
+      data_notes <- paste0("\t", data_notes, ". ", collapse = "\n")
+    } else {
+      data_notes <- paste0("\t", data_notes[2]:1, ". ", data_notes[-2],
+                           collapse = "\n")
+    }
   }
 
   vars_num   <- ncol(data)

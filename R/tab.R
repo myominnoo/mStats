@@ -20,11 +20,11 @@
 #' Specifying `by` generates two-way or n-way table of summary statistics
 #' By default, row percentages are presented with count data.
 #'
-#' Value of `row.pct`:
+#' Value of `pct`:
 #'
-#' * `TRUE`  - relative frequency within its row of each cell
-#' * `FALSE` - report relative frequency within its column of each cell
-#' * `NULL`  - cumulative relative frequency
+#' * `row`  - relative frequency within its row of each cell
+#' * `col` - report relative frequency within its column of each cell
+#' * `none`  - cumulative relative frequency
 #'
 #' ## Tabulating the whole dataset
 #'
@@ -41,19 +41,19 @@
 #' frame, so expressions like `x:y` can be used to select a range of
 #' variables.
 #' @param by Stratification Variable
-#' @param row.pct This allows you to control how relative frequency are
+#' @param pct This allows you to control how relative frequency are
 #' calculated or none at all. The value can be:
 #'
-#' * `TRUE` reports relative frequency within its row.
-#' * `FALSE` reports relative frequency within its column.
-#' * `NULL` hides relative frequency.
+#' * `row` reports relative frequency within its row.
+#' * `col` reports relative frequency within its column.
+#' * `none` hides relative frequency.
 #'
 #' @param na.rm logical value: if `TRUE`, it removes observations with missing values.
-#' @param chi2 logical value
+#' @param test name of test
 #'
-#' * `TRUE` calcuates p-value from chi-square test of association.
-#' * `FALSE` calculates p-value from Fisher's exact test.
-#' * `NULL` hides p-value from either tests.
+#' * `chi` calcuates p-value from chi-square test of association.
+#' * `exact` calculates p-value from Fisher's exact test.
+#' * `none` hides p-value from either tests.
 #'
 #' @param digits specify rounding of numbers.
 #'
@@ -93,14 +93,14 @@
 #' @family statistical analysis
 #' @importFrom stats addmargins chisq.test fisher.test na.omit
 #' @export
-tab <- function(data, ... , by = NULL, row.pct = TRUE, na.rm = FALSE,
-                chi2 = TRUE, digits = 1) {
+tab <- function(data, ... , by = NULL, pct = c("row", "col", "none"),
+                na.rm = FALSE, test = c("chi", "exact", "none"), digits = 1) {
   vars_type <- c("factor", "character", "orderedfactor", "logical")
   data_name <- deparse(substitute(data))
   .check_dataframe(data, data_name)
 
   args      <- as.list(match.call())
-  vars_name <- .dots(args, c("data", "by", "row.pct", "na.rm", "chi2", "digits"))
+  vars_name <- .dots(args, c("data", "by", "pct", "na.rm", "test", "digits"))
   vars_name <- .check_dots(data, vars_name)
 
   ## stop if nothing can be found
@@ -125,16 +125,19 @@ tab <- function(data, ... , by = NULL, row.pct = TRUE, na.rm = FALSE,
     .check_vars(data, y_name)
     out <- do.call(
       rbind,
-      lapply(vars_name, tab2, data, y_name, row.pct, na.rm, chi2, digits))
+      lapply(vars_name, tab2, data, y_name, pct, na.rm, test, digits))
     output <- .format_tab(out)
-    output <- .add_header(output, c("Variable", "Level", "\\|"), y_name, "Pr")
     message("  Two-way tabulation")
+    .print_header(output, y_name)
   }
 
   print.data.frame(output, row.names = FALSE, max = 1e9)
   .print_vars_label(data, c(vars_name, y_name))
 
+  attr(out, "vars") <- vars_name
   attr(out, "dataname") <- data_name
+  out <- list(table = out, data = data)
+  class(out) <- attr(out$table, "type")
 
   invisible(out)
 }
@@ -142,8 +145,8 @@ tab <- function(data, ... , by = NULL, row.pct = TRUE, na.rm = FALSE,
 
 
 
-
 # helpers -----------------------------------------------------------------
+
 
 
 tab1 <- function(x, data, na.rm = FALSE, digits = 1) {
@@ -153,7 +156,7 @@ tab1 <- function(x, data, na.rm = FALSE, digits = 1) {
   useNA <- ifelse(na.rm, "no", "ifany")
 
   ## create tabulation table
-  f      <- table(x, useNA = useNA)
+  f      <- base::table(x, useNA = useNA)
   pct    <- prop.table(f) * 100
   cumpct <- sprintf(c(cumsum(pct), 100),
                     fmt = paste0("%#.", digits, "f"))
@@ -161,18 +164,18 @@ tab1 <- function(x, data, na.rm = FALSE, digits = 1) {
   ft     <- c(f, Total = sum(f, na.rm = TRUE))
 
   out        <- data.frame(cbind(names(ft), ft, pct, cumpct))
-  names(out) <- c("Level", "Freq.", "Percent", "Cum.")
+  names(out) <- c("level", "Freq.", "Percent", "Cum.")
 
-  row.names(out) <- NULL
+  ## add row names
+  row.names(out) <- paste0(x_name, ".", out$level)
   out <- rbind(out[0, ], c(rep("", 4)), out)
-  out <- cbind(Variable = c(x_name, rep("", nrow(out) - 1)), out)
+  out <- cbind(variable = c(x_name, rep("", nrow(out) - 1)), out)
   attr(out, "type") <- "tab1"
 
   return(out)
 }
 
-tab2 <- function(x, data, by, row.pct = TRUE, na.rm = FALSE,
-                 chi2 = TRUE, digits = 1) {
+tab2 <- function(x, data, by, pct, na.rm, test, digits) {
   x_name <- x
   y_name <- by
   x <- data[[x]]
@@ -181,7 +184,7 @@ tab2 <- function(x, data, by, row.pct = TRUE, na.rm = FALSE,
   useNA <- ifelse(na.rm, "no", "ifany")
 
   ## Create confusion matrices of raw, row and col percentages
-  tbl <- table(x, y, useNA = useNA)
+  tbl <- base::table(x, y, useNA = useNA)
 
   ## Create row and col names of the tables
   row_name <- c(row.names(tbl), "Total")
@@ -191,13 +194,14 @@ tab2 <- function(x, data, by, row.pct = TRUE, na.rm = FALSE,
   ## Create count table
   tbl_count <- addmargins(tbl)
 
-  if (is.null(row.pct)) {
+  if (length(pct) > 1) pct <- pct[1]
+  if (pct == "none") {
     row.names(tbl_count)   <- row_name
     colnames(tbl_count)    <- col_name
     out <- as.data.frame(cbind(row_name, tbl_count))
-    names(out) <- c("Level", col_name)
+    names(out) <- c("level", col_name)
   } else {
-    if (row.pct) {
+    if (pct == "row") {
 
       tbl_pct <- addmargins(prop.table(tbl, 1) * 100)
       tbl_pct[nrow(tbl_pct), ] <-
@@ -215,8 +219,8 @@ tab2 <- function(x, data, by, row.pct = TRUE, na.rm = FALSE,
 
       tbl_count <- as.data.frame(cbind(row_name, tbl_count))
       out <- cbind(tbl_count, tbl_pct)[, col_order]
-      names(out) <- c("Level", pct_name)
-    } else if (!row.pct) {
+      names(out) <- c("level", pct_name)
+    } else if (pct == "col") {
       tbl_pct <- addmargins(prop.table(tbl, 2) * 100)
       tbl_pct[, ncol(tbl_pct)] <-
         tbl_count[, ncol(tbl_count)] / sum(tbl) * 100
@@ -233,7 +237,7 @@ tab2 <- function(x, data, by, row.pct = TRUE, na.rm = FALSE,
 
       tbl_count <- as.data.frame(cbind(row_name, tbl_count))
       out <- cbind(tbl_count, tbl_pct)[, col_order]
-      names(out) <- c("Level", pct_name)
+      names(out) <- c("level", pct_name)
     }
   }
 
@@ -248,33 +252,40 @@ tab2 <- function(x, data, by, row.pct = TRUE, na.rm = FALSE,
   }
 
   ## get pvalue from chi square and fisher tests
-  if (!is.null(chi2)) {
-    if (chi2) {
+  if (length(test) > 1) test <- test[1]
+  if (test != "none") {
+    if (test == "chi") {
       pvalue <- tryCatch({
         suppressWarnings(chisq.test(x, y, correct = FALSE)$p.value)
       }, error = function(cnd) {
         return(NA)
       })
       pvalue <- sprintf(pvalue, fmt = '%#.3f')
-      test_name <- "Pr(chi2)"
-    } else {
+      test_name <- "Pr[chi2]"
+    } else if (test == "exact") {
       pvalue <- tryCatch({
         suppressWarnings(fisher.test(x, y, simulate.p.value = TRUE)$p.value)
       }, error = function(cnd) {
         return(NA)
       })
       pvalue <- sprintf(pvalue, fmt = '%#.3f')
-      test_name <- "Pr(exact)"
+      test_name <- "Pr[exact]"
     }
+
     ## add pvalue back to out
     out$p1 <- c(pvalue[1], rep("", nrow(out) - 1))
     names(out)[ncol(out)] <- test_name
   }
 
-  row.names(out) <- NULL
   out <- rbind(out[0, ], "", out)
-  out <- cbind(Variable = c(x_name, rep("", nrow(out) - 1)), out)
+  row.names(out) <- paste0(x_name, ".", out$level)
+  out <- cbind(variable = c(x_name, rep("", nrow(out) - 1)), out)
+
+  attr(out, "pct")  <- pct
+  attr(out, "test") <- test
+  attr(out, "by")   <- y_name
   attr(out, "type") <- "tab2"
 
   return(out)
 }
+

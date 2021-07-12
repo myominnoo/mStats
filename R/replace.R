@@ -56,7 +56,7 @@ replace <- function(data, var, value, condition = NULL) {
   tryCatch({
     var <- eval(parse(text = paste0("within(data, ", expr_text, ")")))
   } , error = function(msg){
-    stop(paste0("\n'", expr_text, "' cannot be evaluated.", "\n"), call. = TRUE)
+    stop(paste0("\n`", expr_text, "` cannot be evaluated.", "\n"), call. = TRUE)
     return(NA)
   })
   var <- var[[var_name]]

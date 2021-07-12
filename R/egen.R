@@ -129,8 +129,8 @@ egen <- function(data, var, cut = NULL, label = NULL, new_var = NULL) {
 
   check <- is.na(new_var)
   na_num <- ifelse(any(check), paste0("& ", sum(check), " missing "), "")
-  message("  (", sum(!check), " valid ", na_num, "values generated in '",
-          new_var_name, "')")
+  message("  (", sum(!check), " valid ", na_num, "values generated in `",
+          new_var_name, "`)")
 
   return(data)
 }
