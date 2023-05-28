@@ -8,6 +8,13 @@
 \description{
 A set of tidyverse-friendly functions for data management, calculation of epidemiological measures, statistical analysis, and table creation.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://myominnoo.github.io/mStats/}
+}
+
+}
 \author{
 \strong{Maintainer}: Myo Minn Oo \email{dr.myominnoo@gmail.com} (\href{https://orcid.org/0000-0003-4089-016X}{ORCID})
 

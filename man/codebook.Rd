@@ -2,29 +2,33 @@
 % Please edit documentation in R/codebook.R
 \name{codebook}
 \alias{codebook}
-\title{Describe data contents}
+\title{Generate a codebook}
 \usage{
 codebook(data)
 }
 \arguments{
-\item{data}{An object.}
+\item{data}{The dataset for which the codebook is to be generated.}
 }
 \value{
-\code{data} original \code{data} is (invisibly) returned,
+The input dataset is returned invisibly,
 allowing \code{codebook()} to be used within a data pipe line.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 
-\code{codebook} offers an overview of your data,
-enabling easy examination of its structure; variables,
-their names, labels, data types, missing counts, and unique value counts.
-
-Apart from \link{data.frame}, it uses \link[pillar:glimpse]{pillar::glimpse} to inspect the
-data structure.
+The \code{codebook} function generates a codebook for the given dataset. It provides a summary
+of the dataset's structure and characteristics, including variable names, types, missing
+values, completeness percentages, unique value counts, and variable labels (if available).
 }
 \examples{
 codebook(mtcars)
+
+codebook(iris)
+
+labelled::var_label(iris) <- c(
+	"sepal length", "sepal width", "petal length",
+	"petal width", "species"
+)
 codebook(iris)
 
 }

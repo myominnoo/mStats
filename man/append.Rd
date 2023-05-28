@@ -19,6 +19,6 @@ A data frame
 \code{append} stacks multiple datasets.
 }
 \examples{
-
 append(airquality, mtcars)
+
 }

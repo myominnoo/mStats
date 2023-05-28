@@ -1,0 +1,101 @@
+---
+title: "Enhanced Numeric Data Categorization with cut"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Enhanced Numeric Data Categorization with cut}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The `cut` function from the mStats package offers an enhanced and intuitive approach to categorizing numeric data into intervals, with improved labeling compared to the base `cut` function in R. It provides more flexibility in defining cut points and generates informative interval labels. The function handles both single numeric cut points and vector-based cut points, creating intervals accordingly. However, it does not accept NA, 1L, or missing values as the at argument. When using multiple elements in the at argument, it creates intervals with labels in the format of "lower value - upper value."
+
+This vignette demonstrates the usage of the `cut` function with various examples, showcasing its flexibility and convenience in data management tasks.
+
+```{r setup}
+library(mStats)
+```
+
+## Numeric Vector Example
+
+Consider the following numeric vector `x`:
+```{r}
+x <- 1:5
+x
+```
+
+## Single Numeric Cut Point
+When using a single numeric cut point, `cut` creates equal bins similar to the base `cut` function:
+
+```{r, eval=FALSE}
+cut(x, NA)
+cut(x, 1)
+```
+
+The output divides `x` into equal intervals based on the cut point, with informative interval labels.
+
+## Multiple Numeric Cut Points
+For multiple elements in the at argument, `cut` creates intervals based on the specified values:
+
+```{r}
+cut(x, 2)
+cut(x, 5)
+cut(x, c(3, 5))
+```
+
+The output shows intervals that include the specified cut points, with labels in the format of "`lower value`-`upper value`" for each interval.
+
+## Handling Infinite Values
+cut also handles infinite values in the at argument:
+
+```{r}
+cut(x, c(-Inf, 2, Inf))
+```
+
+In this example, `-Inf` represents negative infinity, and `Inf` represents positive infinity. The intervals are defined accordingly, incorporating the infinite values.
+
+## Vector-Based Cut Points
+When using a vector as the at argument, cut categorizes `x` based on the provided values:
+
+```{r}
+cut(x, 1:5)
+```
+
+In this case, cut generates intervals based on each element in the at vector.
+
+## Invalid at Values
+`cut` restricts the use of certain values for the at argument, such as NA, 1L, or missing values. It provides informative error messages when encountering such cases:
+```{r, eval=FALSE}
+cut("x", 1)
+```
+
+
+## Date Example
+`cut` can also handle date objects. Let's consider the following examples with date and time:
+```{r}
+x <- Sys.Date() - 1:5
+x
+cut(x, 2)
+```
+In this example, `cut` categorizes the dates into intervals based on the specified cut points.
+
+```{r}
+x <- Sys.time() - 1:5
+x
+cut(x, 2)
+```
+
+
+For time objects, `cut` works similarly, categorizing the time values into intervals based on the provided cut points.
+
+## Conclusion
+
+The `cut` function from the mStats package offers enhanced numeric data categorization with improved labeling. It provides flexibility in defining cut points, handles infinite values, and generates informative interval labels. By utilizing `cut`, users can easily categorize and analyze their numeric data, making data management tasks more intuitive and efficient.
+
+For further information and additional features of the `mStats` package, please refer to the package documentation and explore its functionalities.

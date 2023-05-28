@@ -1,0 +1,62 @@
+---
+title: "Data insights with `codebook`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Data insights with `codebook`}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The codebook function is a user-friendly tool designed to create informative summaries, known as codebooks, for data frames in R. It enables R users to explore and understand their datasets more easily. By providing essential details about the variables in a dataset, such as names, types, missing values, completeness, uniqueness, and variable labels (if available), the function empowers users to gain insights and make informed decisions during data analysis.
+
+The codebook function in the mStats package is a valuable resource for generating user-friendly codebooks in R. This vignette will guide you through the process of using the codebook function to explore and summarize your datasets effectively, even if you're not an expert in R programming.
+
+To get started, make sure you have the mStats package installed and loaded in your R environment. If you haven't done so already, you can install the package using the following command:
+
+```{r setup}
+# install.packages("mStats")
+library(mStats)
+library(labelled)
+```
+
+Once the package is ready, you can begin using the codebook function. This function requires only one input, which is the data frame you want to create a codebook for. Here's an example to help you understand how to use the function:
+
+```{r}
+# Generate a codebook for the 'iris' dataset
+codebook(iris)
+
+# Label their variables
+labelled::var_label(iris) <- c(
+  "sepal length", "sepal width", "petal length",
+  "petal width", "species"
+)
+
+# Generate codebook again
+codebook(iris)
+```
+
+Running this code will display a comprehensive codebook for the 'iris' dataset, providing useful information about each variable, such as its name, type, missing values, completeness, uniqueness, and variable labels (if available). The codebook will be presented in a neatly organized table format, making it easy for you to analyze and interpret the dataset.
+
+If you're working with a piped dataset, here's an example:
+
+```{r}
+# Generate a codebook for a piped dataset
+mtcars %>% codebook()
+```
+The function will recognize the piped data, represented by `.`, and label it as "<Piped Data>" in the codebook.
+
+Furthermore, the codebook function seamlessly integrates with the labelled package, allowing you to incorporate variable labels into the codebook. If your dataset contains variable labels, the function will automatically include them in the codebook. To ensure proper handling of variable labels, make sure you have installed and loaded the labelled package before using the codebook function.
+
+If you prefer to use the native pipe operator |>, the codebook function will return the input name instead of "<Piped Data>". Here's an example:
+
+```{r}
+# Generate a codebook using the native pipe operator
+mtcars |> codebook()
+```
