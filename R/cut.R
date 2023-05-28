@@ -50,11 +50,14 @@ cut <- function(x, at, label = NULL, ...) {
 			label <- paste0(c(vmin, brk), "-", c(brk - 1/10^decimal, vmax))
 		}
 
-		base::cut.default(x, breaks = c(vmin, brk, vmax), labels = label,
+		new_x <- base::cut.default(x, breaks = c(vmin, brk, vmax), labels = label,
 											include.lowest = TRUE, right = FALSE, ...)
 	} else {
-		base::cut(x, at, label, ...)
+		new_x <- base::cut(x, at, label, ...)
 	}
+
+	# copy label
+	labelled::copy_labels(x, new_x)
 }
 
 

@@ -430,14 +430,14 @@ following examples with date and time:</p>
 intervals based on the specified cut points.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>() <span class="sc">-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>x</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;2023-05-28 12:34:52 CDT&quot; &quot;2023-05-28 12:34:51 CDT&quot;</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [3] &quot;2023-05-28 12:34:50 CDT&quot; &quot;2023-05-28 12:34:49 CDT&quot;</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [5] &quot;2023-05-28 12:34:48 CDT&quot;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;2023-05-28 13:46:43 CDT&quot; &quot;2023-05-28 13:46:42 CDT&quot;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [3] &quot;2023-05-28 13:46:41 CDT&quot; &quot;2023-05-28 13:46:40 CDT&quot;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [5] &quot;2023-05-28 13:46:39 CDT&quot;</span></span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cut</span>(x, <span class="dv">2</span>)</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 2023-05-28 12:34:49.903936 2023-05-28 12:34:49.903936</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [3] 2023-05-28 12:34:49.903936 2023-05-28 12:34:52.903936</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [5] 2023-05-28 12:34:52.903936</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Levels: 2023-05-28 12:34:52.903936 2023-05-28 12:34:49.903936</span></span></code></pre></div>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 2023-05-28 13:46:40.211726 2023-05-28 13:46:40.211726</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [3] 2023-05-28 13:46:40.211726 2023-05-28 13:46:43.211726</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [5] 2023-05-28 13:46:43.211726</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Levels: 2023-05-28 13:46:43.211726 2023-05-28 13:46:40.211726</span></span></code></pre></div>
 <p>For time objects, <code>cut</code> works similarly, categorizing the
 time values into intervals based on the provided cut points.</p>
 </div>

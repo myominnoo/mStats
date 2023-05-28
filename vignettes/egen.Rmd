@@ -1,0 +1,48 @@
+---
+title: "Convert a continuous variable into groups"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Convert a continuous variable into groups}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The `egen` function is used to convert a continuous variable into groups by discretizing it into intervals. It is a deprecated function that has been replaced by the `cut` function from the `mStats` package. The main difference between `egen` and `cut` is the input they accept.
+
+- `egen` works with data frames or tibbles, allowing variable grouping within the context of the entire dataset.
+- `cut` operates on a vector, performing grouping directly on that vector.
+
+The `egen` function is deprecated and serves as a wrapper around the cut function. It issues a deprecation warning indicating that the recommended approach is to use cut directly.
+
+```{r setup}
+library(mStats)
+data <- data.frame(x = 1:10)
+egen(data, x, at = c(3, 7), label = c("low", "medium", "high"))
+
+```
+
+## `egen` versus `mutate` + `cut`
+
+```{r}
+library(dplyr)
+
+# Example 1: Using egen() function
+data <- data.frame(x = 1:10)
+data <- egen(data, var = x, at = c(3, 7), label = c("low", "medium", "high"))
+
+# Example 2: Using mutate() and cut() functions
+data2 <- data.frame(x = 1:10)
+data2 <- mutate(data2, x = cut(x, at = c(-Inf, 3, 7, Inf), label = c("low", "medium", "high")))
+
+# Check if the results are the same
+identical(data, data2)  # Should be TRUE
+```
+
+In both examples, a data frame `data` and `data2` with a single variable `x` is created. The goal is to group the values of `x` into three categories: "low", "medium", and "high", based on the specified breakpoints.
