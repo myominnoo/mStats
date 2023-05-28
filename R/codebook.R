@@ -5,10 +5,13 @@
 #'
 #' `r lifecycle::badge('stable')`
 #'
-#' `codebook()` offers a concise overview of your data,
+#' `codebook` offers a concise overview of your data,
 #' enabling easy examination of its structure, including variables,
 #' labels, data types, missing counts, and unique value counts.
-#' Simplify your data exploration with `codebook()`.
+#' Simplify your data exploration with `codebook`.
+#'
+#' Apart from [data.frame], it uses [pillar::glimpse] to inspect the
+#' data structure.
 #'
 #' @param data A data frame.
 #' @param width Width of output: defaults to the setting of the
@@ -17,34 +20,25 @@
 #'
 #' @return `data` original `data` is (invisibly) returned,
 #' allowing `codebook()` to be used within a data pipe line.
-#' @export
+#'
 #' @examples
 #' codebook(mtcars)
+#' codebook(iris)
 #'
-#' @examplesIf rlang::is_installed("nycflights13")
-#' codebook(nycflights13::flights)
-#'
-codebook <- function(data, width = NULL) {
+#' @export
+codebook <- function(data) {
 	UseMethod("codebook")
 }
 
 #' @export
-codebook.default <- function(data, width = NULL) {
+codebook.default <- function(data) {
+	pillar::glimpse(data)
 	invisible(data)
 }
 
 #' @export
-codebook.data.frame <- function(data, width = NULL)
+codebook.data.frame <- function(data)
 {
-	if (!is.null(width) && !is.finite(width)) {
-		rlang::abort("`width` must be finite.")
-	}
-	if (is.null(width)) {
-		width <- getOption("width")
-	} else {
-		width <- if (is.finite(width)) width else getOption("width")
-	}
-
 	.data_name <- rlang::expr_text(substitute(data))
 	.data_name <- ifelse(.data_name == ".", "<Piped Data>", .data_name)
 	cli::cat_line(crayon::magenta("$ dataset:", crayon::bold(.data_name)))
@@ -54,38 +48,39 @@ codebook.data.frame <- function(data, width = NULL)
 	cli::cat_line(crayon::magenta("$ Row:", row_n))
 	cli::cat_line(crayon::magenta("$ Col:", col_n))
 
-	var_names <- format_pillar_title(names(data))
+	var_names <- pillar::new_pillar_title(names(data)) |> format()
 	var_types <- purrr::map(data, pillar::type_sum) |>
 		purrr::map_chr(\(x) paste0("<", format(x), ">")) |>
-		format_pillar_title()
+		pillar::new_pillar_title() |>
+		format()
 	miss <- purrr::map_int(data, \(x) sum(is.na(x)))
 	complete <- 1 - (miss / row_n)
 	unique <- purrr::map_int(data, \(x) length(unique(x)))
 
 	df <- data.frame(
-		`#` = seq_len(col_n),
-		Name = var_names,
-		Type = var_types,
-		Miss = miss,
-		Complete = scales::label_comma(accuracy = .01)(complete),
-		Unique = unique,
-		row.names = NULL,
-		check.names = FALSE
+		name = var_names,
+		type = var_types,
+		miss = miss,
+		complete = scales::label_comma(accuracy = .01)(complete),
+		unique = unique,
+		row.names = NULL
 	)
 
 	## TODO: to replace with label() function
 	var_labels <- labelled::var_label(data, unlist = TRUE)
-	var_labels <- ifelse(var_labels == "", "<NULL>", paste0(
-		substr(var_labels, 1, width - pillar::get_max_extent(df) - 5), "..."
-	))
-	df |>
-		cbind(label = var_labels) |>
-		print.data.frame(right = FALSE, row.names = FALSE)
+	# var_labels <- ifelse(var_labels == "", "<NULL>", var_labels)
+	# compare df width with console width. if < 30, truncate labels
+	width_diff <- getOption("width") - sum(pillar::get_extent(df[1, ]))
+	if (width_diff < 30)
+		var_labels <- ifelse(nchar(var_labels) > width_diff,
+												 paste0(substr(var_labels, 1, 10), "..."), var_labels)
+
+	# print tables
+	cbind(df, label = var_labels) |>
+		data.frame(row.names = NULL) |>
+		print.data.frame(right = FALSE, row.names = TRUE)
+
+	# return data invisibly
 	invisible(data)
 }
 
-
-format_pillar_title <- function(x)
-{
-	pillar::new_pillar_title(x) |> format()
-}

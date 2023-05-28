@@ -27,8 +27,6 @@ Simplify your data exploration with \code{codebook()}.
 }
 \examples{
 codebook(mtcars)
+codebook(iris)
 
-\dontshow{if (rlang::is_installed("nycflights13")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-codebook(nycflights13::flights)
-\dontshow{\}) # examplesIf}
 }
