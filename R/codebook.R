@@ -1,28 +1,28 @@
 
-#' Describe data contents
+#' Generate a codebook
 #'
 #' @description
 #'
 #' `r lifecycle::badge('stable')`
 #'
-#' `codebook` offers a concise overview of your data,
-#' enabling easy examination of its structure, including variables,
-#' labels, data types, missing counts, and unique value counts.
-#' Simplify your data exploration with `codebook`.
+#' The `codebook` function generates a codebook for the given dataset. It provides a summary
+#' of the dataset's structure and characteristics, including variable names, types, missing
+#' values, completeness percentages, unique value counts, and variable labels (if available).
 #'
-#' Apart from [data.frame], it uses [pillar::glimpse] to inspect the
-#' data structure.
+#' @param data The dataset for which the codebook is to be generated.
 #'
-#' @param data A data frame.
-#' @param width Width of output: defaults to the setting of the
-#'   `width` [option][pillar_options] (if finite)
-#'   or the width of the console.
-#'
-#' @return `data` original `data` is (invisibly) returned,
+#' @return The input dataset is returned invisibly,
 #' allowing `codebook()` to be used within a data pipe line.
 #'
 #' @examples
 #' codebook(mtcars)
+#'
+#' codebook(iris)
+#'
+#' labelled::var_label(iris) <- c(
+#' 	"sepal length", "sepal width", "petal length",
+#' 	"petal width", "species"
+#' )
 #' codebook(iris)
 #'
 #' @export

@@ -4,14 +4,10 @@
 \alias{codebook}
 \title{Describe data contents}
 \usage{
-codebook(data, width = NULL)
+codebook(data)
 }
 \arguments{
-\item{data}{A data frame.}
-
-\item{width}{Width of output: defaults to the setting of the
-\code{width} \link[=pillar_options]{option} (if finite)
-or the width of the console.}
+\item{data}{An object.}
 }
 \value{
 \code{data} original \code{data} is (invisibly) returned,
@@ -20,10 +16,12 @@ allowing \code{codebook()} to be used within a data pipe line.
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 
-\code{codebook()} offers a concise overview of your data,
-enabling easy examination of its structure, including variables,
-labels, data types, missing counts, and unique value counts.
-Simplify your data exploration with \code{codebook()}.
+\code{codebook} offers an overview of your data,
+enabling easy examination of its structure; variables,
+their names, labels, data types, missing counts, and unique value counts.
+
+Apart from \link{data.frame}, it uses \link[pillar:glimpse]{pillar::glimpse} to inspect the
+data structure.
 }
 \examples{
 codebook(mtcars)

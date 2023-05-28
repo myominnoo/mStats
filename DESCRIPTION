@@ -1,7 +1,7 @@
 Package: mStats
 Type: Package
 Title: Medical Statistics & Epidemiological Analysis
-Version: 0.1.0
+Version: 3.5.0
 Authors@R: 
     c(person(given = "Myo Minn",
              family = "Oo",
@@ -31,6 +31,10 @@ Imports:
     scales
 Suggests: 
     covr,
+    dplyr,
+    knitr,
     nycflights13,
+    rmarkdown,
     testthat
 Config/testthat/edition: 3
+VignetteBuilder: knitr

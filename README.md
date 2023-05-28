@@ -14,50 +14,77 @@ coverage](https://codecov.io/gh/myominnoo/mStats/branch/main/graph/badge.svg)](h
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 <!-- badges: end -->
 
-The goal of mStats is to …
+`mStats` provides an opinionated set of R wrapper functions for data
+analysis and manipulation, covering a range of tasks from data
+exploration and transformation to regression modeling and statistical
+summaries. It serves as my personal collection of functions developed
+based on my own preferences and experiences, tailored to meet my
+specific needs in various projects.
+
+As an evolving package, I continuously add new functions to `mStats` to
+adapt to my evolving needs and preferences. This highly opinionated
+package reflects my unique perspective and incorporates the solutions I
+have found valuable in my data analysis workflows.
+
+By using `mStats`, users can benefit from my expertise and the
+convenience of having a centralized set of functions designed to address
+common data manipulation, analysis, and visualization tasks. This
+personalized approach ensures efficiency and consistency across
+projects, as the package encompasses the techniques I prefer.
+
+I believe that `mStats` makes a valuable contribution to the R community
+by offering insights and potential solutions derived from my own
+experiences. It showcases the power of customization and demonstrates
+how individual preferences can shape the development of tools to enhance
+data analysis workflows.
 
 ## Installation
 
-You can install the development version of mStats from
-[GitHub](https://github.com/) with:
+Install from CRAN with :
+
+``` r
+install.packages("mStats")
+```
+
+Or install the development version from GitHub :
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("myominnoo/mStats")
 ```
 
-## Example
+## Usage
 
-This is a basic example which shows you how to solve a common problem:
+Below is a quick demonstration of what mStats can do.
 
 ``` r
 library(mStats)
-## basic example code
+#> 
+#> Attaching package: 'mStats'
+#> The following objects are masked from 'package:base':
+#> 
+#>     append, cut
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+### codebook: check an overview of the data
 
 ``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
+codebook(mtcars)
+#> $ dataset: mtcars
+#> $ Row: 32
+#> $ Col: 11
+#>    name type  miss complete unique label
+#> 1  mpg  <dbl> 0    1.00     25          
+#> 2  cyl  <dbl> 0    1.00      3          
+#> 3  disp <dbl> 0    1.00     27          
+#> 4  hp   <dbl> 0    1.00     22          
+#> 5  drat <dbl> 0    1.00     22          
+#> 6  wt   <dbl> 0    1.00     29          
+#> 7  qsec <dbl> 0    1.00     30          
+#> 8  vs   <dbl> 0    1.00      2          
+#> 9  am   <dbl> 0    1.00      2          
+#> 10 gear <dbl> 0    1.00      3          
+#> 11 carb <dbl> 0    1.00      6
 ```
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this. You could also
-use GitHub Actions to re-render `README.Rmd` every time you push. An
-example workflow can be found here:
-<https://github.com/r-lib/actions/tree/v1/examples>.
-
-You can also embed plots, for example:
-
-<img src="man/figures/README-pressure-1.png" width="100%" />
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
+### cut

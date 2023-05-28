@@ -2,5 +2,7 @@
 
 S3method(codebook,data.frame)
 S3method(codebook,default)
+export(append)
 export(codebook)
+export(cut)
 importFrom(lifecycle,deprecated)
