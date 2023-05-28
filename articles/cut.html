@@ -43,6 +43,7 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/codebook.html">Data insights with `codebook`</a>
     <a class="dropdown-item" href="../articles/cut.html">Enhanced Numeric Data Categorization with cut</a>
+    <a class="dropdown-item" href="../articles/egen.html">Convert a continuous variable into groups</a>
   </div>
 </li>
       </ul>
@@ -181,14 +182,14 @@ intervals based on the specified cut points.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span></span>
 <span><span class="va">x</span></span>
-<span><span class="co">#&gt; [1] "2023-05-28 18:05:17 UTC" "2023-05-28 18:05:16 UTC"</span></span>
-<span><span class="co">#&gt; [3] "2023-05-28 18:05:15 UTC" "2023-05-28 18:05:14 UTC"</span></span>
-<span><span class="co">#&gt; [5] "2023-05-28 18:05:13 UTC"</span></span>
+<span><span class="co">#&gt; [1] "2023-05-28 18:49:38 UTC" "2023-05-28 18:49:37 UTC"</span></span>
+<span><span class="co">#&gt; [3] "2023-05-28 18:49:36 UTC" "2023-05-28 18:49:35 UTC"</span></span>
+<span><span class="co">#&gt; [5] "2023-05-28 18:49:34 UTC"</span></span>
 <span><span class="fu"><a href="../reference/cut.html">cut</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 2023-05-28 18:05:14.732117 2023-05-28 18:05:14.732117</span></span>
-<span><span class="co">#&gt; [3] 2023-05-28 18:05:14.732117 2023-05-28 18:05:17.732117</span></span>
-<span><span class="co">#&gt; [5] 2023-05-28 18:05:17.732117</span></span>
-<span><span class="co">#&gt; Levels: 2023-05-28 18:05:17.732117 2023-05-28 18:05:14.732117</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 2023-05-28 18:49:35.272441 2023-05-28 18:49:35.272441</span></span>
+<span><span class="co">#&gt; [3] 2023-05-28 18:49:35.272441 2023-05-28 18:49:38.272441</span></span>
+<span><span class="co">#&gt; [5] 2023-05-28 18:49:38.272441</span></span>
+<span><span class="co">#&gt; Levels: 2023-05-28 18:49:38.272441 2023-05-28 18:49:35.272441</span></span></code></pre></div>
 <p>For time objects, <code>cut</code> works similarly, categorizing the
 time values into intervals based on the provided cut points.</p>
 </div>
