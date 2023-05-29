@@ -44,6 +44,7 @@
     <a class="dropdown-item" href="../articles/codebook.html">Data insights with `codebook`</a>
     <a class="dropdown-item" href="../articles/cut.html">Enhanced Numeric Data Categorization with cut</a>
     <a class="dropdown-item" href="../articles/egen.html">Convert a continuous variable into groups</a>
+    <a class="dropdown-item" href="../articles/tag_duplicates.html">Working with Duplicate Observations using `tag_duplicates`</a>
   </div>
 </li>
       </ul>
@@ -90,13 +91,15 @@ on that vector.</li>
 around the cut function. It issues a deprecation warning indicating that
 the recommended approach is to use cut directly.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://myominnoo.github.io/mStats/">mStats</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://myominnoo.github.io/mStats/" class="external-link">mStats</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'mStats'</span></span>
 <span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     append, cut</span></span>
+<span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu"><a href="../reference/egen.html">egen</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">x</span>, at <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">7</span><span class="op">)</span>, label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"low"</span>, <span class="st">"medium"</span>, <span class="st">"high"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: `egen()` was deprecated in mStats 3.4.0.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `cut()` instead.</span></span>

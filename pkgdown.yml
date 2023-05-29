@@ -5,8 +5,9 @@ articles:
   codebook: codebook.html
   cut: cut.html
   egen: egen.html
-last_built: 2023-05-28T18:49Z
+  tag_duplicates: tag_duplicates.html
+last_built: 2023-05-29T05:13Z
 urls:
-  reference: https://myominnoo.github.io/mStats/reference
-  article: https://myominnoo.github.io/mStats/articles
+  reference: https://myominnoo.github.io/mStats/, https://github.com/myominnoo/mStats/reference
+  article: https://myominnoo.github.io/mStats/, https://github.com/myominnoo/mStats/articles
 

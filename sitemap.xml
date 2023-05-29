@@ -1,48 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://myominnoo.github.io/mStats/404.html</loc>
+    <loc>https://myominnoo.github.io/mStats/, https://github.com/myominnoo/mStats/404.html</loc>
   </url>
   <url>
-    <loc>https://myominnoo.github.io/mStats/LICENSE-text.html</loc>
+    <loc>https://myominnoo.github.io/mStats/, https://github.com/myominnoo/mStats/LICENSE-text.html</loc>
   </url>
   <url>
-    <loc>https://myominnoo.github.io/mStats/LICENSE.html</loc>
+    <loc>https://myominnoo.github.io/mStats/, https://github.com/myominnoo/mStats/LICENSE.html</loc>
   </url>
   <url>
-    <loc>https://myominnoo.github.io/mStats/articles/codebook.html</loc>
+    <loc>https://myominnoo.github.io/mStats/, https://github.com/myominnoo/mStats/articles/codebook.html</loc>
   </url>
   <url>
-    <loc>https://myominnoo.github.io/mStats/articles/cut.html</loc>
+    <loc>https://myominnoo.github.io/mStats/, https://github.com/myominnoo/mStats/articles/cut.html</loc>
   </url>
   <url>
-    <loc>https://myominnoo.github.io/mStats/articles/egen.html</loc>
+    <loc>https://myominnoo.github.io/mStats/, https://github.com/myominnoo/mStats/articles/egen.html</loc>
   </url>
   <url>
-    <loc>https://myominnoo.github.io/mStats/articles/index.html</loc>
+    <loc>https://myominnoo.github.io/mStats/, https://github.com/myominnoo/mStats/articles/index.html</loc>
   </url>
   <url>
-    <loc>https://myominnoo.github.io/mStats/authors.html</loc>
+    <loc>https://myominnoo.github.io/mStats/, https://github.com/myominnoo/mStats/articles/tag_duplicates.html</loc>
   </url>
   <url>
-    <loc>https://myominnoo.github.io/mStats/index.html</loc>
+    <loc>https://myominnoo.github.io/mStats/, https://github.com/myominnoo/mStats/authors.html</loc>
   </url>
   <url>
-    <loc>https://myominnoo.github.io/mStats/reference/append.html</loc>
+    <loc>https://myominnoo.github.io/mStats/, https://github.com/myominnoo/mStats/index.html</loc>
   </url>
   <url>
-    <loc>https://myominnoo.github.io/mStats/reference/codebook.html</loc>
+    <loc>https://myominnoo.github.io/mStats/, https://github.com/myominnoo/mStats/reference/append.html</loc>
   </url>
   <url>
-    <loc>https://myominnoo.github.io/mStats/reference/cut.html</loc>
+    <loc>https://myominnoo.github.io/mStats/, https://github.com/myominnoo/mStats/reference/codebook.html</loc>
   </url>
   <url>
-    <loc>https://myominnoo.github.io/mStats/reference/egen.html</loc>
+    <loc>https://myominnoo.github.io/mStats/, https://github.com/myominnoo/mStats/reference/count_functions.html</loc>
   </url>
   <url>
-    <loc>https://myominnoo.github.io/mStats/reference/index.html</loc>
+    <loc>https://myominnoo.github.io/mStats/, https://github.com/myominnoo/mStats/reference/cut.html</loc>
   </url>
   <url>
-    <loc>https://myominnoo.github.io/mStats/reference/mStats-package.html</loc>
+    <loc>https://myominnoo.github.io/mStats/, https://github.com/myominnoo/mStats/reference/egen.html</loc>
+  </url>
+  <url>
+    <loc>https://myominnoo.github.io/mStats/, https://github.com/myominnoo/mStats/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>https://myominnoo.github.io/mStats/, https://github.com/myominnoo/mStats/reference/mStats-package.html</loc>
+  </url>
+  <url>
+    <loc>https://myominnoo.github.io/mStats/, https://github.com/myominnoo/mStats/reference/tag_duplicates.html</loc>
   </url>
 </urlset>
