@@ -22,3 +22,11 @@ A data frame
 append(airquality, mtcars)
 
 }
+\seealso{
+Other Data Management: 
+\code{\link{codebook}()},
+\code{\link{count_functions}},
+\code{\link{cut}()},
+\code{\link{tag_duplicates}()}
+}
+\concept{Data Management}

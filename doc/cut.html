@@ -422,22 +422,22 @@ error messages when encountering such cases:</p>
 following examples with date and time:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">Sys.Date</span>() <span class="sc">-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>x</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;2023-05-27&quot; &quot;2023-05-26&quot; &quot;2023-05-25&quot; &quot;2023-05-24&quot; &quot;2023-05-23&quot;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;2023-05-28&quot; &quot;2023-05-27&quot; &quot;2023-05-26&quot; &quot;2023-05-25&quot; &quot;2023-05-24&quot;</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cut</span>(x, <span class="dv">2</span>)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 2023-05-24 2023-05-24 2023-05-24 2023-05-27 2023-05-27</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Levels: 2023-05-27 2023-05-24</span></span></code></pre></div>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 2023-05-25 2023-05-25 2023-05-25 2023-05-28 2023-05-28</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Levels: 2023-05-28 2023-05-25</span></span></code></pre></div>
 <p>In this example, <code>cut</code> categorizes the dates into
 intervals based on the specified cut points.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>() <span class="sc">-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>x</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;2023-05-28 13:46:43 CDT&quot; &quot;2023-05-28 13:46:42 CDT&quot;</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [3] &quot;2023-05-28 13:46:41 CDT&quot; &quot;2023-05-28 13:46:40 CDT&quot;</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [5] &quot;2023-05-28 13:46:39 CDT&quot;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;2023-05-29 00:09:35 CDT&quot; &quot;2023-05-29 00:09:34 CDT&quot;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [3] &quot;2023-05-29 00:09:33 CDT&quot; &quot;2023-05-29 00:09:32 CDT&quot;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [5] &quot;2023-05-29 00:09:31 CDT&quot;</span></span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cut</span>(x, <span class="dv">2</span>)</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 2023-05-28 13:46:40.211726 2023-05-28 13:46:40.211726</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [3] 2023-05-28 13:46:40.211726 2023-05-28 13:46:43.211726</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [5] 2023-05-28 13:46:43.211726</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Levels: 2023-05-28 13:46:43.211726 2023-05-28 13:46:40.211726</span></span></code></pre></div>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 2023-05-29 00:09:32.627278 2023-05-29 00:09:32.627278</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [3] 2023-05-29 00:09:32.627278 2023-05-29 00:09:35.627278</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [5] 2023-05-29 00:09:35.627278</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Levels: 2023-05-29 00:09:35.627278 2023-05-29 00:09:32.627278</span></span></code></pre></div>
 <p>For time objects, <code>cut</code> works similarly, categorizing the
 time values into intervals based on the provided cut points.</p>
 </div>

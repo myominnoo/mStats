@@ -19,6 +19,7 @@
 #' if `x` is not numeric.
 #'
 #'
+#' @family Data Management
 #' @return A factor representing the cut vector
 #' with factor levels assigned based on the breaks or categories.
 #'

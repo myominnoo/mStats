@@ -2,9 +2,12 @@
 
 S3method(codebook,data.frame)
 S3method(codebook,default)
+export(N_)
 export(append)
 export(codebook)
 export(cut)
 export(egen)
+export(n_)
+export(tag_duplicates)
 importFrom(lifecycle,deprecated)
 importFrom(rlang,":=")

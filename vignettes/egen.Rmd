@@ -23,7 +23,9 @@ The `egen` function is deprecated and serves as a wrapper around the cut functio
 
 ```{r setup}
 library(mStats)
+
 data <- data.frame(x = 1:10)
+
 egen(data, x, at = c(3, 7), label = c("low", "medium", "high"))
 
 ```

@@ -9,6 +9,7 @@
 #'
 #' @return A data frame
 #'
+#' @family Data Management
 #' @examples
 #' append(airquality, mtcars)
 #'

@@ -1,0 +1,125 @@
+---
+title: Working with Duplicate Observations using `tag_duplicates`
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Working with Duplicate Observations using tag_duplicates}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This tutorial provides an overview and detailed usage examples for the `tag_duplicates` function in the `mStats` package. It is designed to identify and tag duplicate observations based on specified variables. It mimics the functionality of `Stata`'s duplicates command in R. It provides a report of duplicates and creates a tibble with three columns: `.n_`, `.N_`, and `.dup_`.
+
+```{r setup}
+library(mStats)
+library(dplyr)
+
+# Example with a custom dataset
+data <- data.frame(
+  x = c(1, 1, 2, 2, 3, 4, 4, 5),
+  y = letters[1:8]
+)
+
+# Identify and tag duplicates based on the x variable
+data %>% mutate(tag_duplicates(x))
+
+# Identify and tag duplicates based on multiple variables
+data %>% mutate(tag_duplicates(x, y))
+
+# Identify and tag duplicates based on all variables
+data %>% mutate(tag_duplicates(everything()))
+
+```
+
+In the examples above, we use the `tag_duplicates` function to identify and tag duplicates in the data dataframe. We can specify one or multiple variables to check for duplicates. By using everything(), we can check for duplicates based on all variables in the dataframe.
+
+The function provides a concise report, showing the number of duplicates and surplus observations for each group of variables. The `.dup_` column indicates whether an observation is a duplicate or not.
+
+## Report of duplicates
+
+The `report of duplciates` provides information about duplicate observations in a dataset and how they are interpreted. It consists of three components: `copies`, `observations`, and `surplus.`
+
+- `Copies`: The copies column indicates the number of times a set of observations is duplicated. In other words, it shows the number of identical rows present in the dataset.
+- `Observations`: The observations column represents the total count of unique observations in the dataset, including both original and duplicated rows.
+- `Surplus`: The surplus column denotes the number of additional observations beyond the first occurrence of each duplicated set. It indicates the number of duplicate rows excluding the original row.
+
+To interpret the duplicates report in the context of the `tag_duplicates` R function, consider the following:
+
+- `Copies`: If the copies value is 1, it means there are no duplicates for that specific set of variables. If it is greater than 1, it indicates the number of duplicate sets present.
+- `Observations`: The observations count includes all unique rows in the dataset, including both original and duplicate rows. This count helps identify the total number of distinct observations.
+- `Surplus`: The surplus value represents the number of duplicate rows beyond the first occurrence of each set. These surplus rows need to be further examined or potentially removed.
+
+By analyzing the duplicates report, you can identify which variables or combinations of variables are causing duplicates in the dataset. This information can guide further investigation or data cleaning steps to handle duplicate observations appropriately.
+
+## Appended columns: `.n_`, `.N_`, and `.dup_`
+
+When using the tag_duplicates function in R, the function returns three columns: `.n_`, `.N_`, and `.dup_`. Here's an explanation of how to interpret these columns:
+
+### `.n_`
+
+The `.n_` column represents the count of each observation in the dataset, including duplicates. It indicates the number of times each row appears in the dataset, regardless of whether it is a duplicate or unique. For unique observations, the value in this column will be 1. If an observation is duplicated multiple times, the value will be greater than 1.
+Interpretation of `.n_`:
+
+If `.n_` equals 1, it means the observation is unique and does not have any duplicates in the dataset.
+If `.n_` is greater than 1, it indicates that the observation is duplicated and appears multiple times in the dataset.
+
+### `.N_`
+The `.N_` column represents the count of unique observations. It provides the number of unique occurrences for each observation in the dataset, considering both duplicates and unique rows. Each row in the dataset is assigned the count of its unique occurrence.
+Interpretation of `.N_`:
+
+The `.N_` column helps identify the total number of unique occurrences for each observation in the dataset, regardless of whether it is a duplicate or unique.
+If `.N_` equals 1, it means the observation is unique and has only one occurrence in the dataset.
+If `.N_` is greater than 1, it indicates that the observation has duplicates and appears multiple times in the dataset.
+
+### `.dup_`
+The `.dup_` column is a logical indicator that flags whether an observation is a duplicate or not. It assigns a value of `TRUE` if the observation is a duplicate and FALSE if it is unique.
+Interpretation of `.dup_`:
+
+If `.dup_` is `TRUE`, it means the observation is a duplicate and appears multiple times in the dataset.
+If `.dup_` is `FALSE`, it indicates that the observation is unique and does not have any duplicates.
+
+
+By examining these three columns together, you can determine which observations in your dataset are duplicates, how many times they occur, and whether an observation is unique or duplicated. This information can be valuable for further data analysis, quality control, or data cleaning processes.
+
+## UCLA STATA duplicates Tutorial in R 
+
+Read more about the tutorial here: https://stats.oarc.ucla.edu/stata/faq/how-can-i-detect-duplicate-observations-3/
+
+```{r}
+hsb2 <- haven::read_dta("https://stats.idre.ucla.edu/stat/stata/notes/hsb2.dta")
+
+hsb2_mod <- hsb2 |> 
+	dplyr::select(id, female, ses, read, write, math) |> 
+	dplyr::arrange(id)
+
+hsb2_mod2 <- hsb2_mod |> 
+	dplyr::filter(dplyr::row_number() <= 5) |> 
+	dplyr::bind_rows(hsb2_mod) |> 
+	dplyr::arrange(id) |> 
+	dplyr::mutate(math = ifelse(dplyr::row_number() == 1, 84, math))
+
+hsb2_mod2 |> 
+	dplyr::mutate(tag_duplicates(everything()))
+
+hsb2_mod2 |> 
+	dplyr::mutate(tag_duplicates(id))
+
+hsb2_mod2 |> 
+	dplyr::mutate(tag_duplicates(id)) |> 
+	# filter duplicate observations 
+	dplyr::filter(.dup_)
+```
+
+
+
+## `Reference`
+
+StataCorp. (2021). Stata Base Reference Manual: Duplicates. Retrieved from Stata Press: https://www.stata.com/manuals/rbase/duplicates.pdf
+
+You can read more about it from the Stata Base Reference Manual, which contains detailed information about the duplicates command, through the Stata Press website or by searching for "Stata duplicates command" online.

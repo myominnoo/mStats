@@ -37,3 +37,11 @@ to the base R \code{cut} function.
 x <- c(1, 2, 3, 4, 5)
 cut(x, 2)
 }
+\seealso{
+Other Data Management: 
+\code{\link{append}()},
+\code{\link{codebook}()},
+\code{\link{count_functions}},
+\code{\link{tag_duplicates}()}
+}
+\concept{Data Management}

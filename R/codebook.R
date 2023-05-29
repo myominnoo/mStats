@@ -14,6 +14,7 @@
 #' @return The input dataset is returned invisibly,
 #' allowing `codebook()` to be used within a data pipe line.
 #'
+#' @family Data Management
 #' @examples
 #' codebook(mtcars)
 #'

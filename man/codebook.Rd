@@ -32,3 +32,11 @@ labelled::var_label(iris) <- c(
 codebook(iris)
 
 }
+\seealso{
+Other Data Management: 
+\code{\link{append}()},
+\code{\link{count_functions}},
+\code{\link{cut}()},
+\code{\link{tag_duplicates}()}
+}
+\concept{Data Management}
