@@ -7,11 +7,11 @@ test_that("tagging duplicates works", {
 		y = letters[1:8]
 	)
 
-	expect_equal(mutate(data, tag_duplicates(x))$.n_ |>
+	expect_equal(mutate(data, tag_duplicates(x, .indicators = TRUE))$.n_ |>
 							 	setNames(NULL), c(1,2,1,2,1,1,2,1))
-	expect_equal(mutate(data, tag_duplicates(x))$.N_ |>
+	expect_equal(mutate(data, tag_duplicates(x, .indicators = TRUE))$.N_ |>
 							 	setNames(NULL), c(2,2,2,2,1,2,2,1))
-	expect_equal(mutate(data, tag_duplicates(x))$.dup_ |>
+	expect_equal(mutate(data, tag_duplicates(x, .indicators = TRUE))$.dup_ |>
 							 	setNames(NULL), c(FALSE, TRUE, FALSE, TRUE, FALSE,
 							 										FALSE, TRUE, FALSE))
 })

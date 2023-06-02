@@ -4,10 +4,12 @@
 \alias{tag_duplicates}
 \title{Tag Duplicates}
 \usage{
-tag_duplicates(...)
+tag_duplicates(..., .indicators = FALSE)
 }
 \arguments{
 \item{...}{Columns to use for identifying duplicates.}
+
+\item{.indicators}{logical to return three indicator columns: \code{.n_}, \code{.N_}, and \code{.dup_}.}
 }
 \value{
 A tibble with three columns: \code{.n_}, \code{.N_}, and \code{.dup_}.

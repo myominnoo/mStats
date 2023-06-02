@@ -6,6 +6,7 @@
 #' This function identifies and tags duplicate observations based on specified variables.
 #'
 #' @param ... Columns to use for identifying duplicates.
+#' @param .indicators logical to return three indicator columns: `.n_`, `.N_`, and `.dup_`.
 #'
 #' @return A tibble with three columns: `.n_`, `.N_`, and `.dup_`.
 #'   - `.n_` represents the running counter within each group of variables,
@@ -47,7 +48,7 @@
 #' }
 #'
 #' @export
-tag_duplicates <- function(...)
+tag_duplicates <- function(..., .indicators = FALSE)
 {
 	.n_ <- n_(...)
 	.N_ <- N_(...)
@@ -80,5 +81,7 @@ tag_duplicates <- function(...)
 		dplyr::mutate(surplus = ifelse(copies == 1, 0, surplus)) |>
 		print.data.frame(row.names = FALSE)
 
-	tibble::tibble(.n_, .N_, .dup_ = as.logical(names(.n_)))
+	if (.indicators) {
+		tibble::tibble(.n_, .N_, .dup_ = as.logical(names(.n_)))
+	}
 }
