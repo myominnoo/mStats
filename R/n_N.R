@@ -1,13 +1,20 @@
-#' Count from `n` to `N`
+#' Count from n to N
 #'
 #' \Sexpr[results=rd]{lifecycle::badge("stable")}
 #'
-#' `n_()` and `N_()` are functions used for indexing observations or
+#' These functions are used for indexing observations or
 #' generating sequences of numbers.
 #'
 #' - `n_()` generates a running counter within a group of variables and
 #' represents the number of the current observation.
 #' - `N_()` provides the total count within each group of variables.
+#'
+#' You can do these operations using [dplyr::n()] in this way.
+#' See examples below using [iris] dataset.
+#'
+#' iris |> mutate(.N_ = n()) |> head()
+#' iris |> mutate(.n_ = 1:n()) |> head()
+#' iris |> group_by(Species) |> mutate(.n_ = 1:n()) |> slice(1:5) |> ungroup()
 #'
 #' @inheritParams dplyr::pick
 #'

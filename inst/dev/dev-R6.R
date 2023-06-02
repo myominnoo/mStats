@@ -2,8 +2,13 @@ library(tidyverse)
 devtools::load_all()
 
 
+
+
 iris |>
-	mutate(tag_duplicates(everything()))
+	mutate(Species = label(Species, 'Species of iris flower')) |>
+	codebook()
 iris |>
-	mutate(tag_duplicates(Sepal.Length, Sepal.Width, Petal.Length,
-												Petal.Width, Species))
+	label("Iris dataset") |>
+	codebook()
+
+

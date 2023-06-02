@@ -44,6 +44,11 @@ codebook.data.frame <- function(data)
 	.data_name <- ifelse(.data_name == ".", "<Piped Data>", .data_name)
 	cli::cat_line(crayon::magenta("$ dataset:", crayon::bold(.data_name)))
 
+	## data label
+	data_label <- attr(data, "label")
+	if (!is.null(data_label))
+		cli::cat_line(crayon::magenta("$ label:", crayon::bold(data_label)))
+
 	row_n <- nrow(data)
 	col_n <- ncol(data)
 	cli::cat_line(crayon::magenta("$ Row:", row_n))
