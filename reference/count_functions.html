@@ -40,7 +40,7 @@
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>Count from <code>n</code> to <code>N</code></h1>
+      <img src="" class="logo" alt=""><h1>Count from n to N</h1>
       
       <div class="d-none name"><code>count_functions.Rd</code></div>
     </div>
@@ -73,11 +73,16 @@ handled by the verb (i.e. <code><a href="https://dplyr.tidyverse.org/reference/s
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p><code>n_()</code> and <code>N_()</code> are functions used for indexing observations or
+    <p>These functions are used for indexing observations or
 generating sequences of numbers.</p><ul><li><p><code>n_()</code> generates a running counter within a group of variables and
 represents the number of the current observation.</p></li>
 <li><p><code>N_()</code> provides the total count within each group of variables.</p></li>
-</ul></div>
+</ul><p>You can do these operations using <code><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">dplyr::n()</a></code> in this way.
+See examples below using <a href="https://rdrr.io/r/datasets/iris.html" class="external-link">iris</a> dataset.</p>
+<p>iris |&gt; mutate(.N_ = n()) |&gt; head()
+iris |&gt; mutate(.n_ = 1:n()) |&gt; head()
+iris |&gt; group_by(Species) |&gt; mutate(.n_ = 1:n()) |&gt; slice(1:5) |&gt; ungroup()</p>
+    </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other Data Management: 
