@@ -110,15 +110,15 @@ duplicates and creates a tibble with three columns: <code>.n_</code>,
 <span><span class="co">#&gt;  copies observations surplus</span></span>
 <span><span class="co">#&gt;       1            2       0</span></span>
 <span><span class="co">#&gt;       2            6       3</span></span>
-<span><span class="co">#&gt;   x y .n_ .N_ .dup_</span></span>
-<span><span class="co">#&gt; 1 1 a   1   2 FALSE</span></span>
-<span><span class="co">#&gt; 2 1 b   2   2  TRUE</span></span>
-<span><span class="co">#&gt; 3 2 c   1   2 FALSE</span></span>
-<span><span class="co">#&gt; 4 2 d   2   2  TRUE</span></span>
-<span><span class="co">#&gt; 5 3 e   1   1 FALSE</span></span>
-<span><span class="co">#&gt; 6 4 f   1   2 FALSE</span></span>
-<span><span class="co">#&gt; 7 4 g   2   2  TRUE</span></span>
-<span><span class="co">#&gt; 8 5 h   1   1 FALSE</span></span>
+<span><span class="co">#&gt;   x y</span></span>
+<span><span class="co">#&gt; 1 1 a</span></span>
+<span><span class="co">#&gt; 2 1 b</span></span>
+<span><span class="co">#&gt; 3 2 c</span></span>
+<span><span class="co">#&gt; 4 2 d</span></span>
+<span><span class="co">#&gt; 5 3 e</span></span>
+<span><span class="co">#&gt; 6 4 f</span></span>
+<span><span class="co">#&gt; 7 4 g</span></span>
+<span><span class="co">#&gt; 8 5 h</span></span>
 <span></span>
 <span><span class="co"># Identify and tag duplicates based on multiple variables</span></span>
 <span><span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="fu"><a href="../reference/tag_duplicates.html">tag_duplicates</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span></span>
@@ -126,15 +126,15 @@ duplicates and creates a tibble with three columns: <code>.n_</code>,
 <span><span class="co">#&gt; <span style="color: #BB00BB;">  in terms of </span><span style="color: #BB00BB; font-style: italic;">x, y</span></span></span>
 <span><span class="co">#&gt;  copies observations surplus</span></span>
 <span><span class="co">#&gt;       1            8       0</span></span>
-<span><span class="co">#&gt;   x y .n_ .N_ .dup_</span></span>
-<span><span class="co">#&gt; 1 1 a   1   1 FALSE</span></span>
-<span><span class="co">#&gt; 2 1 b   1   1 FALSE</span></span>
-<span><span class="co">#&gt; 3 2 c   1   1 FALSE</span></span>
-<span><span class="co">#&gt; 4 2 d   1   1 FALSE</span></span>
-<span><span class="co">#&gt; 5 3 e   1   1 FALSE</span></span>
-<span><span class="co">#&gt; 6 4 f   1   1 FALSE</span></span>
-<span><span class="co">#&gt; 7 4 g   1   1 FALSE</span></span>
-<span><span class="co">#&gt; 8 5 h   1   1 FALSE</span></span>
+<span><span class="co">#&gt;   x y</span></span>
+<span><span class="co">#&gt; 1 1 a</span></span>
+<span><span class="co">#&gt; 2 1 b</span></span>
+<span><span class="co">#&gt; 3 2 c</span></span>
+<span><span class="co">#&gt; 4 2 d</span></span>
+<span><span class="co">#&gt; 5 3 e</span></span>
+<span><span class="co">#&gt; 6 4 f</span></span>
+<span><span class="co">#&gt; 7 4 g</span></span>
+<span><span class="co">#&gt; 8 5 h</span></span>
 <span></span>
 <span><span class="co"># Identify and tag duplicates based on all variables</span></span>
 <span><span class="va">data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="fu"><a href="../reference/tag_duplicates.html">tag_duplicates</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -142,15 +142,15 @@ duplicates and creates a tibble with three columns: <code>.n_</code>,
 <span><span class="co">#&gt; <span style="color: #BB00BB;">  in terms of </span><span style="color: #BB00BB; font-style: italic;">all variables</span></span></span>
 <span><span class="co">#&gt;  copies observations surplus</span></span>
 <span><span class="co">#&gt;       1            8       0</span></span>
-<span><span class="co">#&gt;   x y .n_ .N_ .dup_</span></span>
-<span><span class="co">#&gt; 1 1 a   1   1 FALSE</span></span>
-<span><span class="co">#&gt; 2 1 b   1   1 FALSE</span></span>
-<span><span class="co">#&gt; 3 2 c   1   1 FALSE</span></span>
-<span><span class="co">#&gt; 4 2 d   1   1 FALSE</span></span>
-<span><span class="co">#&gt; 5 3 e   1   1 FALSE</span></span>
-<span><span class="co">#&gt; 6 4 f   1   1 FALSE</span></span>
-<span><span class="co">#&gt; 7 4 g   1   1 FALSE</span></span>
-<span><span class="co">#&gt; 8 5 h   1   1 FALSE</span></span></code></pre></div>
+<span><span class="co">#&gt;   x y</span></span>
+<span><span class="co">#&gt; 1 1 a</span></span>
+<span><span class="co">#&gt; 2 1 b</span></span>
+<span><span class="co">#&gt; 3 2 c</span></span>
+<span><span class="co">#&gt; 4 2 d</span></span>
+<span><span class="co">#&gt; 5 3 e</span></span>
+<span><span class="co">#&gt; 6 4 f</span></span>
+<span><span class="co">#&gt; 7 4 g</span></span>
+<span><span class="co">#&gt; 8 5 h</span></span></code></pre></div>
 <p>In the examples above, we use the <code>tag_duplicates</code>
 function to identify and tag duplicates in the data dataframe. We can
 specify one or multiple variables to check for duplicates. By using
@@ -286,19 +286,19 @@ processes.</p>
 <span><span class="co">#&gt;  copies observations surplus</span></span>
 <span><span class="co">#&gt;       1          197       0</span></span>
 <span><span class="co">#&gt;       2            8       4</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 205 × 9</span></span></span>
-<span><span class="co">#&gt;       id female     ses         read write  math   .n_   .N_ .dup_</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl+lbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl+lbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     1 1<span style="color: #949494;"> [female]</span> 1<span style="color: #949494;"> [low]</span>       34    44    84     1     1 FALSE</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     1 1<span style="color: #949494;"> [female]</span> 1<span style="color: #949494;"> [low]</span>       34    44    40     1     1 FALSE</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     2 1<span style="color: #949494;"> [female]</span> 2<span style="color: #949494;"> [middle]</span>    39    41    33     1     2 FALSE</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     2 1<span style="color: #949494;"> [female]</span> 2<span style="color: #949494;"> [middle]</span>    39    41    33     2     2 TRUE </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     3 0<span style="color: #949494;"> [male]</span>   1<span style="color: #949494;"> [low]</span>       63    65    48     1     2 FALSE</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     3 0<span style="color: #949494;"> [male]</span>   1<span style="color: #949494;"> [low]</span>       63    65    48     2     2 TRUE </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     4 1<span style="color: #949494;"> [female]</span> 1<span style="color: #949494;"> [low]</span>       44    50    41     1     2 FALSE</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     4 1<span style="color: #949494;"> [female]</span> 1<span style="color: #949494;"> [low]</span>       44    50    41     2     2 TRUE </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     5 0<span style="color: #949494;"> [male]</span>   1<span style="color: #949494;"> [low]</span>       47    40    43     1     2 FALSE</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     5 0<span style="color: #949494;"> [male]</span>   1<span style="color: #949494;"> [low]</span>       47    40    43     2     2 TRUE </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 205 × 6</span></span></span>
+<span><span class="co">#&gt;       id female     ses         read write  math</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl+lbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl+lbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     1 1<span style="color: #949494;"> [female]</span> 1<span style="color: #949494;"> [low]</span>       34    44    84</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     1 1<span style="color: #949494;"> [female]</span> 1<span style="color: #949494;"> [low]</span>       34    44    40</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     2 1<span style="color: #949494;"> [female]</span> 2<span style="color: #949494;"> [middle]</span>    39    41    33</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     2 1<span style="color: #949494;"> [female]</span> 2<span style="color: #949494;"> [middle]</span>    39    41    33</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     3 0<span style="color: #949494;"> [male]</span>   1<span style="color: #949494;"> [low]</span>       63    65    48</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     3 0<span style="color: #949494;"> [male]</span>   1<span style="color: #949494;"> [low]</span>       63    65    48</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     4 1<span style="color: #949494;"> [female]</span> 1<span style="color: #949494;"> [low]</span>       44    50    41</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     4 1<span style="color: #949494;"> [female]</span> 1<span style="color: #949494;"> [low]</span>       44    50    41</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     5 0<span style="color: #949494;"> [male]</span>   1<span style="color: #949494;"> [low]</span>       47    40    43</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     5 0<span style="color: #949494;"> [male]</span>   1<span style="color: #949494;"> [low]</span>       47    40    43</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 195 more rows</span></span></span>
 <span></span>
 <span><span class="va">hsb2_mod2</span> <span class="op">|&gt;</span> </span>
@@ -308,27 +308,27 @@ processes.</p>
 <span><span class="co">#&gt;  copies observations surplus</span></span>
 <span><span class="co">#&gt;       1          195       0</span></span>
 <span><span class="co">#&gt;       2           10       5</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 205 × 9</span></span></span>
-<span><span class="co">#&gt;       id female     ses         read write  math   .n_   .N_ .dup_</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl+lbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl+lbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     1 1<span style="color: #949494;"> [female]</span> 1<span style="color: #949494;"> [low]</span>       34    44    84     1     2 FALSE</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     1 1<span style="color: #949494;"> [female]</span> 1<span style="color: #949494;"> [low]</span>       34    44    40     2     2 TRUE </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     2 1<span style="color: #949494;"> [female]</span> 2<span style="color: #949494;"> [middle]</span>    39    41    33     1     2 FALSE</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     2 1<span style="color: #949494;"> [female]</span> 2<span style="color: #949494;"> [middle]</span>    39    41    33     2     2 TRUE </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     3 0<span style="color: #949494;"> [male]</span>   1<span style="color: #949494;"> [low]</span>       63    65    48     1     2 FALSE</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     3 0<span style="color: #949494;"> [male]</span>   1<span style="color: #949494;"> [low]</span>       63    65    48     2     2 TRUE </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     4 1<span style="color: #949494;"> [female]</span> 1<span style="color: #949494;"> [low]</span>       44    50    41     1     2 FALSE</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     4 1<span style="color: #949494;"> [female]</span> 1<span style="color: #949494;"> [low]</span>       44    50    41     2     2 TRUE </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     5 0<span style="color: #949494;"> [male]</span>   1<span style="color: #949494;"> [low]</span>       47    40    43     1     2 FALSE</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     5 0<span style="color: #949494;"> [male]</span>   1<span style="color: #949494;"> [low]</span>       47    40    43     2     2 TRUE </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 205 × 6</span></span></span>
+<span><span class="co">#&gt;       id female     ses         read write  math</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl+lbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl+lbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     1 1<span style="color: #949494;"> [female]</span> 1<span style="color: #949494;"> [low]</span>       34    44    84</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     1 1<span style="color: #949494;"> [female]</span> 1<span style="color: #949494;"> [low]</span>       34    44    40</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     2 1<span style="color: #949494;"> [female]</span> 2<span style="color: #949494;"> [middle]</span>    39    41    33</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     2 1<span style="color: #949494;"> [female]</span> 2<span style="color: #949494;"> [middle]</span>    39    41    33</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     3 0<span style="color: #949494;"> [male]</span>   1<span style="color: #949494;"> [low]</span>       63    65    48</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     3 0<span style="color: #949494;"> [male]</span>   1<span style="color: #949494;"> [low]</span>       63    65    48</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     4 1<span style="color: #949494;"> [female]</span> 1<span style="color: #949494;"> [low]</span>       44    50    41</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     4 1<span style="color: #949494;"> [female]</span> 1<span style="color: #949494;"> [low]</span>       44    50    41</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     5 0<span style="color: #949494;"> [male]</span>   1<span style="color: #949494;"> [low]</span>       47    40    43</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     5 0<span style="color: #949494;"> [male]</span>   1<span style="color: #949494;"> [low]</span>       47    40    43</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 195 more rows</span></span></span>
 <span></span>
 <span><span class="va">hsb2_mod2</span> <span class="op">|&gt;</span> </span>
-<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="fu"><a href="../reference/tag_duplicates.html">tag_duplicates</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="fu"><a href="../reference/tag_duplicates.html">tag_duplicates</a></span><span class="op">(</span><span class="va">id</span>, .indicators <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>    <span class="co"># filter duplicate observations </span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.dup_</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #BB00BB;">$ </span><span style="color: #BB00BB; font-weight: bold;">Report of duplicates</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BB00BB;">  in terms of </span><span style="color: #BB00BB; font-style: italic;">id</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BB00BB;">  in terms of </span><span style="color: #BB00BB; font-style: italic;">id, TRUE</span></span></span>
 <span><span class="co">#&gt;  copies observations surplus</span></span>
 <span><span class="co">#&gt;       1          195       0</span></span>
 <span><span class="co">#&gt;       2           10       5</span></span>
