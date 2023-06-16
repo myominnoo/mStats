@@ -12,3 +12,6 @@ iris |>
 	codebook()
 
 
+dupxmpl <- haven::read_dta("https://www.stata-press.com/data/r18/dupxmpl.dta")
+dupxmpl |> mutate(tag_duplicates(everything()))
+dupxmpl |> mutate(tag_duplicates(everything(), .add_tags = TRUE))

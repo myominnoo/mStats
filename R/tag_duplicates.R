@@ -6,7 +6,7 @@
 #' This function identifies and tags duplicate observations based on specified variables.
 #'
 #' @param ... Columns to use for identifying duplicates.
-#' @param .indicators logical to return three indicator columns: `.n_`, `.N_`, and `.dup_`.
+#' @param .add_tags logical to return three indicator columns: `.n_`, `.N_`, and `.dup_`.
 #'
 #' @return A tibble with three columns: `.n_`, `.N_`, and `.dup_`.
 #'   - `.n_` represents the running counter within each group of variables,
@@ -18,7 +18,7 @@
 #' @details
 #' This function mimics the functionality of Stata's `duplicates` command in R.
 #' It calculates the number of duplicates and provides a report of duplicates
-#' based on the specified variables. The function utilizes the `[n_]` and `[N_]` functions
+#' based on the specified variables. The function utilizes the [n_] and [N_] functions
 #' for counting and grouping the observations.
 #'
 #' @family Data Management
@@ -48,15 +48,18 @@
 #' }
 #'
 #' @export
-tag_duplicates <- function(..., .indicators = FALSE)
+tag_duplicates <- function(..., .add_tags = TRUE)
 {
 	.n_ <- n_(...)
 	.N_ <- N_(...)
 	# add this for visible binding - global variables [warning] during package check
 	Freq <- surplus <- copies <- observations <- NULL
 
-	vars_name <- as.character(match.call())[-1] |>
-		paste(collapse = ", ")
+	args <- as.list(match.call())[-1]
+	args_names <- names(args)
+	vars_name <- ifelse(is.null(args_names), args,
+											args[args_names != ".add_tags"]) |>
+		as.character() |> paste(collapse = ", ")
 	vars_name <- ifelse(vars_name == "everything()", "all variables", vars_name)
 	# if > width - 24, truncate label
 	console_width <- abs(getOption("width") - 30)
@@ -81,7 +84,7 @@ tag_duplicates <- function(..., .indicators = FALSE)
 		dplyr::mutate(surplus = ifelse(copies == 1, 0, surplus)) |>
 		print.data.frame(row.names = FALSE)
 
-	if (.indicators) {
+	if (.add_tags) {
 		tibble::tibble(.n_, .N_, .dup_ = as.logical(names(.n_)))
 	}
 }

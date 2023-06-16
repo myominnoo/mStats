@@ -111,7 +111,7 @@ hsb2_mod2 |>
 	dplyr::mutate(tag_duplicates(id))
 
 hsb2_mod2 |> 
-	dplyr::mutate(tag_duplicates(id, .indicators = TRUE)) |> 
+	dplyr::mutate(tag_duplicates(id, .add_tags = TRUE)) |> 
 	# filter duplicate observations 
 	dplyr::filter(.dup_)
 ```

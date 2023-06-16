@@ -4,12 +4,12 @@
 \alias{tag_duplicates}
 \title{Tag Duplicates}
 \usage{
-tag_duplicates(..., .indicators = FALSE)
+tag_duplicates(..., .add_tags = FALSE)
 }
 \arguments{
 \item{...}{Columns to use for identifying duplicates.}
 
-\item{.indicators}{logical to return three indicator columns: \code{.n_}, \code{.N_}, and \code{.dup_}.}
+\item{.add_tags}{logical to return three indicator columns: \code{.n_}, \code{.N_}, and \code{.dup_}.}
 }
 \value{
 A tibble with three columns: \code{.n_}, \code{.N_}, and \code{.dup_}.
@@ -29,7 +29,7 @@ This function identifies and tags duplicate observations based on specified vari
 
 This function mimics the functionality of Stata's \code{duplicates} command in R.
 It calculates the number of duplicates and provides a report of duplicates
-based on the specified variables. The function utilizes the \verb{[n_]} and \verb{[N_]} functions
+based on the specified variables. The function utilizes the \link{n_} and \link[=n_]{N_} functions
 for counting and grouping the observations.
 }
 \examples{
