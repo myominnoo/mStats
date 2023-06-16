@@ -4,7 +4,7 @@
 \alias{tag_duplicates}
 \title{Tag Duplicates}
 \usage{
-tag_duplicates(..., .add_tags = FALSE)
+tag_duplicates(..., .add_tags = TRUE)
 }
 \arguments{
 \item{...}{Columns to use for identifying duplicates.}

@@ -42,17 +42,18 @@ codebook.data.frame <- function(data)
 {
 	.data_name <- rlang::expr_text(substitute(data))
 	.data_name <- ifelse(.data_name == ".", "<Piped Data>", .data_name)
-	cli::cat_line(crayon::magenta("$ dataset:", crayon::bold(.data_name)))
+	cli::cat_line(crayon::magenta("$ Codebook"))
+	cli::cat_line(crayon::magenta("  dataset:", crayon::bold(.data_name)))
 
 	## data label
 	data_label <- attr(data, "label")
 	if (!is.null(data_label))
-		cli::cat_line(crayon::magenta("$ label:", crayon::bold(data_label)))
+		cli::cat_line(crayon::magenta("  label:", crayon::bold(data_label)))
 
 	row_n <- nrow(data)
 	col_n <- ncol(data)
-	cli::cat_line(crayon::magenta("$ Row:", row_n))
-	cli::cat_line(crayon::magenta("$ Col:", col_n))
+	cli::cat_line(crayon::magenta("  Row:", row_n))
+	cli::cat_line(crayon::magenta("  Col:", col_n))
 
 	var_names <- pillar::new_pillar_title(names(data)) |> format()
 	var_types <- purrr::map(data, pillar::type_sum) |>
