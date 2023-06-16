@@ -91,9 +91,10 @@ allowing <code>codebook()</code> to be used within a data pipe line.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">codebook</span><span class="op">(</span><span class="va">mtcars</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB00BB;">$ dataset: </span><span style="color: #BB00BB; font-weight: bold;">mtcars</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB00BB;">$ Row: 32</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB00BB;">$ Col: 11</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB00BB;">$ Codebook</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB00BB;">  dataset: </span><span style="color: #BB00BB; font-weight: bold;">mtcars</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB00BB;">  Row: 32</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB00BB;">  Col: 11</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    name type  miss complete unique label</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1  mpg  &lt;dbl&gt; 0    1.00     25          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2  cyl  &lt;dbl&gt; 0    1.00      3          </span>
@@ -108,9 +109,10 @@ allowing <code>codebook()</code> to be used within a data pipe line.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 11 carb &lt;dbl&gt; 0    1.00      6          </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">codebook</span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB00BB;">$ dataset: </span><span style="color: #BB00BB; font-weight: bold;">iris</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB00BB;">$ Row: 150</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB00BB;">$ Col: 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB00BB;">$ Codebook</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB00BB;">  dataset: </span><span style="color: #BB00BB; font-weight: bold;">iris</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB00BB;">  Row: 150</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB00BB;">  Col: 5</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   name         type  miss complete unique label</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 Sepal.Length &lt;dbl&gt; 0    1.00     35          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 Sepal.Width  &lt;dbl&gt; 0    1.00     23          </span>
@@ -123,9 +125,10 @@ allowing <code>codebook()</code> to be used within a data pipe line.</p>
 <span class="r-in"><span>  <span class="st">"petal width"</span>, <span class="st">"species"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">codebook</span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB00BB;">$ dataset: </span><span style="color: #BB00BB; font-weight: bold;">iris</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB00BB;">$ Row: 150</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB00BB;">$ Col: 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB00BB;">$ Codebook</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB00BB;">  dataset: </span><span style="color: #BB00BB; font-weight: bold;">iris</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB00BB;">  Row: 150</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB00BB;">  Col: 5</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   name         type  miss complete unique label       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 Sepal.Length &lt;dbl&gt; 0    1.00     35     sepal length</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 Sepal.Width  &lt;dbl&gt; 0    1.00     23     sepal width </span>

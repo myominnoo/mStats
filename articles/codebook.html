@@ -107,9 +107,10 @@ to use the function:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate a codebook for the 'iris' dataset</span></span>
 <span><span class="fu"><a href="../reference/codebook.html">codebook</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BB00BB;">$ dataset: </span><span style="color: #BB00BB; font-weight: bold;">iris</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BB00BB;">$ Row: 150</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BB00BB;">$ Col: 5</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BB00BB;">$ Codebook</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BB00BB;">  dataset: </span><span style="color: #BB00BB; font-weight: bold;">iris</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BB00BB;">  Row: 150</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BB00BB;">  Col: 5</span></span></span>
 <span><span class="co">#&gt;   name         type  miss complete unique label</span></span>
 <span><span class="co">#&gt; 1 Sepal.Length &lt;dbl&gt; 0    1.00     35          </span></span>
 <span><span class="co">#&gt; 2 Sepal.Width  &lt;dbl&gt; 0    1.00     23          </span></span>
@@ -125,9 +126,10 @@ to use the function:</p>
 <span></span>
 <span><span class="co"># Generate codebook again</span></span>
 <span><span class="fu"><a href="../reference/codebook.html">codebook</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BB00BB;">$ dataset: </span><span style="color: #BB00BB; font-weight: bold;">iris</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BB00BB;">$ Row: 150</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BB00BB;">$ Col: 5</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BB00BB;">$ Codebook</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BB00BB;">  dataset: </span><span style="color: #BB00BB; font-weight: bold;">iris</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BB00BB;">  Row: 150</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BB00BB;">  Col: 5</span></span></span>
 <span><span class="co">#&gt;   name         type  miss complete unique label       </span></span>
 <span><span class="co">#&gt; 1 Sepal.Length &lt;dbl&gt; 0    1.00     35     sepal length</span></span>
 <span><span class="co">#&gt; 2 Sepal.Width  &lt;dbl&gt; 0    1.00     23     sepal width </span></span>
@@ -144,9 +146,10 @@ interpret the dataset.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate a codebook for a piped dataset</span></span>
 <span><span class="va">mtcars</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="../reference/codebook.html">codebook</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BB00BB;">$ dataset: </span><span style="color: #BB00BB; font-weight: bold;">&lt;Piped Data&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BB00BB;">$ Row: 32</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BB00BB;">$ Col: 11</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BB00BB;">$ Codebook</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BB00BB;">  dataset: </span><span style="color: #BB00BB; font-weight: bold;">&lt;Piped Data&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BB00BB;">  Row: 32</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BB00BB;">  Col: 11</span></span></span>
 <span><span class="co">#&gt;    name type  miss complete unique label</span></span>
 <span><span class="co">#&gt; 1  mpg  &lt;dbl&gt; 0    1.00     25          </span></span>
 <span><span class="co">#&gt; 2  cyl  &lt;dbl&gt; 0    1.00      3          </span></span>
@@ -173,9 +176,10 @@ example:</piped></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate a codebook using the native pipe operator</span></span>
 <span><span class="va">mtcars</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/codebook.html">codebook</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #BB00BB;">$ dataset: </span><span style="color: #BB00BB; font-weight: bold;">mtcars</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BB00BB;">$ Row: 32</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BB00BB;">$ Col: 11</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BB00BB;">$ Codebook</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BB00BB;">  dataset: </span><span style="color: #BB00BB; font-weight: bold;">mtcars</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BB00BB;">  Row: 32</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BB00BB;">  Col: 11</span></span></span>
 <span><span class="co">#&gt;    name type  miss complete unique label</span></span>
 <span><span class="co">#&gt; 1  mpg  &lt;dbl&gt; 0    1.00     25          </span></span>
 <span><span class="co">#&gt; 2  cyl  &lt;dbl&gt; 0    1.00      3          </span></span>
