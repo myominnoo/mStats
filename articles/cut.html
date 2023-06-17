@@ -177,23 +177,23 @@ following examples with date and time:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span></span>
 <span><span class="va">x</span></span>
-<span><span class="co">#&gt; [1] "2023-06-15" "2023-06-14" "2023-06-13" "2023-06-12" "2023-06-11"</span></span>
+<span><span class="co">#&gt; [1] "2023-06-16" "2023-06-15" "2023-06-14" "2023-06-13" "2023-06-12"</span></span>
 <span><span class="fu"><a href="../reference/cut.html">cut</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 2023-06-12 2023-06-12 2023-06-12 2023-06-15 2023-06-15</span></span>
-<span><span class="co">#&gt; Levels: 2023-06-15 2023-06-12</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 2023-06-13 2023-06-13 2023-06-13 2023-06-16 2023-06-16</span></span>
+<span><span class="co">#&gt; Levels: 2023-06-16 2023-06-13</span></span></code></pre></div>
 <p>In this example, <code>cut</code> categorizes the dates into
 intervals based on the specified cut points.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span></span>
 <span><span class="va">x</span></span>
-<span><span class="co">#&gt; [1] "2023-06-16 04:26:29 UTC" "2023-06-16 04:26:28 UTC"</span></span>
-<span><span class="co">#&gt; [3] "2023-06-16 04:26:27 UTC" "2023-06-16 04:26:26 UTC"</span></span>
-<span><span class="co">#&gt; [5] "2023-06-16 04:26:25 UTC"</span></span>
+<span><span class="co">#&gt; [1] "2023-06-17 21:06:12 UTC" "2023-06-17 21:06:11 UTC"</span></span>
+<span><span class="co">#&gt; [3] "2023-06-17 21:06:10 UTC" "2023-06-17 21:06:09 UTC"</span></span>
+<span><span class="co">#&gt; [5] "2023-06-17 21:06:08 UTC"</span></span>
 <span><span class="fu"><a href="../reference/cut.html">cut</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 2023-06-16 04:26:26.410035 2023-06-16 04:26:26.410035</span></span>
-<span><span class="co">#&gt; [3] 2023-06-16 04:26:26.410035 2023-06-16 04:26:29.410035</span></span>
-<span><span class="co">#&gt; [5] 2023-06-16 04:26:29.410035</span></span>
-<span><span class="co">#&gt; Levels: 2023-06-16 04:26:29.410035 2023-06-16 04:26:26.410035</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 2023-06-17 21:06:09.108932 2023-06-17 21:06:09.108932</span></span>
+<span><span class="co">#&gt; [3] 2023-06-17 21:06:09.108932 2023-06-17 21:06:12.108932</span></span>
+<span><span class="co">#&gt; [5] 2023-06-17 21:06:12.108932</span></span>
+<span><span class="co">#&gt; Levels: 2023-06-17 21:06:12.108932 2023-06-17 21:06:09.108932</span></span></code></pre></div>
 <p>For time objects, <code>cut</code> works similarly, categorizing the
 time values into intervals based on the provided cut points.</p>
 </div>
