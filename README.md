@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# mStats
+# mStats <a href='https://myominnoo.github.io/mStats'><img src='man/figures/logo.png' align="right" height="120" /></a>
 
 <!-- badges: start -->
 
@@ -70,9 +70,10 @@ library(mStats)
 
 ``` r
 codebook(mtcars)
-#> $ dataset: mtcars
-#> $ Row: 32
-#> $ Col: 11
+#> $ Codebook
+#>   dataset: mtcars
+#>   Row: 32
+#>   Col: 11
 #>    name type  miss complete unique label
 #> 1  mpg  <dbl> 0    1.00     25          
 #> 2  cyl  <dbl> 0    1.00      3          

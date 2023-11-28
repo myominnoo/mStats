@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# mStats
+# mStats <a href='https://myominnoo.github.io/mStats'><img src='man/figures/logo.png' align="right" height="120" /></a>
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/mStats)](https://CRAN.R-project.org/package=mStats)

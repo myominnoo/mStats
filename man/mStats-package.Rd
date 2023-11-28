@@ -6,6 +6,8 @@
 \alias{mStats-package}
 \title{mStats: Medical Statistics & Epidemiological Analysis}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 A set of tidyverse-friendly functions for data management, calculation of epidemiological measures, statistical analysis, and table creation.
 }
 \seealso{
